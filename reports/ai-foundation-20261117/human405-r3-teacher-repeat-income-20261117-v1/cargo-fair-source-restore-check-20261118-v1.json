@@ -1,0 +1,10 @@
+{
+  "root": "/private/tmp/seti-cargo-fair-sealed-20261118-btli8ji0",
+  "base": "84f5077615d716768e618054de4154a5d57124ba",
+  "candidate": "v492/movementv8/valuev71",
+  "patchApplied": true,
+  "sourceHashesExact": true,
+  "javascriptSyntaxPassed": true,
+  "files": 21,
+  "runtimePromoted": false
+}

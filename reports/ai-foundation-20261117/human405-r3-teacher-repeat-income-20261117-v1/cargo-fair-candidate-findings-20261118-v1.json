@@ -1,0 +1,166 @@
+{
+  "schemaVersion": "seti-cargo-fair-value-findings-v1",
+  "date": "2026-11-18",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v492/movementv8/valuev71",
+  "promoted": false,
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReferenceUnchanged": 384,
+  "newAutonomousGames": 0,
+  "newTwentyBoardRuns": 0,
+  "previousTurnClassification": "progress: implemented and independently verified actual post-pickup fixed transportation v491; no full-game score change",
+  "thisTurnClassification": "progress: same-root Native controls correct missing movement-corner funding on both routes; known cargo floors and cache cut prevent skipping real transport; sequential visible cargo execution verified; copy optimization graph parity and remaining Native profile recorded",
+  "fairComparison": {
+    "previousComparisonIncomplete": "234.5 versus230 omitted ordinary landing funding from the same held1-move+1score corner",
+    "bothCurrentBeforeClaimAndDelivery": 222,
+    "bothKnownTaskThenOldCargoFloor": 235.5,
+    "oldCargoNetGainWithHeldCorner": 5.5,
+    "B117Gain": 8,
+    "ordinaryEndWallet": {
+      "credits": 6,
+      "energy": 0,
+      "hand": 5
+    },
+    "cardEndWallet": {
+      "credits": 5,
+      "energy": 2,
+      "hand": 4
+    },
+    "cardRetainsNewTransport": true,
+    "notFullStrategicEquivalence": "Equal known reachable floors under V71 do not equate future assets. New fossil identity/reward is not priced before actual reveal.",
+    "teacher289Selection": "ordinary landing235.5, realization-5.5; card landing235.5, realization-13.5; retain existing realization tie-break, no forced teacher selection"
+  },
+  "policyChanges": [
+    "One known one-point movement corner is evaluated with Native score/discard and exact pending movement, alongside current energy, then fixed into the chosen cargo path.",
+    "A finite greedy suffix can deliver multiple known independent jobs; every claim strictly decreases remaining job count. No bare directions, payment combinations or unseen reward branching are added.",
+    "Current V remains actual ledger:222 before pickup; B117 alone reaches230. Known cargo capital is a separate reachable floor235.5, applied to both ordinary and card routes, including unchanged known inputs after a public/alien-card refill barrier.",
+    "Native corner/movement/arrival/task rules own private preview writes. DeepSpace sole free-analyze scope and existing guards decline unsupported contexts.",
+    "Forecast-bearing checkpoints retain deterministic prefixes but truncate before end_turn, so the next actual root can execute the promised cargo. Cached selected rows also reflect actual executed edges."
+  ],
+  "validation": {
+    "nodePassed": 17,
+    "browserPassed": 9,
+    "valueInputAuditPassed": 67,
+    "finalGuardTestsPassed": 3,
+    "sealedSourceTestsPassed": 4,
+    "hiddenControls": "six unseen identities plus reversed hidden decks keep exactly the same pre-pickup quote; two Native landing controls attain235.5 with the same old F07 route",
+    "postPickupSealedResults": [
+      {
+        "newFossil": "fossil_01",
+        "delivered": "fossil_01",
+        "value": 242,
+        "native": 11,
+        "maxMs": 49.969708,
+        "actualInputs": 12
+      },
+      {
+        "newFossil": "fossil_02",
+        "delivered": "fossil_02",
+        "value": 249,
+        "native": 11,
+        "maxMs": 24.39887500000009,
+        "actualInputs": 12
+      },
+      {
+        "newFossil": "fossil_03",
+        "delivered": "fossil_07",
+        "value": 235.5,
+        "native": 6,
+        "maxMs": 22.589666999999963,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_04",
+        "delivered": "fossil_07",
+        "value": 235.5,
+        "native": 6,
+        "maxMs": 20.001624999999876,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_05",
+        "delivered": "fossil_05",
+        "value": 242,
+        "native": 11,
+        "maxMs": 20.16112499999963,
+        "actualInputs": 12
+      },
+      {
+        "newFossil": "fossil_06",
+        "delivered": "fossil_06",
+        "value": 244,
+        "native": 11,
+        "maxMs": 20.420500000000175,
+        "actualInputs": 12
+      }
+    ],
+    "maximumSimulationsAcrossWholeTestSuffix": 11,
+    "maximumSingleDecisionMillisecondsInSealedCases": 49.969708,
+    "independentSecondJobPreservedUntilItsOwnClaim": true,
+    "noRootOrRngMutation": true,
+    "replanControl": {
+      "actualInputs": 15,
+      "cachedLandingPrefix": 8,
+      "step9": {
+        "step": 9,
+        "actionId": "card_corner:cb6e4492",
+        "family": "card_corner",
+        "value": 235.5,
+        "native": 5,
+        "ms": 43.71266700000001,
+        "planRows": 7
+      },
+      "finalValue": 235.5,
+      "rngUnchanged": true,
+      "otherPlayersUnchanged": true,
+      "notAutonomousGame": "Initial teacher289 diagnostic plan was over budget; controlled cache replay does not make that original search admitted."
+    }
+  },
+  "copyOptimization": {
+    "fullRootsAndGraphsExact": true,
+    "allowedDiagnosticDifference": "card ranking cache hit/miss only",
+    "cases": [
+      {
+        "kind": "before",
+        "native": 481,
+        "ms": 3140.474333,
+        "value": 235.5,
+        "actionId": "land:d5ee03a2",
+        "sourceSha256": "9daf3e6277640d0fe90d2152bff6554632f8c85140de80756a2136fb1e8f4190"
+      },
+      {
+        "kind": "after",
+        "native": 481,
+        "ms": 2597.79325,
+        "value": 235.5,
+        "actionId": "land:d5ee03a2",
+        "sourceSha256": "9be01ef3c24db87a81a058b9ab0ece792e957f7be83eb0a0f87f6db738aaa9ee"
+      }
+    ],
+    "qualification": "One paired process with before first and after second; not a universal cold timing claim. Exact source overrides archived.",
+    "stillFails256And600": true
+  },
+  "remainingCost": {
+    "native": 481,
+    "fallbacks": 481,
+    "traceInputs": 201,
+    "alienCardInputs": 94,
+    "otherInputs": 186,
+    "traceColors": {
+      "blue": 3,
+      "pink": 136,
+      "yellow": 62
+    },
+    "resourceControlAtTraceOrAlienCard": 0,
+    "nextConcreteCase": "A selected pink trace after Saturn red scan still goes Native with queue[alien_trace,probe_turn_reward,probe_turn_reward]. Its payload is the fixed pink type, not flexible/null. Existing last-plain trace helper requires queue length1 and cannot preserve/drain these deterministic blue/yellow scan suffixes. Need full Native transaction proof before extending it.",
+    "evidence": "cargo-native-fallbacks-20261118-v1.json.gz"
+  },
+  "sourceRestore": "cargo-fair-source-restore-check-20261118-v1.json",
+  "sourceManifest": "cargo-fair-candidate-source-20261118-v1.json",
+  "next": [
+    "Implement and independently verify a quiet plain-trace continuation that preserves later queued trace/scan rewards instead of prematurely committing; classify alien-card94 remaining tails without assuming goal-control involvement.",
+    "Measure logical/Native input and time changes at teacher289; retain exact root/session/RNG and graph/value evidence.",
+    "Single-root256/600 admission remains required before fixed-root expansion, source promotion, autonomous full game or20 boards.",
+    "Preserve first-two/three-round and historical score evidence during admission; goal remains active."
+  ]
+}

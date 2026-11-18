@@ -1,0 +1,6 @@
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":11,"maxMs":47.74516699999998,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":11,"maxMs":23.86620800000003,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":21.86841699999991,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":21.860875000000078,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":11,"maxMs":20.744292000000314,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":11,"maxMs":19.796125000000302,"actualInputs":12}]}
+SUMMARY unit passed=3 failed=0 total=3 time=5.61s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3

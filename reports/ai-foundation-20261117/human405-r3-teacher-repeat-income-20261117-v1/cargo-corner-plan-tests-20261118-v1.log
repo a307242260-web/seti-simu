@@ -1,0 +1,4 @@
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":237,"native":6,"maxMs":45.475832999999994,"actualInputs":7},{"newFossil":"fossil_02","delivered":"fossil_02","value":243.5,"native":6,"maxMs":26.910375000000045,"actualInputs":7},{"newFossil":"fossil_03","delivered":"fossil_07","value":234.5,"native":6,"maxMs":22.12566599999991,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":234.5,"native":6,"maxMs":19.538041999999905,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":236.5,"native":6,"maxMs":22.427250000000186,"actualInputs":7},{"newFossil":"fossil_06","delivered":"fossil_06","value":238.5,"native":6,"maxMs":19.269582999999784,"actualInputs":7}]}
+SUMMARY unit passed=1 failed=0 total=1 time=2.43s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

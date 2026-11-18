@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v10",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v9.json",
+  "publishedParent": "84f5077615d716768e618054de4154a5d57124ba",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v492/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets; fixed budgets and reproducibility remain required.",
+  "previousGoalTurnClassification": "progress: implemented and independently verified actual post-pickup fixed transportation v491; no full-game score change",
+  "thisGoalTurnClassification": "progress: same-root Native controls correct missing movement-corner funding on both routes; known cargo floors and cache cut prevent skipping real transport; sequential visible cargo execution verified; copy optimization graph parity and remaining Native profile recorded",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "cargo-fair-candidate-findings-20261118-v1.json",
+  "unpassedGate": {
+    "native": 481,
+    "milliseconds": 2597.79325,
+    "sourceSha256": "9be01ef3c24db87a81a058b9ab0ece792e957f7be83eb0a0f87f6db738aaa9ee",
+    "note": "paired copy benchmark source before final same-path company guards; not timing admission"
+  },
+  "remainingNativeDistribution": {
+    "trace": 201,
+    "alienCard": 94,
+    "other": 186
+  },
+  "next": [
+    "Implement and independently verify a quiet plain-trace continuation that preserves later queued trace/scan rewards instead of prematurely committing; classify alien-card94 remaining tails without assuming goal-control involvement.",
+    "Measure logical/Native input and time changes at teacher289; retain exact root/session/RNG and graph/value evidence.",
+    "Single-root256/600 admission remains required before fixed-root expansion, source promotion, autonomous full game or20 boards.",
+    "Preserve first-two/three-round and historical score evidence during admission; goal remains active."
+  ]
+}

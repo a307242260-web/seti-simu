@@ -1,0 +1,25 @@
+{
+  "baseCandidateManifest": "cargo-fair-candidate-source-20261118-v1.json",
+  "restore": "Restore candidate manifest, then apply before/after analysis-port and shared decision-search overrides; all other runtime dependencies are unchanged.",
+  "overrides": [
+    {
+      "case": "before",
+      "target": "randomizer/game/ai/analysis-port.js",
+      "artifact": "cargo-copy-benchmark-before-analysis-port-20261118-v1.js.gz",
+      "sha256": "9daf3e6277640d0fe90d2152bff6554632f8c85140de80756a2136fb1e8f4190"
+    },
+    {
+      "case": "after",
+      "target": "randomizer/game/ai/analysis-port.js",
+      "artifact": "cargo-copy-benchmark-after-analysis-port-20261118-v1.js.gz",
+      "sha256": "9be01ef3c24db87a81a058b9ab0ece792e957f7be83eb0a0f87f6db738aaa9ee"
+    },
+    {
+      "case": "both",
+      "target": "randomizer/game/ai/decision-search.js",
+      "artifact": "cargo-copy-benchmark-both-decision-search-20261118-v1.js.gz",
+      "sha256": "ce927d72ae9582afd17648596eb75752fb3aa26e1d3d33a89f56fcbfb987f5d8"
+    }
+  ],
+  "timingAdmissionPassed": false
+}
