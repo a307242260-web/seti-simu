@@ -1,0 +1,286 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795030544,
+  "deadlineEpochSeconds": 1795031744,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 24 -B 4 \"b_16.webp\" randomizer/game/cards/effects.js; rg -n -A 15 -B 4 \"cards-for-credit\" randomizer/game/quick* randomizer/game/*trade*"
+      ],
+      "startedEpochSeconds": 1795030578.978921,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 32917,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795030579.001055,
+      "stdoutSha256": "c9be635775ea3b76267678900f6d30a4f2b675cfc95f7d7c813f60d3fad2363a",
+      "stderrSha256": "8b23d224ae26a219fc404c4ed9dd4d4b1e95206966808a11ea140dc295a38807"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path; import json; m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text()); s=(Path(m[\"runtime\"])/\"randomizer/game/cards/effects.js\").read_text(); print(s[s.index(\"\\\"amiba_5.webp\\\": withSource\"):][:1700]); paths=[p for p in Path(\"randomizer\").rglob(\"*.js\") if \"cards-for-credit\" in p.read_text()];print([str(p) for p in paths])"
+      ],
+      "startedEpochSeconds": 1795030602.3804312,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 33190,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030602.4707189,
+      "stdoutSha256": "89a1ec5a7af53b896f1af8001a426b12850c7e729723e564591263763dfa2629",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=json.loads((pathlib.Path(m[\"runtime\"])/m[\"savePath\"]).read_text());print([(i+1,x[\"action\"][\"family\"],x[\"action\"].get(\"target\")) for i,x in enumerate(s[\"replaySteps\"]) if 231<=i+1<=255]);print(pathlib.Path(\"randomizer/game/actions/quick-trades.js\").read_text()[:11000])"
+      ],
+      "startedEpochSeconds": 1795030619.079914,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 33392,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030619.104353,
+      "stdoutSha256": "c8024fb4304f5dd1cb13852554fe751f19aa767cd8bdad2396425b03255cf432",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 20 -B 6 \"cards-for-credit|discard.*card\" randomizer/game/ai/resource-demand.test.js | head -100; rg -n -A 14 -B 4 \"choose_discard|discard_selection|discardCount|discard-card\" randomizer/game/ai/analysis-port.js | head -100"
+      ],
+      "startedEpochSeconds": 1795030666.480028,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 33840,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030666.493066,
+      "stdoutSha256": "4f31fb7609b0c62e825f247c479a8533a58f289063cd8a49f4be0e127837d987",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/compare-amiba1-actual-scan-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030728.178933,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 34551,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030728.2271202,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 14 -B 9 \"confirm: true|confirm: count|confirm-discard\" randomizer/game/ai/analysis-port.js randomizer/game/actions/input-bridge.js randomizer/game/effects/discard-session.js"
+      ],
+      "startedEpochSeconds": 1795030735.7413068,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 34763,
+      "exitCode": 2,
+      "childExitCode": 2,
+      "endedEpochSeconds": 1795030735.753501,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "18e5d58333f343914b972fa81fb649e0afe576c96b0a7185bfa5c3f28a4a6962"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n \"confirm: true|family: .choose_card.|quick_trade_discard\" randomizer/game | head -60"
+      ],
+      "startedEpochSeconds": 1795030749.12604,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 34954,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030749.15025,
+      "stdoutSha256": "fd733b69117ab968c5fd6d5cd56906c28835568f57ae53a04621b34993e1ee4b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-amiba1-actual-scan-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030755.709444,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 35107,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795030756.576033,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "97763db09865491b1e09398fcfe37a7cbb5dad12ef7e07a77bcc3c49b15ae6fb"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/compare-amiba1-actual-scan-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030790.4619572,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 35528,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030790.5095491,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-amiba1-actual-scan-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030796.1204329,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 35677,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030796.798708,
+      "stdoutSha256": "b13df48affd2f97df389b9d787767e7b5c4084a507648add110d9ef7e41d30b2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/verify-amiba1-same-turn-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030839.399005,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 36163,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030839.445743,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-amiba1-same-turn-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795030843.951584,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 36287,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030844.439138,
+      "stdoutSha256": "a0f979117e1012f952bd1e1bdeeefc24b9715fa2faa11f7cda4ded3f2a08f787",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib,gzip; m=pathlib.Path(\"reports/ai-foundation-20261119\");a=json.loads((m/\"r3-amiba1-actual-scan-native-20261119-v1.json\").read_text());b=json.loads((m/\"r3-amiba1-same-turn-verification-20261119-v1.json\").read_text());print({\"nativeTotal\":a[\"nativeInputs\"]+b[\"nativeInputs\"],\"fullOriginalObservationReproduced\":b[\"branches\"][0][\"fullObservationExactBefore242\"],\"sameTurnAssetsVerified\":b[\"sameTurnScoreIncomeTechDataAndRng\"],\"events\":[len((m/p).read_text().splitlines()) for p in [\"r3-amiba1-actual-scan-events-20261119-v1.jsonl\",\"r3-amiba1-same-turn-events-20261119-v1.jsonl\"]]});print(\"EXISTING_R4_LEDGER_FILES\",[p.name for p in m.glob(\"*r4*\")])"
+      ],
+      "startedEpochSeconds": 1795030897.910762,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 36772,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030897.9354398,
+      "stdoutSha256": "2342d219490f3e860ee796811f5786da11647ceb668903440f5929a04199745c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; x=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-business-card-outcome-20261119-v1.json\").read_text());print(json.dumps(x,ensure_ascii=False,indent=2)[:13000])"
+      ],
+      "startedEpochSeconds": 1795030904.634537,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 36896,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795030904.659172,
+      "stdoutSha256": "153951a07f99b80be65517d5318190f1193a2f2b375a4bce538493700e87444a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "route": "Amiba1 income and visible research payoff; final actual-scan unit",
+  "priorUnit": "reports/ai-foundation-20261119/r3-amiba1-business-control-20261119-v1.window.json",
+  "priorUnitMinutes": 24.48,
+  "scope": "Actual scan and orange/blue research continuation under legal funding; no AI policy change/search/full game",
+  "nativeBranchInputCap": 64,
+  "totalNativeInputCap": 192,
+  "stoppingRule": "Close this engine hypothesis after the declared comparison or deadline; do not extend with another immediate micro-question",
+  "recoveries": [
+    {
+      "observedEpochSeconds": 1795030602.353832,
+      "reason": "Read-only source probe used a nonexistent shell glob; no Native input or search. Continue exact paths with original deadline unchanged."
+    },
+    {
+      "observedEpochSeconds": 1795030749.09901,
+      "reason": "Second read-only probe named nonexistent source files. No Native input; switch to repository-wide exact text search without guessed files. Deadline unchanged."
+    },
+    {
+      "observedEpochSeconds": 1795030790.434907,
+      "reason": "Diagnostic driver expected choose_card for discard payment; Native contract uses choose_payment. Baseline24 and engine9 inputs are checkpointed. Resume exact engine pending-discard session, preserve failure evidence and replay zero successful inputs. Original deadline unchanged."
+    }
+  ],
+  "declaredComparison": {
+    "root": "verified post210 income endpoints from previous unit",
+    "baseline": "actual211-234",
+    "engine": "actual211-218, discard DLC25 and acquired Amiba5 for1credit, install Amiba1 and end own turn, actual219-234 with current-visible orange/blue engine rewards",
+    "stateEquivalence": "same initial economy/income/data/technology/RNG; hand differs by retained Amiba1 vsB16; compare same completed scan and two paid tech, explicitly charge extra setup turn and hand consumption",
+    "pruning": "No search enumeration; exactly two fixed continuations, no alternate payment combinations, no resource injection",
+    "resourceLowerBound": "activation needs1credit, actual scan consumes all1credit+2energy; after scan no energy and no available credit corner, so declared two-card funding is charged",
+    "budget": "64 Native inputs per branch,128total, original fixed deadline; no full game, policy edit or AI search",
+    "success": "baseline full official observation reproduces before235; same tech/income/RNG, all differences in score/data/hand/resources/reserve explicit",
+    "stop": "Close engine hypothesis; do not claim score gain without accounting sacrificed Amiba5 future use"
+  },
+  "boundaryVerification": {
+    "recordedEpochSeconds": 1795030839.370755,
+    "requiredByDeclaredLimitation": "Original baseline can play sacrificed Amiba5 next; unequal setup turn must be charged. Reuse engine turn15 and execute only known baseline235-241 to same turn15.",
+    "additionalNativeInputs": 7,
+    "noNewHypothesis": true,
+    "deadlineUnchanged": true
+  },
+  "closedEpochSeconds": 1795030983.458883,
+  "closeReason": "Actual scan and same-own-turn comparison rejects this Amiba1 financing proposal; no policy change justified. Amiba1 hypothesis closed for this route.",
+  "evidenceArchive": "reports/ai-foundation-20261119/r3-amiba1-actual-scan-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "3fbda92818de90e16d4000de9fc7c6cc2bb27585053373844e19cd5e1b69815a"
+}

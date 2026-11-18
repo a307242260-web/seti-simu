@@ -1,0 +1,609 @@
+{
+  "phase": "complete",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "modelVersion": "seti-purpose-capital-state-value-v71",
+  "scope": "Finish the baseline next known Amiba5 turn235-241 to match engine own-turn15; engine checkpoint is reused without any execution.",
+  "branches": [
+    {
+      "name": "baseline",
+      "nativeInputs": 7,
+      "initial": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 0,
+          "score": 105
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp"
+          },
+          {
+            "id": "card-60-0",
+            "cardId": "dlc_25.png"
+          },
+          {
+            "id": "alien-amiba-5-12",
+            "cardId": "amiba_5.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "blueBonusOwnerId": "player-white",
+            "cardId": "dlc_31.png",
+            "cardTypeCode": 3,
+            "discardActionCode": 0,
+            "faceUp": true,
+            "id": "card-51-0",
+            "incomeCode": 0,
+            "price": 1,
+            "scanActionCode": 0,
+            "set": "space-agency"
+          },
+          {
+            "alienCardId": 0,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [
+                "amiba0-pink-data"
+              ],
+              "modelCardId": "amiba_0.webp"
+            },
+            "cardId": "amiba_0.webp",
+            "cardTypeCode": 1,
+            "discardActionCode": 3,
+            "faceUp": true,
+            "id": "alien-amiba-0-1",
+            "incomeCode": 2,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "alien:阿米巴"
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-33",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-34",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-32",
+              "index": 9,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-35",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-36",
+              "index": 13,
+              "placementKind": "blueBonus"
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 14,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 15,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "id": "data-token-39",
+              "index": 16,
+              "placementKind": "computer",
+              "placementSlot": 6
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-40",
+              "index": 17,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "turn": 14,
+        "currentProjectedFinalScore": 145,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 177,
+          "components": {
+            "realizedScore": 105,
+            "currentEndGameBonus": 40,
+            "resources": 1,
+            "hand": 3,
+            "income": 12.5,
+            "technologyPotential": 11.5,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 4,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "c379854c854c3ccab68699ce7b4012e3575fd9bb9b1b0f762348c984321dc0ad"
+      },
+      "result": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 3,
+          "publicity": 0,
+          "score": 109
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-67-0",
+            "cardId": "dlc_15.png"
+          },
+          {
+            "id": "card-60-0",
+            "cardId": "dlc_25.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "blueBonusOwnerId": "player-white",
+            "cardId": "dlc_31.png",
+            "cardTypeCode": 3,
+            "discardActionCode": 0,
+            "faceUp": true,
+            "id": "card-51-0",
+            "incomeCode": 0,
+            "price": 1,
+            "scanActionCode": 0,
+            "set": "space-agency"
+          },
+          {
+            "alienCardId": 0,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [
+                "amiba0-pink-data"
+              ],
+              "modelCardId": "amiba_0.webp"
+            },
+            "cardId": "amiba_0.webp",
+            "cardTypeCode": 1,
+            "discardActionCode": 3,
+            "faceUp": true,
+            "id": "alien-amiba-0-1",
+            "incomeCode": 2,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "alien:阿米巴"
+          },
+          {
+            "alienCardId": 5,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardId": "amiba_5.webp",
+            "cardTypeCode": 3,
+            "discardActionCode": 4,
+            "faceUp": true,
+            "id": "alien-amiba-5-12",
+            "incomeCode": 1,
+            "price": 1,
+            "scanActionCode": 1,
+            "set": "alien:阿米巴"
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-33",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-34",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-32",
+              "index": 9,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-35",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-36",
+              "index": 13,
+              "placementKind": "blueBonus"
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 14,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 15,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "id": "data-token-39",
+              "index": 16,
+              "placementKind": "computer",
+              "placementSlot": 6
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-40",
+              "index": 17,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "turn": 15,
+        "currentProjectedFinalScore": 155,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 190,
+          "components": {
+            "realizedScore": 109,
+            "currentEndGameBonus": 46,
+            "resources": 0,
+            "hand": 3,
+            "income": 12.5,
+            "technologyPotential": 11.5,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 8,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "e832baee5909fae027ea8705cda4f497cf5fedc662b3610dcf1460861966562f"
+      },
+      "fullObservationExactBefore242": true,
+      "coldRestoreExact": true,
+      "complete": true
+    }
+  ],
+  "nativeInputs": 7,
+  "aiSearches": 0,
+  "newGames": 0,
+  "sameTurnScoreIncomeTechDataAndRng": true,
+  "reusedEngine": {
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 1,
+      "energy": 0,
+      "handSize": 0,
+      "publicity": 1,
+      "score": 109
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "hand": [],
+    "reserved": [
+      {
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_117.webp"
+        },
+        "cardId": "b_117.webp",
+        "cardTypeCode": 2,
+        "discardActionCode": 2,
+        "faceUp": true,
+        "id": "card-13-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 3,
+        "set": "basic"
+      },
+      {
+        "blueBonusOwnerId": "player-white",
+        "cardId": "dlc_31.png",
+        "cardTypeCode": 3,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-51-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      },
+      {
+        "alienCardId": 0,
+        "amibaCard": true,
+        "amibaTask": null,
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [
+            "amiba0-pink-data"
+          ],
+          "modelCardId": "amiba_0.webp"
+        },
+        "cardId": "amiba_0.webp",
+        "cardTypeCode": 1,
+        "discardActionCode": 3,
+        "faceUp": true,
+        "id": "alien-amiba-0-1",
+        "incomeCode": 2,
+        "price": 2,
+        "scanActionCode": 2,
+        "set": "alien:阿米巴"
+      },
+      {
+        "alienCardId": 1,
+        "amibaCard": true,
+        "amibaTask": null,
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [
+            "amiba1-orange-tech",
+            "amiba1-blue-tech"
+          ],
+          "modelCardId": "amiba_1.webp"
+        },
+        "cardId": "amiba_1.webp",
+        "cardTypeCode": 1,
+        "discardActionCode": 5,
+        "faceUp": true,
+        "id": "alien-amiba-1-2",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "alien:阿米巴"
+      }
+    ],
+    "tech": {
+      "blueBoardSlots": {
+        "blue1": 3,
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue3": true,
+        "orange1": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-33",
+          "index": 10,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-34",
+          "index": 11,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-32",
+          "index": 9,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-35",
+          "index": 12,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-36",
+          "index": 13,
+          "placementKind": "blueBonus"
+        },
+        {
+          "blueSlot": 2,
+          "id": "data-token-37",
+          "index": 14,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-38",
+          "index": 15,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-39",
+          "index": 16,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-40",
+          "index": 17,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "turn": 15,
+    "currentProjectedFinalScore": 149,
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 178.5,
+      "components": {
+        "realizedScore": 109,
+        "currentEndGameBonus": 40,
+        "resources": 1.5,
+        "hand": 0,
+        "income": 12.5,
+        "technologyPotential": 11.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 4,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    },
+    "nativeStateSha256": "42e13255296aa055016a2cb00ca216f385f286b3e62ab6ff4e0ad1ac5b24ea82"
+  }
+}

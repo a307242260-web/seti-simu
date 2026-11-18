@@ -1,0 +1,320 @@
+{
+  "schemaVersion": "seti-amiba1-actual-scan-outcome-v1",
+  "date": "2026-11-19",
+  "question": "Does retaining Amiba1 and legally installing it around the actual scan/research schedule outperform the known baseline assets after charging setup and funding?",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "root": "Existing verified before211 income endpoints; one retains Amiba1, the other B16. Initial economy, tech, income, data and RNG are equal.",
+  "execution": {
+    "baseline": "actual211-241, including next Amiba5 turn and company card swap",
+    "engine": "actual211-218 scan, sacrifice DLC25+Amiba5 for1credit, install Amiba1+extra setup turn, actual219-234 with both additional engine rewards",
+    "engineRewardScores": [
+      2,
+      2
+    ],
+    "commonBoundary": "same round3 next own-turn15, scan and orange1/blue1 completed; baseline uses the turn engine spent on installation to play Amiba5",
+    "nativeInputs": 65,
+    "baselineInputs": 31,
+    "engineInputs": 34,
+    "newAISearches": 0,
+    "newAutonomousGames": 0,
+    "repeatedSuccessfulInputs": 0
+  },
+  "baseline": {
+    "score": 109,
+    "projectedFinalAtCurrentState": 155,
+    "credits": 0,
+    "energy": 0,
+    "publicity": 0,
+    "hand": [
+      {
+        "id": "card-67-0",
+        "cardId": "dlc_15.png"
+      },
+      {
+        "id": "card-60-0",
+        "cardId": "dlc_25.png"
+      },
+      {
+        "id": "card-65-0",
+        "cardId": "dlc_17.png"
+      }
+    ],
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 3,
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue3": true,
+        "orange1": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-33",
+          "index": 10,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-34",
+          "index": 11,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-32",
+          "index": 9,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-35",
+          "index": 12,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-36",
+          "index": 13,
+          "placementKind": "blueBonus"
+        },
+        {
+          "blueSlot": 2,
+          "id": "data-token-37",
+          "index": 14,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-38",
+          "index": 15,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-39",
+          "index": 16,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-40",
+          "index": 17,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "turn": 15,
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 190,
+      "components": {
+        "realizedScore": 109,
+        "currentEndGameBonus": 46,
+        "resources": 0,
+        "hand": 3,
+        "income": 12.5,
+        "technologyPotential": 11.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 8,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "engine": {
+    "score": 109,
+    "projectedFinalAtCurrentState": 149,
+    "credits": 1,
+    "energy": 0,
+    "publicity": 1,
+    "hand": [],
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 3,
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue3": true,
+        "orange1": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-33",
+          "index": 10,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-34",
+          "index": 11,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-32",
+          "index": 9,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-35",
+          "index": 12,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-36",
+          "index": 13,
+          "placementKind": "blueBonus"
+        },
+        {
+          "blueSlot": 2,
+          "id": "data-token-37",
+          "index": 14,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-38",
+          "index": 15,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "id": "data-token-39",
+          "index": 16,
+          "placementKind": "computer",
+          "placementSlot": 6
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-40",
+          "index": 17,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "turn": 15,
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 178.5,
+      "components": {
+        "realizedScore": 109,
+        "currentEndGameBonus": 40,
+        "resources": 1.5,
+        "hand": 0,
+        "income": 12.5,
+        "technologyPotential": 11.5,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 4,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "sameTurnScoreIncomeTechnologyDataAndRng": true,
+  "originalBaselineFullOfficialObservationsReproducedBefore": [
+    235,
+    242
+  ],
+  "decision": {
+    "status": "reject-this-financing-proposal; close-Amiba1-retain-income-hypothesis-without-policy-edit",
+    "supported": [
+      "The engine gains4 immediate points across actual orange/blue research, but costs two cards and a setup turn.",
+      "After baseline plays the sacrificed Amiba5 on the same own-turn budget, both have109 points and identical technology/income/data.",
+      "The baseline retains3 cards and current projected endgame bonus is6 higher; engine retains1 extra credit,1 publicity and unused purple engine right.",
+      "Model value190 versus178.5 supports the selected baseline for this declared comparison; the difference is not a measured final-game score gain."
+    ],
+    "notProven": [
+      "Global optimality of the income picker or all earlier installation timings.",
+      "That every possible engine funding choice is inferior.",
+      "A new full-game score, 20-board mean or strategy improvement."
+    ],
+    "whyNoPatch": "This concrete alternative does not establish a causal development improvement; forcing retention or use of Amiba1 would discard useful known follow-up assets."
+  },
+  "methodResult": {
+    "priorUnitMinutes": 24.48,
+    "thisUnitMinutes": 7.324314717451731,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "fullCheckpointsAfterEveryNativeInput": true,
+    "allBranchesColdRestoreExact": true,
+    "failuresRetained": [
+      "Two read-only source probes named missing paths/globs; no Native input.",
+      "Driver used choose_card instead of choose_payment for discard selection. Resumed exact pending-discard checkpoint after engine9 inputs; baseline24 not repeated."
+    ],
+    "diagnosticProgress": true,
+    "AIQualityImprovementProven": false
+  },
+  "nextQuestion": {
+    "root": "Actual formal272 fourth-round input311",
+    "existingEvidence": "reports/ai-foundation-20261119/r4-tech-step311-existing-evidence-20261119-v1.json.gz",
+    "comparison": "Saved complete research plan value236 versus selected scan239.5, under an explicitly shared future business boundary.",
+    "reason": "Research is legal and evaluated, so candidate omission has already been ruled out. Test whether the scan preference sacrifices affordable later development; do not return to B101/Amiba1 or reopen frozen v514.",
+    "executed": false
+  },
+  "formalCompletedScoreUnchanged": 272,
+  "formalGameWallSeconds": 16.1,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "previousGoalTurnClassification": "progress: two income endpoints and immediate-research witness verified, no strategy improvement established",
+  "thisGoalTurnClassification": "progress: actual scan financing and same-own-turn Native control refutes apparent4-point improvement after accounting sacrificed Amiba5 and retained assets",
+  "sources": {
+    "reports/ai-foundation-20261119/r3-amiba1-actual-scan-native-20261119-v1.json": "3f9ababad75cf1d8d5ed6d83d3d646a8328838d75bf30c23d23e158d39b98619",
+    "reports/ai-foundation-20261119/r3-amiba1-actual-scan-native-20261119-v1-failed.json": "d351e05417d334c2f8fa1018f552724dde922ed4515fec3d667b9e51dfe09ae1",
+    "reports/ai-foundation-20261119/r3-amiba1-same-turn-verification-20261119-v1.json": "fcd7486a9a6cd2ec85153c1ffdc635fede314ca48c2eb65e6980568bcca109f7",
+    "reports/ai-foundation-20261119/r3-amiba1-actual-scan-baseline-checkpoint-20261119-v1.json.gz": "a1932345f9688ba270277325dd5eaed26bf6ba9c94cf80630a95ecea0cae3d42",
+    "reports/ai-foundation-20261119/r3-amiba1-actual-scan-engine-checkpoint-20261119-v1.json.gz": "3954c32a1a22387f696a19421a7d52b3d0d95e37569017706575fca2a495f7b2",
+    "reports/ai-foundation-20261119/r3-amiba1-same-turn-baseline-checkpoint-20261119-v1.json.gz": "8e5c3242ba424a2cb66191d2562bc1db6dd3f93106b50b4a153b83f142d11619",
+    "reports/ai-foundation-20261119/r3-amiba1-business-control-outcome-20261119-v1.json": "a67dd410dc610f7f41d9aa829e48889033cb04c5502e46ac16e27aba168fd888"
+  }
+}
