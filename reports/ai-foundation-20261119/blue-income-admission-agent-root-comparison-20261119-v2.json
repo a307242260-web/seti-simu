@@ -1,0 +1,501 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "scope": "Fresh current agent on each exact historical guard checkpoint; one real submitted action per source, no autonomous game or manual continuation.",
+  "cases": [
+    {
+      "file": "reports/research/0b908c22.532563ef.full.json.round-end-2.checkpoint.json",
+      "expectedFamily": "scan",
+      "sources": [
+        {
+          "label": "baseline",
+          "nativeRootSha256": "33227cd34030e7bc16bf0e1e79deb29b401bc81b6f56904aae16a239996527c8",
+          "round": 2,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v71",
+          "wallMilliseconds": 102.56058300000001,
+          "actionId": "scan:2d21a323",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 62,
+            "stopReason": null,
+            "nativeExecutions": 20,
+            "rootAndSearchMilliseconds": 76.747083,
+            "searchMilliseconds": 67.304666,
+            "roots": [
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 62,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:261514ac",
+                "value": 55,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 63.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "move:7382b5d2",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:094e1546",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:715deece",
+                "goal": {
+                  "id": "rocket:2:orbit:venus:planet:",
+                  "kind": "route",
+                  "family": "orbit",
+                  "rocketId": 2,
+                  "planetId": "venus",
+                  "endpointTarget": {
+                    "type": "planet"
+                  },
+                  "endpointCost": {
+                    "credits": 1,
+                    "energy": 1
+                  },
+                  "benefit": {
+                    "score": 9,
+                    "incomeCount": 1,
+                    "dataCount": 0,
+                    "grossEquivalentValue": 11.5,
+                    "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+                    "source": "planetRewards.orbit:venus"
+                  },
+                  "coordinate": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "path": [
+                    {
+                      "from": {
+                        "x": 6,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 1
+                    },
+                    {
+                      "from": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 4,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 2
+                    }
+                  ],
+                  "movementPoints": 3,
+                  "required": {
+                    "credits": 1
+                  }
+                },
+                "value": 62.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "value": 55.166666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "goal": {
+                  "id": "play:card-20-pass-1-1",
+                  "kind": "play_card",
+                  "cardId": "card-20-pass-1-1",
+                  "required": {
+                    "credits": 3
+                  }
+                },
+                "value": 51.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:be9dd0cd",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "industry:e887dc52",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "card_corner:7d2ae2d1",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "card_corner:69366621",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scanBeforePass": {
+              "policy": "round-two-uncontested-scan-opportunity-v1",
+              "actionId": "scan:2d21a323",
+              "passActionId": "pass:a1f33c73",
+              "passValue": 63.666666666666664,
+              "scanValue": 62,
+              "loss": 1.6666666666666643,
+              "maxOpportunityCost": 2,
+              "sectorId": "sector-1-a",
+              "realization": -11.5,
+              "preparationDebt": 0
+            },
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "33227cd34030e7bc16bf0e1e79deb29b401bc81b6f56904aae16a239996527c8"
+        },
+        {
+          "label": "candidate",
+          "nativeRootSha256": "33227cd34030e7bc16bf0e1e79deb29b401bc81b6f56904aae16a239996527c8",
+          "round": 2,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v72-public-income-prototype",
+          "wallMilliseconds": 98.62616699999995,
+          "actionId": "scan:2d21a323",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 62,
+            "stopReason": null,
+            "nativeExecutions": 20,
+            "rootAndSearchMilliseconds": 74.26491600000003,
+            "searchMilliseconds": 64.93233299999997,
+            "roots": [
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 62,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:261514ac",
+                "value": 55,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 63.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "move:7382b5d2",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:094e1546",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:715deece",
+                "goal": {
+                  "id": "rocket:2:orbit:venus:planet:",
+                  "kind": "route",
+                  "family": "orbit",
+                  "rocketId": 2,
+                  "planetId": "venus",
+                  "endpointTarget": {
+                    "type": "planet"
+                  },
+                  "endpointCost": {
+                    "credits": 1,
+                    "energy": 1
+                  },
+                  "benefit": {
+                    "score": 9,
+                    "incomeCount": 1,
+                    "dataCount": 0,
+                    "grossEquivalentValue": 11.5,
+                    "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+                    "source": "planetRewards.orbit:venus"
+                  },
+                  "coordinate": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "path": [
+                    {
+                      "from": {
+                        "x": 6,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 1
+                    },
+                    {
+                      "from": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 4,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 2
+                    }
+                  ],
+                  "movementPoints": 3,
+                  "required": {
+                    "credits": 1
+                  }
+                },
+                "value": 62.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "value": 55.166666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "goal": {
+                  "id": "play:card-20-pass-1-1",
+                  "kind": "play_card",
+                  "cardId": "card-20-pass-1-1",
+                  "required": {
+                    "credits": 3
+                  }
+                },
+                "value": 51.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:be9dd0cd",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "industry:e887dc52",
+                "goal": {
+                  "kind": "move",
+                  "id": "rocket:2:land:mercury:planet:",
+                  "amount": 1,
+                  "priority": 4,
+                  "required": {
+                    "credits": 0,
+                    "energy": 8,
+                    "movementSteps": 4,
+                    "movementPoints": 5,
+                    "paidMovementPoints": 5
+                  }
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "card_corner:7d2ae2d1",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "card_corner:69366621",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scanBeforePass": {
+              "policy": "round-two-uncontested-scan-opportunity-v1",
+              "actionId": "scan:2d21a323",
+              "passActionId": "pass:a1f33c73",
+              "passValue": 63.666666666666664,
+              "scanValue": 62,
+              "loss": 1.6666666666666643,
+              "maxOpportunityCost": 2,
+              "sectorId": "sector-1-a",
+              "realization": -11.5,
+              "preparationDebt": 0
+            },
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "33227cd34030e7bc16bf0e1e79deb29b401bc81b6f56904aae16a239996527c8"
+        }
+      ],
+      "sameNativeRoot": true,
+      "sameAction": true
+    }
+  ],
+  "newAutonomousGames": 0
+}

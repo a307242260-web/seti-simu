@@ -1,0 +1,499 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "baselineRuntime": "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q",
+  "candidateRuntime": "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__",
+  "restoredInputs": [
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v179-first-round-analysis-tradeoff-native-20261105-v1.json",
+      "bytes": 86426,
+      "sha256": "0d2e6a4a28caf3ad77aad083a0e73c0fc0737425a3d654bcd1ada906f4f15a55"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-early-first-white-20261107-v1.root.json",
+      "bytes": 43016,
+      "sha256": "63d524bf814b79478af0eac1655ce8b67762fd51b5a42a7d3a3c3cc8e4bfecb8"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/r4-company-tail-v1/prototype-native-proof-20261107-v1.checkpoint.json",
+      "bytes": 1131831,
+      "sha256": "f5de05f41c7a4a0f622ebdb067c4eade2d8ab8ec6a995e2433d8a2843efc2ab7"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/read-only-rewards-v1/amiba-analysis-capital-v305-reference-20261107-v1.js",
+      "bytes": 22990,
+      "sha256": "0893bfaa1c924910988a25227e34db6fec3f840867bd827165dc7a3cac90aee9"
+    },
+    {
+      "path": "reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json",
+      "bytes": 19607,
+      "sha256": "ee293cd51377790ec785055109adaa99c2e8cb35bff9dd199d07606eb429dccc"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-20261022/cdbe7999.576bbc50.full.action-log.html",
+      "bytes": 65821,
+      "sha256": "f2a8afe4af01217bf4c97ee0810ed8dd2298e120e5c63453be3316d5f63b1df1"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-00-20261022/3558b009.2bc7b88c.full.action-log.html",
+      "bytes": 65842,
+      "sha256": "8ab3314fd8792a27e55444c797c0ef3bf510bf76ffa45b54acbb65c4e2512f1f"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-01-20261022/1ed7c0bf.2bc7b88c.full.action-log.html",
+      "bytes": 67541,
+      "sha256": "bcdd372f32552ca420f369c6568578ae285b39fed887375e45ec15d571595f1a"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-02-20261022/8cf00b93.2bc7b88c.full.action-log.html",
+      "bytes": 63209,
+      "sha256": "2698bf93c0005792bd9f689bc6de1e9b2c4e8860348d0f6f9fcf37f659eb6898"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-03-20261022/801a83ba.2bc7b88c.full.action-log.html",
+      "bytes": 63751,
+      "sha256": "9462f4d8e3945cf1e95dfa8a6a2f6ebb68e33f45cdb3c003e58160d76843932e"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-04-20261022/199abbfb.2bc7b88c.full.action-log.html",
+      "bytes": 66705,
+      "sha256": "383c209197627abd5d222bd653d0909c719ceb3bd767f00520d76d7f458fa30f"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-05-20261022/7cd473bf.2bc7b88c.full.action-log.html",
+      "bytes": 67128,
+      "sha256": "5e8dd5db3393df8f5556c586fb7d60a5c714372ac76b3c3c2d726ae27f69622c"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-06-20261022/b15f4401.2bc7b88c.full.action-log.html",
+      "bytes": 65997,
+      "sha256": "e9dbff9de9985bd6a9d3eb4d01572277ad94c8f0559cd5ea5fc0314416d08c5c"
+    },
+    {
+      "path": "reports/iteration/ai-foundation-dev-07-20261022/3bbbc445.2bc7b88c.full.action-log.html",
+      "bytes": 67004,
+      "sha256": "ba0efdfd7115bac0883305a0bb9413c41f5141f661b9a701b57ac7672019b2b9"
+    },
+    {
+      "path": "reports/research/0aef5774.532563ef.full.json.round-end-1.checkpoint.json",
+      "bytes": 298154,
+      "sha256": "c5f0e1817f3f6e740dcbdc417b5d1222c982e01d39eaa55d22da7ed52e31fbd9"
+    },
+    {
+      "path": "reports/research/199abbfb.2bc7b88c.full.json",
+      "bytes": 4117,
+      "sha256": "7d54b407c301835dbcff16f9dad03392f5b851e6bf34d8d6c038579ce3dbe379"
+    },
+    {
+      "path": "reports/research/1ed7c0bf.2bc7b88c.full.json",
+      "bytes": 4166,
+      "sha256": "fc75ecfa4111ebe071619811dc6aed1f60f525070a3d602d41b2fbbe88302f2d"
+    },
+    {
+      "path": "reports/research/3558b009.2bc7b88c.full.json",
+      "bytes": 4123,
+      "sha256": "e75e8314845bff5b5169b177f21771bd486715c0b49b41d8174196cf27bcdfef"
+    },
+    {
+      "path": "reports/research/3bbbc445.2bc7b88c.full.json",
+      "bytes": 3942,
+      "sha256": "2b24e28d59dfc89ee74148d7456d2ca45bafc731cde67fa0e0094be75159fc2e"
+    },
+    {
+      "path": "reports/research/3e9df353.dc540a52.quick-400.json.round-end-3.checkpoint.json",
+      "bytes": 834739,
+      "sha256": "5fb10572f8563db1bd7eaacd8dc1f608b494963952e353aa6c7d3d58d5f4fbd8"
+    },
+    {
+      "path": "reports/research/7bb2c6d4.60f8cca6.quick-24.json",
+      "bytes": 29052,
+      "sha256": "bc1e79b28ff4bf7824304791e57eb4eec75a59ff9203df96166b65cb21e2950c"
+    },
+    {
+      "path": "reports/research/7cd473bf.2bc7b88c.full.json",
+      "bytes": 4182,
+      "sha256": "46f8e0c2083fd6a44fbb682c3a3e87d7190f1cc6af8cf0501654828181dbcc76"
+    },
+    {
+      "path": "reports/research/801a83ba.2bc7b88c.full.json",
+      "bytes": 3914,
+      "sha256": "00bd7e94e49170f12cdb4c05a922f3faf0bdc7561ae648d2e8cee819094869fb"
+    },
+    {
+      "path": "reports/research/8cf00b93.2bc7b88c.full.json",
+      "bytes": 3987,
+      "sha256": "de79b7c6a8c7a5e9f549ccd34a9a829213338b435487855aa0f36258413b4e30"
+    },
+    {
+      "path": "reports/research/b15f4401.2bc7b88c.full.json",
+      "bytes": 3997,
+      "sha256": "91fe2db0ad5dd377aeeaf73dda64dc2b55f73101394dea5abf96bdc606002eb5"
+    },
+    {
+      "path": "reports/research/cdbe7999.576bbc50.full.json",
+      "bytes": 4109,
+      "sha256": "4606b57215eac75285463a7f769ca6293e688b23cfc77ac8533d6ea6c6585bc4"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-20261022-576bbc50-full-v126.json",
+      "bytes": 294176,
+      "sha256": "42f1f829a4867a59c5e6102d8a99f1ec88670c825ad110a943ca1f785bb4ae14"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-00-20261022-2bc7b88c-full-v126.json",
+      "bytes": 294183,
+      "sha256": "97824de4cfb14528a1e0dd92ecd20947a853e6ac27574d29e27d96c3f794347f"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-01-20261022-2bc7b88c-full-v128.json",
+      "bytes": 314038,
+      "sha256": "063ebd04eb54dc31a5b8dd1325f31b8716e5efe8c37689cba7935e06b800e804"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-02-20261022-2bc7b88c-full-v116.json",
+      "bytes": 289020,
+      "sha256": "c98fc55ece5a2b812f433f250677a86a52a4a926ae9f619202603b352479a730"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-03-20261022-2bc7b88c-full-v120.json",
+      "bytes": 296666,
+      "sha256": "f94001c9d045c185cdbe8d3bf09ec250e101d9e55e1c20735b048baed6ddf7c4"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-04-20261022-2bc7b88c-full-v124.json",
+      "bytes": 332105,
+      "sha256": "8a6cec51f5a3f90bc41c145aa57808ada6447c445465da8d015d9032433ce31b"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-05-20261022-2bc7b88c-full-v130.json",
+      "bytes": 311840,
+      "sha256": "b7c15691441726e4cd5d64cc347317f111b59d25d0d17cd0b9d346817807b2f7"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-06-20261022-2bc7b88c-full-v126.json",
+      "bytes": 321122,
+      "sha256": "85e8748daa69b618ba12ba78da30bfd1a1bc70718707399996d8f82ccb901b70"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-search-v123-white-r1-20261031-94530144-quick-200-v25.json",
+      "bytes": 176661,
+      "sha256": "ca22850db5aadaaa2296223ea9c2dfa6e4a79f0e5ebf4794dcb742096fcc2343"
+    }
+  ],
+  "tests": {
+    "randomizer/app/host-architecture-audit.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.07090401649475098,
+        "signature": "Error: 规则模块残留 Browser runtime: randomizer/game/ai/probe-capital.js",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_app_host-architecture-audit.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/analysis-region-prefix.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.43665623664855957,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    analysisPlan: {\n      candidates: [Getter/Setter] [\n        {\n          blueSlot: 1,\n...\n    knownPublicIncomeSwapPlan: null,\n+   nextIncomeProbePlan: {\n+     existingContribution: 1,\n+     increase: 1,\n+     reason: 'known-income-funded-earth-probe-replacement',\n+     scope: 'One ordinary orbit paid from known next-round currency income alone, no current wallet/new card/landing/trace/data. Existing known income-card opportunity cost; positive score floor capped by standard launch replacement cost. Alternative to current mission capital, never a Native successor or admissible bound.',\n+     selected: {\n+       goalId: '5:orbit:venus:planet',\n+       incomeCardOpportunityCost: 1,\n+       knownIncomeCardId: 'card-29-pass-2-5',\n+       netScoreFloor: 3,\n+       nextIncomeBudget: {\n+         credits: 6,\n+         energy: 2\n+       },\n+       payment: {\n+         creditPurchases: 0,\n+         energyPurchases: 1,\n+         spend: {\n+           credits: 3,\n+           energy: 2\n+         },\n+         value: 5\n+       },\n+       planetId: 'venus',\n+       replacementCeiling: 2,\n+       scoreFloor: 9,\n+       value: 2\n+     },\n+     value: 2\n+   },\n+   probePotential: 1,\n-   probePotential: 0,\n    researchIncomePlan: {\n      reason: 'reserved-card-needs-native-value',\n      selected: null,\n      value: 0\n    },\n...\n    },\n+   total: 13\n-   total: 12\n  }",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_analysis-region-prefix.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/computer-preinvestment.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.13576197624206543,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261104/two-rounds-teacher-v2/v182-income-preparation-cost-gap-20261105-v1.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_computer-preinvestment.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/ai-foundation-20261104/two-rounds-teacher-v2/v182-income-preparation-cost-gap-20261105-v1.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.1349191665649414,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261104/two-rounds-teacher-v2/v182-income-preparation-cost-gap-20261105-v1.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-randomizer_game_ai_computer-preinvestment.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261104/two-rounds-teacher-v2/v182-income-preparation-cost-gap-20261105-v1.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/final-round-probe-window.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.4218430519104004,
+        "signature": "AssertionError [ERR_ASSERTION]: every complete original component/plan before final round and after PASS stays exact\n+ actual - expected\n... Skipped lines\n\n  {\n    analysisPlan: {\n      candidates: [Getter/Setter] [\n        {\n          blueSlot: 1,\n...\n    knownPublicIncomeSwapPlan: null,\n+   nextIncomeProbePlan: {\n+     existingContribution: 1,\n+     increase: 1,\n+     reason: 'known-income-funded-earth-probe-replacement',\n+     scope: 'One ordinary orbit paid from known next-round currency income alone, no current wallet/new card/landing/trace/data. Existing known income-card opportunity cost; positive score floor capped by standard launch replacement cost. Alternative to current mission capital, never a Native successor or admissible bound.',\n+     selected: {\n+       goalId: '5:orbit:venus:planet',\n+       incomeCardOpportunityCost: 1,\n+       knownIncomeCardId: 'card-29-pass-2-5',\n+       netScoreFloor: 3,\n+       nextIncomeBudget: {\n+         credits: 6,\n+         energy: 2\n+       },\n+       payment: {\n+         creditPurchases: 0,\n+         energyPurchases: 1,\n+         spend: {\n+           credits: 3,\n+           energy: 2\n+         },\n+         value: 5\n+       },\n+       planetId: 'venus',\n+       replacementCeiling: 2,\n+       scoreFloor: 9,\n+       value: 2\n+     },\n+     value: 2\n+   },\n+   probePotential: 1,\n-   probePotential: 0,\n    researchIncomePlan: {\n      reason: 'reserved-card-needs-native-value',\n      selected: null,\n      value: 0\n    },\n...\n    },\n+   total: 13\n-   total: 12\n  }",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_final-round-probe-window.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/fixed-tail-capital-carry.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.11352396011352539,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-late-first-white-20261107-v1.root.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_fixed-tail-capital-carry.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-late-first-white-20261107-v1.root.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.11412191390991211,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-late-first-white-20261107-v1.root.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-randomizer_game_ai_fixed-tail-capital-carry.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-late-first-white-20261107-v1.root.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/funded-movement-tail.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.18501591682434082,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n3 !== 10",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_funded-movement-tail.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/known-card-money.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 7.166522026062012,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 2",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_known-card-money.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/pre-main-data-plan.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.8945789337158203,
+        "signature": "AssertionError [ERR_ASSERTION]: 第4轮不能把插收入假定为优于用角标避免强制弃牌",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_pre-main-data-plan.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/probe-replacement-witness.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.4030289649963379,
+        "signature": "AssertionError [ERR_ASSERTION]: full components/numeric capital outside the newly selected capped witness stay exact\n+ actual - expected\n... Skipped lines\n\n  {\n    analysisPlan: {\n      candidates: [Getter/Setter] [\n        {\n          blueSlot: 1,\n...\n    knownPublicIncomeSwapPlan: null,\n+   probePotential: 1,\n-   probePotential: 0,\n    researchIncomePlan: {\n      reason: 'reserved-card-needs-native-value',\n      selected: null,\n      value: 0\n    },\n...\n    },\n+   total: 13\n-   total: 12\n  }",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_probe-replacement-witness.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/probe-travel-tail.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.514042854309082,
+        "signature": "AssertionError [ERR_ASSERTION]: actual complete closure must not be rejected by a larger movement estimate",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_probe-travel-tail.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/r4-company-tail.test.js": {
+      "baseline": {
+        "exitCode": 0,
+        "seconds": 0.35582709312438965,
+        "signature": "{\"r4CompanyTail\":\"passed\",\"fullRootActionsGoalsValuesCompletionsExact\":true,\"baselineNativeInputs\":263,\"actualNativeInputs\":57,\"provedTailCount\":25,\"materializedNativeInputs\":167,\"independentNativeInputsReused\":67,\"noNewCardOrNativeObservationFromProof\":true,\"rootAndRngRestored\":true,\"newAutonomousRuns\":0}\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_r4-company-tail.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "candidate": {
+        "exitCode": 0,
+        "seconds": 0.35874414443969727,
+        "signature": "{\"r4CompanyTail\":\"passed\",\"fullRootActionsGoalsValuesCompletionsExact\":true,\"baselineNativeInputs\":263,\"actualNativeInputs\":57,\"provedTailCount\":25,\"materializedNativeInputs\":167,\"independentNativeInputsReused\":67,\"noNewCardOrNativeObservationFromProof\":true,\"rootAndRngRestored\":true,\"newAutonomousRuns\":0}\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-randomizer_game_ai_r4-company-tail.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": false
+    },
+    "randomizer/game/ai/read-only-rewards.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.06732368469238281,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261107/read-only-rewards-v1/amiba-v305-reference-20261107-v1.js'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_read-only-rewards.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/ai-foundation-20261107/read-only-rewards-v1/amiba-v305-reference-20261107-v1.js"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.06613397598266602,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/ai-foundation-20261107/read-only-rewards-v1/amiba-v305-reference-20261107-v1.js'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-randomizer_game_ai_read-only-rewards.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261107/read-only-rewards-v1/amiba-v305-reference-20261107-v1.js"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/scan-income-after-free-move.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 1.4830267429351807,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'move:2a7c4819',\n    191.5,\n+   136\n-   188\n  ]",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_scan-income-after-free-move.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/search-agent.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.31055688858032227,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/research/0aef5774.532563ef.full.json.round-end-2.checkpoint.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_search-agent.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/0aef5774.532563ef.full.json.round-end-2.checkpoint.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.32503485679626465,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/research/0aef5774.532563ef.full.json.round-end-2.checkpoint.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-randomizer_game_ai_search-agent.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/0aef5774.532563ef.full.json.round-end-2.checkpoint.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/shared-resource-prefix.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.6560180187225342,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n9 !== 8",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_shared-resource-prefix.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "randomizer/game/ai/stationary-cargo-income.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 3.6437430381774902,
+        "signature": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n22 !== 27",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-randomizer_game_ai_stationary-cargo-income.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": true
+    },
+    "tools/research-human405-first3.test.js": {
+      "baseline": {
+        "exitCode": 0,
+        "seconds": 1.783118724822998,
+        "signature": "fatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\n{\"autonomousFirstThreeRoundsHarness\":\"passed\",\"original23FullNativeEnvelopeAndRng\":true,\"noTeacher112Prefix\":true,\"originalPassivePolicy\":true,\"noAiQueries\":true,\"noAutonomousRuns\":true,\"realNativePassBoundaryAndFault\":true,\"roundEndBeforeCardAndIncome\":true,\"normalAndFailedDuplicateGuard\":true,\"provisionalRegistryAndRenderedLabel\":true,\"excludedFromFullGameLeaderboardAndBaseline\":true}\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-tools_research-human405-first3.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "candidate": {
+        "exitCode": 0,
+        "seconds": 1.7549359798431396,
+        "signature": "fatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\n{\"autonomousFirstThreeRoundsHarness\":\"passed\",\"original23FullNativeEnvelopeAndRng\":true,\"noTeacher112Prefix\":true,\"originalPassivePolicy\":true,\"noAiQueries\":true,\"noAutonomousRuns\":true,\"realNativePassBoundaryAndFault\":true,\"roundEndBeforeCardAndIncome\":true,\"normalAndFailedDuplicateGuard\":true,\"provisionalRegistryAndRenderedLabel\":true,\"excludedFromFullGameLeaderboardAndBaseline\":true}\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-tools_research-human405-first3.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": false
+    },
+    "tools/research-human405-full.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.11445093154907227,
+        "signature": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /FULL_CONTINUATION_STRATEGY_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '<runtime>/reports/research/e01243ba.93989585.quick-400.json'\"",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-tools_research-human405-full.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/e01243ba.93989585.quick-400.json",
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/e01243ba.93989585.quick-400.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.1134500503540039,
+        "signature": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /FULL_CONTINUATION_STRATEGY_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '<runtime>/reports/research/e01243ba.93989585.quick-400.json'\"",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-tools_research-human405-full.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/e01243ba.93989585.quick-400.json",
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/e01243ba.93989585.quick-400.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "tools/research-human405-r4.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.09134507179260254,
+        "signature": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /R4_CANDIDATE_SOURCE_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '<runtime>/reports/research/815da7fc.de3eb34e.quick-400.json'\"",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-tools_research-human405-r4.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/815da7fc.de3eb34e.quick-400.json",
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/815da7fc.de3eb34e.quick-400.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.09270405769348145,
+        "signature": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /R4_CANDIDATE_SOURCE_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '<runtime>/reports/research/815da7fc.de3eb34e.quick-400.json'\"",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-tools_research-human405-r4.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/815da7fc.de3eb34e.quick-400.json",
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/815da7fc.de3eb34e.quick-400.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "tools/robot-ai-generation.test.js": {
+      "baseline": {
+        "exitCode": 1,
+        "seconds": 0.48640012741088867,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/research/688e6730.fef545ca.quick-400.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-tools_robot-ai-generation.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-v71-admission-baseline-20261119-ou_0n34q/reports/research/688e6730.fef545ca.quick-400.json"
+        ]
+      },
+      "candidate": {
+        "exitCode": 1,
+        "seconds": 0.4780559539794922,
+        "signature": "Error: ENOENT: no such file or directory, open '<runtime>/reports/research/688e6730.fef545ca.quick-400.json'",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-tools_robot-ai-generation.test.js-20261119-v1.log",
+        "missing": [
+          "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/688e6730.fef545ca.quick-400.json"
+        ]
+      },
+      "sameFailureSignature": true
+    },
+    "tools/robot-report-link.test.js": {
+      "baseline": {
+        "exitCode": 0,
+        "seconds": 0.7855310440063477,
+        "signature": "robot report record links passed\nrobot report world comparison passed\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-baseline-tools_robot-report-link.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "candidate": {
+        "exitCode": 0,
+        "seconds": 0.7895238399505615,
+        "signature": "robot report record links passed\nrobot report world comparison passed\n",
+        "log": "reports/ai-foundation-20261119/blue-income-admission-candidate-tools_robot-report-link.test.js-20261119-v1.log",
+        "missing": []
+      },
+      "sameFailureSignature": false
+    }
+  },
+  "baselineSourceHashesVerified": true,
+  "newAutonomousGames": 0,
+  "limits": "The same failed assertion is not a pass; later assertions remain unverified."
+}

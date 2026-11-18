@@ -1,0 +1,491 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "restoredInputs": [
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-data-plan-no-borrow-corpus-20261028-v2.raw.json.gz",
+      "bytes": 20130,
+      "sha256": "eee247d8cc622bb2be134944f90ace7cc28bc2e645fd7b51e9532f6218ba586f"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-057-20261030-v1.json",
+      "bytes": 249207,
+      "sha256": "39c867670a0ec7220314f607904c86acfec0a8a9609036248ada4584a8832d25"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/teacher58-before-pass-20261031-v1.json",
+      "bytes": 32810,
+      "sha256": "3b51f29983e5a220aa3ddb0142378e0f4d2d41699d3f908dccbde6f66f48d8fa"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-v155-cold-serial-case-105-20261104-v1.raw.json.gz",
+      "bytes": 27153,
+      "sha256": "2a33d6bf78e6c4a74ce3acade0e54ab43128750cd5359dcf155f95e09d9a0c07"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.raw.json.gz",
+      "bytes": 30210,
+      "sha256": "838895f3ea4ed3dfbdd77d3424eac3af287c5ed2aeff278608c6703a428a0798"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.checkpoint.json",
+      "bytes": 144991,
+      "sha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-024-20261104-v1.json",
+      "bytes": 30304,
+      "sha256": "86587a727b6f29153dad747bc34b15afed53351cc02a1588cbb60b644fabb8fe"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-known-orbit-blue-funding-native-20261104-v2.json",
+      "bytes": 96800,
+      "sha256": "bd64eac2ce16f437b7f6b9227a26ac10ba070e8fdae960945cc97f899ebe5a80"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v179-computer-preinvestment-suffix-native-20261105-v1.json",
+      "bytes": 348473,
+      "sha256": "2f34c0cfeb5719e029dc2f8e69e49166ece6e27493ed1c6969eecadb63664e70"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-107-20261105-v1.checkpoint.json",
+      "bytes": 463090,
+      "sha256": "bb7795308482e979b2072e99ea814748766ac831a5743fc5694a092af37c2d7c"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-163-20261105-v1.checkpoint.json",
+      "bytes": 676748,
+      "sha256": "c831403b062cf739c0252b2aca55ace5afcb769e4e74234f6f4fd61a3fcb2e42"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-next-mismatch-185-20261105-v1.checkpoint.json",
+      "bytes": 899383,
+      "sha256": "efae5a85d232060cbfb52305407f02d8f86f532a5081bc1ed209698ca915c62f"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-proof-audit-v1/added-cold-cases-20261107-v1.json",
+      "bytes": 17287,
+      "sha256": "8cc6aa208c0891289b4700c5d51f41d76dbddcac4c4427adf3d1e7a2db46857d"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/joint-research-repetition-v1/validated-joint-inputs-20261107-v1.v8.gz",
+      "bytes": 250856,
+      "sha256": "05d5e0c370656dd8cd32bc80695ce58bb72e87529d9e1cefc50acfb5c881a727"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/probe-replacement-bound-v1/probe-capital-v293-reference-20261107-v1.js",
+      "bytes": 33853,
+      "sha256": "e145d799f29a8c5de59a63432aaa83d5b2aca96de990bae61540bab8967489d8"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/probe-witness-source-order-v1/source-snapshot/randomizer/game/ai/state-value.js",
+      "bytes": 48102,
+      "sha256": "bc975f460e27af17aae11c2166c70b8bae8558cb91ac373cbcfc1861f58eda34"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/r4-company-tail-v1/independent-native-verification-20261107-v1.json",
+      "bytes": 2133,
+      "sha256": "67da1d7223aee0ae0c9450b484fd28bb4ac8e50f726e1919fb7513e08fa7fe29"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/read-only-rewards-v1/ready-analysis-capital-v305-reference-20261107-v1.js",
+      "bytes": 9111,
+      "sha256": "5c504e1c9966b16ce0ffc7b63383a0cd05afa500a20d5ff2fda85a839d0e9f0d"
+    },
+    {
+      "path": "reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v2.json",
+      "bytes": 19855,
+      "sha256": "e8c0dcf29f87d8e844f2f174388bb2dc317ee3a86401b39a172215a3df6bfeab"
+    },
+    {
+      "path": "reports/iteration/registry.json",
+      "bytes": 11959667,
+      "sha256": "ea06f22ae6e0a81afce7e4fe90bafbb0e9c655d69fec247cc0910365b505a18a"
+    },
+    {
+      "path": "reports/research/19bd7474.94530144.quick-200.json",
+      "bytes": 1065894,
+      "sha256": "471350fe0e2eec85f9bb03bf0622cb3e4c8d550437b0d431a77240f9125916a6"
+    },
+    {
+      "path": "reports/research/35f648b3.28f4e95c.quick-400.json.round-end-1.checkpoint.json",
+      "bytes": 323650,
+      "sha256": "329a2b6cd61ce8b7747e282f36397a5040b27c35a5cd6256f5373c78dac57917"
+    },
+    {
+      "path": "reports/research/e15da1c1.532563ef.full.json.round-end-1.checkpoint.json",
+      "bytes": 305321,
+      "sha256": "b81291d2a3e0a3d7f100d71d7da603b72e92a442edb095832e22013f0ee135dc"
+    },
+    {
+      "path": "reports/research/f14a863e.4bc44eb2.full.json",
+      "bytes": 850881,
+      "sha256": "5fbf2a60797de9e1e8a63954dbdbc55631a7281204c25ece93f346c4c6788200"
+    }
+  ],
+  "tests": {
+    "randomizer/app/host-architecture-audit.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "other-error",
+      "missing": [],
+      "seconds": 0.12952923774719238,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_app_host-architecture-audit.test.js-20261119-v1.log",
+      "logSha256": "3d25baa1516479f480e72121e56d81f491434f3a8c5bde1f1af25c04b0b72222"
+    },
+    "randomizer/game/ai/amiba-analysis-capital.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.4896059036254883,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_amiba-analysis-capital.test.js-20261119-v1.log",
+      "logSha256": "30d78097950b278a0b6c269718b8ac9c429cb06f39bada2d0291566826e3ea4e"
+    },
+    "randomizer/game/ai/analysis-region-prefix.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.4742298126220703,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_analysis-region-prefix.test.js-20261119-v1.log",
+      "logSha256": "95348dccdaabe29aa80e1ec500b57e75b5f01fe7a4c6b1258bd399e1a918c405"
+    },
+    "randomizer/game/ai/computer-preinvestment.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261104/two-rounds-teacher-v2/v179-first-round-analysis-tradeoff-native-20261105-v1.json"
+      ],
+      "seconds": 0.12453389167785645,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_computer-preinvestment.test.js-20261119-v1.log",
+      "logSha256": "ce37ec7b0afe8cbd3f9f3977d1bcf3d5029e448e37f6d43a655fb51580073a62"
+    },
+    "randomizer/game/ai/final-round-probe-window.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.46922898292541504,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_final-round-probe-window.test.js-20261119-v1.log",
+      "logSha256": "9ab1e1d471d63413115bb0905aceedd71aa7d1114eee5cb4c94b4d1eb184e4be"
+    },
+    "randomizer/game/ai/fixed-data-plan.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 2.3267111778259277,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_fixed-data-plan.test.js-20261119-v1.log",
+      "logSha256": "74c04cf8fff9a7a0be646a147b564b23ae139dc310d1f8ab493bba5ed40dd78e"
+    },
+    "randomizer/game/ai/fixed-tail-capital-carry.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-early-first-white-20261107-v1.root.json"
+      ],
+      "seconds": 0.1603860855102539,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_fixed-tail-capital-carry.test.js-20261119-v1.log",
+      "logSha256": "5cf5e0b0c950bea0ae3604708df231f69f7a3e13deea97125cf3a7a06bb7ac60"
+    },
+    "randomizer/game/ai/funded-hand-timing.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.9873967170715332,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_funded-hand-timing.test.js-20261119-v1.log",
+      "logSha256": "b3f3b527da11c084dce7fda1422470e9a06a8fd4eb13db4d8895c625a03cacf5"
+    },
+    "randomizer/game/ai/funded-movement-tail.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.2182331085205078,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_funded-movement-tail.test.js-20261119-v1.log",
+      "logSha256": "d26756e650d20ea1e06c42b64c344433f3520e4b53900738537c635a81a6491f"
+    },
+    "randomizer/game/ai/funded-research-value.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.5072979927062988,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_funded-research-value.test.js-20261119-v1.log",
+      "logSha256": "4ace54399bc31b9b7a39fa640891fe0da7b4d09ccdcf37db330ae84182dfa459"
+    },
+    "randomizer/game/ai/known-card-money.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 7.213152170181274,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_known-card-money.test.js-20261119-v1.log",
+      "logSha256": "b9f047c291301422a070f336fd00c68b37507aca3a145dd502babbae088d68f9"
+    },
+    "randomizer/game/ai/mission-data-continuation.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 3.5552031993865967,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_mission-data-continuation.test.js-20261119-v1.log",
+      "logSha256": "d1f773ccc77f3c918069f26fc5345b4641b297bb8170cc83116f2fd99f357df8"
+    },
+    "randomizer/game/ai/pre-main-data-plan.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.9496488571166992,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_pre-main-data-plan.test.js-20261119-v1.log",
+      "logSha256": "5108a694cc6b4d2d498dc2f9194d226804cf69fa996ce05ad3ddf77f6661770a"
+    },
+    "randomizer/game/ai/probe-capital-value.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.7746942043304443,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_probe-capital-value.test.js-20261119-v1.log",
+      "logSha256": "ff75c860248a12d0c5fce4908550d69f1f6034e0aee3ffbee182d39403c07dee"
+    },
+    "randomizer/game/ai/probe-replacement-witness.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.45830202102661133,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_probe-replacement-witness.test.js-20261119-v1.log",
+      "logSha256": "fec1bb5dc814f67566ab00ad2959e5a0f5e7e6b829eee9a1c34740297253511f"
+    },
+    "randomizer/game/ai/probe-travel-tail.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.5504779815673828,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_probe-travel-tail.test.js-20261119-v1.log",
+      "logSha256": "1d1c2210c9fea36b77eebec62ca959bef1971824840d93b4a0c1ffbeb7fd8677"
+    },
+    "randomizer/game/ai/purpose-capital-value.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.2603108882904053,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_purpose-capital-value.test.js-20261119-v1.log",
+      "logSha256": "5d6eab0e2c5b69c88162951fd0bc475675073dcade70c88759ec1033c1c69378"
+    },
+    "randomizer/game/ai/r4-company-tail.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261107/r4-company-tail-v1/prototype-native-proof-20261107-v1.checkpoint.json"
+      ],
+      "seconds": 0.13313889503479004,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_r4-company-tail.test.js-20261119-v1.log",
+      "logSha256": "2dc50cc7be7468356a5bbf0fc50ab48548e6e802a065669ee82d7e711f2e82d5"
+    },
+    "randomizer/game/ai/read-only-rewards.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/ai-foundation-20261107/read-only-rewards-v1/amiba-analysis-capital-v305-reference-20261107-v1.js"
+      ],
+      "seconds": 0.11258316040039062,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_read-only-rewards.test.js-20261119-v1.log",
+      "logSha256": "e86355ab47c418647634cd442804b285ede6faf14c0c53f8bf0cf257558554cb"
+    },
+    "randomizer/game/ai/research-comparison-loop.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 1.6912140846252441,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_research-comparison-loop.test.js-20261119-v1.log",
+      "logSha256": "6c1d2f052b40a49cc5cfacc2f91e094e17b877e0bd2a5773931fa34e8ea5f31e"
+    },
+    "randomizer/game/ai/research-income-capital.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 23.832711935043335,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_research-income-capital.test.js-20261119-v1.log",
+      "logSha256": "78301f2dc6adf7d5d5a8085cc941a4a06a823a50232cbdb0d5de74d28038fa63"
+    },
+    "randomizer/game/ai/research-single-window.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 1.738516092300415,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_research-single-window.test.js-20261119-v1.log",
+      "logSha256": "eb8c547abf661eeee4dc2efa1fd60ee409321ebf79b3223cb4440dd0041fc3d9"
+    },
+    "randomizer/game/ai/scan-income-after-free-move.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 1.6140868663787842,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_scan-income-after-free-move.test.js-20261119-v1.log",
+      "logSha256": "ecae76d56382bb71678e61c081656970eb521ef4b717343512a5a4db7813e10b"
+    },
+    "randomizer/game/ai/search-agent.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/0aef5774.532563ef.full.json.round-end-1.checkpoint.json"
+      ],
+      "seconds": 0.2949209213256836,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_search-agent.test.js-20261119-v1.log",
+      "logSha256": "92db1df3610bde0a089304723aeb79bba2a901094d13fe1136d96b598d35fe6e"
+    },
+    "randomizer/game/ai/shared-resource-prefix.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.7328870296478271,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_shared-resource-prefix.test.js-20261119-v1.log",
+      "logSha256": "e6df6350b50d08099c4c927f7e0f235e416cebc137e8e97f75a9cf2e396f0e6b"
+    },
+    "randomizer/game/ai/six-greedy-plans.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 1.658466100692749,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_six-greedy-plans.test.js-20261119-v1.log",
+      "logSha256": "8edd6584342742a891e2b2e46d0c27cc69e39f753a89c0b5b2b74547c3a6b454"
+    },
+    "randomizer/game/ai/stationary-cargo-income.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 3.8273189067840576,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-randomizer_game_ai_stationary-cargo-income.test.js-20261119-v1.log",
+      "logSha256": "47cfcc347ff8ea730a04c3d23c212a987437ce6cbc97d8aa825f348f9508852d"
+    },
+    "tools/research-human405-current-full.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 1.1939489841461182,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-current-full.test.js-20261119-v1.log",
+      "logSha256": "4ab02168d5777b605c12d10f1eb4f44fcafa12c243320d7f2fd5d76a818facee"
+    },
+    "tools/research-human405-first2.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.7677497863769531,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-first2.test.js-20261119-v1.log",
+      "logSha256": "234c874ea18d77a3ab27c9884550c0799e8476585bfbef839f7747c4322f9e2f"
+    },
+    "tools/research-human405-first3.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/reports/research/3e9df353.dc540a52.quick-400.json.round-end-3.checkpoint.json"
+      ],
+      "seconds": 1.1126048564910889,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-first3.test.js-20261119-v1.log",
+      "logSha256": "1addc885654e18231a38fd3c5db2a8750dd4108c3748db401fc09b4ba35105c3"
+    },
+    "tools/research-human405-full.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-file",
+      "missing": [
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/seti-saves/seti-save-research-ai-search-v123-white-r1-20261031-94530144-quick-200-v25.json",
+        "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/seti-saves/seti-save-research-ai-search-v123-white-r1-20261031-94530144-quick-200-v25.json"
+      ],
+      "seconds": 0.1520400047302246,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-full.test.js-20261119-v1.log",
+      "logSha256": "ae8cf99eb6f50ab43a63265724cb73087b1af0a958bb44103dae6272130e58de"
+    },
+    "tools/research-human405-r4.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "missing-module",
+      "missing": [
+        "../reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v1.json"
+      ],
+      "seconds": 0.1407759189605713,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-r4.test.js-20261119-v1.log",
+      "logSha256": "83845c1cbc723b23aec25282cc78bd22a4fba493c437b2644d335b7bb1a2ebda"
+    },
+    "tools/research-human405-round1.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 2.316032886505127,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-round1.test.js-20261119-v1.log",
+      "logSha256": "8570ead9e6c3c75e9ba09fdafb40013f5f7e76decd4bbe81ee5a71d5b24d9509"
+    },
+    "tools/research-human405-third.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 0.690338134765625,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_research-human405-third.test.js-20261119-v1.log",
+      "logSha256": "812d1e2a7a4d7eefd29313bc05c13392574c9bf058fec3c5f661a8aa7ec4ec97"
+    },
+    "tools/robot-ai-generation.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.5222949981689453,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_robot-ai-generation.test.js-20261119-v1.log",
+      "logSha256": "f273fdd785e404ab8f13822d715a3b27215f5cc40c25865fc3a3728fa6de495c"
+    },
+    "tools/robot-report-link.test.js": {
+      "state": "finished",
+      "exitCode": 1,
+      "kind": "assertion",
+      "missing": [],
+      "seconds": 0.5649430751800537,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_robot-report-link.test.js-20261119-v1.log",
+      "logSha256": "35acf57622ea516e54cb6ed6c4fc901d3c7176b7d8076163600095412373fe5e"
+    },
+    "tools/robot-report-replay.test.js": {
+      "state": "finished",
+      "exitCode": 0,
+      "kind": "passed",
+      "missing": [],
+      "seconds": 1.4436018466949463,
+      "log": "reports/ai-foundation-20261119/blue-income-admission-case-tools_robot-report-replay.test.js-20261119-v1.log",
+      "logSha256": "a7a387b91794e6f842d78ebb6481813b576e622127b4809b5a45686a5bd2a786"
+    }
+  },
+  "newAutonomousGames": 0,
+  "counts": {
+    "assertion": 12,
+    "missing-file": 7,
+    "missing-module": 1,
+    "other-error": 1,
+    "passed": 16
+  }
+}

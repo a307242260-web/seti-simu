@@ -1,0 +1,813 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "scope": "Fresh current agent on each exact historical guard checkpoint; one real submitted action per source, no autonomous game or manual continuation.",
+  "cases": [
+    {
+      "file": "reports/research/e15da1c1.532563ef.full.json.round-end-1.checkpoint.json",
+      "expectedFamily": "pass",
+      "sources": [
+        {
+          "label": "baseline",
+          "nativeRootSha256": "b087b740c72719a40badeb29c748250f40d04c3bd05f3937985e5adaca76c2ff",
+          "round": 1,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v71",
+          "wallMilliseconds": 94.905958,
+          "actionId": "pass:a1f33c73",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 66.16666666666667,
+            "stopReason": null,
+            "nativeExecutions": 45,
+            "rootAndSearchMilliseconds": 73.115125,
+            "searchMilliseconds": 63.84287499999999,
+            "roots": [
+              {
+                "actionId": "launch:c94cda79",
+                "value": 64.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 65,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:11b47c6b",
+                "value": 60,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 66.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "value": 65.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "goal": {
+                  "id": "scan:sector:sector-1-a:launch",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 3
+                  },
+                  "launch": true,
+                  "purpose": "scan named sector and fund purple4 native launch"
+                },
+                "value": 63,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": {
+                  "kind": "data",
+                  "id": "data:analyze:6",
+                  "amount": 1,
+                  "priority": 4
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": {
+                  "kind": "data",
+                  "id": "data:analyze:6",
+                  "amount": 1,
+                  "priority": 4
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:17a0f8a8",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:45e34a8f",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "b087b740c72719a40badeb29c748250f40d04c3bd05f3937985e5adaca76c2ff"
+        },
+        {
+          "label": "candidate",
+          "nativeRootSha256": "b087b740c72719a40badeb29c748250f40d04c3bd05f3937985e5adaca76c2ff",
+          "round": 1,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v72-public-income-prototype",
+          "wallMilliseconds": 92.20295799999997,
+          "actionId": "pass:a1f33c73",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 66.16666666666667,
+            "stopReason": null,
+            "nativeExecutions": 45,
+            "rootAndSearchMilliseconds": 71.15545800000001,
+            "searchMilliseconds": 62.321417000000054,
+            "roots": [
+              {
+                "actionId": "launch:c94cda79",
+                "value": 64.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 65,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:11b47c6b",
+                "value": 60,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 66.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "value": 65.16666666666667,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "goal": {
+                  "id": "scan:sector:sector-1-a:launch",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 3
+                  },
+                  "launch": true,
+                  "purpose": "scan named sector and fund purple4 native launch"
+                },
+                "value": 63,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": {
+                  "kind": "data",
+                  "id": "data:analyze:6",
+                  "amount": 1,
+                  "priority": 4
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": {
+                  "kind": "data",
+                  "id": "data:analyze:6",
+                  "amount": 1,
+                  "priority": 4
+                },
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:17a0f8a8",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:45e34a8f",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "b087b740c72719a40badeb29c748250f40d04c3bd05f3937985e5adaca76c2ff"
+        }
+      ],
+      "sameNativeRoot": true,
+      "sameAction": true
+    },
+    {
+      "file": "reports/research/0aef5774.532563ef.full.json.round-end-1.checkpoint.json",
+      "expectedFamily": "pass",
+      "sources": [
+        {
+          "label": "baseline",
+          "nativeRootSha256": "d064a3a014e6926ed20cec97f5263ab7cad718101c9fa35dc7bc9754a2933b10",
+          "round": 1,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v71",
+          "wallMilliseconds": 50.87258300000002,
+          "actionId": "pass:a1f33c73",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 57,
+            "stopReason": null,
+            "nativeExecutions": 41,
+            "rootAndSearchMilliseconds": 32.78300000000007,
+            "searchMilliseconds": 27.009875000000022,
+            "roots": [
+              {
+                "actionId": "launch:c94cda79",
+                "value": 55,
+                "completion": "complete"
+              },
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 55.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 57,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "d064a3a014e6926ed20cec97f5263ab7cad718101c9fa35dc7bc9754a2933b10"
+        },
+        {
+          "label": "candidate",
+          "nativeRootSha256": "d064a3a014e6926ed20cec97f5263ab7cad718101c9fa35dc7bc9754a2933b10",
+          "round": 1,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v72-public-income-prototype",
+          "wallMilliseconds": 50.10116700000003,
+          "actionId": "pass:a1f33c73",
+          "expectedFamilyMatched": true,
+          "search": {
+            "complete": true,
+            "value": 57,
+            "stopReason": null,
+            "nativeExecutions": 41,
+            "rootAndSearchMilliseconds": 32.51941599999998,
+            "searchMilliseconds": 26.416292,
+            "roots": [
+              {
+                "actionId": "launch:c94cda79",
+                "value": 55,
+                "completion": "complete"
+              },
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 55.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 57,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "d064a3a014e6926ed20cec97f5263ab7cad718101c9fa35dc7bc9754a2933b10"
+        }
+      ],
+      "sameNativeRoot": true,
+      "sameAction": true
+    },
+    {
+      "file": "reports/research/0aef5774.532563ef.full.json.round-end-2.checkpoint.json",
+      "expectedFamily": "scan",
+      "sources": [
+        {
+          "label": "baseline",
+          "nativeRootSha256": "2675db075e61d61f86058e59e8063a39f6f47907b27d68bedf82e64223abd8ad",
+          "round": 2,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v71",
+          "wallMilliseconds": 62.70275000000004,
+          "actionId": "move:ddf0bb75",
+          "expectedFamilyMatched": false,
+          "search": {
+            "complete": true,
+            "value": 58.5,
+            "stopReason": null,
+            "nativeExecutions": 18,
+            "rootAndSearchMilliseconds": 44.551333,
+            "searchMilliseconds": 38.36033299999997,
+            "roots": [
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 56.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:26c70012",
+                "value": 56.5,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:ee860091",
+                "value": 56.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 57,
+                "completion": "complete"
+              },
+              {
+                "actionId": "move:e0158279",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:75e0e1ed",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:ddf0bb75",
+                "goal": {
+                  "id": "rocket:3:orbit:venus:planet:",
+                  "kind": "route",
+                  "family": "orbit",
+                  "rocketId": 3,
+                  "planetId": "venus",
+                  "endpointTarget": {
+                    "type": "planet"
+                  },
+                  "endpointCost": {
+                    "credits": 1,
+                    "energy": 1
+                  },
+                  "benefit": {
+                    "score": 9,
+                    "incomeCount": 1,
+                    "dataCount": 0,
+                    "grossEquivalentValue": 11.5,
+                    "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+                    "source": "planetRewards.orbit:venus"
+                  },
+                  "coordinate": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "path": [
+                    {
+                      "from": {
+                        "x": 6,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 1
+                    },
+                    {
+                      "from": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 4,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 2
+                    }
+                  ],
+                  "movementPoints": 3,
+                  "required": {
+                    "credits": 1
+                  }
+                },
+                "value": 58.5,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:be9dd0cd",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "industry:e887dc52",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "card_corner:5c86e936",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:3d46b6bc",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "2675db075e61d61f86058e59e8063a39f6f47907b27d68bedf82e64223abd8ad"
+        },
+        {
+          "label": "candidate",
+          "nativeRootSha256": "2675db075e61d61f86058e59e8063a39f6f47907b27d68bedf82e64223abd8ad",
+          "round": 2,
+          "currentPlayer": "player-white",
+          "sourceVersion": "seti-search-agent-v2/seti-complete-decision-search-v483/seti-purpose-capital-state-value-v72-public-income-prototype",
+          "wallMilliseconds": 66.68354099999999,
+          "actionId": "move:ddf0bb75",
+          "expectedFamilyMatched": false,
+          "search": {
+            "complete": true,
+            "value": 58.5,
+            "stopReason": null,
+            "nativeExecutions": 18,
+            "rootAndSearchMilliseconds": 49.700333,
+            "searchMilliseconds": 43.08008399999994,
+            "roots": [
+              {
+                "actionId": "scan:2d21a323",
+                "goal": {
+                  "id": "scan:sector:sector-1-a",
+                  "kind": "scan-flow",
+                  "nebulaId": "sector-1-a",
+                  "required": {
+                    "credits": 1,
+                    "energy": 2
+                  },
+                  "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+                },
+                "value": 56.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:26c70012",
+                "value": 56.5,
+                "completion": "complete"
+              },
+              {
+                "actionId": "play_card:ee860091",
+                "value": 56.666666666666664,
+                "completion": "complete"
+              },
+              {
+                "actionId": "pass:a1f33c73",
+                "value": 57,
+                "completion": "complete"
+              },
+              {
+                "actionId": "move:e0158279",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:75e0e1ed",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "move:ddf0bb75",
+                "goal": {
+                  "id": "rocket:3:orbit:venus:planet:",
+                  "kind": "route",
+                  "family": "orbit",
+                  "rocketId": 3,
+                  "planetId": "venus",
+                  "endpointTarget": {
+                    "type": "planet"
+                  },
+                  "endpointCost": {
+                    "credits": 1,
+                    "energy": 1
+                  },
+                  "benefit": {
+                    "score": 9,
+                    "incomeCount": 1,
+                    "dataCount": 0,
+                    "grossEquivalentValue": 11.5,
+                    "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+                    "source": "planetRewards.orbit:venus"
+                  },
+                  "coordinate": {
+                    "x": 4,
+                    "y": 1
+                  },
+                  "path": [
+                    {
+                      "from": {
+                        "x": 6,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 1
+                    },
+                    {
+                      "from": {
+                        "x": 5,
+                        "y": 1
+                      },
+                      "to": {
+                        "x": 4,
+                        "y": 1
+                      },
+                      "deltaX": -1,
+                      "deltaY": 0,
+                      "requiredMovePoints": 2
+                    }
+                  ],
+                  "movementPoints": 3,
+                  "required": {
+                    "credits": 1
+                  }
+                },
+                "value": 58.5,
+                "completion": "complete"
+              },
+              {
+                "actionId": "quick_trade:f385e2ac",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:49c75492",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:12411a2c",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:a39c1a77",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:37140fcf",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:122c43fc",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "quick_trade:df811f99",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "quick_trade:be9dd0cd",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "industry:e887dc52",
+                "goal": null,
+                "value": null,
+                "completion": "excluded-by-card-pick-policy"
+              },
+              {
+                "actionId": "card_corner:5c86e936",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              },
+              {
+                "actionId": "card_corner:3d46b6bc",
+                "value": null,
+                "completion": "excluded-by-movement-policy"
+              },
+              {
+                "actionId": "place_data:8fd12fd3",
+                "value": null,
+                "completion": "excluded-by-resource-policy"
+              }
+            ],
+            "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy"
+          },
+          "gate": true,
+          "afterNativeSha256": "2675db075e61d61f86058e59e8063a39f6f47907b27d68bedf82e64223abd8ad"
+        }
+      ],
+      "sameNativeRoot": true,
+      "sameAction": true
+    },
+    {
+      "file": "reports/research/0b908c22.532563ef.full.json.round-end-2.checkpoint.json",
+      "missing": true
+    }
+  ],
+  "newAutonomousGames": 0
+}

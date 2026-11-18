@@ -1,0 +1,450 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "runtime": "/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "restoredInputs": [
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-shared-prefix-final-20261028-v1.raw.json.gz",
+      "bytes": 20251,
+      "sha256": "563973bcae990143015350de16f5033d0f007f699cd143ae9f8e2caf907af2df"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json",
+      "bytes": 43367,
+      "sha256": "58b8daf65a676b450496248e2c8eec0ae3017120a1d044522572edd1f44a8066"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json",
+      "bytes": 42024,
+      "sha256": "3968665750a7a891f4dfad3149c6123f9fd2c06180092f4f8b204aaa717a87ed"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-024-20261029-v1.json",
+      "bytes": 30831,
+      "sha256": "1caefb981a284e359dfa9b89971f1f0c2f062a785c0a2737ef98876334f795d6"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-026-20261030-v1.json",
+      "bytes": 242729,
+      "sha256": "ce866399abadd425cdac5fc73135ba5ee563b390383090405eb502cbefcdbf19"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-035-20261030-v1.json",
+      "bytes": 32889,
+      "sha256": "d805bbbab7ee496e29c711f66972a7754745aaa7af8404ac3c88a60e25a40e47"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-038-20261030-v1.json",
+      "bytes": 33001,
+      "sha256": "eaef18fdf8e94d870d0e6fcb81500d2bad2f85b5dc888dea1f58f4adc1ff27a9"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-060-20261030-v1.json",
+      "bytes": 33435,
+      "sha256": "d5cf7e12953a2f2858276b323a760ca4ff5b7a20b3c8b12d5f5244583abd20e7"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-062-20261030-v1.json",
+      "bytes": 426734,
+      "sha256": "35c05c032cf2337e405cd6f219c0d889daa735f89c0975ff429062eb1a94c8c2"
+    },
+    {
+      "path": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+      "bytes": 451859,
+      "sha256": "60c003b4d92d0b645d8d793c252a133c479437466cb43b716e36f45b9d217acd"
+    },
+    {
+      "path": "adhoc/human405-v158-native-20261105-v1/ai-step-055-20261105-v1.json",
+      "bytes": 32792,
+      "sha256": "c270a5509e5fa4b83e16ffcf1ee125872a9a0a0e19db7ae0571de872f4fa6ab3"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-v123-completion-runtime-source-check-20261031-v1.json",
+      "bytes": 12190,
+      "sha256": "caec949f72d498b04b6ec3abd639c1a640f4ded269b9c42ff6920f438bd4a0f7"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.json",
+      "bytes": 16799,
+      "sha256": "9ba1ecef66185351b6cbb0e462d640ca2000f231fe86fb54c11c8451f29c3bac"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/movement-copy-control-before-20261029-v1.json",
+      "bytes": 35768,
+      "sha256": "f6cf32a617e0da5ce7ab52b329c817c836a0958edd7ea881de9177fc3c593a6b"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "bytes": 31087,
+      "sha256": "b044fcd7d74def9e0220e895139ff296f9117df8924b70e593e8b6194344b767"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "bytes": 32560,
+      "sha256": "491d0f88b8b9544df3639de8cb6ec1d141d6efa60556a4d73686ebcd185c743c"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-084-20261104-v1.json",
+      "bytes": 36278,
+      "sha256": "c50c0ff80e9ff266e8be4ac135e025d1d2ef81efab556df349e13126a5c33af1"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/public-income-option-native-20261105-v1.json",
+      "bytes": 436560,
+      "sha256": "1be29943b301d4e95fd675780f281f9118798cb75309d613c8875aa7f2146232"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v152-research-income-native-controls-20261104-v2.json",
+      "bytes": 1944153,
+      "sha256": "da36f40c38a438a4a2621f9f57f839b294ecfea930853c79362023c920f21442"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v156-movement-tail-native-controls-20261104-v3.json",
+      "bytes": 1298072,
+      "sha256": "073c0e7e216639d9212f89017bdadc3e7d5d9417f34ac72b885872f39306dc81"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v164-mission-data-continuation-native-20261105-v1.json",
+      "bytes": 3110660,
+      "sha256": "75e01666b4125c2c83c97f90f134fa87ed7c9f217e5a35dc2493b71fe8f652d9"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v184-round2-purpose-realization-native-20261105-v1.json",
+      "bytes": 712175,
+      "sha256": "02d16aba90f8e320091a00f9a8b368a3f161cd6305d6a76fa230910fd6b8686d"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-launch-portfolio-native-20261105-v1.json",
+      "bytes": 2326101,
+      "sha256": "c68eb7043982a963807b14f047486a9ac9d343c2d18b73e72ae038429be37950"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-113-20261105-v1.checkpoint.json",
+      "bytes": 485792,
+      "sha256": "0c7659905b151fff67495722e53dddb398fe41f0e07c83edc210008e562dea4f"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-136-20261105-v1.checkpoint.json",
+      "bytes": 575339,
+      "sha256": "44a289caec211e3b99e1392fbb904e553838e1170641f7c9e9f06e9be486751a"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-141-20261105-v1.checkpoint.json",
+      "bytes": 594817,
+      "sha256": "b703c44640f6f7070650f714b5604f06cfb4f4279997ce2bb75b2abfdbaa4824"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-r3-before-safety-protocol-root-20261105-v1.json",
+      "bytes": 39192,
+      "sha256": "24634846f25c2ccfed26110b9bbd854fc53538ec8628c8cc0c9e275c27ae7eea"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-scan-setup-prefix-20261106-v1.checkpoint.json",
+      "bytes": 3727744,
+      "sha256": "3e9d0958ed8b3ac3ffb8274dadc81157be66d439aaec92ce4852cb83a1000c65"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-paired-visible-scan-prefix-20261106-v1.checkpoint.json",
+      "bytes": 3409892,
+      "sha256": "c7961cd5deba5a871514a888327d3ec982bfeb31f3662adcc0e87b34ef43d4ae"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v223-paired-purple2-known-analysis-single-3-root-20261106-v1.json",
+      "bytes": 39704,
+      "sha256": "42fc456cc1677bddaf15b976e3f02d7774d8efa979c1090380b5a08bd6549a47"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v225-paired-paired-scan-setup-dlc31-15-root-20261106-v1.json",
+      "bytes": 39809,
+      "sha256": "a29315b1baef4a9f4a76d7fe0acdb2551dd50f2e99877de4bf1dd23bf91dac85"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v238-paid-research-decomposition-20261106-v1.checkpoint.json",
+      "bytes": 2870060,
+      "sha256": "b70e693d8fc28de6f5478feba085531dbf5f30cac0887f44f3eb72cbc6108c64"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-free-card-known-suffix-control-20261106-v1.json",
+      "bytes": 270216,
+      "sha256": "d1fe1cf1a4b4e8253766b114e660e421bc6d2d2d9addb3d3123241291373fce7"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v253-standard-r3-native-verification-prefix-20261106-v1.checkpoint.json",
+      "bytes": 8546284,
+      "sha256": "1082ba14238a1faa44058ca7bcb98c4e79111b585bfd3796b8cc80e68d5a3463"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v256-actual-before-132-root-20261106-v1.json",
+      "bytes": 39840,
+      "sha256": "d248c6d0a25ac6cbe6220a4e701c3947baedf93e125d36f7cc8bcbd0fe0cd1e9"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v259-analysis-publicity-post-main-root-20261106-v1.json",
+      "bytes": 41083,
+      "sha256": "18a7f9337d560c796738a40c5f38602dd588ea2c4274a5901c4e9bee925c01b3"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v263-research-order-mark-native-fixture-20261106-v1.json",
+      "bytes": 122875,
+      "sha256": "f0b10f4a2a946946a3cf3a082f26aa46bc87d79d0f76ad1d763b21fc47cb28dc"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v300-cold-actual-v298-r4-venus-late-orbit-20261107-v1.json",
+      "bytes": 28386,
+      "sha256": "11129222c333d8f7a5421e42a737146e03ef503f094db5b9adfd3b69d4a574c7"
+    },
+    {
+      "path": "reports/ai-foundation-20261106/scan-analysis-income-v1/income176-20261106-v1.json",
+      "bytes": 216091,
+      "sha256": "cc6d354078095873957c89865804b046c59d3f0500f42a8cb6892da7648b0427"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/analysis-invariant-v1/source-manifest-20261107-v1.json",
+      "bytes": 21905,
+      "sha256": "78246edb16b1259f9a5426f6ee556d05f7849b42c7b88b3b8760188a832411e9"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/analysis-lazy-explanations-v1/source-manifest-20261107-v1.json",
+      "bytes": 41087,
+      "sha256": "41c4c98795d8653fd89c3d529e819ca8cf6c11f7de30a61902c801b6bfc89bb1"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/analysis-lazy-regions-v1/source-manifest-20261107-v1.json",
+      "bytes": 41845,
+      "sha256": "1aacd7648b7af4b56bf554e423ad25b42c8ba90616226d96b549cf2a28047198"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/analysis-region-prefix-v1/source-manifest-20261107-v1.json",
+      "bytes": 39567,
+      "sha256": "7e5edafa040076e7fd3e5fb22a7eb85735504cbea05eaf2c7f1853a78eecdef5"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/analysis-target-trace-copy-v1/source-manifest-20261107-v1.json",
+      "bytes": 40041,
+      "sha256": "a5d30c320886448e0d7f7d90f48f41e2f530536e6c9869db35b44ae0fc78bd02"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/capital-carry-v1/source-manifest-20261107-v1.json",
+      "bytes": 36869,
+      "sha256": "d3ff9e3360eff852a9f9646da55898458a16236629ba7c8bb7356f670dc4a4e8"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-probe-handoff-v1/actual-v298-r4-venus-late-orbit-20261107-v1.root.json",
+      "bytes": 43163,
+      "sha256": "5e593a77c830e3973dd99397349ff955f39f968a6611c499b70aeddbbaae3db2"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-proof-audit-v1/independent-native-verification-20261107-v1.json",
+      "bytes": 2432,
+      "sha256": "124e01ac3f5e155860b4e79a362a4c36f0aff58d6530c0e02cef1a03ba370d3c"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/next-income-probe-joint-v1/source-manifest-20261107-v1.json",
+      "bytes": 23594,
+      "sha256": "3e53dc98af05e4d359c48dd09d4c9b03928f3cb2d081564522d52f1a7691f044"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/probe-witness-source-order-v1/source-manifest-20261107-v1.json",
+      "bytes": 24284,
+      "sha256": "eb72eea74436a179b4c30059a653b8a28b5a9c0dc783d0f0f1457baafa646604"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/source-snapshot/randomizer/game/ai/analysis-publicity-capital.js",
+      "bytes": 4205,
+      "sha256": "94dbbc9a91f3e0369f94eb53de51bb07f583752b2d222299daeb8fdcaf9acf31"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/r4-company-tail-v1/source-manifest-20261107-v1.json",
+      "bytes": 30892,
+      "sha256": "159313ab1c166bbd088950dced0dbd6708a8ec92b5829c4575b19e82bde95d1d"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/read-only-rewards-v1/source-manifest-20261107-v1.json",
+      "bytes": 35942,
+      "sha256": "0efff735623fc3433b8b60219d7dc20267743b6c10bd44cd9f33a14d70e0311f"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/research-comparison-loop-v1/source-manifest-20261107-v1.json",
+      "bytes": 37608,
+      "sha256": "7e24b75add418179548bf0308888a1f361034ee19dbf3ebf3f164fb422d206bf"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/research-mark-prefix-reuse-v1/source-manifest-20261107-v1.json",
+      "bytes": 32693,
+      "sha256": "fb5f92474320086ee33b2dfcf792498dad522538a3ee17da0daa265b72b6a44c"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/research-mark-score-ceiling-v1/source-manifest-20261107-v1.json",
+      "bytes": 33645,
+      "sha256": "6d6eeb32aca5b843d7a1fee3be8e4862e9d670b70be2ae727382d34eb6843ad2"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/research-single-window-v1/source-manifest-20261107-v1.json",
+      "bytes": 38311,
+      "sha256": "3f947eb9b9330dd8bfdb3a55695dd0659ccb1f79d9ab0112cc65758d89bc7ad5"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/singleton-resource-ranking-v1/resource-demand-v285-reference-20261107-v1.js",
+      "bytes": 55631,
+      "sha256": "9479b0c3ff73045d25f91c5f1afa68905c9578d5c212ed586e36d2c5488ce291"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/transient-capital-direct-v1/source-manifest-20261107-v1.json",
+      "bytes": 21277,
+      "sha256": "f37cd87c8a7e4d2ed3e05ae1368c20908c522d30ee51af6275e58310f948f2df"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/trigger-cache-capacity-v1/source-manifest-20261107-v1.json",
+      "bytes": 31826,
+      "sha256": "06179c22561171cc3071db3d76e60cb00b3261b8c200028d89f2bcd1a182cc43"
+    },
+    {
+      "path": "reports/ai-foundation-20261112/fixed-board-scan-analysis-v1/scan-analysis-roots-20261112-v1.json.gz",
+      "bytes": 8812,
+      "sha256": "8db1274da0a46f4550b1d4797b3236d2a7f4e84a10fab72e7f1cb44c0b2aeb66"
+    },
+    {
+      "path": "reports/ai-foundation-20261112/human405-pickup-income-v1/teacher-pickup-income-roots-20261112-v1.json.gz",
+      "bytes": 36493,
+      "sha256": "a86b93de2ac3ca6d84b0226548fcbc7072db95f7da303ff302f7a0fe11c79207"
+    },
+    {
+      "path": "reports/iteration/page-template.html",
+      "bytes": 15237,
+      "sha256": "74a1716f8b0a9936f0c789c28e5154f07c1ccfa391785338345d56a9dd055284"
+    },
+    {
+      "path": "reports/research/22c44c19.d39dd7a2.full.json.failed-checkpoint.json",
+      "bytes": 493485,
+      "sha256": "f1e121b9fede3bf8a2d42f5e82b8725bba5d61d2533c003243052444e6cfb271"
+    },
+    {
+      "path": "reports/research/35f648b3.28f4e95c.quick-400.json",
+      "bytes": 1856894,
+      "sha256": "b0a66807b86bd626ca0446a4f548403292d81927a30b5b122f1b3cd93ee620ea"
+    },
+    {
+      "path": "reports/research/e987ead2.9491f13b.quick-400.json",
+      "bytes": 3380520,
+      "sha256": "280250d7a406244dbc19875e6d7a8f411db31e44e347f4d3ceae3bffcc8baf48"
+    },
+    {
+      "path": "seti-saves/seti-save-537-merged.json",
+      "bytes": 746161,
+      "sha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7"
+    },
+    {
+      "path": "seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json",
+      "bytes": 323150,
+      "sha256": "46a68cbdc9c452243f49805c776033d5542d82c5a56e2fb3aece5454d8161c8b"
+    },
+    {
+      "path": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-quick-24-v2.json",
+      "bytes": 277783,
+      "sha256": "2591d4eacc5f72b7a4b7bf60cfe5195b2bb76269c2602a186dfd81eb66351f8e"
+    }
+  ],
+  "command": [
+    "node",
+    "tools/run_node_tests.js",
+    "--exclude",
+    "randomizer/game/ai/state-value.test.js",
+    "--exclude",
+    "randomizer/game/ai/ready-analysis-capital.test.js"
+  ],
+  "previousExactSourcePassingTestsReused": [
+    "randomizer/game/ai/state-value.test.js",
+    "randomizer/game/ai/ready-analysis-capital.test.js"
+  ],
+  "log": "reports/ai-foundation-20261119/blue-income-admission-node-20261119-v1.log",
+  "state": "finished",
+  "startedEpochSeconds": 1795038308.708679,
+  "newAutonomousGames": 0,
+  "pid": 13792,
+  "exitCode": 1,
+  "endedEpochSeconds": 1795038473.967445,
+  "summary": [
+    "SUMMARY unit passed=174 failed=74 total=248 time=164.20s",
+    "SUMMARY fullFlow passed=1 failed=0 total=1 time=0.49s",
+    "FAIL randomizer/app/host-architecture-audit.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/agent-runtime.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/amiba-analysis-capital.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-invariant.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-lazy-explanations.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-lazy-regions.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-lazy-trace-contexts.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-port.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-publicity-capital.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-publicity-preparation.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-region-prefix.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/analysis-target-trace-copy.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/card-pick-planning.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/company-income-priority.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/computer-preinvestment.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/decision-search.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/final-round-probe-window.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/fixed-data-plan.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/fixed-tail-capital-carry.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/funded-hand-timing.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/funded-movement-tail.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/funded-research-value.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/goal-movement.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/income-choice-consistency.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/known-card-money.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/known-movement-tool.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/known-postdraw-tail.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/local-decision-plans.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/local-preview-copy.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/mission-data-continuation.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/movement-preview-copy.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/pre-main-data-plan.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/probe-capital-value.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/probe-replacement-witness.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/probe-travel-tail.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/public-amiba-income-swap.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/purpose-capital-value.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/quiet-data-tail.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/r4-company-tail.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/read-only-rewards.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-comparison-loop.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-income-capital.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-mark-capital.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-mark-prefix-memo.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-score-ceiling.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-single-window.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/research-symbol-composition.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/resource-demand.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/route-endpoint-completion.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/scan-analysis-income-utility.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/scan-income-after-free-move.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/search-agent.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/shared-resource-prefix.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/singleton-resource-ranking.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/six-greedy-plans.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/stationary-cargo-income.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/trigger-delta-memo.test.js status=1 signal=none",
+    "FAIL randomizer/game/ai/winning-income-plan.test.js status=1 signal=none",
+    "FAIL randomizer/game/cards/conditional-sector-flow.test.js status=1 signal=none",
+    "FAIL tools/alien-reveal-hidden.test.js status=1 signal=none",
+    "FAIL tools/fixed-world-identity.test.js status=1 signal=none",
+    "FAIL tools/research-human405-current-full.test.js status=1 signal=none",
+    "FAIL tools/research-human405-first2.test.js status=1 signal=none",
+    "FAIL tools/research-human405-first3.test.js status=1 signal=none",
+    "FAIL tools/research-human405-full.test.js status=1 signal=none",
+    "FAIL tools/research-human405-r4.test.js status=1 signal=none",
+    "FAIL tools/research-human405-round1.test.js status=1 signal=none",
+    "FAIL tools/research-human405-third.test.js status=1 signal=none",
+    "FAIL tools/research-search-statistics.test.js status=1 signal=none",
+    "FAIL tools/research-world-resume.test.js status=1 signal=none",
+    "FAIL tools/robot-ai-generation.test.js status=1 signal=none",
+    "FAIL tools/robot-report-compact.test.js status=1 signal=none",
+    "FAIL tools/robot-report-link.test.js status=1 signal=none",
+    "FAIL tools/robot-report-replay.test.js status=1 signal=none"
+  ],
+  "logSha256": "88cfde00e58814e80077ea5acd80a0b91573cf24781a1d3d41fa17d5633c2747"
+}

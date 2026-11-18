@@ -1,0 +1,105 @@
+{
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "decision": "frozen-not-admitted-for-autonomous-game",
+  "productionChanged": false,
+  "formalCompletedScoreUnchanged": 272,
+  "previouslyMeasuredFormalGameSeconds": 16.1,
+  "newAutonomousGames": 0,
+  "unitRegression": {
+    "registered": 250,
+    "passed": 236,
+    "notPassed": 14,
+    "failures": [
+      "randomizer/app/host-architecture-audit.test.js",
+      "randomizer/game/ai/analysis-region-prefix.test.js",
+      "randomizer/game/ai/final-round-probe-window.test.js",
+      "randomizer/game/ai/funded-movement-tail.test.js",
+      "randomizer/game/ai/known-card-money.test.js",
+      "randomizer/game/ai/pre-main-data-plan.test.js",
+      "randomizer/game/ai/probe-replacement-witness.test.js",
+      "randomizer/game/ai/probe-travel-tail.test.js",
+      "randomizer/game/ai/scan-income-after-free-move.test.js",
+      "randomizer/game/ai/search-agent.test.js",
+      "randomizer/game/ai/shared-resource-prefix.test.js",
+      "randomizer/game/ai/stationary-cargo-income.test.js",
+      "tools/research-human405-r4.test.js",
+      "tools/robot-ai-generation.test.js"
+    ],
+    "fullFlowPassed": true,
+    "allGreen": false
+  },
+  "newEvidence": {
+    "computerPreinvestmentPassed": true,
+    "computerPreinvestmentNativeInputs": 6,
+    "boundControlRoots": 12,
+    "boundControlRootsWithin256And600ms": true,
+    "boundControlsAreNotAFullDomainProof": true,
+    "fourExistingAgentRootsSameNativeStateAndSameActionUnderV71AndV72": true,
+    "fourAgentPairsAllWithin256And600ms": true,
+    "outdatedScanExpectation": {
+      "actualGoal": "move toward Venus orbit",
+      "actualValueBothSources": 58.5,
+      "scanValueBothSources": 56.666666666666664,
+      "passValueBothSources": 57,
+      "notANewCandidateRegression": true
+    },
+    "initialMissingInputsDoNotCountAsBehaviorFailures": true,
+    "sameFailedAssertionDoesNotCountAsPassingTheRemainingTest": true
+  },
+  "notPassedClassification": {
+    "historicalPortfolioReference": [
+      "analysis-region-prefix",
+      "final-round-probe-window",
+      "probe-replacement-witness"
+    ],
+    "finalPassOrHistoricalAbsoluteValueContractNeedsReview": [
+      "known-card-money",
+      "pre-main-data-plan",
+      "funded-movement-tail"
+    ],
+    "historicalExecutionOrRootCountNeedsBehavioralReplacement": [
+      "scan-income-after-free-move",
+      "stationary-cargo-income",
+      "shared-resource-prefix"
+    ],
+    "logicalTransitionBudgetConfusedWithNativeSubmissions": [
+      "probe-travel-tail"
+    ],
+    "sourceCommentFalsePositive": [
+      "host-architecture-audit"
+    ],
+    "outdatedSpecificActionExpectationFreshlyCompared": [
+      "search-agent"
+    ],
+    "archivedInputOrReportingDataNotComplete": [
+      "research-human405-r4",
+      "robot-ai-generation"
+    ]
+  },
+  "unresolvedAdmission": [
+    "The general post-main capital ceiling for the added public-income closure is not proved by the twelve controls.",
+    "Required validation still contains failed historical assertions and incomplete archived inputs; later assertions were not waived or silently bypassed.",
+    "No autonomous game, per-round asset improvement or twenty-board gain has been established."
+  ],
+  "nextOnlyAction": "Review the current validation contract and its exact input manifest against the green behavioral requirements before any new strategy iteration; in particular, source-drift rejection for frozen R4 continuations must not depend on loading obsolete archives first.",
+  "method": {
+    "previousGoalTurnClassification": "progress: isolated forecast patch and root104 decision change",
+    "thisGoalTurnClassification": "progress: actual frozen-source regression, per-test input recovery, exact baseline comparisons and twelve bound controls; admission refused rather than claiming an AI improvement",
+    "startedEpochSeconds": 1795038124.6898339,
+    "closedEpochSeconds": 1795040989.088445,
+    "originalDeadlineEpochSeconds": 1795041124.6898339,
+    "wallMinutes": 47.73997685114543,
+    "priorRouteMinutesConservative": 66,
+    "cumulativeRouteMinutesConservative": 113.73997685114543,
+    "deadlineNotReset": true,
+    "noStrategyOrCachePatchInThisUnit": true
+  },
+  "wholeGoalComplete": false
+}
