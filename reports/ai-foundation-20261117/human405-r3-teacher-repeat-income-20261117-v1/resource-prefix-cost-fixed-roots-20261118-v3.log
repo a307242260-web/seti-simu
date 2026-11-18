@@ -1,0 +1,24 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: only measured ranking-cache diagnostics may be omitted
+    at /Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/compare-resource-prefix-cost-20261118-v3.cjs:18:3
+    at Array.map (<anonymous>)
+    at decisionLines (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/compare-resource-prefix-cost-20261118-v3.cjs:15:15)
+    at compare (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/compare-resource-prefix-cost-20261118-v3.cjs:31:215)
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/compare-resource-prefix-cost-20261118-v3.cjs:43:37)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

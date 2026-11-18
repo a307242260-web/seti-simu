@@ -592,7 +592,11 @@
       return Object.freeze(actions);
     }
 
-    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
+    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null, physicalSource = null) {
+      // A resource view changes only private plan control over this exact
+      // immutable envelope/status/boundary. Keep one physical key, including
+      // queue and RNG; resourceControl remains in the separate node identity.
+      physicalSource=physicalSource?.physicalSource||physicalSource;
       let visible = observation && freeze(observation);
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
@@ -611,13 +615,15 @@
       // compared by the graph. Delay their large exact key until identity or
       // durable plan evidence actually consumes it; no equality fields change.
       let physicalKey,physicalId,collisionKey,identity;
-      nodes.set(node, { envelope, serial: nodeCount,
+      nodes.set(node, { envelope, serial: nodeCount, physicalSource,
         get physicalKey(){
+          if(physicalSource)return physicalSource.physicalKey;
           if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates,null,identitySlices);identityMaterializations++;}
           return physicalKey;
         },
-        get collisionKey(){return collisionKey??=physicalCollisionKey(envelope);},
+        get collisionKey(){return physicalSource?physicalSource.collisionKey:collisionKey??=physicalCollisionKey(envelope);},
         get physicalId(){
+          if(physicalSource)return physicalSource.physicalId;
           if(physicalId===undefined)physicalId=internPhysicalIdentity(this,envelope,status,boundary);
           return physicalId;
         },
@@ -4480,7 +4486,7 @@
           control={goal,operation};
         }
       }
-      return createNode(stored.envelope,null,node.legalActions,node.status,stored.informationBarrier,stored.intent,control);
+      return createNode(stored.envelope,null,node.legalActions,node.status,stored.informationBarrier,stored.intent,control,stored);
     }
 
     function expandResourcePlan(node,plan,hasCapacity) {
@@ -4501,7 +4507,9 @@
       }
       while(true){
         if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
-        const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
+        // Stable acquisition plans are not fixed menu choices. Here only
+        // fixed choices are consumed; goal selection still uses cardPickSpec.
+        const spec=current.status==="decision"?cardPickSpec(current):null,tail=targetReached?localDecisionSpec(current):null;
         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
         const step=spec?.fixed&&!["transport-data-prep","funded-earth-shipment","satellite-scan-setup","data-funded-cargo"].includes(plan.goal.kind)?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
           :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);

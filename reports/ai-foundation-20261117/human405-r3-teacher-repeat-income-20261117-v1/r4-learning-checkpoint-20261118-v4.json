@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v4",
+  "date": "2026-11-18",
+  "policy": "v485",
+  "value": "v71",
+  "parent": "06eadb9ab28a337f8d5754b1bcb04424ef768439",
+  "snapshot": "/private/tmp/seti-current-full-z97c_km1",
+  "previous": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-learning-checkpoint-20261118-v3.json",
+  "teacherLegalReference": {
+    "score": 384,
+    "inputs": 474,
+    "allStateSessionRngEqual": true
+  },
+  "AIFormalScoreUnchanged": 272,
+  "lastTurnClassification": "progress: bounded exact physical identity sharing and fixed-picker call guard passed316 fixed Native root comparisons plusNode/Browser/V audits",
+  "admission": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/resource-prefix-cost-admission-20261118-v1.json",
+  "gate": {
+    "scope": "300 historical AI roots and16 teacherR4 roots through272",
+    "passed": true,
+    "maxNative": 256,
+    "maxMilliseconds": 571.6790409999994
+  },
+  "next": [
+    "Continue teacherR4 legal reference after272 to identify next differing candidate, fixed preparation or valuation. Gate newly reached complex roots before any autonomous full game.",
+    "Native complete-turn265 proves a real30-point immediate gain versus retained assets; compare subsequent known uses without a card-specific preservation bonus.",
+    "No new full game or20-board results yet; retain272 formal score and384 modifiedteacher reference.",
+    "Preserve shared unrelated dirty source; publish isolated verified changes toorigin/dev."
+  ],
+  "goalStatus": "active"
+}

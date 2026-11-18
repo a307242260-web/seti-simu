@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "seti-resource-prefix-cost-admission-v1",
+  "date": "2026-11-18",
+  "parent": "06eadb9ab28a337f8d5754b1bcb04424ef768439",
+  "policy": "seti-complete-decision-search-v485",
+  "valueModelUnchanged": "v71",
+  "change": [
+    "Same immutable envelope, status and barrier share the original physical identity computation across resource views. Resource goal/operation and known-card control remain separate identity fields.",
+    "Inside fixed resource preparation only decision nodes can consume fixed card picks; stable acquisition purpose planning remains unchanged."
+  ],
+  "bounds": {
+    "noAdditionalSearchBranches": true,
+    "nodeTimeBeamBudgetUnchanged": true,
+    "reachabilityAndResourceLowerBoundsUnchanged": true,
+    "noNewGeneralCache": true,
+    "sharingLifetime": "existing analysis port/root lifetime; canonical source flattened to avoid recursive chains"
+  },
+  "pairedFixedRootCorpus": {
+    "whiteAIRoots": 300,
+    "teacherR4Roots": 16,
+    "fullRecordedNativeReplay": 354,
+    "completeStateSessionAndRngEqual": true,
+    "maxNative": 256,
+    "maxMilliseconds": 571.6790409999994,
+    "point272": {
+      "native": 141,
+      "beforeMs": 668.1212079999968,
+      "afterMs": 571.6790409999994,
+      "sameActionValueAndSearchGraph": true
+    },
+    "sameActionValueAndNativeCountsAtAllRoots": true,
+    "allowedDifference": "Only lines[].cardPickPolicy.selection.cache hit/miss diagnostic labels; all fixed-purpose labels, card IDs, values and actual graph edges remain strict.",
+    "benchmarkNotANewGame": true,
+    "processOrder": "chronological historical AI inputs, then16 chronological teacher roots; independent cold analysis port and maxCacheEntries0 at each root",
+    "evidence": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/resource-prefix-cost-fixed-roots-20261118-v4.json.gz"
+  },
+  "tests": {
+    "node": 6,
+    "browser": 3,
+    "valueInputAuditPasses": 66,
+    "nativeRootRngIsolation": true
+  },
+  "retainedFailures": {
+    "v2": "raw witness differs at input162 only in3 card-pick ranking cache hit/miss labels; actual choices/value/native equal",
+    "v3": "comparison helper incorrectly rejected fixed-purpose cache labels; fixed helper preserves these exact labels",
+    "browserV1": "sandbox could not bind127.0.0.1; approved local-only rerun passed"
+  },
+  "AIFormalScoreUnchanged": 272,
+  "newFullOr20BoardExperiment": false,
+  "limitations": [
+    "No new autonomous full game, score improvement or20-board mean established.",
+    "Teacher roots beyond272 have not yet passed the new gate.",
+    "Shared worktree unrelated source changes are preserved; source verified in isolated snapshot."
+  ]
+}

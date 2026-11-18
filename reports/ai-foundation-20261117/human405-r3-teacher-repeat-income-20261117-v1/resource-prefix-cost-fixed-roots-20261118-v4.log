@@ -1,0 +1,13 @@
+{"roots":25,"label":"AI272-input-55","cases":[{"kind":"before","native":0,"ms":6.149083000000246},{"kind":"after","native":0,"ms":6.271457999999711}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":50,"label":"AI272-input-89","cases":[{"kind":"before","native":3,"ms":22.090667000000394},{"kind":"after","native":3,"ms":20.364000000000487}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":75,"label":"AI272-input-114","cases":[{"kind":"before","native":1,"ms":13.715250000000196},{"kind":"after","native":1,"ms":13.203792000000249}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":100,"label":"AI272-input-145","cases":[{"kind":"before","native":7,"ms":23.353124999999636},{"kind":"after","native":7,"ms":19.169458000000304}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":125,"label":"AI272-input-173","cases":[{"kind":"before","native":35,"ms":58.85162499999933},{"kind":"after","native":35,"ms":57.42720899999949}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":150,"label":"AI272-input-198","cases":[{"kind":"before","native":5,"ms":21.444000000001324},{"kind":"after","native":5,"ms":21.052040999999008}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":175,"label":"AI272-input-223","cases":[{"kind":"before","native":59,"ms":120.40116599999965},{"kind":"after","native":59,"ms":97.26720800000112}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":200,"label":"AI272-input-248","cases":[{"kind":"before","native":0,"ms":10.240084000000934},{"kind":"after","native":0,"ms":9.6856659999994}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":225,"label":"AI272-input-275","cases":[{"kind":"before","native":2,"ms":17.274708000000828},{"kind":"after","native":2,"ms":18.284624999996595}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":250,"label":"AI272-input-304","cases":[{"kind":"before","native":0,"ms":9.696584000001167},{"kind":"after","native":0,"ms":9.68645899999683}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":275,"label":"AI272-input-329","cases":[{"kind":"before","native":57,"ms":102.04749999999694},{"kind":"after","native":57,"ms":99.34216600000218}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":300,"label":"AI272-input-354","cases":[{"kind":"before","native":1,"ms":9.46704200000022},{"kind":"after","native":1,"ms":9.583791000000929}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":316,"completed":true,"fullReplayVerified":true,"failure":null,"peakAfterNative":256,"peakAfterMs":571.6790409999994}

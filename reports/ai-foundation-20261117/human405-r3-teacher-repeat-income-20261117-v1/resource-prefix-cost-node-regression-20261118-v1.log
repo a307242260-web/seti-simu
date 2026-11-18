@@ -1,0 +1,17 @@
+trusted analysis fork isolation and exact reuse passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"fundedFreePrefix":true,"nativePrintedLanding":13,"actualRemainingEnergy":1,"noInterveningRotation":true,"rootAndRngIsolated":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"currentFullOpening":23,"nativeRootAndRngPreserved":true,"passiveOpponents":true,"decisionAndTimeRejectedBeforeInput":true,"failedFullDeduplicated":true,"historicalContinuationsSeparate":true}
+SUMMARY unit passed=6 failed=0 total=6 time=7.85s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=4
+OWNER training/reporting tests=1
