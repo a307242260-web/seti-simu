@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v25",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v24.json",
+  "publishedParent": "faf3bcb45b677c107499da78f4e1ce808f94a78a",
+  "goalStatus": "active",
+  "phase": "bounded method trial closed: Browser cargo invariant classified, runtime frozen",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "lastUnpromotedCandidate": "v513/resourcev29/movementv8/valuev71",
+  "candidateLocalEvidence": {
+    "versions": [
+      "v512",
+      "v513"
+    ],
+    "sameRootAndRng": true,
+    "intentionalStrategyChange": true,
+    "interpretation": "Preparations retain the declared beneficiary/purpose. This changes policy coverage; it is not a proof that all removed off-purpose continuations are equivalent.",
+    "completeRuleSubmissions": [
+      209,
+      69
+    ],
+    "logicalNodes": [
+      1949,
+      601
+    ],
+    "milliseconds": [
+      1573.717125,
+      639.702459
+    ],
+    "wallReductionFraction": 0.593508611657257,
+    "value": 239.5,
+    "actionId": "play_card:975c7a35",
+    "nativePurposeControls": 24,
+    "sixPreservedPayoffs": [
+      242,
+      249,
+      239.5,
+      239.5,
+      242,
+      244
+    ],
+    "limit": "One measurement per distinct runtime, not a latency distribution or new game score. Changes to two validation tools after timing are explicitly recorded; measured runtime is unchanged."
+  },
+  "admission": {
+    "singlePointPassed": false,
+    "millisecondsOverLimit": 39.702458999999976,
+    "nodeDistinctPassed": 11,
+    "nodeKnownFailure": "line39 root-edge count9 vs8",
+    "valueInputAuditPassed": 68,
+    "browserPlanned": 9,
+    "browserPassed": 2,
+    "browserFailed": 1,
+    "browserNotRun": 6,
+    "browserFailure": "production-known-post-main-cargo: first claim overwrote independent cargo",
+    "browserFailureClassification": "stale validation invariant; not evidence of a Native overwrite",
+    "fullRegressionPassed": false,
+    "candidatePromoted": false
+  },
+  "methodAssessment": {
+    "diagnosisAndRejectionUseful": true,
+    "localChangeDemonstrated": true,
+    "wholeGameQualityImproved": false,
+    "openEndedImplementationAllowed": false,
+    "finding": "Previous process can produce local evidence but does not bound how long local work may postpone whole-goal acceptance. Add an explicit work-unit limit and stop at unresolved admission rather than automatically generating another patch."
+  },
+  "nextWorkUnit": {
+    "question": "Correct Browser cargo assertion to the actual delivered fossil and other job, using saved Native trace for validation before any renewed search.",
+    "limit": "Same60-minute/two-hypothesis limit; no chained strategy optimization.",
+    "remainingAdmission": "639.7ms remains above600ms. Browser suite not passed; full regression and whole-game validation incomplete."
+  },
+  "thisReviewNewSearches": 0,
+  "thisReviewNativeSubmissions": {
+    "newAISearches": 0,
+    "newBrowserRuns": 0,
+    "newGames": 0,
+    "successfulSavedLiveNativeInputs": 14,
+    "successfulSavedPrivatePlanSubmissions": 5,
+    "firstAttemptFailure": "Diagnostic serialized lazy analysis nodes after port.close; failed before saving the trace. Subsequent version stores each live input and only copies plain action records.",
+    "firstAttemptInferredLiveInputs": 9,
+    "firstAttemptInferredPrivateSubmissions": 5,
+    "accountingLimit": "First failed attempt counts are reconstructed from the fixed script path and error location, not a persisted Native counter; they are not excluded from incurred work."
+  },
+  "thisReviewBrowserRuns": 0,
+  "thisReviewNewGames": 0,
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v2.json",
+  "workflow": "docs/ai-research-workflow.md",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "scope": "Original teaching alignment goal stays active. This delivery only consolidates methodology and freezes unaccepted prior local work; it does not start a new strategy experiment or claim a new score.",
+  "previousGoalTurnClassification": "progress: research workflow gained bounded work units and explicit exits; existing evidence independently audited and committed",
+  "thisGoalTurnClassification": "progress: Native five-input replay proves first cargo completion preserves the real other task; exact prior seven-input suffix root allows evidence reuse; Browser failure classified as stale invariant",
+  "methodPilot": "reports/ai-foundation-20261118/r4-browser-cargo-findings-20261118-v1.json"
+}

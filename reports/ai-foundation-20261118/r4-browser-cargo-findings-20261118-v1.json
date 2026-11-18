@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-18",
+  "sources": {
+    "r4-browser-cargo-diagnosis-20261118-v1.json.gz": "ceab89e512284fd925892c012c050c2b39c43c425da4a8f5ecbf867d020d17b3",
+    "r4-browser-cargo-replay-20261118-v1.json.gz": "d8531523ee321917d1ad0826cebf7cc4a3da090048f0a502660d16c746ca04a7",
+    "r4-cargo-whole-suffix-20261118-v1.receipt.json.gz": "bee0a148a447dc80238c4737bdbd934aa2961f5d93023015598a828773978ae6",
+    "r4-main-owned-v513-source-20261118-v1.json": "d9c8bd3097c57a748052d38673463e08e689584d7a4d709ade7cbedd0890939c",
+    "r4-browser-cargo-diagnosis-20261118-v1.log": "e247b5a126fe47075916591e6486132d6877ec819bc56b7d93bad42731fc42b2"
+  },
+  "question": "Does the failed Browser invariant preserve the independent second cargo?",
+  "classification": "stale validation invariant; not evidence of a Native overwrite",
+  "firstDelivery": {
+    "fossil": "fossil_07",
+    "claimCard": "alien-chong-6-16",
+    "removedJob": "5",
+    "preservedJob": "7",
+    "preservedFossil": "fossil_06"
+  },
+  "cause": "Browser calls job5 independent although job5 is the F07 delivery being completed. Node uses the actual selected fossil and checks the other initial job, job7.",
+  "evidence": {
+    "replayedNativeInputs": 5,
+    "otherTaskExact": true,
+    "rngUnchanged": true,
+    "exactPriorSuffixRoot": true,
+    "priorSevenInputSuffixReused": true,
+    "priorSuffixValue": 244
+  },
+  "workAccounting": {
+    "newAISearches": 0,
+    "newBrowserRuns": 0,
+    "newGames": 0,
+    "successfulSavedLiveNativeInputs": 14,
+    "successfulSavedPrivatePlanSubmissions": 5,
+    "firstAttemptFailure": "Diagnostic serialized lazy analysis nodes after port.close; failed before saving the trace. Subsequent version stores each live input and only copies plain action records.",
+    "firstAttemptInferredLiveInputs": 9,
+    "firstAttemptInferredPrivateSubmissions": 5,
+    "accountingLimit": "First failed attempt counts are reconstructed from the fixed script path and error location, not a persisted Native counter; they are not excluded from incurred work."
+  },
+  "methodTrial": {
+    "newCauseClassified": true,
+    "secondRuntimeOverwriteHypothesisRejected": true,
+    "followupStrategyPatchStarted": false,
+    "exit": "Close this diagnostic work unit; retain existing admission failures."
+  },
+  "remaining": [
+    "Correct the Browser invariant to bind the actual selected fossil and other job, then verify it using saved Native actions.",
+    "The old Browser result remains2 passed/1 failed/6 not run; this diagnosis is not a full Browser PASS.",
+    "The candidate teacher289639.7ms remains above600ms; no candidate promotion or full game.",
+    "Formal v485 score272 and the original teaching alignment/asset goal remain unchanged."
+  ]
+}

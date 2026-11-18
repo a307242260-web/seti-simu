@@ -74,3 +74,6 @@
 - verification: python3 adhoc/audit-ai-methodology-20261118-v2.py；只读校验16来源、同根、运行时版本差异、数值和失败日志；本次没有AI／原生／浏览器执行。
 - observed_outcome: 方法已增加投入上限和强制出口；已有诊断与局部修复有效，完整业务效果仍未验收；新的投入约束尚待下一工作单元检验。
 - keep_or_revise: keep（有限研究流程）；不宣称时限机制或AI整体质量已经通过前瞻性验收。
+
+- followup_evaluation_bounded_cargo_20261118: 首个有限单元以5次实际回放确认Browser错误保留了已交付F07的任务5；真正独立的F06任务7完整保留。完整存档与旧7输入续运起点一致，复用旧证据而不运行AI或续运。归因后收口，未接策略补丁；Browser及性能准入仍未通过。先前诊断序列化失败及推定重复成本明确留档；方法能形成有限结论，不能据此宣布整体AI提升。
+- followup_bounded_cargo_evidence: reports/ai-foundation-20261118/r4-browser-cargo-findings-20261118-v1.json；adhoc/audit-r4-browser-cargo-diagnosis-20261118-v1.py。

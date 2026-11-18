@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-18",
+  "question": "Does the Browser's Ch6 assertion observe the first shipment or a later shipment that legitimately consumes rocket5's job?",
+  "hypotheses": ["Stale Browser card/rocket binding misidentifies the first completion", "Runtime shipment overwrites the independent other task"],
+  "root": "v513 earned-pickup fixture, Native known prefix then publicly choose fossil_06; same state as the failed Browser case",
+  "method": "Read the existing fixed F07 resource plan; execute only its declared complete Native prefix; if necessary inspect/replay the finite remaining delivery without running AI search",
+  "sameBoundary": "After each actual complete_task transport action, compare jobs by delivered fossil and compare the other original job byte for byte",
+  "identityAndResources": "No new state merge or search; keep current wallet, exact Native actions, fixed route resources, original root/RNG and known identities. No branch cap or budget change.",
+  "pass": "Identify actual first and second task recipients and prove whether the original other job changes on the first delivery. Preserve exact state/action evidence, not merely a test exit code.",
+  "stop": "At most60 minutes active work or the two listed hypotheses, whichever first; no strategy patch or next optimization",
+  "newGames": 0,
+  "newAISearches": 0
+}
