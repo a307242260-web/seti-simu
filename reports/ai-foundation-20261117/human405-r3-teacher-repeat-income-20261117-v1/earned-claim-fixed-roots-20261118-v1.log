@@ -1,0 +1,42 @@
+{"roots":25,"label":"AI272-input-55","round":1,"cases":[{"kind":"before","native":0,"ms":6.543042000000241},{"kind":"after","native":0,"ms":6.995957999999973}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":50,"label":"AI272-input-89","round":2,"cases":[{"kind":"before","native":3,"ms":23.347999999999956},{"kind":"after","native":3,"ms":20.509624999999687}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":75,"label":"AI272-input-114","round":2,"cases":[{"kind":"before","native":1,"ms":11.937540999999328},{"kind":"after","native":1,"ms":12.219250000000102}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":100,"label":"AI272-input-145","round":3,"cases":[{"kind":"before","native":7,"ms":21.964124999999513},{"kind":"after","native":7,"ms":20.437041000000136}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":125,"label":"AI272-input-173","round":3,"cases":[{"kind":"before","native":35,"ms":61.17445899999984},{"kind":"after","native":35,"ms":58.306916999999885}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":150,"label":"AI272-input-198","round":3,"cases":[{"kind":"before","native":5,"ms":22.590374999999767},{"kind":"after","native":5,"ms":22.39300000000003}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":175,"label":"AI272-input-223","round":3,"cases":[{"kind":"before","native":59,"ms":134.64424999999937},{"kind":"after","native":59,"ms":118.77199999999903}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":200,"label":"AI272-input-248","round":3,"cases":[{"kind":"before","native":0,"ms":9.913124999999127},{"kind":"after","native":0,"ms":10.031792000001587}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":225,"label":"AI272-input-275","round":4,"cases":[{"kind":"before","native":2,"ms":17.512125000001106},{"kind":"after","native":2,"ms":17.656874999996944}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":250,"label":"AI272-input-304","round":4,"cases":[{"kind":"before","native":0,"ms":10.870124999997643},{"kind":"after","native":0,"ms":9.859624999997322}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":275,"label":"AI272-input-329","round":4,"cases":[{"kind":"before","native":55,"ms":120.57195900000079},{"kind":"after","native":55,"ms":104.83962500000052}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":300,"label":"AI272-input-354","round":4,"cases":[{"kind":"before","native":1,"ms":10.360708000000159},{"kind":"after","native":1,"ms":9.549416999998357}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+{"roots":316,"label":"teacher-input-272","round":4,"cases":[{"kind":"before","native":143,"ms":663.9752499999995},{"kind":"after","native":143,"ms":639.346292000002}],"exactSearchEquality":true,"rootAndRngIsolated":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: teacher-input-289 round4 linesSha256
++ actual - expected
+
++ '870228cc30606b8d61ac020b45da4f56893cc34011eb4457ebf8a3818fffb766'
+- '4bcb8126135d3d318e432aadfe70086f1e735280a52df2e03fabbff95fdb6463'
+
+    at compare (/private/tmp/seti-current-full-z97c_km1/compare-earned-claim-fixed-roots-20261118-v1.cjs:42:177)
+    at Object.<anonymous> (/private/tmp/seti-current-full-z97c_km1/compare-earned-claim-fixed-roots-20261118-v1.cjs:59:146)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: '870228cc30606b8d61ac020b45da4f56893cc34011eb4457ebf8a3818fffb766',
+  expected: '4bcb8126135d3d318e432aadfe70086f1e735280a52df2e03fabbff95fdb6463',
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

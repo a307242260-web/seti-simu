@@ -1,0 +1,38 @@
+{
+  "node": 2960,
+  "quote": {
+    "proof": "seti-known-earned-task-after-identity-only-pickup-v1",
+    "cardId": "card-13-0",
+    "taskId": "b117-orbit-land-count-task",
+    "beforeValue": 192.5,
+    "value": 200.5,
+    "gain": 8,
+    "knownFollowupInputs": 2,
+    "unknownPickupChoicePriced": false,
+    "assumption": "pickup writes transport/token only; no arrival or matching event trigger; earned planet markers and unique free end task persist"
+  },
+  "edges": [
+    {
+      "actionId": "play_card:975c7a35",
+      "target": 3,
+      "cost": 1,
+      "equivalent": false,
+      "fixedCardPlan": null,
+      "fixedChoices": [],
+      "steps": [
+        "play_card:975c7a35"
+      ]
+    },
+    {
+      "actionId": "choose_target:7dd3abc6",
+      "target": 2960,
+      "cost": 1,
+      "equivalent": false,
+      "fixedCardPlan": null,
+      "fixedChoices": [],
+      "steps": [
+        "choose_target:7dd3abc6"
+      ]
+    }
+  ]
+}

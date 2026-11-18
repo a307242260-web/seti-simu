@@ -1,0 +1,8 @@
+PASS production-chong-orbit-pickup http://127.0.0.1:51260/randomizer/index.html
+PASS production-earned-pickup-task http://127.0.0.1:51260/randomizer/index.html
+PASS production-quiet-company-swap http://127.0.0.1:51260/randomizer/index.html
+PASS production-free-scan-one-step http://127.0.0.1:51260/randomizer/index.html
+PASS production-free-scan-funded-prefix http://127.0.0.1:51260/randomizer/index.html
+PASS production-known-data-scan-cycle http://127.0.0.1:51260/randomizer/index.html
+PASS production-analysis-before-orbit http://127.0.0.1:51260/randomizer/index.html
+SUMMARY browserSmoke passed=7 failed=0 total=7

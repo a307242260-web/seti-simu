@@ -1,0 +1,1015 @@
+{
+  "method": "Self samples of each utility attributed to first3 non-utility callers; exclusive within utility, not inclusive recursive totals",
+  "rows": {
+    "deepFreeze": [
+      {
+        "callers": [
+          {
+            "function": "save",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 847
+          },
+          {
+            "function": "snapshot",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 532
+          },
+          {
+            "function": "finishChild",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 5982
+          }
+        ],
+        "sampleMs": 14.666
+      },
+      {
+        "callers": [
+          {
+            "function": "committedProjection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 595
+          },
+          {
+            "function": "projectionInner",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 617
+          },
+          {
+            "function": "projection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 613
+          }
+        ],
+        "sampleMs": 11.501
+      },
+      {
+        "callers": [
+          {
+            "function": "compareAndCommit",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+            "line": 395
+          },
+          {
+            "function": "commit",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 387
+          },
+          {
+            "function": "advance",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 669
+          }
+        ],
+        "sampleMs": 2.958
+      },
+      {
+        "callers": [
+          {
+            "function": "committedProjection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 595
+          },
+          {
+            "function": "newGame",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 961
+          },
+          {
+            "function": "newGame",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+            "line": 1795
+          }
+        ],
+        "sampleMs": 1.5
+      },
+      {
+        "callers": [
+          {
+            "function": "inspect",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 637
+          },
+          {
+            "function": "finishChild",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 5982
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 1.5
+      },
+      {
+        "callers": [
+          {
+            "function": "advanceSession",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 687
+          },
+          {
+            "function": "submitDecision",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 799
+          },
+          {
+            "function": "executeCurrent",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 5145
+          }
+        ],
+        "sampleMs": 1.5
+      },
+      {
+        "callers": [
+          {
+            "function": "projectionInner",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 617
+          },
+          {
+            "function": "projection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 613
+          },
+          {
+            "function": "project",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 517
+          }
+        ],
+        "sampleMs": 1.5
+      },
+      {
+        "callers": [
+          {
+            "function": "getSnapshot",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+            "line": 367
+          },
+          {
+            "function": "readStoreSnapshot",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 395
+          },
+          {
+            "function": "committedProjection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 595
+          }
+        ],
+        "sampleMs": 1.458
+      },
+      {
+        "callers": [
+          {
+            "function": "enumerateActions",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 808
+          },
+          {
+            "function": "legalActions",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 137
+          },
+          {
+            "function": "openRoot",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 679
+          }
+        ],
+        "sampleMs": 1.458
+      }
+    ],
+    "structuredClone": [
+      {
+        "callers": [
+          {
+            "function": "previewIncomeCompletion",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 2053
+          },
+          {
+            "function": "incomeCompletion",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 2061
+          },
+          {
+            "function": "resourceSpec",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4072
+          }
+        ],
+        "sampleMs": 20.084
+      },
+      {
+        "callers": [
+          {
+            "function": "knownFossilTraceQuotes",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1368
+          },
+          {
+            "function": "pinkScoreBeforeUnknownFossil",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1418
+          },
+          {
+            "function": "localDecisionSpec",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 3109
+          }
+        ],
+        "sampleMs": 18.042
+      },
+      {
+        "callers": [
+          {
+            "function": "maskUnknownCards",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 89
+          },
+          {
+            "function": "sanitizeHiddenInformationObservation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 196
+          },
+          {
+            "function": "observeEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 566
+          }
+        ],
+        "sampleMs": 13.584
+      },
+      {
+        "callers": [
+          {
+            "function": "buildProbeCandidateStructures",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+            "line": 749
+          },
+          {
+            "function": "buildProbeRouteRequirements",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+            "line": 627
+          },
+          {
+            "function": "getProbeRouteRequirements",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+            "line": 1967
+          }
+        ],
+        "sampleMs": 9.459
+      },
+      {
+        "callers": [
+          {
+            "function": "buildRuleObservation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+            "line": 126
+          },
+          {
+            "function": "projectCounterfactualState",
+            "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+            "line": 12
+          },
+          {
+            "function": "projectState",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+            "line": 1691
+          }
+        ],
+        "sampleMs": 9.375
+      },
+      {
+        "callers": [
+          {
+            "function": "getDecisionSnapshot",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 251
+          },
+          {
+            "function": "resolveDecision",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 731
+          },
+          {
+            "function": "submitDecision",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 799
+          }
+        ],
+        "sampleMs": 7.584
+      },
+      {
+        "callers": [
+          {
+            "function": "incomeTailPrefix",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 977
+          },
+          {
+            "function": "computeIncomeTailPreview",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 986
+          },
+          {
+            "function": "incomeTailEndpoint",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 382
+          }
+        ],
+        "sampleMs": 7.457
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietDeepSpaceSwap",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 729
+          },
+          {
+            "function": "previewQuietCompany",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 822
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 7.417
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietAlienDisplay",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1850
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandWithCardPick",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2842
+          }
+        ],
+        "sampleMs": 7.209
+      },
+      {
+        "callers": [
+          {
+            "function": "incomeTailPrefix",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 977
+          },
+          {
+            "function": "computeIncomeTailPreview",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 986
+          },
+          {
+            "function": "previewIncomeTail",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 985
+          }
+        ],
+        "sampleMs": 6.042
+      },
+      {
+        "callers": [
+          {
+            "function": "sanitizePublicPlayer",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+            "line": 71
+          },
+          {
+            "function": "buildRuleObservation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+            "line": 126
+          },
+          {
+            "function": "projectCounterfactualState",
+            "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+            "line": 12
+          }
+        ],
+        "sampleMs": 6.041
+      },
+      {
+        "callers": [
+          {
+            "function": "sanitizeSelfPlayer",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+            "line": 131
+          },
+          {
+            "function": "buildRuleObservation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+            "line": 126
+          },
+          {
+            "function": "projectCounterfactualState",
+            "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+            "line": 12
+          }
+        ],
+        "sampleMs": 4.792
+      }
+    ],
+    "copy": [
+      {
+        "callers": [
+          {
+            "function": "restoreCheckpoint",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 916
+          },
+          {
+            "function": "restore",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 915
+          },
+          {
+            "function": "restoreEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 551
+          }
+        ],
+        "sampleMs": 48.378
+      },
+      {
+        "callers": [
+          {
+            "function": "beginWorkingCopy",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+            "line": 378
+          },
+          {
+            "function": "dispatchStandardAction",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+            "line": 488
+          },
+          {
+            "function": "submitAction",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+            "line": 702
+          }
+        ],
+        "sampleMs": 16.46
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietSpecifiedScan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1312
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandResourcePlan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4567
+          }
+        ],
+        "sampleMs": 15.124
+      },
+      {
+        "callers": [
+          {
+            "function": "previewKnownPositiveTaskSettlement",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1761
+          },
+          {
+            "function": "previewFinalPositiveTaskClaim",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1754
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 14.916
+      },
+      {
+        "callers": [
+          {
+            "function": "previewFixedResearchSelection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1742
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandResourcePlan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4567
+          }
+        ],
+        "sampleMs": 13.374
+      },
+      {
+        "callers": [
+          {
+            "function": "previewPlainPinkTrace",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 1834
+          },
+          {
+            "function": "previewPinkTraceCardMenu",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 2729
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 12.751
+      },
+      {
+        "callers": [
+          {
+            "function": "previewPlainPinkTrace",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 1834
+          },
+          {
+            "function": "previewLastPlainPinkTrace",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 1864
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 10.584
+      },
+      {
+        "callers": [
+          {
+            "function": "previewKnownPositiveTaskSettlement",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1761
+          },
+          {
+            "function": "previewFinalPositiveEndTask",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1772
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 10.541
+      },
+      {
+        "callers": [
+          {
+            "function": "previewPlainPinkTrace",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 1834
+          },
+          {
+            "function": "previewPinkTraceBeforeRefill",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 1906
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 7.584
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietFinalDataPlacement",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 994
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandResourcePlan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4567
+          }
+        ],
+        "sampleMs": 4.542
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietEndHandoffs",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 2269
+          },
+          {
+            "function": "previewFinalEndPrelude",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1902
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 3.042
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietEndHandoffs",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+            "line": 2269
+          },
+          {
+            "function": "previewFinalEndPrelude",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+            "line": 1902
+          },
+          {
+            "function": "redundantQuietFinalClaim",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 7748
+          }
+        ],
+        "sampleMs": 1.459
+      }
+    ],
+    "immutableCapitalInput": [
+      {
+        "callers": [
+          {
+            "function": "inertReservationAnswers",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 6522
+          },
+          {
+            "function": "hasPostMainInertReservations",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 6568
+          },
+          {
+            "function": "describePostMainPlan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 8689
+          }
+        ],
+        "sampleMs": 43.502
+      },
+      {
+        "callers": [
+          {
+            "function": "inertReservationAnswers",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 6522
+          },
+          {
+            "function": "hasTradeInertReservations",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 6528
+          },
+          {
+            "function": "resourceSpec",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4072
+          }
+        ],
+        "sampleMs": 35.958
+      },
+      {
+        "callers": [
+          {
+            "function": "incomeTailEndpoint",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 382
+          },
+          {
+            "function": "computerIncomeValue",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 375
+          },
+          {
+            "function": "catalog",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 551
+          }
+        ],
+        "sampleMs": 23.917
+      },
+      {
+        "callers": [
+          {
+            "function": "incomeValueWithCapital",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 427
+          },
+          {
+            "function": "incomeChoice",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 952
+          },
+          {
+            "function": "fixedDataChoice",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 1023
+          }
+        ],
+        "sampleMs": 1.5
+      },
+      {
+        "callers": [
+          {
+            "function": "incomeTailEndpoint",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 382
+          },
+          {
+            "function": "quoteIncomeTail",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 398
+          },
+          {
+            "function": "incomeTailWithPreview",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+            "line": 406
+          }
+        ],
+        "sampleMs": 1.5
+      }
+    ],
+    "freeze": [
+      {
+        "callers": [
+          {
+            "function": "provedCommittedEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1930
+          },
+          {
+            "function": "finishProvedCommittedState",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2165
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 16.457
+      },
+      {
+        "callers": [
+          {
+            "function": "prepareDecisionContinuation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1792
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandWithCardPick",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2842
+          }
+        ],
+        "sampleMs": 8.917
+      },
+      {
+        "callers": [
+          {
+            "function": "ownLegalActions",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 590
+          },
+          {
+            "function": "createNode",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 596
+          },
+          {
+            "function": "finishChild",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 5982
+          }
+        ],
+        "sampleMs": 8.166
+      },
+      {
+        "callers": [
+          {
+            "function": "provedCommittedEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1930
+          },
+          {
+            "function": "finishProvedTurnBoundary",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2171
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 7.417
+      },
+      {
+        "callers": [
+          {
+            "function": "previewQuietSpecifiedScan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1312
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "expandResourcePlan",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 4567
+          }
+        ],
+        "sampleMs": 7.374
+      },
+      {
+        "callers": [
+          {
+            "function": "observeEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 566
+          },
+          {
+            "function": "valueObservation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 10748
+          },
+          {
+            "function": "observationForValue",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+            "line": 46
+          }
+        ],
+        "sampleMs": 6.082
+      },
+      {
+        "callers": [
+          {
+            "function": "planningState",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2556
+          },
+          {
+            "function": "readPlanningState",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2591
+          },
+          {
+            "function": "describeCardPick",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2744
+          }
+        ],
+        "sampleMs": 5.957
+      },
+      {
+        "callers": [
+          {
+            "function": "provedCommittedEnvelope",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1930
+          },
+          {
+            "function": "prepareQuietPublicRefill",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2059
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 5.916
+      },
+      {
+        "callers": [
+          {
+            "function": "prepareDecisionContinuation",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1792
+          },
+          {
+            "function": "previewFixedResearchSelection",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1742
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          }
+        ],
+        "sampleMs": 3.0
+      },
+      {
+        "callers": [
+          {
+            "function": "readPlanningState",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2591
+          },
+          {
+            "function": "describeCardPick",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2744
+          },
+          {
+            "function": "createNode",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 596
+          }
+        ],
+        "sampleMs": 3.0
+      },
+      {
+        "callers": [
+          {
+            "function": "makeQuietEndPrelude",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 1080
+          },
+          {
+            "function": "expand",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 2181
+          },
+          {
+            "function": "redundantQuietFinalClaim",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 7748
+          }
+        ],
+        "sampleMs": 2.958
+      },
+      {
+        "callers": [
+          {
+            "function": "goalMovementSpec",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 5020
+          },
+          {
+            "function": "stableFinalClaimPolicy",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 7668
+          },
+          {
+            "function": "redundantQuietFinalClaim",
+            "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+            "line": 7748
+          }
+        ],
+        "sampleMs": 2.958
+      }
+    ]
+  }
+}

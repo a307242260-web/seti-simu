@@ -1,0 +1,7 @@
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+generic card orbit: Production printed rewards, grantRewards=false and following effects pass
+card play domain production composition tests passed
+SUMMARY unit passed=2 failed=0 total=2 time=1.65s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1

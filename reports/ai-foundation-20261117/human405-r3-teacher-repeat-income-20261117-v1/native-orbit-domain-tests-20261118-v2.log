@@ -1,0 +1,33 @@
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+false !== true
+
+    at runCardOrbitGrantsStandardPlanetRewards (/private/tmp/seti-native-orbit-fix-20261118-fzeg6yhb/randomizer/game/cards/play-domain.test.js:1059:12)
+    at Object.<anonymous> (/private/tmp/seti-native-orbit-fix-20261118-fzeg6yhb/randomizer/game/cards/play-domain.test.js:1477:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=1 failed=1 total=2 time=0.51s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
+FAIL randomizer/game/cards/play-domain.test.js status=1 signal=none

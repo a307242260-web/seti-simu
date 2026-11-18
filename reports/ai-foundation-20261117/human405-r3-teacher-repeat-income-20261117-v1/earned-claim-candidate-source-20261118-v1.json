@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-18",
+  "base": "ecb735cf7ba5f285f9d0e87842772871c4eab29e",
+  "candidate": "v489/movementv8/valuev71",
+  "promoted": false,
+  "paths": {
+    "randomizer/game/ai/analysis-port.js": "b2b24216d2b6b67965d30fbda2d9ba308b973872c0a2d4aee3805ce8168e362a",
+    "randomizer/game/ai/decision-search.js": "5d394ad90660b88fbaf43fa8ffa545dbac9323f91429dd549da5f0e497c22f0b",
+    "randomizer/game/ai/goal-movement.js": "ddf1d7eec4f2ca1eb98595d7f829945943f557eaa06d43025acf2343a2343e55",
+    "randomizer/game/ai/free-scan-funded-prefix.test.js": "37a1b8e4a03b13833b9d9c9a6f3d517051b926f16a9603ddb290b15524b58acc",
+    "randomizer/game/effects/residual-domain-session.js": "68494058e18cf441b0ff9445cf394f239a8fe5705509d2c279d728429270f364",
+    "randomizer/game/ai/quiet-company-swap.test.js": "1ea6a932c8b74ab2c20782cdb086b953fa3c269f8d14419f171538ca73ff83a8",
+    "tools/node-test-inventory.js": "3c9716abce7e9fd7345239dbdc5868b73a67f2f004e3c9cf9bd3afb3bb811e13",
+    "tools/browser-smoke-inventory.js": "9d509f62c72510a29ac1116d4e5542a2378cc4d77ec8fc22ff96245a37cf3ac1",
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "5b1534ff8dfeda22e3b46abd868a15a893624abc073319dacc49fd0ecd0eac03",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "f4b45035b04fd6d39f18d6538817b0a190e7ad9b7d0dfeb4869118716e0d0d64",
+    "randomizer/game/ai/earned-pickup-task.test.js": "8e84f6cc0d5f012f2c8ed378d990aa26e5421cd188e13ba4853d995535e8c851",
+    "randomizer/game/ai/fixtures/earned-pickup-task-20261118-v1.json.gz": "fa6a89dfa89a422747dda32634b1e1a297e986c0ee115f0b77d618986f069470",
+    "tools/audit_v_state_inputs.js": "e475bf585d5fabf84765385920d20b2c870fc85fb81cd4c9419ce05b64217038"
+  },
+  "fixtures": {
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "candidate-free-scan-one-step-20261118-v1.json.gz",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "candidate-quiet-company-swap-20261118-v1.json.gz",
+    "randomizer/game/ai/fixtures/earned-pickup-task-20261118-v1.json.gz": "candidate-earned-pickup-task-20261118-v1.json.gz"
+  },
+  "patch": "candidate-earned-claim-20261118-v1.patch",
+  "restore": "Restore base commit, git apply --unidiff-zero <patch>, then copy each fixture artifact to its mapped destination; verify every SHA256. No runtime is promoted by this archive.",
+  "patchSha256": "97c8a695b5a557e2b4eedb3859576c1e016b25da2b1ce70c47b8c9319d8beba8"
+}

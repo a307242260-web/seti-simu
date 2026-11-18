@@ -1,0 +1,16 @@
+/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/known-old-cargo-all-identities-20261118-v1.cjs:3
+const D=__dirname,out=path.join(D,"known-old-cargo-all-identities-20261118-v1.json.gz"),prior=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(D,"known-old-cargo-after-pickup-20261118-v1.json.gz")))));assert(!fs.existsSync(out));
+                                                                                                                                                                                                        ^
+
+SyntaxError: Unexpected token ')'
+    at wrapSafe (node:internal/modules/cjs/loader:1638:18)
+    at Module._compile (node:internal/modules/cjs/loader:1680:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0

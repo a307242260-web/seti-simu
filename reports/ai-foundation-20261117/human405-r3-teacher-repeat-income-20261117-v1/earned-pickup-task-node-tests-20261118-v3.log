@@ -1,0 +1,4 @@
+earned pickup task:6 hidden identities, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+SUMMARY unit passed=1 failed=0 total=1 time=1.16s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

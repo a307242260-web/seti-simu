@@ -1,0 +1,9 @@
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+generic card orbit: Production printed rewards, grantRewards=false and following effects pass
+SUMMARY unit passed=3 failed=0 total=3 time=2.05s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER policy/decision-search tests=1
+OWNER rules/card-play tests=1

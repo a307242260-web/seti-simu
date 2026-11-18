@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {
+      "candidate": "v489/movementv8/valuev71",
+      "root": "/private/tmp/seti-earned-claim-sealed-20261118-06m8a11g",
+      "base": "ecb735cf7ba5f285f9d0e87842772871c4eab29e",
+      "patchApplied": true,
+      "sourceHashesExact": true,
+      "javascriptSyntaxPassed": true,
+      "files": 13
+    },
+    {
+      "candidate": "v490/movementv8/valuev71",
+      "root": "/private/tmp/seti-native-orbit-sealed-20261118-h6ny2eku",
+      "base": "ecb735cf7ba5f285f9d0e87842772871c4eab29e",
+      "patchApplied": true,
+      "sourceHashesExact": true,
+      "javascriptSyntaxPassed": true,
+      "files": 17
+    }
+  ],
+  "runtimePromoted": false
+}

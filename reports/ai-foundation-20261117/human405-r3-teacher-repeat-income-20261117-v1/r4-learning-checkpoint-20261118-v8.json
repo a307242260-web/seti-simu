@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v8",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v7.json",
+  "publishedParent": "ecb735cf7ba5f285f9d0e87842772871c4eab29e",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v490/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Third-round teaching alignment continues into fourth-round same-root action and asset comparisons; budget and reproducibility remain required.",
+  "previousGoalTurnClassification": "no progress: user status report only; revalidated logs and disk without changing policy or producing a new control",
+  "thisGoalTurnClassification": "progress: verified7 Browser cases on Native orbit repair, established new481-input critical-root budget failure, proved42-input six-identity profitable known cargo route and measured exact current candidate omission; sealed v488/v489/v490 source bundles and independently replayed60 Native control inputs",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "native-and-cargo-findings-20261118-v1.json",
+  "currentCriticalGate": {
+    "label": "teacher-input-289",
+    "native": 481,
+    "milliseconds": 2177.7502499999996,
+    "value": 230,
+    "actionId": "land:d5ee03a2",
+    "complete": true,
+    "passed": false,
+    "rootAndRngPreserved": true
+  },
+  "olderCandidateGates": [
+    {
+      "label": "teacher-input-272",
+      "native": 143,
+      "ms": 634.6214170000021,
+      "complete": true
+    },
+    {
+      "label": "teacher-input-289",
+      "native": 463,
+      "ms": 2059.910291,
+      "complete": true
+    }
+  ],
+  "next": [
+    "Implement one known, funded cargo purpose with a deterministic legal shortest route and exact task binding, rather than expanding bare movement directions or blindly relaxing one-job guards.",
+    "Verify actual fresh-root selection and execution through both moves and the selected known cargo claim, including cold restoration and a second independent transport.",
+    "Only then price a conservative known-cargo floor before the hidden pickup, without selecting or valuing the new fossil.",
+    "Recheck affected single decisions against256 Native/600ms. Do not start an autonomous game or20-board run before admission.",
+    "After passing affected roots, preserve first-three-round regressions and source isolation before promoting runtime; goal remains active."
+  ]
+}

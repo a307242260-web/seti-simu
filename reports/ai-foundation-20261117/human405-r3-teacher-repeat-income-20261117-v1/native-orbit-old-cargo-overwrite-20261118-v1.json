@@ -1,0 +1,68 @@
+{
+  "kind": "One Native input on old rules proves loss of existing cargo linkage; not an AI game",
+  "sourcePlayDomainSha256": "7d77ed3c57bb308a528a5accbc5dfe76e30327fa7e9efedd515eff4aa1bc5a76",
+  "sourceContext": "excluded-pickup-native-context-20261118-v1.json.gz:last row after",
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_target",
+    "phase": "conditional",
+    "actionId": "choose_target:e56c714f",
+    "actorId": "player-white",
+    "stateVersion": 118,
+    "decisionVersion": 1,
+    "target": {
+      "choiceId": "chong-fossil:fossil_06",
+      "fossilId": "fossil_06",
+      "planetId": "saturn"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "fossil_06：2能量"
+  },
+  "beforeJobs": {
+    "5": {
+      "cardId": "alien-chong-3-10",
+      "cardLabel": null,
+      "destinationPlanetId": "earth",
+      "fossilId": "fossil_07"
+    }
+  },
+  "afterJobs": {
+    "5": {
+      "cardId": "alien-chong-6-16",
+      "cardLabel": null,
+      "destinationPlanetId": "earth",
+      "fossilId": "fossil_06"
+    }
+  },
+  "existingCargoStillOnBoard": [
+    {
+      "angleDegrees": 67.5,
+      "cargo": null,
+      "color": "white",
+      "fossilId": "fossil_07",
+      "id": 6,
+      "kind": "chong-fossil",
+      "launchGrid": {
+        "x": 3,
+        "y": 3
+      },
+      "launchSectorCoordinate": {
+        "x": 3,
+        "y": 3
+      },
+      "playerId": "player-white",
+      "radius": 227.66,
+      "sectorX": 3,
+      "sectorY": 3,
+      "slotIndex": 4,
+      "surface": "solar-board"
+    }
+  ],
+  "oldCargoNoLongerHasJob": true,
+  "afterEnvelopeSha256": "0dab1266e38f831be2bcb9531b7a84fa7da359d7f5824a87e70650db477ebc1e",
+  "rng": {
+    "algorithm": "seti-simulation-mulberry32-v1",
+    "state": 3171573311
+  }
+}

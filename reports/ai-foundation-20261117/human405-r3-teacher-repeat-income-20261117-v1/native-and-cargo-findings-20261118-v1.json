@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "seti-r4-native-and-known-cargo-findings-v1",
+  "date": "2026-11-18",
+  "productionRuntime": "v485/valuev71",
+  "candidateRuntime": "v490/movementv8/valuev71",
+  "candidatePromoted": false,
+  "formalScoresUnchanged": {
+    "ai": 272,
+    "aiSeconds": 16.1,
+    "teacherCurrentLegalReference": 384,
+    "teacherOriginalHistorical": 405,
+    "newAutonomousGames": 0,
+    "newTwentyBoardRuns": 0
+  },
+  "earnedTaskCandidate": {
+    "version": "v489",
+    "knownCurrentValue": 222,
+    "knownFreeTaskFloor": 230,
+    "gain": 8,
+    "allUnseenIdentities": 6,
+    "hiddenFossilRewardPriced": false,
+    "fixedRoots": 317,
+    "first316StructureActionsValuesAndNativeExact": true,
+    "teacher289OnlyQuotedLeafOrBackpropValuesChanged": {
+      "allGraphStructureAndNonValueMetadataExact": true,
+      "quotedLeaves": 92,
+      "changedValuesWithQuotedLeafWitness": 220,
+      "rootValuesChanged": 2,
+      "allParentMaximaVerified": true
+    },
+    "gates": [
+      {
+        "label": "teacher-input-272",
+        "native": 143,
+        "ms": 634.6214170000021,
+        "complete": true
+      },
+      {
+        "label": "teacher-input-289",
+        "native": 463,
+        "ms": 2059.910291,
+        "complete": true
+      }
+    ],
+    "pairedBaselineNote": "Historical beforeSource commit label in generic result was inherited metadata. Actual before/after SHA256 and v488/v489 archived manifests are authoritative."
+  },
+  "nativeRuleFix": {
+    "version": "v490",
+    "bugs": [
+      "Card-sourced orbit omitted its printed planet rewards",
+      "Chong orbit left lastLanding bound to a prior removed probe; actual pickup overwrote the old transport job and orphaned its fossil"
+    ],
+    "fix": [
+      "Orbit and land both use the Production printed-reward owner; grantRewards=false still preserves following card effects",
+      "Chong orbit records current probe and pre-removal coordinates; generic card orbit keeps landing-only metadata",
+      "Reject missing/invalid source or an already bound transport source with CHONG_PICKUP_SOURCE_STALE; do not claim automatic repair of old pending saves"
+    ],
+    "beforeFailure": "native-orbit-before-fix-20261118-v1.log",
+    "actualOverwriteWitness": "native-orbit-old-cargo-overwrite-20261118-v1.json",
+    "nodeMainPassed": 15,
+    "additionalCargoPolicyPassed": 2,
+    "browserPassed": 7,
+    "valueAuditPassed": 67,
+    "historicalReplay": {
+      "aiInputs": 354,
+      "teacherInputs": 474,
+      "nativeStateSessionAndRngExact": true,
+      "reranAI": false,
+      "note": "Replay log verificationSource is the original archive verification tag, not the new candidate hash; use the archived candidate manifest for exact current runtime."
+    },
+    "criticalRoot": {
+      "label": "teacher-input-289",
+      "native": 481,
+      "milliseconds": 2177.7502499999996,
+      "value": 230,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "passed": false,
+      "rootAndRngPreserved": true
+    }
+  },
+  "knownOldCargoGap": {
+    "classification": "missing funded purpose and executable plan, not just an incorrect weight",
+    "observedAfterPickupSearch": {
+      "actionId": "complete_task:ed0b038f",
+      "family": "complete_task",
+      "value": 230,
+      "native": 1,
+      "milliseconds": 33.194541999999984,
+      "all8CargoDirectionsExcluded": true
+    },
+    "nativeWitness": {
+      "newUnseenFossilIdentities": 6,
+      "totalInputs": 42,
+      "route": "old known F07 cargo6: (3,3) -> (3,2) -> Earth(3,1); 2 currently funded energy",
+      "afterPickupValue": 222,
+      "afterOldCargoClaimValue": 226.5,
+      "afterAlsoB117ClaimValue": 234.5,
+      "oldCargoNetGain": 4.5,
+      "B117Gain": 8,
+      "unknownNewFossilRewardPriced": false,
+      "newTransportPreserved": true,
+      "rngUnchanged": true,
+      "evidence": "known-old-cargo-all-identities-20261118-v1.json.gz"
+    },
+    "codeRestrictionsObserved": [
+      "Standard ordinary-probe route requirements omit fossil carriers",
+      "Existing Earth shipment helpers require exactly1 job; directEnergy helper also rejects completed main actions and all reserved-card triggers",
+      "Current post-pickup root has2 jobs and mainActionCompleted=true"
+    ],
+    "notYetImplemented": "No cargo candidate, boundary floor or execution change has been made. 234.5 is a controlled route value, not an AI score."
+  },
+  "reproducibility": {
+    "sourceManifests": [
+      "cheap-guards-candidate-source-20261118-v1.json",
+      "earned-claim-candidate-source-20261118-v1.json",
+      "native-orbit-candidate-source-20261118-v1.json"
+    ],
+    "sourceRestore": "candidate-source-restore-check-20261118-v1.json",
+    "independentSealedSourceTests": "native-orbit-sealed-source-tests-20261118-v1.log",
+    "independent60NativeInputs": "native-orbit-sealed-cargo-replay-20261118-v2.log",
+    "previousVerifierFailure": "v1 fact comparison retained an undefined wins property absent from JSON. Final v2 still checks full Native envelopes/hashes exactly; only display facts use JSON representation."
+  },
+  "next": [
+    "Implement one known, funded cargo purpose with a deterministic legal shortest route and exact task binding, rather than expanding bare movement directions or blindly relaxing one-job guards.",
+    "Verify actual fresh-root selection and execution through both moves and the selected known cargo claim, including cold restoration and a second independent transport.",
+    "Only then price a conservative known-cargo floor before the hidden pickup, without selecting or valuing the new fossil.",
+    "Recheck affected single decisions against256 Native/600ms. Do not start an autonomous game or20-board run before admission.",
+    "After passing affected roots, preserve first-three-round regressions and source isolation before promoting runtime; goal remains active."
+  ]
+}

@@ -1,0 +1,23 @@
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+/private/tmp/seti-native-orbit-fix-20261118-fzeg6yhb/randomizer/game/cards/chong-orbit-pickup.test.js:42
+  if(!grantRewards){const checkpoint=saved();checkpoint.session.session.queue[0].payload.cardEffect.options.grantRewards=false;assert(comp.lifecycle.restore(checkpoint).ok);}
+                                                                                                                        ^
+
+TypeError: Cannot assign to read only property 'grantRewards' of object '#<Object>'
+    at Object.<anonymous> (/private/tmp/seti-native-orbit-fix-20261118-fzeg6yhb/randomizer/game/cards/chong-orbit-pickup.test.js:42:121)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0
+card play domain production composition tests passed
+SUMMARY unit passed=1 failed=1 total=2 time=1.62s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
+FAIL randomizer/game/cards/chong-orbit-pickup.test.js status=1 signal=none

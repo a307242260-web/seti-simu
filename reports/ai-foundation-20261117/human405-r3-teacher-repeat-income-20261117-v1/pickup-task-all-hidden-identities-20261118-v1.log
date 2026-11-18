@@ -1,0 +1,1071 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
++   committedState: '{"aliens":{"aliens":{"1":{"alienId":"阿米巴","assignedAlienId":"阿米巴","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},"2":{"alienId":"虫","assignedAlienId":"虫","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}},"amiba":{"cardDeck":[5,2,8,4,6],"displayedCardIndex":9,"initialConfiguration":{"cardDeck":[9,0,1,3,7,5,2,8,4,6],"symbolOrder":["symbol_4","symbol_2","symbol_1","symbol_5","symbol_3"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":1,"symbolSlots":{"orange_1":"symbol_4","orange_2":"symbol_2","orange_3":"symbol_1","red_1":"symbol_5","red_2":"symbol_3"},"symbolsById":{"symbol_1":{"sequence":3,"slotId":"orange_3","symbolId":"symbol_1"},"symbol_2":{"sequence":2,"slotId":"orange_2","symbolId":"symbol_2"},"symbol_3":{"sequence":5,"slotId":"red_2","symbolId":"symbol_3"},"symbol_4":{"sequence":1,"slotId":"orange_1","symbolId":"symbol_4"},"symbol_5":{"sequence":4,"slotId":"red_1","symbolId":"symbol_5"}},"traceSlotsByAlienSlotId":{"1":{"blue":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":4,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":null},"yellow":{"1":null,"2":null,"3":null,"4":null}}}},"aomomo":{"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"landingMarkers":[],"orbitMarkers":[],"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"banrenma":{"bonusSlots":{},"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"scoreMarksByPlayerId":{},"traceSlotsByAlienSlotId":{}},"chong":{"cardDeck":[1,5],"completedTransports":[],"displayedCardIndex":9,"fossilsById":{"fossil_01":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_01","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_02":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_02","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_03":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_03","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_04":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_04","location":"panel","planetId":null,"rocketId":null,"status":"panel","taskCardId":null,"visibleToPlayerIds":[]},"fossil_05":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_05","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_06":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_06","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_07":{"carriedByPlayerColor":"white","carriedByPlayerId":"player-white","destinationPlanetId":"earth","fossilId":"fossil_07","fossilRewardRepeat":0,"location":"transported","planetId":"saturn","rocketId":5,"status":"transported","suggestedDestinationPlanetId":"earth","taskCardId":"alien-chong-3-10","taskCardLabel":null,"taskCompleted":false,"taskDataCount":0,"taskGain":{},"taskPickCard":false,"visibleToPlayerIds":[]}},"initialConfiguration":{"cardDeck":[9,0,7,2,3,8,4,6,1,5],"fossilOrder":["fossil_02","fossil_05","fossil_03","fossil_01","fossil_06","fossil_07","fossil_04"]},"panelFossilSlots":{"7":"fossil_04"},"planetFossilIds":{"jupiter":["fossil_02","fossil_05","fossil_03"],"saturn":["fossil_01","fossil_06","fossil_07"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":2,"traceSlotsByAlienSlotId":{"2":{"blue":{"1":null,"2":null,"3":null,"4":null,"5":null,"6":null,"7":null,"8":null,"9":{"playerColor":"white","playerId":"player-white","position":9,"rewardApplied":true,"sequence":15,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":9,"traceType":"pink"}},"yellow":{"1":null,"2":null,"3":{"playerColor":"white","playerId":"player-white","position":3,"rewardApplied":true,"sequence":13,"traceType":"yellow"},"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":11,"traceType":"yellow"}}}},"transportTasksByRocketId":{"5":{"cardId":"alien-chong-3-10","cardLabel":null,"destinationPlanetId":"earth","fossilId":"fossil_07"}},"unlockedBluePositions":[7,8,9]},"fangzhou":{"card1Deck":[0,1,2,3,4,5,6,7,8],"card1Revealed":[],"card1RevealedSinceShuffle":0,"card1ShuffleCount":0,"displayedCard1Index":null,"playerCard2ById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{},"unlockCountByPlayerId":{}},"jiuzhe":{"cardsDealt":false,"freeScoreThreshold":null,"paidScoreThreshold":null,"playerCardsById":{},"playerThreatByColor":{},"playerThreatById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"neutralScoreTraceMarks":{},"revealPoolAlienIds":["九折","半人马","奥陌陌","异常点","方舟","符文族","虫","阿米巴"],"runezu":{"availableSymbols":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"faceSymbolSlots":{},"panelSymbolSlots":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"sourceSymbolSlots":{},"traceSlotsByAlienSlotId":{}},"yichangdian":{"anomalies":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"nextAnomalySectorX":null,"revealEarthX":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}}},"cards":{"discardPile":[{"cardId":"b_75.webp","cardTypeCode":2,"discardActionCode":0,"faceUp":true,"id":"card-8-0","incomeCode":0,"price":2,"scanActionCode":0,"set":"basic"},{"cardId":"b_63.webp","cardTypeCode":3,"discardActionCode":0,"faceUp":true,"id":"card-45-0","incomeCode":0,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"b_11.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-44-0","incomeCode":2,"price":0,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_36.png","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-43-0","incomeCode":2,"price":2,"scanActionCode":3,"set":"space-agency"},{"cardId":"b_114.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-37-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_34.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-46-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"space-agency"},{"cardId":"dlc_38.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-39-0","incomeCode":1,"price":1,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_106.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-4-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_33.png","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-48-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"b_109.webp","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-9-0","incomeCode":1,"price":3,"scanActionCode":2,"set":"basic"},{"cardId":"b_2.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-17-0","incomeCode":2,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_21.png","cardTypeCode":1,"discardActionCode":1,"faceUp":true,"id":"card-19-0","incomeCode":2,"price":0,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_5.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-24-pass-1-5","incomeCode":0,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_37.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-42-0","incomeCode":2,"price":0,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_78.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-26-pass-2-2","incomeCode":2,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_49.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-22-pass-1-3","incomeCode":0,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_71.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-36-0","incomeCode":0,"price":0,"scanActionCode":2,"set":"basic"},{"cardId":"b_53.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-28-pass-2-4","incomeCode":2,"price":1,"scanActionCode":1,"set":"basic"},{"cardId":"b_65.webp","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-11-0","incomeCode":1,"price":3,"scanActionCode":3,"set":"basic"},{"cardId":"b_62.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-54-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"b_10.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-53-0","incomeCode":1'... 32930 more characters,
+-   committedState: '{"aliens":{"aliens":{"1":{"alienId":"阿米巴","assignedAlienId":"阿米巴","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},"2":{"alienId":"虫","assignedAlienId":"虫","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}},"amiba":{"cardDeck":[5,2,8,4,6],"displayedCardIndex":9,"initialConfiguration":{"cardDeck":[9,0,1,3,7,5,2,8,4,6],"symbolOrder":["symbol_4","symbol_2","symbol_1","symbol_5","symbol_3"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":1,"symbolSlots":{"orange_1":"symbol_4","orange_2":"symbol_2","orange_3":"symbol_1","red_1":"symbol_5","red_2":"symbol_3"},"symbolsById":{"symbol_1":{"sequence":3,"slotId":"orange_3","symbolId":"symbol_1"},"symbol_2":{"sequence":2,"slotId":"orange_2","symbolId":"symbol_2"},"symbol_3":{"sequence":5,"slotId":"red_2","symbolId":"symbol_3"},"symbol_4":{"sequence":1,"slotId":"orange_1","symbolId":"symbol_4"},"symbol_5":{"sequence":4,"slotId":"red_1","symbolId":"symbol_5"}},"traceSlotsByAlienSlotId":{"1":{"blue":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":4,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":null},"yellow":{"1":null,"2":null,"3":null,"4":null}}}},"aomomo":{"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"landingMarkers":[],"orbitMarkers":[],"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"banrenma":{"bonusSlots":{},"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"scoreMarksByPlayerId":{},"traceSlotsByAlienSlotId":{}},"chong":{"cardDeck":[1,5],"completedTransports":[],"displayedCardIndex":9,"fossilsById":{"fossil_06":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_06","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_02":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_02","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_03":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_03","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_04":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_04","location":"panel","planetId":null,"rocketId":null,"status":"panel","taskCardId":null,"visibleToPlayerIds":[]},"fossil_05":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_05","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_01":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_01","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_07":{"carriedByPlayerColor":"white","carriedByPlayerId":"player-white","destinationPlanetId":"earth","fossilId":"fossil_07","fossilRewardRepeat":0,"location":"transported","planetId":"saturn","rocketId":5,"status":"transported","suggestedDestinationPlanetId":"earth","taskCardId":"alien-chong-3-10","taskCardLabel":null,"taskCompleted":false,"taskDataCount":0,"taskGain":{},"taskPickCard":false,"visibleToPlayerIds":[]}},"initialConfiguration":{"cardDeck":[9,0,7,2,3,8,4,6,1,5],"fossilOrder":["fossil_02","fossil_05","fossil_03","fossil_01","fossil_06","fossil_07","fossil_04"]},"panelFossilSlots":{"7":"fossil_04"},"planetFossilIds":{"jupiter":["fossil_02","fossil_05","fossil_03"],"saturn":["fossil_01","fossil_06","fossil_07"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":2,"traceSlotsByAlienSlotId":{"2":{"blue":{"1":null,"2":null,"3":null,"4":null,"5":null,"6":null,"7":null,"8":null,"9":{"playerColor":"white","playerId":"player-white","position":9,"rewardApplied":true,"sequence":15,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":9,"traceType":"pink"}},"yellow":{"1":null,"2":null,"3":{"playerColor":"white","playerId":"player-white","position":3,"rewardApplied":true,"sequence":13,"traceType":"yellow"},"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":11,"traceType":"yellow"}}}},"transportTasksByRocketId":{"5":{"cardId":"alien-chong-3-10","cardLabel":null,"destinationPlanetId":"earth","fossilId":"fossil_07"}},"unlockedBluePositions":[7,8,9]},"fangzhou":{"card1Deck":[0,1,2,3,4,5,6,7,8],"card1Revealed":[],"card1RevealedSinceShuffle":0,"card1ShuffleCount":0,"displayedCard1Index":null,"playerCard2ById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{},"unlockCountByPlayerId":{}},"jiuzhe":{"cardsDealt":false,"freeScoreThreshold":null,"paidScoreThreshold":null,"playerCardsById":{},"playerThreatByColor":{},"playerThreatById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"neutralScoreTraceMarks":{},"revealPoolAlienIds":["九折","半人马","奥陌陌","异常点","方舟","符文族","虫","阿米巴"],"runezu":{"availableSymbols":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"faceSymbolSlots":{},"panelSymbolSlots":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"sourceSymbolSlots":{},"traceSlotsByAlienSlotId":{}},"yichangdian":{"anomalies":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"nextAnomalySectorX":null,"revealEarthX":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}}},"cards":{"discardPile":[{"cardId":"b_75.webp","cardTypeCode":2,"discardActionCode":0,"faceUp":true,"id":"card-8-0","incomeCode":0,"price":2,"scanActionCode":0,"set":"basic"},{"cardId":"b_63.webp","cardTypeCode":3,"discardActionCode":0,"faceUp":true,"id":"card-45-0","incomeCode":0,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"b_11.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-44-0","incomeCode":2,"price":0,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_36.png","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-43-0","incomeCode":2,"price":2,"scanActionCode":3,"set":"space-agency"},{"cardId":"b_114.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-37-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_34.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-46-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"space-agency"},{"cardId":"dlc_38.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-39-0","incomeCode":1,"price":1,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_106.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-4-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_33.png","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-48-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"b_109.webp","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-9-0","incomeCode":1,"price":3,"scanActionCode":2,"set":"basic"},{"cardId":"b_2.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-17-0","incomeCode":2,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_21.png","cardTypeCode":1,"discardActionCode":1,"faceUp":true,"id":"card-19-0","incomeCode":2,"price":0,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_5.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-24-pass-1-5","incomeCode":0,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_37.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-42-0","incomeCode":2,"price":0,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_78.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-26-pass-2-2","incomeCode":2,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_49.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-22-pass-1-3","incomeCode":0,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_71.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-36-0","incomeCode":0,"price":0,"scanActionCode":2,"set":"basic"},{"cardId":"b_53.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-28-pass-2-4","incomeCode":2,"price":1,"scanActionCode":1,"set":"basic"},{"cardId":"b_65.webp","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-11-0","incomeCode":1,"price":3,"scanActionCode":3,"set":"basic"},{"cardId":"b_62.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-54-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"b_10.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-53-0","incomeCode":1'... 32930 more characters,
+    schemaVersion: 'seti-rule-composition-save-v1',
+    session: {
+      replayCursor: 8,
+      schemaVersion: 'seti-effect-session-checkpoint-v1',
+      session: {
+
+    at restore (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-root-harness-20261118-v1.cjs:27:110)
+    at open (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-root-harness-20261118-v1.cjs:69:2)
+    at Object.<anonymous> (/private/tmp/seti-current-full-z97c_km1/prove-pickup-task-floor-20261118-v1.cjs:10:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: {
+    schemaVersion: 'seti-rule-composition-save-v1',
+    committedState: '{"aliens":{"aliens":{"1":{"alienId":"阿米巴","assignedAlienId":"阿米巴","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},"2":{"alienId":"虫","assignedAlienId":"虫","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}},"amiba":{"cardDeck":[5,2,8,4,6],"displayedCardIndex":9,"initialConfiguration":{"cardDeck":[9,0,1,3,7,5,2,8,4,6],"symbolOrder":["symbol_4","symbol_2","symbol_1","symbol_5","symbol_3"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":1,"symbolSlots":{"orange_1":"symbol_4","orange_2":"symbol_2","orange_3":"symbol_1","red_1":"symbol_5","red_2":"symbol_3"},"symbolsById":{"symbol_1":{"sequence":3,"slotId":"orange_3","symbolId":"symbol_1"},"symbol_2":{"sequence":2,"slotId":"orange_2","symbolId":"symbol_2"},"symbol_3":{"sequence":5,"slotId":"red_2","symbolId":"symbol_3"},"symbol_4":{"sequence":1,"slotId":"orange_1","symbolId":"symbol_4"},"symbol_5":{"sequence":4,"slotId":"red_1","symbolId":"symbol_5"}},"traceSlotsByAlienSlotId":{"1":{"blue":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":4,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":null},"yellow":{"1":null,"2":null,"3":null,"4":null}}}},"aomomo":{"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"landingMarkers":[],"orbitMarkers":[],"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"banrenma":{"bonusSlots":{},"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"scoreMarksByPlayerId":{},"traceSlotsByAlienSlotId":{}},"chong":{"cardDeck":[1,5],"completedTransports":[],"displayedCardIndex":9,"fossilsById":{"fossil_01":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_01","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_02":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_02","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_03":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_03","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_04":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_04","location":"panel","planetId":null,"rocketId":null,"status":"panel","taskCardId":null,"visibleToPlayerIds":[]},"fossil_05":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_05","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_06":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_06","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_07":{"carriedByPlayerColor":"white","carriedByPlayerId":"player-white","destinationPlanetId":"earth","fossilId":"fossil_07","fossilRewardRepeat":0,"location":"transported","planetId":"saturn","rocketId":5,"status":"transported","suggestedDestinationPlanetId":"earth","taskCardId":"alien-chong-3-10","taskCardLabel":null,"taskCompleted":false,"taskDataCount":0,"taskGain":{},"taskPickCard":false,"visibleToPlayerIds":[]}},"initialConfiguration":{"cardDeck":[9,0,7,2,3,8,4,6,1,5],"fossilOrder":["fossil_02","fossil_05","fossil_03","fossil_01","fossil_06","fossil_07","fossil_04"]},"panelFossilSlots":{"7":"fossil_04"},"planetFossilIds":{"jupiter":["fossil_02","fossil_05","fossil_03"],"saturn":["fossil_01","fossil_06","fossil_07"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":2,"traceSlotsByAlienSlotId":{"2":{"blue":{"1":null,"2":null,"3":null,"4":null,"5":null,"6":null,"7":null,"8":null,"9":{"playerColor":"white","playerId":"player-white","position":9,"rewardApplied":true,"sequence":15,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":9,"traceType":"pink"}},"yellow":{"1":null,"2":null,"3":{"playerColor":"white","playerId":"player-white","position":3,"rewardApplied":true,"sequence":13,"traceType":"yellow"},"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":11,"traceType":"yellow"}}}},"transportTasksByRocketId":{"5":{"cardId":"alien-chong-3-10","cardLabel":null,"destinationPlanetId":"earth","fossilId":"fossil_07"}},"unlockedBluePositions":[7,8,9]},"fangzhou":{"card1Deck":[0,1,2,3,4,5,6,7,8],"card1Revealed":[],"card1RevealedSinceShuffle":0,"card1ShuffleCount":0,"displayedCard1Index":null,"playerCard2ById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{},"unlockCountByPlayerId":{}},"jiuzhe":{"cardsDealt":false,"freeScoreThreshold":null,"paidScoreThreshold":null,"playerCardsById":{},"playerThreatByColor":{},"playerThreatById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"neutralScoreTraceMarks":{},"revealPoolAlienIds":["九折","半人马","奥陌陌","异常点","方舟","符文族","虫","阿米巴"],"runezu":{"availableSymbols":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"faceSymbolSlots":{},"panelSymbolSlots":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"sourceSymbolSlots":{},"traceSlotsByAlienSlotId":{}},"yichangdian":{"anomalies":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"nextAnomalySectorX":null,"revealEarthX":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}}},"cards":{"discardPile":[{"cardId":"b_75.webp","cardTypeCode":2,"discardActionCode":0,"faceUp":true,"id":"card-8-0","incomeCode":0,"price":2,"scanActionCode":0,"set":"basic"},{"cardId":"b_63.webp","cardTypeCode":3,"discardActionCode":0,"faceUp":true,"id":"card-45-0","incomeCode":0,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"b_11.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-44-0","incomeCode":2,"price":0,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_36.png","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-43-0","incomeCode":2,"price":2,"scanActionCode":3,"set":"space-agency"},{"cardId":"b_114.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-37-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_34.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-46-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"space-agency"},{"cardId":"dlc_38.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-39-0","incomeCode":1,"price":1,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_106.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-4-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_33.png","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-48-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"b_109.webp","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-9-0","incomeCode":1,"price":3,"scanActionCode":2,"set":"basic"},{"cardId":"b_2.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-17-0","incomeCode":2,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_21.png","cardTypeCode":1,"discardActionCode":1,"faceUp":true,"id":"card-19-0","incomeCode":2,"price":0,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_5.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-24-pass-1-5","incomeCode":0,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_37.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-42-0","incomeCode":2,"price":0,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_78.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-26-pass-2-2","incomeCode":2,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_49.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-22-pass-1-3","incomeCode":0,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_71.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-36-0","incomeCode":0,"price":0,"scanActionCode":2,"set":"basic"},{"cardId":"b_53.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-28-pass-2-4","incomeCode":2,"price":1,"scanActionCode":1,"set":"basic"},{"cardId":"b_65.webp","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-11-0","incomeCode":1,"price":3,"scanActionCode":3,"set":"basic"},{"cardId":"b_62.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-54-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"b_10.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-53-0","incomeCode":1'... 32930 more characters,
+    session: {
+      schemaVersion: 'seti-effect-session-checkpoint-v1',
+      replayCursor: 8,
+      session: {
+        schemaVersion: 'seti-effect-session-v1',
+        sessionId: 'effect-session-1',
+        phase: 'awaiting_input',
+        baseVersion: 118,
+        baseState: {
+          aliens: {
+            aliens: [Object],
+            amiba: [Object],
+            aomomo: [Object],
+            banrenma: [Object],
+            chong: [Object],
+            fangzhou: [Object],
+            jiuzhe: [Object],
+            neutralScoreTraceMarks: {},
+            revealPoolAlienIds: [Array],
+            runezu: [Object],
+            yichangdian: [Object]
+          },
+          cards: {
+            discardPile: [Array],
+            drawPileCardIds: [Array],
+            passReservePiles: [Object],
+            publicCards: [Array],
+            removedFromGameCardIds: [Array]
+          },
+          data: {
+            nebulae: [Object],
+            sectorExtraMarks: [Object],
+            sectorSettlements: [Object]
+          },
+          finalScoring: {
+            thresholds: [Array],
+            tileVariants: [Object],
+            tiles: [Object]
+          },
+          match: { cardPlayContext: [Object], decisionVersion: 1 },
+          meta: {
+            gameId: 'seti-simulation-runtime',
+            rngState: [Object],
+            rulesetVersion: 'seti-runtime-v1.3',
+            schemaVersion: 'seti-committed-game-state-v1',
+            seed: 'seti-free-analyze-v1',
+            sequences: [Object],
+            stateVersion: 118,
+            worldVersion: 'human-405-world-v1'
+          },
+          pieces: {
+            activeRocketId: 7,
+            playerRocketSequences: [Object],
+            rockets: [Array]
+          },
+          planets: { planets: [Object] },
+          players: { players: [Array] },
+          solarSystem: {
+            aomomoActive: false,
+            rotation: [Object],
+            sectorBySlot: [Object]
+          },
+          tech: { stacks: [Object] },
+          turn: {
+            actionCycleNumber: 6,
+            activePlayerCount: 4,
+            activePlayerIds: [Array],
+            cardTurnEventBonuses: [],
+            completedTurnPlayerIds: [],
+            currentPlayerId: 'player-white',
+            gameEndReason: null,
+            gameEnded: false,
+            passedPlayerIds: [Array],
+            roundNumber: 4,
+            startPlayerId: 'player-brown',
+            turnNumber: 9,
+            turnOrderPlayerIds: [Array],
+            visitedPlanetsByPlayerId: {}
+          }
+        },
+        workingState: {
+          aliens: {
+            aliens: [Object],
+            amiba: [Object],
+            aomomo: [Object],
+            banrenma: [Object],
+            chong: [Object],
+            fangzhou: [Object],
+            jiuzhe: [Object],
+            neutralScoreTraceMarks: {},
+            revealPoolAlienIds: [Array],
+            runezu: [Object],
+            yichangdian: [Object]
+          },
+          cards: {
+            discardPile: [Array],
+            drawPileCardIds: [Array],
+            passReservePiles: [Object],
+            publicCards: [Array],
+            removedFromGameCardIds: [Array]
+          },
+          data: {
+            nebulae: [Object],
+            sectorExtraMarks: [Object],
+            sectorSettlements: [Object]
+          },
+          finalScoring: {
+            thresholds: [Array],
+            tileVariants: [Object],
+            tiles: [Object]
+          },
+          match: { cardPlayContext: [Object], decisionVersion: 1 },
+          meta: {
+            gameId: 'seti-simulation-runtime',
+            rngState: [Object],
+            rulesetVersion: 'seti-runtime-v1.3',
+            schemaVersion: 'seti-committed-game-state-v1',
+            seed: 'seti-free-analyze-v1',
+            sequences: [Object],
+            stateVersion: 118,
+            worldVersion: 'human-405-world-v1'
+          },
+          pieces: {
+            activeRocketId: 6,
+            playerRocketSequences: [Object],
+            rockets: [Array]
+          },
+          planets: { planets: [Object] },
+          players: { players: [Array] },
+          solarSystem: {
+            aomomoActive: false,
+            rotation: [Object],
+            sectorBySlot: [Object]
+          },
+          tech: { stacks: [Object] },
+          turn: {
+            actionCycleNumber: 6,
+            activePlayerCount: 4,
+            activePlayerIds: [Array],
+            cardTurnEventBonuses: [],
+            completedTurnPlayerIds: [],
+            currentPlayerId: 'player-white',
+            gameEndReason: null,
+            gameEnded: false,
+            passedPlayerIds: [Array],
+            roundNumber: 4,
+            startPlayerId: 'player-brown',
+            turnNumber: 9,
+            turnOrderPlayerIds: [Array],
+            visitedPlanetsByPlayerId: {}
+          }
+        },
+        committedState: null,
+        queue: [
+          {
+            schemaVersion: 'seti-effect-session-v1',
+            effectId: 'effect-session-1:effect:25',
+            groupId: 'effect-session-1:group:25',
+            groupKind: 'spawned',
+            type: 'card_play_domain_effect:decision:chong_pickup_fossil',
+            kind: 'decision',
+            ownerId: 'player-white',
+            decisionKind: 'choose_target',
+            allowQuickActions: false,
+            payload: [Object],
+            source: [Object],
+            groupIndex: 0
+          }
+        ],
+        journal: {
+          actions: [ [Object] ],
+          decisions: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          effects: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object]
+          ],
+          events: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object]
+          ],
+          rng: [],
+          history: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ],
+          logs: [],
+          replay: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ]
+        },
+        failure: null,
+        irreversibleBarrier: {
+          effectId: 'effect-session-1:effect:23',
+          revision: 22,
+          code: 'hidden_alien_card',
+          reason: '外星人牌堆已翻开'
+        },
+        revision: 24,
+        nextEffectSequence: 25,
+        nextGroupSequence: 25,
+        interruptContext: null,
+        undoFrames: [
+          {
+            effectId: 'effect-session-1:effect:1',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 0,
+            phaseBefore: 'action_accepted',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 1,
+            nextGroupSequenceBefore: 1
+          },
+          {
+            effectId: 'effect-session-1:effect:2',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 1,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 3,
+            nextGroupSequenceBefore: 3
+          },
+          {
+            effectId: 'effect-session-1:effect:4',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 2,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 4,
+            nextGroupSequenceBefore: 4
+          },
+          {
+            effectId: 'effect-session-1:effect:5',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 3,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 8,
+            nextGroupSequenceBefore: 8
+          },
+          {
+            effectId: 'effect-session-1:effect:6',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 4,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 8,
+            nextGroupSequenceBefore: 8
+          },
+          {
+            effectId: 'effect-session-1:effect:9',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 5,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 10,
+            nextGroupSequenceBefore: 10
+          },
+          {
+            effectId: 'effect-session-1:effect:11',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 6,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 11,
+            nextGroupSequenceBefore: 11
+          },
+          {
+            effectId: 'effect-session-1:effect:10',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 7,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 11,
+            nextGroupSequenceBefore: 11
+          },
+          {
+            effectId: 'effect-session-1:effect:12',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 8,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 12,
+            nextGroupSequenceBefore: 12
+          },
+          {
+            effectId: 'effect-session-1:effect:13',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 9,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 13,
+            nextGroupSequenceBefore: 13
+          },
+          {
+            effectId: 'effect-session-1:effect:7',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 10,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 13,
+            nextGroupSequenceBefore: 13
+          },
+          {
+            effectId: 'effect-session-1:effect:14',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 11,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 15,
+            nextGroupSequenceBefore: 15
+          },
+          {
+            effectId: 'effect-session-1:effect:16',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 12,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 16,
+            nextGroupSequenceBefore: 16
+          },
+          {
+            effectId: 'effect-session-1:effect:15',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 13,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 16,
+            nextGroupSequenceBefore: 16
+          },
+          {
+            effectId: 'effect-session-1:effect:17',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 14,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 17,
+            nextGroupSequenceBefore: 17
+          },
+          {
+            effectId: 'effect-session-1:effect:8',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 15,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 17,
+            nextGroupSequenceBefore: 17
+          },
+          {
+            effectId: 'effect-session-1:effect:18',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 16,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 19,
+            nextGroupSequenceBefore: 19
+          },
+          {
+            effectId: 'effect-session-1:effect:20',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 17,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 20,
+            nextGroupSequenceBefore: 20
+          },
+          {
+            effectId: 'effect-session-1:effect:19',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 18,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 20,
+            nextGroupSequenceBefore: 20
+          },
+          {
+            effectId: 'effect-session-1:effect:21',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 19,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 21,
+            nextGroupSequenceBefore: 21
+          },
+          {
+            effectId: 'effect-session-1:effect:22',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 20,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 22,
+            nextGroupSequenceBefore: 22
+          },
+          {
+            effectId: 'effect-session-1:effect:23',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 21,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          },
+          {
+            effectId: 'effect-session-1:effect:24',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 22,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: [Object],
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          },
+          {
+            effectId: 'effect-session-1:effect:3',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 23,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: [Object],
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          }
+        ],
+        commitResult: null
+      }
+    }
+  },
+  expected: {
+    schemaVersion: 'seti-rule-composition-save-v1',
+    committedState: '{"aliens":{"aliens":{"1":{"alienId":"阿米巴","assignedAlienId":"阿米巴","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"}}},"2":{"alienId":"虫","assignedAlienId":"虫","revealed":true,"traces":{"blue":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"pink":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"white"},"yellow":{"extraCount":0,"extraMarkers":[],"firstPlaced":true,"neutral":false,"ownerPlayerColor":"blue"}}}},"amiba":{"cardDeck":[5,2,8,4,6],"displayedCardIndex":9,"initialConfiguration":{"cardDeck":[9,0,1,3,7,5,2,8,4,6],"symbolOrder":["symbol_4","symbol_2","symbol_1","symbol_5","symbol_3"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":1,"symbolSlots":{"orange_1":"symbol_4","orange_2":"symbol_2","orange_3":"symbol_1","red_1":"symbol_5","red_2":"symbol_3"},"symbolsById":{"symbol_1":{"sequence":3,"slotId":"orange_3","symbolId":"symbol_1"},"symbol_2":{"sequence":2,"slotId":"orange_2","symbolId":"symbol_2"},"symbol_3":{"sequence":5,"slotId":"red_2","symbolId":"symbol_3"},"symbol_4":{"sequence":1,"slotId":"orange_1","symbolId":"symbol_4"},"symbol_5":{"sequence":4,"slotId":"red_1","symbolId":"symbol_5"}},"traceSlotsByAlienSlotId":{"1":{"blue":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":4,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":null},"yellow":{"1":null,"2":null,"3":null,"4":null}}}},"aomomo":{"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"landingMarkers":[],"orbitMarkers":[],"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"banrenma":{"bonusSlots":{},"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"scoreMarksByPlayerId":{},"traceSlotsByAlienSlotId":{}},"chong":{"cardDeck":[1,5],"completedTransports":[],"displayedCardIndex":9,"fossilsById":{"fossil_06":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_06","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_02":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_02","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_03":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_03","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_04":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_04","location":"panel","planetId":null,"rocketId":null,"status":"panel","taskCardId":null,"visibleToPlayerIds":[]},"fossil_05":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_05","location":"planet","planetId":"jupiter","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_01":{"carriedByPlayerColor":null,"carriedByPlayerId":null,"destinationPlanetId":null,"fossilId":"fossil_01","location":"planet","planetId":"saturn","rocketId":null,"status":"available","taskCardId":null,"visibleToPlayerIds":[]},"fossil_07":{"carriedByPlayerColor":"white","carriedByPlayerId":"player-white","destinationPlanetId":"earth","fossilId":"fossil_07","fossilRewardRepeat":0,"location":"transported","planetId":"saturn","rocketId":5,"status":"transported","suggestedDestinationPlanetId":"earth","taskCardId":"alien-chong-3-10","taskCardLabel":null,"taskCompleted":false,"taskDataCount":0,"taskGain":{},"taskPickCard":false,"visibleToPlayerIds":[]}},"initialConfiguration":{"cardDeck":[9,0,7,2,3,8,4,6,1,5],"fossilOrder":["fossil_02","fossil_05","fossil_03","fossil_01","fossil_06","fossil_07","fossil_04"]},"panelFossilSlots":{"7":"fossil_04"},"planetFossilIds":{"jupiter":["fossil_02","fossil_05","fossil_03"],"saturn":["fossil_01","fossil_06","fossil_07"]},"revealInitialized":true,"revealedByPlayerColor":"white","revealedByPlayerId":"player-white","revealedSlotId":2,"traceSlotsByAlienSlotId":{"2":{"blue":{"1":null,"2":null,"3":null,"4":null,"5":null,"6":null,"7":null,"8":null,"9":{"playerColor":"white","playerId":"player-white","position":9,"rewardApplied":true,"sequence":15,"traceType":"blue"}},"pink":{"1":null,"2":null,"3":null,"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":9,"traceType":"pink"}},"yellow":{"1":null,"2":null,"3":{"playerColor":"white","playerId":"player-white","position":3,"rewardApplied":true,"sequence":13,"traceType":"yellow"},"4":{"playerColor":"white","playerId":"player-white","position":4,"rewardApplied":true,"sequence":11,"traceType":"yellow"}}}},"transportTasksByRocketId":{"5":{"cardId":"alien-chong-3-10","cardLabel":null,"destinationPlanetId":"earth","fossilId":"fossil_07"}},"unlockedBluePositions":[7,8,9]},"fangzhou":{"card1Deck":[0,1,2,3,4,5,6,7,8],"card1Revealed":[],"card1RevealedSinceShuffle":0,"card1ShuffleCount":0,"displayedCard1Index":null,"playerCard2ById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{},"unlockCountByPlayerId":{}},"jiuzhe":{"cardsDealt":false,"freeScoreThreshold":null,"paidScoreThreshold":null,"playerCardsById":{},"playerThreatByColor":{},"playerThreatById":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}},"neutralScoreTraceMarks":{},"revealPoolAlienIds":["九折","半人马","奥陌陌","异常点","方舟","符文族","虫","阿米巴"],"runezu":{"availableSymbols":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"faceSymbolSlots":{},"panelSymbolSlots":{},"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"sourceSymbolSlots":{},"traceSlotsByAlienSlotId":{}},"yichangdian":{"anomalies":[],"cardDeck":[0,1,2,3,4,5,6,7,8,9],"displayedCardIndex":null,"nextAnomalySectorX":null,"revealEarthX":null,"revealInitialized":false,"revealedByPlayerColor":null,"revealedByPlayerId":null,"revealedSlotId":null,"traceSlotsByAlienSlotId":{}}},"cards":{"discardPile":[{"cardId":"b_75.webp","cardTypeCode":2,"discardActionCode":0,"faceUp":true,"id":"card-8-0","incomeCode":0,"price":2,"scanActionCode":0,"set":"basic"},{"cardId":"b_63.webp","cardTypeCode":3,"discardActionCode":0,"faceUp":true,"id":"card-45-0","incomeCode":0,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"b_11.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-44-0","incomeCode":2,"price":0,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_36.png","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-43-0","incomeCode":2,"price":2,"scanActionCode":3,"set":"space-agency"},{"cardId":"b_114.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-37-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"basic"},{"cardId":"dlc_34.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-46-0","incomeCode":1,"price":2,"scanActionCode":1,"set":"space-agency"},{"cardId":"dlc_38.png","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-39-0","incomeCode":1,"price":1,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_106.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-4-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_33.png","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-48-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"b_109.webp","cardTypeCode":0,"discardActionCode":1,"faceUp":true,"id":"card-9-0","incomeCode":1,"price":3,"scanActionCode":2,"set":"basic"},{"cardId":"b_2.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-17-0","incomeCode":2,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"dlc_21.png","cardTypeCode":1,"discardActionCode":1,"faceUp":true,"id":"card-19-0","incomeCode":2,"price":0,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_5.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-24-pass-1-5","incomeCode":0,"price":1,"scanActionCode":2,"set":"space-agency"},{"cardId":"dlc_37.png","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-42-0","incomeCode":2,"price":0,"scanActionCode":0,"set":"space-agency"},{"cardId":"b_78.webp","cardTypeCode":1,"discardActionCode":0,"faceUp":true,"id":"card-26-pass-2-2","incomeCode":2,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_49.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-22-pass-1-3","incomeCode":0,"price":1,"scanActionCode":0,"set":"basic"},{"cardId":"b_71.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-36-0","incomeCode":0,"price":0,"scanActionCode":2,"set":"basic"},{"cardId":"b_53.webp","cardTypeCode":2,"discardActionCode":2,"faceUp":true,"id":"card-28-pass-2-4","incomeCode":2,"price":1,"scanActionCode":1,"set":"basic"},{"cardId":"b_65.webp","cardTypeCode":0,"discardActionCode":2,"faceUp":true,"id":"card-11-0","incomeCode":1,"price":3,"scanActionCode":3,"set":"basic"},{"cardId":"b_62.webp","cardTypeCode":0,"discardActionCode":0,"faceUp":true,"id":"card-54-0","incomeCode":1,"price":1,"scanActionCode":2,"set":"basic"},{"cardId":"b_10.webp","cardTypeCode":1,"discardActionCode":2,"faceUp":true,"id":"card-53-0","incomeCode":1'... 32930 more characters,
+    session: {
+      schemaVersion: 'seti-effect-session-checkpoint-v1',
+      replayCursor: 8,
+      session: {
+        schemaVersion: 'seti-effect-session-v1',
+        sessionId: 'effect-session-1',
+        phase: 'awaiting_input',
+        baseVersion: 118,
+        baseState: {
+          aliens: {
+            aliens: [Object],
+            amiba: [Object],
+            aomomo: [Object],
+            banrenma: [Object],
+            chong: [Object],
+            fangzhou: [Object],
+            jiuzhe: [Object],
+            neutralScoreTraceMarks: {},
+            revealPoolAlienIds: [Array],
+            runezu: [Object],
+            yichangdian: [Object]
+          },
+          cards: {
+            discardPile: [Array],
+            drawPileCardIds: [Array],
+            passReservePiles: [Object],
+            publicCards: [Array],
+            removedFromGameCardIds: [Array]
+          },
+          data: {
+            nebulae: [Object],
+            sectorExtraMarks: [Object],
+            sectorSettlements: [Object]
+          },
+          finalScoring: {
+            thresholds: [Array],
+            tileVariants: [Object],
+            tiles: [Object]
+          },
+          match: { cardPlayContext: [Object], decisionVersion: 1 },
+          meta: {
+            gameId: 'seti-simulation-runtime',
+            rngState: [Object],
+            rulesetVersion: 'seti-runtime-v1.3',
+            schemaVersion: 'seti-committed-game-state-v1',
+            seed: 'seti-free-analyze-v1',
+            sequences: [Object],
+            stateVersion: 118,
+            worldVersion: 'human-405-world-v1'
+          },
+          pieces: {
+            activeRocketId: 7,
+            playerRocketSequences: [Object],
+            rockets: [Array]
+          },
+          planets: { planets: [Object] },
+          players: { players: [Array] },
+          solarSystem: {
+            aomomoActive: false,
+            rotation: [Object],
+            sectorBySlot: [Object]
+          },
+          tech: { stacks: [Object] },
+          turn: {
+            actionCycleNumber: 6,
+            activePlayerCount: 4,
+            activePlayerIds: [Array],
+            cardTurnEventBonuses: [],
+            completedTurnPlayerIds: [],
+            currentPlayerId: 'player-white',
+            gameEndReason: null,
+            gameEnded: false,
+            passedPlayerIds: [Array],
+            roundNumber: 4,
+            startPlayerId: 'player-brown',
+            turnNumber: 9,
+            turnOrderPlayerIds: [Array],
+            visitedPlanetsByPlayerId: {}
+          }
+        },
+        workingState: {
+          aliens: {
+            aliens: [Object],
+            amiba: [Object],
+            aomomo: [Object],
+            banrenma: [Object],
+            chong: [Object],
+            fangzhou: [Object],
+            jiuzhe: [Object],
+            neutralScoreTraceMarks: {},
+            revealPoolAlienIds: [Array],
+            runezu: [Object],
+            yichangdian: [Object]
+          },
+          cards: {
+            discardPile: [Array],
+            drawPileCardIds: [Array],
+            passReservePiles: [Object],
+            publicCards: [Array],
+            removedFromGameCardIds: [Array]
+          },
+          data: {
+            nebulae: [Object],
+            sectorExtraMarks: [Object],
+            sectorSettlements: [Object]
+          },
+          finalScoring: {
+            thresholds: [Array],
+            tileVariants: [Object],
+            tiles: [Object]
+          },
+          match: { cardPlayContext: [Object], decisionVersion: 1 },
+          meta: {
+            gameId: 'seti-simulation-runtime',
+            rngState: [Object],
+            rulesetVersion: 'seti-runtime-v1.3',
+            schemaVersion: 'seti-committed-game-state-v1',
+            seed: 'seti-free-analyze-v1',
+            sequences: [Object],
+            stateVersion: 118,
+            worldVersion: 'human-405-world-v1'
+          },
+          pieces: {
+            activeRocketId: 6,
+            playerRocketSequences: [Object],
+            rockets: [Array]
+          },
+          planets: { planets: [Object] },
+          players: { players: [Array] },
+          solarSystem: {
+            aomomoActive: false,
+            rotation: [Object],
+            sectorBySlot: [Object]
+          },
+          tech: { stacks: [Object] },
+          turn: {
+            actionCycleNumber: 6,
+            activePlayerCount: 4,
+            activePlayerIds: [Array],
+            cardTurnEventBonuses: [],
+            completedTurnPlayerIds: [],
+            currentPlayerId: 'player-white',
+            gameEndReason: null,
+            gameEnded: false,
+            passedPlayerIds: [Array],
+            roundNumber: 4,
+            startPlayerId: 'player-brown',
+            turnNumber: 9,
+            turnOrderPlayerIds: [Array],
+            visitedPlanetsByPlayerId: {}
+          }
+        },
+        committedState: null,
+        queue: [
+          {
+            schemaVersion: 'seti-effect-session-v1',
+            effectId: 'effect-session-1:effect:25',
+            groupId: 'effect-session-1:group:25',
+            groupKind: 'spawned',
+            type: 'card_play_domain_effect:decision:chong_pickup_fossil',
+            kind: 'decision',
+            ownerId: 'player-white',
+            decisionKind: 'choose_target',
+            allowQuickActions: false,
+            payload: [Object],
+            source: [Object],
+            groupIndex: 0
+          }
+        ],
+        journal: {
+          actions: [ [Object] ],
+          decisions: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          effects: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object]
+          ],
+          events: [
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object],
+            [Object], [Object], [Object]
+          ],
+          rng: [],
+          history: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ],
+          logs: [],
+          replay: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ]
+        },
+        failure: null,
+        irreversibleBarrier: {
+          effectId: 'effect-session-1:effect:23',
+          revision: 22,
+          code: 'hidden_alien_card',
+          reason: '外星人牌堆已翻开'
+        },
+        revision: 24,
+        nextEffectSequence: 25,
+        nextGroupSequence: 25,
+        interruptContext: null,
+        undoFrames: [
+          {
+            effectId: 'effect-session-1:effect:1',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 0,
+            phaseBefore: 'action_accepted',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 1,
+            nextGroupSequenceBefore: 1
+          },
+          {
+            effectId: 'effect-session-1:effect:2',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 1,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 3,
+            nextGroupSequenceBefore: 3
+          },
+          {
+            effectId: 'effect-session-1:effect:4',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 2,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 4,
+            nextGroupSequenceBefore: 4
+          },
+          {
+            effectId: 'effect-session-1:effect:5',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 3,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 8,
+            nextGroupSequenceBefore: 8
+          },
+          {
+            effectId: 'effect-session-1:effect:6',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 4,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 8,
+            nextGroupSequenceBefore: 8
+          },
+          {
+            effectId: 'effect-session-1:effect:9',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 5,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 10,
+            nextGroupSequenceBefore: 10
+          },
+          {
+            effectId: 'effect-session-1:effect:11',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 6,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 11,
+            nextGroupSequenceBefore: 11
+          },
+          {
+            effectId: 'effect-session-1:effect:10',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 7,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 11,
+            nextGroupSequenceBefore: 11
+          },
+          {
+            effectId: 'effect-session-1:effect:12',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 8,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 12,
+            nextGroupSequenceBefore: 12
+          },
+          {
+            effectId: 'effect-session-1:effect:13',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 9,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 13,
+            nextGroupSequenceBefore: 13
+          },
+          {
+            effectId: 'effect-session-1:effect:7',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 10,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 13,
+            nextGroupSequenceBefore: 13
+          },
+          {
+            effectId: 'effect-session-1:effect:14',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 11,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 15,
+            nextGroupSequenceBefore: 15
+          },
+          {
+            effectId: 'effect-session-1:effect:16',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 12,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 16,
+            nextGroupSequenceBefore: 16
+          },
+          {
+            effectId: 'effect-session-1:effect:15',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 13,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 16,
+            nextGroupSequenceBefore: 16
+          },
+          {
+            effectId: 'effect-session-1:effect:17',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 14,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 17,
+            nextGroupSequenceBefore: 17
+          },
+          {
+            effectId: 'effect-session-1:effect:8',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 15,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 17,
+            nextGroupSequenceBefore: 17
+          },
+          {
+            effectId: 'effect-session-1:effect:18',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 16,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 19,
+            nextGroupSequenceBefore: 19
+          },
+          {
+            effectId: 'effect-session-1:effect:20',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 17,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 20,
+            nextGroupSequenceBefore: 20
+          },
+          {
+            effectId: 'effect-session-1:effect:19',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 18,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 20,
+            nextGroupSequenceBefore: 20
+          },
+          {
+            effectId: 'effect-session-1:effect:21',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 19,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 21,
+            nextGroupSequenceBefore: 21
+          },
+          {
+            effectId: 'effect-session-1:effect:22',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 20,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 22,
+            nextGroupSequenceBefore: 22
+          },
+          {
+            effectId: 'effect-session-1:effect:23',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 21,
+            phaseBefore: 'awaiting_input',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: null,
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          },
+          {
+            effectId: 'effect-session-1:effect:24',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 22,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: [Object],
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          },
+          {
+            effectId: 'effect-session-1:effect:3',
+            stateBefore: [Object],
+            queueBefore: [Array],
+            revisionBefore: 23,
+            phaseBefore: 'draining',
+            journalLengths: [Object],
+            irreversibleBarrierBefore: [Object],
+            interruptContextBefore: null,
+            nextEffectSequenceBefore: 24,
+            nextGroupSequenceBefore: 24
+          }
+        ],
+        commitResult: null
+      }
+    }
+  },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

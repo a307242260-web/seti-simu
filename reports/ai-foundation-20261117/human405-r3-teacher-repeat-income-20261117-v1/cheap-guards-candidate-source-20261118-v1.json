@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-18",
+  "base": "ecb735cf7ba5f285f9d0e87842772871c4eab29e",
+  "candidate": "v488/movementv8/valuev71",
+  "promoted": false,
+  "paths": {
+    "randomizer/game/ai/analysis-port.js": "5abeb55f0fec077304777930e1b159b396236c9dd9e51494c9f1863861f6c6ab",
+    "randomizer/game/ai/decision-search.js": "2e8677796e32b18f7d39a513f147bdb2c84601758d23a6ff3cf77e50cffe7866",
+    "randomizer/game/ai/goal-movement.js": "ddf1d7eec4f2ca1eb98595d7f829945943f557eaa06d43025acf2343a2343e55",
+    "randomizer/game/ai/free-scan-funded-prefix.test.js": "37a1b8e4a03b13833b9d9c9a6f3d517051b926f16a9603ddb290b15524b58acc",
+    "randomizer/game/effects/residual-domain-session.js": "68494058e18cf441b0ff9445cf394f239a8fe5705509d2c279d728429270f364",
+    "randomizer/game/ai/quiet-company-swap.test.js": "1ea6a932c8b74ab2c20782cdb086b953fa3c269f8d14419f171538ca73ff83a8",
+    "tools/node-test-inventory.js": "9a9137572f7515183d09c3e2de82736e370cb23d25a58d77818e070eb647d73f",
+    "tools/browser-smoke-inventory.js": "c009e4c01c2633eb64c6ae151066a7530cb92422c9af21fb7c9bc0069b8f1837",
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "5b1534ff8dfeda22e3b46abd868a15a893624abc073319dacc49fd0ecd0eac03",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "f4b45035b04fd6d39f18d6538817b0a190e7ad9b7d0dfeb4869118716e0d0d64"
+  },
+  "fixtures": {
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "candidate-free-scan-one-step-20261118-v1.json.gz",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "candidate-quiet-company-swap-20261118-v1.json.gz"
+  },
+  "patch": "candidate-cheap-guards-20261118-v1.patch",
+  "restore": "Restore base commit; git apply --unidiff-zero patch; copy mapped fixtures; verify source SHA256.",
+  "patchSha256": "29be673a48c8fd7771ca1abe54772daa58161da600b9a8ebf2a782f007312bfd"
+}
