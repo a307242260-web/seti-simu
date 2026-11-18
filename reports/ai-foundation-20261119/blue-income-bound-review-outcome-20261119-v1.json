@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "seti-frozen-bound-proof-review-v1",
+  "date": "2026-11-19",
+  "parent": "1784d0149bf410506c5f01c8264899217d7a3684",
+  "readOnlyBoundReviewVerified": true,
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "inputSha256": {
+    "blue-income-admission-bound-controls-20261119-v1.json": "ed47b3671fea6ce26815f627e6d93d6366e38dd6f1c28edce5bd9791b58eb14d",
+    "blue-income-admission-bound-controls-20261119-v2.json": "8e293efd7cf0867c2e39a4465b0df786425d68fb029cd09bb52ba8b15fd5d1d1"
+  },
+  "codeEvidence": {
+    "analysis-port.js:8293-8301": "        // Fixed post-main data goals reach computer4 for income, or an\n        // existing blue prerequisite. They cannot invent computer6 unless a\n        // blue slot actually requires it; raw unplanned data retains the ceiling.\n        const computerSlots=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot);\n        const analysisReachable=!resourcePlanning||computerSlots.includes(4)\n          ||Object.entries(owner.techState.blueBoardSlots).some(([id,slot])=>owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]\n            &&data.getRequiredComputerSlotForBlueBonus(slot)>=4)\n          ||resourceSpec(node)?.plans.some(p=>p.goal.kind===\"income\");\n        const analysisUpper=state.turn.roundNumber<4&&analysisReachable?stateValue.readyAnalysisUpperBound(node.observation.publicState.board.aliens.slots,{techState:owner.techState,computerSlots,round:state.turn.roundNumber,publicCards:state.cards.publicCards}):{linear:0,publicity:0};",
+    "analysis-port.js:8304-8318": "        // With no live mission, a ready analysis can only add its known trace\n        // and one blue resource tail plus these same held/research ceilings.\n        // Ignore its costs for the upper bound, but subtract source capital.\n        const sourceCapital=resourceDemand.planningCapital(state,owner),sourceAnalysis=sourceCapital-current-currentResearch;\n        const bridge=stateValue.researchIncomeUpperBound({round:state.turn.roundNumber,computerSlots:data.listComputerPlacedTokens(owner).map(t=>t.placementSlot),techState:owner.techState,supply:state.tech,publicCards:state.cards.publicCards,maximumPublicity:result.maximumPublicity,researchCost});\n        const secondResearch=bridge.secondResearchPossible?stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,researchCost}):0;\n        const prepaidUpper=state.turn.roundNumber<4&&industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId===\"deepspace_swap_cards\"\n          ?Math.max(0,...node.observation.publicState.board.aliens.slots.flatMap(slot=>slot.revealed?[]:[alienState.getExtraTraceReward().gain,alienState.getFirstTraceRewardForSlot(slot.slotId).gain].map(g=>(g.score||0)+(g.publicity||0)*stateValue.DEFAULT_WEIGHTS.publicity)))*5/6:0;\n        const maximumCapital=Math.max(offered+researchUpper+analysisUpper.linear,offered+bridge.linear+secondResearch,offered+researchUpper+prepaidUpper);\n        const capitalUpperIncrease=Math.max(0,maximumCapital-sourceCapital);\n        bound=freeze({...result,proof:\"seti-post-main-capital-upper-v4\",linearSourceProof:result.proof,\n          maximumValueIncrease:result.maximumValueIncrease+capitalUpperIncrease,capitalUpperIncrease,\n          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,sourceAnalysisCapital:sourceAnalysis,maximumAnalysisLinear:analysisUpper.linear,maximumAnalysisPublicity:analysisUpper.publicity,maximumPrepaidAnalysisCapital:prepaidUpper,analysisReachableByFixedDataPolicy:analysisReachable,\n          maximumResearchIncomeLinear:bridge.linear,maximumResearchAfterIncome:secondResearch,sourcePurposeCapital:sourceCapital,maximumPurposeCapital:maximumCapital,\n          permanentTechnologyGainAdmitted:false});",
+    "ready-analysis-capital.js:204": "  const income=progress?Math.max(0,...(progress.publicCards||[]).filter(c=>c?.cardId&&!c.hidden).map(c=>cards.getIncomeGainForCard(c)).filter(Boolean).map(g=>Object.entries(g).filter(([k])=>['credits','energy'].includes(k)).reduce((n,[k,v])=>n+v*(weights[k]||0)*(1+Math.max(0,4-progress.round)),0))):0;"
+  },
+  "existingRootChecks": [
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "funded-energy-income",
+      "rootSha256": "feebd9a5d16130cb03b4f9dfc14ee4bd6bc4c1fec03bc52088142cf1009c3c21",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 3.5,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 2.583333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "no-currency",
+      "rootSha256": "d0f953f36e833d21337c082cff1b4a1f383917277709c7bbe068f145b163370c",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 3.5,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 2.583333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "currency-caps",
+      "rootSha256": "3abc384f0285de31f3208f0b42fc180824f92c47fa7f52c93c2e0a754c26a42a",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 3.5,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 2.583333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "publicity-and-data-caps",
+      "rootSha256": "3f47ee5fc5ff35b8d7f3f1e84c20aa68f82a8d75d3ae702cb81451d6bee67d3d",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 13.333333333333334,
+      "maximumPurposeCapital": 9.583333333333332,
+      "totalUpperAllowance": 1.5,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "publicity-short",
+      "rootSha256": "172c2dde514e0302d30e595dba286171200e3970dc8b04fd43772e22553e3071",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 1.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "data-short",
+      "rootSha256": "6fcd1f308150b8a4b0f357e69e5a4593c2e7ba71aa54378aaaaace027c571ee9",
+      "observedValueIncrease": 1.5833333333333357,
+      "sourcePurposeCapital": 1.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "credit-offer-only",
+      "rootSha256": "6fe20489001d7d7b9f6d0e9d3ffcdf42cd81ab8bad87bcce644858c4189b9540",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 3.5,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 2.583333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v1.json",
+      "name": "no-public-offers",
+      "rootSha256": "33217ba6ed8e79e919338fa338782af3ce7b0d3414842b53210e062fa6fe43c9",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 1.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v2.json",
+      "name": "activation-from-computer2",
+      "rootSha256": "e54b7994e59a37dd2cd2093393267e9079f5a0c3700472bb333a7992f0a25909",
+      "observedValueIncrease": 1.75,
+      "sourcePurposeCapital": 3.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v2.json",
+      "name": "activation-at-currency-caps",
+      "rootSha256": "bab0e724c8020609886443c4eef7ce3585ded779c49fda231e1739abe08a36d8",
+      "observedValueIncrease": 1.75,
+      "sourcePurposeCapital": 3.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v2.json",
+      "name": "activation-via-computer2-publicity",
+      "rootSha256": "a4ab71a180bf63f6b13449af15d5abdde1da39099501238f42fe172f6eb564eb",
+      "observedValueIncrease": 1.75,
+      "sourcePurposeCapital": 3.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    },
+    {
+      "source": "blue-income-admission-bound-controls-20261119-v2.json",
+      "name": "unfunded-after-computer2-publicity",
+      "rootSha256": "577bb952315b66c84bddbb7a837027cbb39865ab62e0d1338cdd600f2f0b586c",
+      "observedValueIncrease": 0.0,
+      "sourcePurposeCapital": 3.75,
+      "maximumPurposeCapital": 4.583333333333333,
+      "totalUpperAllowance": 4.333333333333333,
+      "rootAnalysisAllowance": 0,
+      "boundCoversObservedBest": true
+    }
+  ],
+  "finding": "All twelve recorded root certificates bypass the newly enlarged ready-analysis allowance because analysisReachableByFixedDataPolicy is false. Four roots have a positive observed continuation value increase, but total allowance still covers their observed best. This is a gap in the component-level proof, not evidence of an actual pruned better action. Intermediate-node certificates were not traced by these records.",
+  "proofObligation": "For each admitted post-main state and reachable valued boundary, prove the full capital envelope including new public-income preparation. In particular, justify the zero-analysis branch using every remaining alternative envelope or reject that certificate when the implication cannot be proved. Fixed-plan reachability and future purpose valuation are different predicates.",
+  "decision": "candidate-remains-frozen; no strategy adoption or autonomous game",
+  "generalBoundProved": false,
+  "incorrectPruningDemonstrated": false,
+  "newSearches": 0,
+  "newNativeSubmissions": 0,
+  "newAutonomousGames": 0,
+  "productionChanged": false,
+  "formalCompletedScoreUnchanged": 272,
+  "previouslyMeasuredFormalGameSeconds": 16.1,
+  "routeAccounting": {
+    "priorConservativeMinutes": 113.73997685114543,
+    "thisReviewWallMinutes": 2.3609080990155538,
+    "cumulativeConservativeMinutes": 116.10088495016099,
+    "routeLimitMinutes": 120,
+    "freezePreserved": true
+  },
+  "nextOnlyAction": "Resolve the zero-analysis certificate implication before extending the frozen candidate; do not rerun identical controls or treat its twelve root bounds as proof of the new analysis allowance. Required admission failures remain separate."
+}

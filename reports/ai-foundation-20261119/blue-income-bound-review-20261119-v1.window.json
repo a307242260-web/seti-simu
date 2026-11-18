@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795043747.514366,
+  "deadlineEpochSeconds": 1795044047.514366,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043747.8525481,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 62796,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043747.900927
+    },
+    {
+      "command": [
+        "rg",
+        "-n",
+        "readyAnalysis.upperBound|function postMainValueBound|postMainCapitalCeiling|function capitalCeiling|analysisUpper|readyAnalysisBound|analysisBound|function purposeCapital|function analysisPortfolio",
+        "/private/tmp/seti-v72-final-pass-validation-20261119-mmjl_f81/randomizer/game/ai/state-value.js",
+        "/private/tmp/seti-v72-final-pass-validation-20261119-mmjl_f81/randomizer/game/ai/analysis-port.js"
+      ],
+      "startedEpochSeconds": 1795043753.962358,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 62951,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043754.0882418
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043763.265558,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 63118,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043763.290401
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043774.71507,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 63298,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043774.739456
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043785.759941,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 63471,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043785.8085382
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043795.071457,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 63634,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043795.119835
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795043822.79806,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-bound-review-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 63928,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795043822.8225338
+    }
+  ],
+  "scope": "Read-only bound correctness review of frozen public-income candidate; no source patch, search, Native submissions or autonomous games. Prior route 113.74 minutes; remaining review capped at five wall minutes.",
+  "closedEpochSeconds": 1795043889.169156,
+  "outcome": "blue-income-bound-review-outcome-20261119-v1.json",
+  "decision": "frozen-not-proved"
+}
