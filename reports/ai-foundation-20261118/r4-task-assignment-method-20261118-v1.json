@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "seti-method-prospective-pilot-v1",
+  "sources": {
+    "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-route-facts-related-node-check-20261118-v1.log": "57b5c2ceb353334eb6caeaf39f4d0dcaf0cb4b1d0187a3c4e857f62d5b3c7a13",
+    "reports/ai-foundation-20261118/r4-task-assignment-six-identities-20261118-v1.log": "8d8bb1cb70e4b1f97ef993f71e3b9ae96cd21e8614151d1ffc8552a9eaca3386",
+    "reports/ai-foundation-20261118/r4-task-assignment-candidate-20261118-v2.log": "c5d4f898d92c8558bde8b3e3c6d7baf3e3163c659065df6bb67f0ff6c355f55f",
+    "reports/ai-foundation-20261118/r4-task-assignment-baseline-20261118-v1.log": "f8b5fcc3ec2402b114fc7024e424bf939c8315162cc79d255114da1992aa222d",
+    "reports/ai-foundation-20261118/r4-task-assignment-candidate-20261118-v1.log": "3c5ddaba4a1bc7f3ad53052959c77c2f079bcde258e194e33c8faba805275097",
+    "reports/ai-foundation-20261118/r4-task-assignment-pilot-20261118-v1.receipt.json.gz": "231e3eb562bed289e15630a6c90d03ff5e1f331cfb6aef6c67b6f1ae6e20a521",
+    "reports/ai-foundation-20261118/r4-task-assignment-pilot-20261118-v1.restore-check.json": "db207e30a45d0741c9ca28bc8c777df1f0e64d2bec19b6a027afee85f6163817"
+  },
+  "methodOutcome": "Root cause found; narrow prototype rejected by predeclared non-regression criterion. Open-ended AI implementation remains on hold.",
+  "nativeControl": {
+    "cases": 2,
+    "actualSubmissions": 38,
+    "noSearch": true,
+    "actualBoardScoreDelta": 3,
+    "creditsDelta": 1,
+    "currentWindowValueDelta": 4,
+    "notWholeGameScore": true
+  },
+  "rootCause": "Planner binds a fossil to its originating task despite Native destination-based matching. Existing raw task matching code is correct.",
+  "candidate": "v511 isolated, rejected; no production promotion",
+  "newTargetedTest": {
+    "cargoTaskAssignment": "passed",
+    "value": 239.5,
+    "score": 148,
+    "credit": 6,
+    "native": 6,
+    "maxMs": 50.411666,
+    "actualInputs": 7,
+    "coldRecovery": true,
+    "independentCargoUnchanged": true
+  },
+  "comparison": [
+    {
+      "newFossil": "fossil_01",
+      "beforeValue": 242,
+      "afterValue": 239.5,
+      "delta": -2.5,
+      "beforeDelivery": "fossil_01",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_02",
+      "beforeValue": 249,
+      "afterValue": 249,
+      "delta": 0,
+      "beforeDelivery": "fossil_02",
+      "afterDelivery": "fossil_02"
+    },
+    {
+      "newFossil": "fossil_03",
+      "beforeValue": 235.5,
+      "afterValue": 239.5,
+      "delta": 4.0,
+      "beforeDelivery": "fossil_07",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_04",
+      "beforeValue": 235.5,
+      "afterValue": 239.5,
+      "delta": 4.0,
+      "beforeDelivery": "fossil_07",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_05",
+      "beforeValue": 242,
+      "afterValue": 239.5,
+      "delta": -2.5,
+      "beforeDelivery": "fossil_05",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_06",
+      "beforeValue": 244,
+      "afterValue": 239.5,
+      "delta": -4.5,
+      "beforeDelivery": "fossil_06",
+      "afterDelivery": "fossil_07"
+    }
+  ],
+  "regressions": [
+    {
+      "newFossil": "fossil_01",
+      "beforeValue": 242,
+      "afterValue": 239.5,
+      "delta": -2.5,
+      "beforeDelivery": "fossil_01",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_05",
+      "beforeValue": 242,
+      "afterValue": 239.5,
+      "delta": -2.5,
+      "beforeDelivery": "fossil_05",
+      "afterDelivery": "fossil_07"
+    },
+    {
+      "newFossil": "fossil_06",
+      "beforeValue": 244,
+      "afterValue": 239.5,
+      "delta": -4.5,
+      "beforeDelivery": "fossil_06",
+      "afterDelivery": "fossil_07"
+    }
+  ],
+  "whyOldTestsDidNotFail": "Existing six-case assertions require reachable value>=235.5, Native consistency and budgets; they do not protect each prior best value. Successful test exit is not non-regression evidence.",
+  "remainingCauseEvidence": "After Ch6 claims old F07, the remaining job still has cardId=Ch6 but Ch6 is absent from reservedCards. visibleEarthCargo requires the originating card to remain reserved, so the suffix omits a potentially fulfillable other task. Greedy immediate claim gain therefore does not establish whole-plan superiority.",
+  "prototypeFaults": [
+    "First target run reached the intended Native payoff but the test asserted a nonexistent resource field credit; corrected to credits, retaining the failed log.",
+    "Counterfactual fixture serialization required canonical key ordering; initial harness mismatch and corrected control provenance retained."
+  ],
+  "next": "No further AI run. First define task/fossil ownership and compare complete known suffixes while retaining old feasible plans; quantify work before another implementation. Do not enumerate moves or all task permutations.",
+  "archive": {
+    "baseSourceManifest": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-route-facts-candidate-source-20261118-v1.json",
+    "patch": "reports/ai-foundation-20261118/rejected-cargo-task-assignment-20261118-v1.patch",
+    "patchSha256": "9eac19a6379dffeef9f6d616c4babadc20666f3638916d0165161e5702c1656e",
+    "files": {
+      "randomizer/game/ai/analysis-port.js": {
+        "baseSha256": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+        "candidateSha256": "6b074e08345c21e91c06422d108ceccf0bca7bf8562c34924a94e2467f5d4434"
+      },
+      "randomizer/game/ai/decision-search.js": {
+        "baseSha256": "2ad71a8b445592dd903a6a30f91cd5d66924a591ce88cf3d0f8d233799c66c4f",
+        "candidateSha256": "3fbb7143c242fda9a5a64536d6cc1e807036b69ac21707014faf05f352815052"
+      },
+      "tools/node-test-inventory.js": {
+        "baseSha256": "8065904678be4309a13c7fb200055cba2c30f8d6544c18eb22a9e8962be61a57",
+        "candidateSha256": "eaf3f311cf689d3f50df1fbd2438efb4d2fa7e678380d93a123acd209e2892fa"
+      },
+      "randomizer/game/ai/cargo-task-assignment.test.js": {
+        "baseSha256": null,
+        "candidateSha256": "7b31af821a52590158f4db99d85a16b85e2758823a729cd59131f2e7abef71b9"
+      }
+    },
+    "restoredFilesByteExact": true
+  },
+  "formalScoreUnchanged": 272,
+  "newGames": 0,
+  "newBatches": 0,
+  "teacher289Reruns": 0,
+  "sharedAIRuntimeChanged": false
+}

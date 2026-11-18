@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v21",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v20.json",
+  "publishedParent": "38dcfce5adbc934c419145b5a5b240746305af67",
+  "goalStatus": "active",
+  "scope": "Original teaching/asset alignment goal remains intact. Current user instruction changes the phase to methodology review and validation before further AI implementation.",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续。",
+  "phase": "methodology-validated-for-diagnosis; rejected bounded prototype",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "lastUnpromotedCandidate": "v510; isolated v511 rejected",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "previousGoalTurnClassification": "progress: v510 Native directory reuse validated and archived as417ce2d30; end-to-end strategy milestone remains unchanged.",
+  "thisGoalTurnClassification": "progress: Native controlled comparison finds destination-based task omission; bounded v511 reaches239.5 but regresses three known stronger outcomes, so rejected before teacher289 or game. Loop refined to protect per-case old best and compare complete known plans.",
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v1.json",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "methodologyStatus": "Diagnostic, comparison and stop-loss loop promoted; AI quality improvement unproven",
+  "resumeGate": [
+    "One same-start causal decision dossier identifies a specific reproducible missing/incorrect candidate, greedy plan, boundary, valuation, execution or reuse issue, or demonstrates a justified equivalent tradeoff and selects the next genuine unresolved case.",
+    "State an observation that would falsify the proposed cause and the expected corrected action/assets; hidden seed outcomes are not public knowledge.",
+    "Provide a plausible quantified computation path under existing constraints. Do not resume the previously queued cargo-copy/identity/menu micro-optimization loop merely because its local checks can pass."
+  ],
+  "next": [
+    "Remain in methodology/causal diagnosis. Clarify fossil/job/task ownership and whole known suffix feasibility while retaining old feasible routes.",
+    "No further AI implementation until a revised falsifiable bounded plan addresses the revealed suffix dependency; no whole game until original single-point admission.",
+    "Observe next two decision dossiers; revise method if only paperwork/tests grow without new causal conclusion or accepted fix."
+  ],
+  "methodPilot": "reports/ai-foundation-20261118/r4-task-assignment-method-20261118-v1.json"
+}

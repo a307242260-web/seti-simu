@@ -1,0 +1,21 @@
+{
+  "phase": "bounded method-driven strategy prototype; no open-ended performance work",
+  "candidate": "v511",
+  "base": "/private/tmp/seti-native-route-facts-sealed-20261118-392l0igs",
+  "root": "/private/tmp/seti-cargo-task-match-20261118-7tsm5tvm",
+  "evidence": "r4-task-assignment-pilot-20261118-v1.receipt.json.gz",
+  "rootCause": "Native destination-based task matching is narrower in the planner: job.cardId fixes the beneficiary before arrival. Full-pool Ch3 data is chosen instead of a legally claimable Ch6 reward.",
+  "change": "Generate the existing physical cargo route once, then compare supported known same-destination task settlements using Native query/claim and the existing exact value ledger. Keep the highest reachable greedy plan and all old route choices. No card-specific exception.",
+  "stateEquivalence": "No new identity, state merge or pruning. Each alternative settlement owns an isolated Native copy.",
+  "reachabilityAndResourceLowerBound": "Same visible fossil, public destination, shortest path and existing energy/one-move funding bound. Match only Native query results that actually consume the routed fossil; every claim strictly consumes one job.",
+  "computation": "In the diagnosed context there is1 supported known job and2 eligible tasks, so1 existing route/funding computation plus2 Native claim quotes. No new direction tree, future turn expansion or hidden outcome enumeration. Reuse existing global null budgets; no beam/leaf cap. Local candidate checks must close within256 full submissions/600ms; whole teacher289 still requires independent600ms admission before any game.",
+  "success": "fossil03 post-pickup current-window value at least239.5 and actual task beneficiary Ch6 with F07; exact Native execution, cold recovery and another job remain correct; existing fossil06 value244 and other stronger routes must not regress.",
+  "falsifier": "A mismatch in Native endpoints, legal task/fossil selection, RNG, old better results or budget. Do not tune values to satisfy a teacher action.",
+  "validationOrder": [
+    "New targeted regression fails on unchanged v510",
+    "Apply minimal beneficiary-matching change in isolated candidate",
+    "Targeted regression and existing six-identity cargo checks",
+    "Only if promising: one teacher289 comparison, mandatory affected checks and source archive; no whole game or20-board run"
+  ],
+  "authorizationScope": "Resume only this evidence-backed prototype after the methodology control. General methodology remains candidate; no claim of overall quality or performance completion."
+}

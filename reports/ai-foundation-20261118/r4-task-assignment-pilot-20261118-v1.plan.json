@@ -1,0 +1,32 @@
+{
+  "id": "r4-task-assignment-pilot-20261118-v1",
+  "phase": "methodology validation; no AI implementation or search",
+  "runtime": "v510 frozen source from native-route-facts-candidate-source-20261118-v1.json",
+  "businessQuestion": "Does binding an arriving fossil to its originating task omit another legal, higher-value same-destination task?",
+  "initialState": "Same teacher input289 root. Replay existing common card6 landing and known old F07 return prefix; branch only at the same delivered-F07 checkpoint.",
+  "contexts": [
+    "original fossil06 pickup",
+    "existing unseen fossil06↔fossil03 permutation, known after pickup"
+  ],
+  "alternatives": {
+    "A": "Use delivered F07 to complete Ch3 (2 data)",
+    "B": "Use the identical delivered F07 to complete Ch6 (3 score+1credit)"
+  },
+  "boundary": "After the selected old-F07 task, the same earned B117 and ordinary END; no subsequent main action or new-fossil delivery",
+  "hypothesis": "Both legal tasks consume the same F07 and one task completion; full data pool makes Ch3 data overflow. B should add3 actual/final score and1credit, hence4V, without using the new fossil reward.",
+  "falsifiers": [
+    "Ch6 cannot legally settle with F07",
+    "Ch3 data produces another real benefit or matching trigger",
+    "Claim consumes the newly revealed fossil or changes another job",
+    "Equal complete endpoints under current V",
+    "Raw model prior known lower bounds refer to different starts or code"
+  ],
+  "coverageAndResourceBound": "No AI graph expanded. Reuse existing deterministic landing and fixed two-step old-cargo route; at most40 actual Native submissions across two contexts. Each matched branch starts at the exact same saved state and RNG. No branch pruning or unknown pre-pickup reward pricing.",
+  "sourceInspection": {
+    "Native": "residual-domain-session.listCardSettlements lists delivered fossils by destination for each task card; chong.completeTransportedFossil does not require originating card equality",
+    "planner": "analysis-port.knownFundedCargoQuote finds task by job.cardId"
+  },
+  "baselineEvidence": "native-route-facts-related-node-check-20261118-v1.log reports fossil03 current AI235.5, fossil06 current AI244. Do not claim both contexts currently choose A.",
+  "expectedWorkProduct": "Matched Native inputs/endpoints/score/resource/RNG and untouched other-job receipts. Confirm or reject the hypothesis before any AI edit.",
+  "resumeAIImplementationAllowedByThisPlan": false
+}

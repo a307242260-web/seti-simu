@@ -22,3 +22,26 @@
 - verification: `python3 adhoc/audit-ai-methodology-20261118-v1.py`；只读现有图、CPU采样、原生对照和检查点，校验来源SHA，无AI运行或原生输入。
 - observed_outcome: 回顾性筛选拒绝继续以三个热点作为600ms主线；确认当前等值下界不构成战略资产等价。前瞻性方法试验未完成。
 - keep_or_revise: candidate；保持实现停止，前瞻性试验后再决定是否推广。
+
+## SETI-METHOD-20261118-01：前瞻性试验后的有限推广
+
+- source: 同一用户方法论优先指令；reports/ai-foundation-20261118/r4-task-assignment-method-20261118-v1.json。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 教学学习与性能超限的前置诊断、迁移对照及止损循环
+- target_file: docs/ai-research-workflow.md §1.1
+- remote_skill_id: none
+- change: 在既有实验流程前加入同起点因果诊断、收益上限筛选、完整计划比较、逐例旧最好结果对照和反例止损；不改变原有验收条件。
+- applied_change: 新增目标文档§1.1；未修改共享运行时、全局规则或长期记忆。隔离v511原型已拒绝，新增源码仅按补丁存档。
+- expected_effect: 在扩大实现或批跑前发现真实遗漏，并拦下单点改善、其他状态退步的补丁。
+- evaluation_window: 本次38输入原生对照及v511六例迁移试验；推广后观察后续两张决策卡。
+- success_signal: 已定位原任务绑定遗漏；按事先声明的条件拒绝三例退步的原型，未执行第289步或新整局；后续须继续产生可判断的原因或无退步修正。
+- rollback_condition: 连续两张卡只新增材料或测试数量，没有新的因果结论／可验收修正；修订选题与流程，不恢复开放式微优化。
+- risk: 当前窗口估值不等于全局分数；逐例不退步只适用于已固定的比较问题，不能阻止事先说明且有资产依据的合理取舍。一个方法试验不能证明AI整体质量提高。
+- evidence_before: 六检查点正式成绩272不变，热点收益上限不足，等值下界未证明资产等价。
+- owner_or_agent_decision: 按用户要求先验证方法；仅推广有证据的诊断与止损部分。AI实现、整局和批跑不恢复。
+- applied_at: 2026-11-18
+- verification: 原生控制两例共38输入、四存档精确恢复；目标回归先失败后达到239.5；六例旧最好结果比较发现三例退步；拒绝补丁四文件独立还原SHA一致。
+- observed_outcome: 候选／固定计划根因已确定；v511被否决；正式成绩272和共享AI均不变。实际AI质量改善仍未验收。
+- keep_or_revise: keep（有限推广诊断／对照／止损）；重审任务、化石、路线及筹资的归属后，再决定下一项最小方法试验。

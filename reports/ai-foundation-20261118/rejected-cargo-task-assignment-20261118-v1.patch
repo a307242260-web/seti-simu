@@ -1,0 +1,86 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4925,3 +4925,2 @@
+-        const ship=visibleEarthCargo(state,p,job),card=ship&&p.reservedCards.find(c=>c.id===job.cardId),rule=card&&chong.getCardTask(card),reward=chong.getFossilReward(job.fossilId);
+-        if(!ship||ship.movementLocked||!rule||rule.destinationPlanetId!=="earth"||rule.effects||rule.rewards
+-          ||rule.pickCard||rule.pickAlienCard||rule.drawCards||rule.chooseFossilRewardOnly||!reward
++        const ship=visibleEarthCargo(state,p,job),reward=chong.getFossilReward(job.fossilId);
++        if(!ship||ship.movementLocked||!reward
+@@ -4928,0 +4928,8 @@
++        // Native matches delivered fossils by destination, not originating card.
++        const tasks=p.reservedCards.flatMap(card=>{
++          const rule=card.chongTask||chong.getCardTask(card);
++          return chong.isChongCard(card)&&!card.chongTaskCompleted&&rule?.kind==="transport"
++            &&rule.destinationPlanetId==="earth"&&!rule.effects&&!rule.rewards
++            &&!rule.pickCard&&!rule.pickAlienCard&&!rule.drawCards&&!rule.chooseFossilRewardOnly?[{card,rule}]:[];
++        });
++        if(!tasks.length)continue;
+@@ -4964,11 +4971,16 @@
+-        const settlement=residualSession.queryCardSettlement(next,seatId,{kind:"chong_task",cardInstanceId:card.id,ruleId:rule.id||rule.kind});
+-        if(settlement?.fossilId!==job.fossilId)continue;
+-        const applied=residualSession.settleReadyTaskDirect(next,seatId,card.id,rule.id||rule.kind);
+-        const event={type:"complete_task",playerId:seatId,cardInstanceId:card.id,ruleId:rule.id||rule.kind};
+-        const claimed=applied.ok&&residualSession.augmentEffectResult(next,{ok:true,spawnedEffects:applied.spawnedEffects||[],irreversible:applied.irreversible,events:[event]},
+-          {type:"residual_action",ownerId:seatId});
+-        if(!claimed?.ok||claimed.irreversible||claimed.spawnedEffects.length||localPlans.hasPendingFossilArrival(next))continue;
+-        const after=finalNoProbeValue(next,owner);before??=finalNoProbeValue(state,p);
+-        const gain=stateValue.sumValueParts([after,-before]);if(!(gain>0))continue;
+-        candidates.push({after:next,beforeValue:before,afterValue:after,quote:{kind:"funded-earth-shipment",directEnergy:true,path,funding,cardId:card.id,
+-          fossilId:job.fossilId,value:gain,proof:"known-native-post-main-cargo-v2"}});
++        for(const {card,rule} of tasks){
++          // Share the physical route; each alternative claim owns its writes.
++          const claim=tasks.length===1?next:{...next,...copyForkData({meta:next.meta,pieces:next.pieces,aliens:next.aliens,cards:next.cards,turn:next.turn,match:next.match}),
++            players:{...next.players,players:next.players.players.map(q=>q===owner?copyForkData(q):q)}};
++          const settlement=residualSession.queryCardSettlement(claim,seatId,{kind:"chong_task",cardInstanceId:card.id,ruleId:rule.id||rule.kind});
++          if(settlement?.fossilId!==job.fossilId)continue;
++          const applied=residualSession.settleReadyTaskDirect(claim,seatId,card.id,rule.id||rule.kind);
++          const event={type:"complete_task",playerId:seatId,cardInstanceId:card.id,ruleId:rule.id||rule.kind};
++          const claimed=applied.ok&&residualSession.augmentEffectResult(claim,{ok:true,spawnedEffects:applied.spawnedEffects||[],irreversible:applied.irreversible,events:[event]},
++            {type:"residual_action",ownerId:seatId});
++          if(!claimed?.ok||claimed.irreversible||claimed.spawnedEffects.length||localPlans.hasPendingFossilArrival(claim))continue;
++          const after=finalNoProbeValue(claim,claim.players.players.find(q=>q.id===seatId));before??=finalNoProbeValue(state,p);
++          const gain=stateValue.sumValueParts([after,-before]);if(!(gain>0))continue;
++          candidates.push({after:claim,beforeValue:before,afterValue:after,quote:{kind:"funded-earth-shipment",directEnergy:true,path,funding,cardId:card.id,
++            fossilId:job.fossilId,value:gain,proof:"known-native-post-main-cargo-v2"}});
++        }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v510";
++  const VERSION = "seti-complete-decision-search-v511";
+--- a/tools/node-test-inventory.js
++++ b/tools/node-test-inventory.js
+@@ -22,0 +23 @@
++    entry("randomizer/game/ai/cargo-task-assignment.test.js", "policy/decision-search", "同一已知化石按目的地比较不同任务，原生更高收益计划、冷恢复及另一运输保持", "绑定原任务遗漏更高合法收益、重复移动筹资、两任务互相污染或冷恢复选择漂移"),
+--- /dev/null
++++ b/randomizer/game/ai/cargo-task-assignment.test.js
+@@ -0,0 +1,29 @@
++"use strict";
++const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),z=require("node:zlib");
++const {createSimulationRuleComposition}=require("../../training/simulation-rule-composition"),{createSeededRandom}=require("../random"),{buildRuleObservation}=require("../../app/rule-observation"),{createAnalysisPort}=require("./analysis-port"),{createSearchAgent}=require("./search-agent"),{createStateValueEvaluator}=require("./state-value");
++const f=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,"fixtures/earned-pickup-task-20261118-v1.json.gz")))),seat="player-white",seed=JSON.parse(f.root.committedState).meta.seed,evaluate=createStateValueEvaluator(seat);
++const order=x=>Array.isArray(x)?x.map(order):x&&typeof x==="object"?Object.fromEntries(Object.keys(x).sort().map(k=>[k,order(x[k])])):x;
++const rename=v=>typeof v==="string"?v==="fossil_06"?"fossil_03":v==="fossil_03"?"fossil_06":v:Array.isArray(v)?v.map(rename):v&&typeof v==="object"?Object.fromEntries(Object.entries(v).map(([k,x])=>[rename(k),rename(x)])):v;
++const root=structuredClone(f.root),source=JSON.parse(root.committedState);source.aliens.chong=rename(source.aliens.chong);root.committedState=JSON.stringify(order(source));
++const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v,c)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true,trustedFrozenWorking:c?.trustedFrozenWorking===true})});k.newGame({seed});const c=k.composition;
++const save=()=>c.lifecycle.save().envelope,state=()=>{const e=save();return e.session?.session?.workingState||JSON.parse(e.committedState)},player=()=>state().players.players.find(p=>p.id===seat),menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
++const apply=a=>{assert(a);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==="quick"?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));};
++try{
++ assert(c.lifecycle.restore(root).ok);for(const a of f.actions)apply(menu().find(x=>x.actionId===a.actionId));apply(menu().find(a=>a.target.fossilId==="fossil_03"));
++ const before=save(),jobs=structuredClone(state().aliens.chong.transportTasksByRocketId),turn=state().turn.turnNumber,other=Object.values(jobs).find(j=>j.fossilId!=="fossil_07");assert(other);
++ let checkpoint,first,steps=0,native=0,maxMs=0,claimed=false;
++ while(state().turn.turnNumber===turn){
++  assert(steps++<16,"known delivery and task suffix must terminate");const port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});let q,action;
++  try{const agent=createSearchAgent({seatId:seat,analysisPort:port});if(checkpoint)agent.loadCheckpoint(checkpoint);const original=save();q=agent.decide({seatId:seat,legalActions:menu()}).search;assert.deepEqual(save(),original,"planning preserves source and RNG");assert(q.complete&&!q.unresolved.length);action=menu().find(a=>a.actionId===q.actionId);checkpoint=agent.createCheckpoint();}
++  finally{port.close()}
++  if(!first){first=q;assert(q.value>=239.5,"same delivered fossil must be eligible for the higher-valued other Earth task");const plan=q.roots.find(r=>r.actionId===q.actionId).goal;assert.equal(plan.fossilId,"fossil_07");assert.equal(plan.cardId,"alien-chong-6-16");assert.notEqual(plan.cardId,Object.values(jobs).find(j=>j.fossilId===plan.fossilId).cardId);
++   const cold=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const resumed=createSearchAgent({seatId:seat,analysisPort:cold});resumed.loadCheckpoint(checkpoint);const original=save(),r=resumed.decide({seatId:seat,legalActions:menu()}).search;assert.equal(r.actionId,q.actionId);assert.equal(r.value,q.value);assert.equal(r.diagnostics.nativeExecutions,0);assert.deepEqual(save(),original);}finally{cold.close()}
++  }
++  assert(q.diagnostics.nativeExecutions<=256);assert(q.rootAndSearchMilliseconds<=600);native+=q.diagnostics.nativeExecutions;maxMs=Math.max(maxMs,q.rootAndSearchMilliseconds);apply(action);
++  if(action.family==="complete_task"&&action.target.cardInstanceId==="alien-chong-6-16"){
++   assert.equal(state().aliens.chong.fossilsById.fossil_07.completedByCardId,"alien-chong-6-16");assert.deepEqual(Object.values(state().aliens.chong.transportTasksByRocketId).find(j=>j.fossilId===other.fossilId),other);claimed=true;
++  }
++ }
++ assert(claimed);assert.equal(evaluate(c.projection({role:"player",playerId:seat}).state),first.value);assert.equal(player().resources.score,148);assert.equal(player().resources.credits,6);assert.deepEqual(state().meta.rngState,JSON.parse(before.committedState).meta.rngState);assert.deepEqual(Object.values(state().aliens.chong.transportTasksByRocketId).find(j=>j.fossilId===other.fossilId),other);
++ console.log(JSON.stringify({cargoTaskAssignment:"passed",value:first.value,score:player().resources.score,credit:player().resources.credits,native,maxMs,actualInputs:steps,coldRecovery:true,independentCargoUnchanged:true}));
++}finally{c.dispose()}
