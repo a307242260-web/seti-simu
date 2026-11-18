@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-18",
+  "workUnitStartedAt": "2026-11-18 12:44:23 UTC",
+  "hypotheses": ["Shrink the full-world copies in fixed cargo evaluation", "Reuse a fixed cargo marginal gain across differences that cancel from both before and after values"],
+  "copyScreen": "Existing samples: cargo68.499ms, copies31.332ms, finalNoProbeValue10.376ms. Copies alone are insufficient for the39.702ms gap; do not start a copy-only patch."
+  ,"candidateDependencyProof": [
+    "Keep every Native state field, known-card IDs and forbidden coordinate in the key, except owner base score/scoreSources and nebulae/sectorSettlements.",
+    "Eligibility requires round4, only revealed Worm/Amiba, no pending card triggers, and reserved endgame rules limited to planetLandingPairs/amibaTraceCount/chongTraceCount or none. Other rules must retain the original implementation.",
+    "Native fossil movement changes position, wallet and visit events, never orbit/landing markers. The fixed accepted claims have no spawned scanning effects. Nebula marks/sector wins therefore remain unchanged; gold b2=min(planet markers,sector wins) has the same value before and after.",
+    "The allowed reserved endgame rules read planet markers or traces, not nebula state or raw score. Current base score is additive without Jiuzhe/Runezu. No pending triggers may observe it. This is a value-delta identity, never a Native-state merge.",
+    "The cached object would contain gain/plans only; actual value must be rebased from the current full Native final score/wallet. Current private states and source/RNG must not be replaced."
+  ],
+  "minimalDiagnostic": "One instrumented uncached v513 decision collects candidate keys, actual gain/plan hashes, repeat cost, key cost and exact rebasing. The complete graph/roots must equal the saved601-node/69-submit/239.5 result. Diagnostic timing is not admission.",
+  "falsifier": "Same key but different gain/plan, failed rebasing, insufficient net cost savings, changed graph or unsupported reads/writes: reject before implementation.",
+  "budgetsAndCoverage": "Runtime limits stay null; no new depth/root/beam cap or branch omission. All Native planning, resource bounds and unknown-card boundaries remain unchanged.",
+  "stop": "At most60 minutes or the two listed hypotheses. No game or batch; no chained unrelated optimization."
+}

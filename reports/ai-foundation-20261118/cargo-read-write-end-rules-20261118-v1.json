@@ -1,0 +1,48 @@
+{
+  "cards": [
+    {
+      "id": "card-13-0",
+      "rule": null
+    },
+    {
+      "id": "card-51-0",
+      "rule": {
+        "kind": "planetLandingPairs",
+        "count": 2,
+        "scorePer": 6
+      }
+    },
+    {
+      "id": "alien-amiba-1-2",
+      "rule": null
+    },
+    {
+      "id": "card-29-pass-2-5",
+      "rule": null
+    },
+    {
+      "id": "alien-amiba-7-5",
+      "rule": {
+        "kind": "amibaTraceCount",
+        "traceType": "blue",
+        "scorePer": 2
+      }
+    },
+    {
+      "id": "alien-chong-3-10",
+      "rule": null
+    },
+    {
+      "id": "alien-chong-2-8",
+      "rule": {
+        "kind": "chongTraceCount",
+        "scorePer": 1
+      }
+    },
+    {
+      "id": "alien-chong-6-16",
+      "rule": null
+    }
+  ],
+  "pendingTriggers": []
+}

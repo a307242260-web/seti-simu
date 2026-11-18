@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-18",
+  "sources": {
+    "r4-main-owned-point289-v513-20261118-v1.json.gz": "d41dd918e17b419d28decbcebf8a462c4a6fd965ee54ccff180a56043c244276",
+    "r4-main-owned-v513-cpu-20261118-v1.json.gz": "977e911b00d8eaf65a3f4be0af0c26d9c966327a3459a94ce637a49f233bce76",
+    "cargo-gain-reuse-diagnostic-20261118-v1.json.gz": "893aaa77bc3554b951c477e4880233df73ab748d553752b088b57e72936d1bc7",
+    "cargo-read-write-end-rules-20261118-v1.json": "73e40bd607bf6245e276c2371a47e26a386a9c2c196ef5d62fc0bbc85b0556e5"
+  },
+  "readWriteSources": {
+    "randomizer/game/ai/analysis-port.js": "ca767065da4a0fc7181b55c164d44cee424ff0e44ef6edfb9e15171fd0c057d5",
+    "randomizer/game/end-game-scoring.js": "34f6d86465157d16aa354d27d2535594bd64d5acc2212d39728b191c689219a5",
+    "randomizer/game/abilities/rocket.js": "d5ed4ff8b9451fb1be6cd92d938c81a28e69d14a8f5556a868f6892a65b9c11c",
+    "randomizer/game/cards/play-domain.js": "638745713c22236ddd00b8b9b76c3d069417a7a6805277d84a0d95d6f912e1fb",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/effects/residual-domain-session.js": "db7887442c1af7f2be8bd16e7587453505693ed941b59845791821cd08a1cb2e"
+  },
+  "copyProposal": {
+    "sampleMilliseconds": {
+      "search": 615.5,
+      "cargo": 68.499,
+      "cargoFinalScore": 10.376,
+      "cargoCopy": 31.332,
+      "moduleResolution": 12.083
+    },
+    "optimisticRootIfCargoCopiesFree": 607.1384339059496,
+    "decision": "Reject cargo-copy-only work as the sole600ms path.",
+    "limit": "Proportional CPU sample screen, not a measured lower bound or predicted achieved speedup."
+  },
+  "gainReuseProposal": {
+    "dependencyKey": "Retain the full Native state/knowledge/forbidden coordinate, except owner base score/scoreSources and nebulae/sectorSettlements; guard aliens, triggers and three supported endgame-rule kinds.",
+    "observedConsistent": true,
+    "exactCurrentValueRebasing": true,
+    "eligibleCalls": 271,
+    "uniqueKeys": 198,
+    "positiveCalls": 177,
+    "positiveKeys": 105,
+    "positiveRepeatedCalls": 72,
+    "keyMilliseconds": 26.73004699999916,
+    "repeatedUncachedMilliseconds": 24.49700000000007,
+    "rebasingMilliseconds": 0.9931260000000748,
+    "optimisticNetMilliseconds": -3.2261729999991644,
+    "decision": "Reject this cache key before implementation: key construction already costs more than the observed repeated work. Even a free key removes only the24.5ms repeated block in this diagnostic.",
+    "limits": "Diagnostic overhead/GC can perturb block timings. These are screening evidence, not admission or a stable speed comparison. Consistent sampled gains do not replace counterfactual Native proof for a smaller future key."
+  },
+  "nativeDependencyFindings": [
+    "Arrival rewards from Native moveProbe add publicity/visit events and do not place orbit/landing markers.",
+    "Transport task consumption writes the transported fossil/job, removes its rocket/card, applies fixed rewards and updates task count; one-move corner appends discard and removes its card ID from the draw pile.",
+    "The observed reserved endgame rules read landing pairs and Amiba/Worm traces. Gold b2 couples planet markers and sector wins, so omitting scan progress requires proving markers stay fixed and no scanning effect executes.",
+    "No state merge or cached Native successor is allowed. A value-delta proof must rebase on the current full score/wallet; hidden rewards, trigger observations and unsupported scoring rules require original execution.",
+    "A smaller key still needs a complete semantic read/write audit, including data allocation, event augmentation, resource caps, final marks and task/fossil matching. This work unit does not claim that audit complete."
+  ],
+  "workUnitExit": "Two declared proposals screened; neither provides a credible600ms path. No AI cache or clone patch was implemented.",
+  "diagnostic": {
+    "newDiagnosticSearches": 1,
+    "nativeSubmissions": 69,
+    "fullGraphAndRootsExact": true,
+    "value": 239.5,
+    "logicalNodes": 601,
+    "newAdmissionTiming": false,
+    "newGames": 0
+  },
+  "formal": {
+    "version": "v485/valuev71",
+    "completeGameScore": 272,
+    "candidate": "v513",
+    "promoted": false,
+    "candidateMilliseconds": 639.702459,
+    "singlePointPassed": false
+  },
+  "nextQuestion": "Can a compact cargo-only dependency key, justified from Native reads/writes rather than heuristic omissions, yield substantially more reuse at lower cost? First finish the audit and quantify whether it can remove the39.7ms gap with margin; otherwise reject it."
+}
