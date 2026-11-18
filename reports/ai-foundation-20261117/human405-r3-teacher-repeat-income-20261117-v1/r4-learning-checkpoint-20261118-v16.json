@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v16",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v15.json",
+  "publishedParent": "4ae61e7f3ba790ea5486c1a56563a78810d767f6",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v504/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue R3 teaching alignment into R4 same-root decisions and all assets, preserving first two rounds, reproducibility and budgets.",
+  "previousGoalTurnClassification": "no progress: status-only response; current turn revalidated and completed candidate Native/Browser/value/source evidence",
+  "thisGoalTurnClassification": "progress: Native write-domain copy reduced paired point1650.7 to1562.1ms with exact full graph;292 complete Native-envelope checks,24 Node,14 Browser,68 V-input audits and4 sealed tests passed; diagnosed310 end-claim checks with299 successful proofs and119 representative source classes.",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "quiet-science-copy-candidate-findings-20261118-v1.json",
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1562.129125,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "next": [
+    "核查299条已证明的结束回合任务时机检查，寻找有完整依赖证明的复用或提前判定；保留11条不满足证明的原始路径。",
+    "保留600ms单点门槛及前两轮回归，未达标不启用候选、不跑新整局。"
+  ]
+}

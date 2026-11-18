@@ -1,0 +1,56 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v504/movementv8/valuev71",
+  "candidatePromoted": false,
+  "formalAIUnchanged": 272,
+  "teacherLegalReference": 384,
+  "noNewFullGameOrBatch": true,
+  "change": "痕迹放置和外星人领牌的固定接续只复制原生会写入的meta/data/aliens/players/match；其他冻结切片只读复用；公共补牌前仍私有复制cards，非冻结来源完整复制。未知队列与奖励继续原生执行。",
+  "semanticChange": false,
+  "equivalence": "所有根、完整逻辑图、值、兑现、准备债、完成情况与v503逐项一致，原根/RNG不变。292份完整Native信封对照，4组隐藏牌堆置换通过。",
+  "comparison": {
+    "file": "quiet-science-copy-point289-comparison-20261118-v1.json.gz",
+    "beforeMilliseconds": 1650.667292,
+    "afterMilliseconds": 1562.129125,
+    "native": 210,
+    "value": 235.5,
+    "actionId": "land:d5ee03a2",
+    "fullGraphsExact": true,
+    "timingCaveat": "同进程先旧后新的单次对照，不是普遍时延承诺，不与别批数据相加减。"
+  },
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1562.129125,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "verification": {
+    "nodeRelated": 24,
+    "browser": 14,
+    "vInputAudit": 68,
+    "sealedTests": 4,
+    "sourceRestore": {
+      "base": "4ae61e7f3ba790ea5486c1a56563a78810d767f6",
+      "candidate": "v504/movementv8/valuev71",
+      "sourceFilesVerified": 33,
+      "unchangedBaseFiles": 524,
+      "sealedRoot": "/private/tmp/seti-quiet-science-copy-sealed-20261118-t_ake8ob",
+      "allChangedJavaScriptSyntaxChecked": true,
+      "runtimePromoted": false
+    }
+  },
+  "nextEvidence": {
+    "file": "quiet-claim-cost-contexts-20261118-v1.json.gz",
+    "calls": 310,
+    "proved": 299,
+    "walletHandTaskDataCargoClasses": 119,
+    "meaning": "已执行的任务领取／结束回合等价检查，保存每类一个原生源状态及全部计数；只是诊断，未作新剪枝。",
+    "limitation": "分类未包含所有盘面字段，不能直接作为缓存或状态等价键；任务领取会增加钱，需验证是否开启新用途。"
+  },
+  "next": [
+    "核查299条已证明的结束回合任务时机检查，寻找有完整依赖证明的复用或提前判定；保留11条不满足证明的原始路径。",
+    "保留600ms单点门槛及前两轮回归，未达标不启用候选、不跑新整局。"
+  ],
+  "sourceBundle": "quiet-science-copy-candidate-source-20261118-v1.json"
+}

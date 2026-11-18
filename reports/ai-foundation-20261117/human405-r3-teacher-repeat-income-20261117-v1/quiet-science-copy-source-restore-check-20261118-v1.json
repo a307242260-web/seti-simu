@@ -1,0 +1,9 @@
+{
+  "base": "4ae61e7f3ba790ea5486c1a56563a78810d767f6",
+  "candidate": "v504/movementv8/valuev71",
+  "sourceFilesVerified": 33,
+  "unchangedBaseFiles": 524,
+  "sealedRoot": "/private/tmp/seti-quiet-science-copy-sealed-20261118-t_ake8ob",
+  "allChangedJavaScriptSyntaxChecked": true,
+  "runtimePromoted": false
+}

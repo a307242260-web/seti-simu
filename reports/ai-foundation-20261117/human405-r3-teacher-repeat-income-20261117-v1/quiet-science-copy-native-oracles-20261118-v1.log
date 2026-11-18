@@ -1,0 +1,7 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+{"yellowTraceQueue":"passed","cases":62,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":44,"nativeFallbackInputs":18}
+SUMMARY unit passed=3 failed=0 total=3 time=12.21s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=3
