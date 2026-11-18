@@ -28,7 +28,7 @@
         "sha256": "5edfdb944772fa0dbfa90db0d8cd6be41fbcd8a46f9b2fb91b1a5f1de79ba598"
       }
     ],
-    "candidateDecision": "early-claim-fixed-tail-point289-comparison-20261118-v1.json.gz"
+    "candidateDecision": "native-route-facts-point289-comparison-20261118-v1.json.gz"
   },
   "completedGame": {
     "score": 272,
@@ -205,21 +205,23 @@
     "source": "Committed previous report and verified current-rule teacher reference"
   },
   "candidate": {
-    "version": "v508",
+    "version": "v510",
     "promoted": false,
     "native": 209,
-    "milliseconds": 1630.369042,
+    "milliseconds": 1528.445541,
     "complete": true,
     "scoreUsedForActionComparison": 235.5,
     "nativeLimit": 256,
     "millisecondsLimit": 600
   },
   "validation": {
-    "nodePassed": 30,
+    "nodePassed": 36,
     "nodeFailed": 1,
-    "browserPassed": 18,
+    "browserPassed": 19,
     "valueInputAuditPassed": 68,
     "legacyIntegrationReceiptSameAcrossV504V505V506": true,
-    "sealedNodePassed": 8
+    "sealedNodePassed": 12,
+    "exactNativeDirectoryQueries": 802,
+    "warmColdDirectoryComparisons": 128
   }
 }

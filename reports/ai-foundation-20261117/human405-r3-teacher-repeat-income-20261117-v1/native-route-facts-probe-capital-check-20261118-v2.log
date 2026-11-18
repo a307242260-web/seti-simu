@@ -1,0 +1,5 @@
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.78s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1

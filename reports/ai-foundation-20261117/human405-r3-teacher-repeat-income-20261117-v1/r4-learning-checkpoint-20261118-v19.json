@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v19",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v18.json",
+  "publishedParent": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v510/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Preserve original R3 teaching alignment and authorized R4 same-root learning, first-two-round assets, Native reproducibility, necessary branch coverage and admission budgets. Original development comparison remains required.",
+  "previousGoalTurnClassification": "progress: v508 canonical early positive claim and checked unique-END proof,4 Native zero-reward completion counterexamples,41 restored files and related checks committed and pushed as3ee67597a.",
+  "thisGoalTurnClassification": "progress:43-file independently restored candidate;802 exact old/new Native directory queries; structure rebuilds47→7;128 warm/cold controls; complete1949-node graph and all root outcomes unchanged; paired1673.698→1528.446ms at209 Native inputs.36 distinct Node pass/1 reproduced old assertion after exact historical fixture restoration,19 Browser,68 input audits,12 sealed tests. No game or runtime promotion.",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "gate": {
+    "native": 209,
+    "nativeLimit": 256,
+    "milliseconds": 1528.445541,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "findings": "native-route-facts-candidate-findings-20261118-v1.json",
+  "next": [
+    "Reduce private copying in knownFundedCargoQuote only after auditing Native movement/corner/claim/event/scoring writes. Keep Chong jobs/fossils mutable; share other frozen slices only for explicitly audited ordinary tasks, retaining full-copy fallback for Amiba theory tasks or other species. Prove complete quote state and actual Native payoffs before any timing claim.",
+    "Continue profiling state identity and read-only Native menu costs without dropping physical fields or necessary branches.",
+    "Keep256/600ms admission. After admission revalidate fixed roots and first two rounds, continue original R4 same-root teaching/assets comparison and only then one unique full game."
+  ]
+}

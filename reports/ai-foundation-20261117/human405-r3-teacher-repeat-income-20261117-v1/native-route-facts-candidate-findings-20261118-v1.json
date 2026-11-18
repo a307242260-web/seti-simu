@@ -1,0 +1,156 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v510/movementv8/valuev71",
+  "promoted": false,
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "noNewGameOrBatch": true,
+  "previousGoalTurnClassification": "progress: v508 canonical early positive claim and checked unique-END proof,4 Native zero-reward completion counterexamples,41 restored files and related checks committed and pushed as3ee67597a.",
+  "change": "Native probe structure cache uses only actually read alien inputs: remaining unrevealed first-yellow reward count and the complete Aomomo panel. Keep existing topology, sources, planets, effective tech, movement allowance and fresh current-wallet gaps. No search-state equivalence, branch pruning, rule bypass, goal restriction or budget change.",
+  "readDependencyAudit": {
+    "productionKernel": [
+      "availableFirstYellowTraces/rewardEquivalentValue",
+      "buildProbeCandidateStructures",
+      "probeEndpointOwnMarkers",
+      "prepareProbeRoutes",
+      "probeStructureKey",
+      "finalizeProbeRequirements"
+    ],
+    "nativePlanetAbilities": [
+      "listOrbitRequirementsAt/buildOrbitChoice",
+      "listLandRequirementsAt/buildLandChoicesForPlacement",
+      "getLandEnergyCost",
+      "Aomomo marker counts"
+    ],
+    "nativeRocketAbilities": [
+      "getRequiredMovePointsFromCoordinate",
+      "getRocketLimitForPlayer",
+      "getLaunchCost"
+    ],
+    "otherAlienData": "Amiba/Chong trace positions/history, symbols, fossil job metadata, decks/offers and other species are not read by this directory. Full Aomomo panel retained conservatively."
+  },
+  "pairedComparison": {
+    "before": {
+      "kind": "before",
+      "sourceFiles": {
+        "analysis-port": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+        "local-decision-plans": "f7fa99596770947b0b0b90ec6b9cf632670cca2c5a5172db6f941c855a8b874b",
+        "decision-search": "cf24ff984c00f45c0c2208f9e16fe20d93b565f2145e38b7aeb6b29fa26d93bc"
+      },
+      "sourceSha256": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "native": 209,
+      "ms": 1673.698,
+      "earlyClaimOrders": 290,
+      "complete": true,
+      "unresolved": [],
+      "nativeProductionKernelSha256": "a4255dfe887b94a01bb8b6e6cb1dec30c53e9969de2338b9ed23aa2318b44233"
+    },
+    "after": {
+      "kind": "after",
+      "sourceFiles": {
+        "analysis-port": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+        "local-decision-plans": "f7fa99596770947b0b0b90ec6b9cf632670cca2c5a5172db6f941c855a8b874b",
+        "decision-search": "2ad71a8b445592dd903a6a30f91cd5d66924a591ce88cf3d0f8d233799c66c4f"
+      },
+      "sourceSha256": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "native": 209,
+      "ms": 1528.445541,
+      "earlyClaimOrders": 290,
+      "complete": true,
+      "unresolved": [],
+      "nativeProductionKernelSha256": "7957e37cefd22078ebc4fd86163c35c4004dd53178c148cdb55eebf857b5c68c"
+    },
+    "fullGraphsExact": true,
+    "rootAndRngPreserved": true,
+    "logicalNodes": 1949,
+    "pairedSpeedupPercent": 8.678534538489025
+  },
+  "queryDifferential": {
+    "kind": "Instrumented actual-query Native differential; not timing admission or a game",
+    "candidateKernelSha256": "7957e37cefd22078ebc4fd86163c35c4004dd53178c148cdb55eebf857b5c68c",
+    "referenceKernelSha256": "a4255dfe887b94a01bb8b6e6cb1dec30c53e9969de2338b9ed23aa2318b44233",
+    "native": 209,
+    "value": 235.5,
+    "logicalNodes": 1949,
+    "stats": {
+      "queries": 802,
+      "candidateBuilds": 7,
+      "referenceBuilds": 47,
+      "uniqueNativeInputs": 797,
+      "statesUnchanged": true,
+      "allNativeFieldsExact": true
+    },
+    "rootAndRngPreserved": true
+  },
+  "warmColdControls": {
+    "nativeComparisons": 128,
+    "actualHistoricalContexts": 119,
+    "controls": "Current wallet gaps/sort, restored first-yellow rewards, unrelated decks/offers, Aomomo orbit discount, own orbit/landing markers and clearing marks. Frozen source and RNG preserved."
+  },
+  "verification": {
+    "nodePassedDistinct": 36,
+    "nodeFailedDistinct": 1,
+    "initialNodeRun": {
+      "passed": 35,
+      "failed": 2,
+      "total": 37
+    },
+    "historicalFixtureRepair": {
+      "cause": "One additional valuation test could not find its historically cleaned report fixture. Restore the exact named blob from base only into isolated candidate/sealed reports overlays. No shared historical file or production behavior changed.",
+      "dependency": "reports/ai-foundation-20261113/prepass-funded-landing/r3-defer-final-analysis-board09-crossover-20261113-v1.json.gz",
+      "targetedRecheckPassed": 1,
+      "targetedRecheckFailed": 0,
+      "log": "native-route-facts-probe-capital-check-20261118-v2.log"
+    },
+    "remainingFailure": "analysis-port.test.js legacy energy-for-move count0 versus expected2, reproduced in previous candidates. Not counted as passed.",
+    "browserPassed": 19,
+    "valueInputAuditPassed": 68,
+    "sealedNodePassed": 12,
+    "sourceRestore": {
+      "candidate": "v510/movementv8/valuev71",
+      "sourceFilesVerified": 43,
+      "unchangedBaseFiles": 522,
+      "base": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+      "patchSha256": "0ad14d2e541eea743af59fe1b6ab87297c56ac956b1b8b82f0525d6985b56519",
+      "nodeSyntaxFiles": 29,
+      "sealedRoot": "/private/tmp/seti-native-route-facts-sealed-20261118-392l0igs",
+      "promoted": false
+    }
+  },
+  "gate": {
+    "native": 209,
+    "nativeLimit": 256,
+    "milliseconds": 1528.445541,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "timingCaveat": "One same-process before/after pair. Independent batches are not a cumulative speed series. CPU sampling and instrumented old/new query verification are diagnostics only, not timing admission.",
+  "currentCpuDiagnostic": {
+    "file": "native-route-facts-point289-cpu-summary-20261118-v1.json",
+    "inclusiveMilliseconds": {
+      "identity": 187.046,
+      "quietFinalValue": 161.623,
+      "enumerateStableActions": 139.913,
+      "knownCargoFuture": 137.706,
+      "knownFundedCargoQuote": 136.456,
+      "goalMovementSpec": 74.125
+    },
+    "selfMilliseconds": {
+      "copy": 133.576,
+      "(garbage collector)": 118.121,
+      "structuredClone": 98.125
+    },
+    "inclusiveCostsOverlap": true
+  },
+  "sourceBundle": "native-route-facts-candidate-source-20261118-v1.json",
+  "report": "reports/iteration/current-full-baseline-20261118-v1.html",
+  "next": [
+    "Reduce private copying in knownFundedCargoQuote only after auditing Native movement/corner/claim/event/scoring writes. Keep Chong jobs/fossils mutable; share other frozen slices only for explicitly audited ordinary tasks, retaining full-copy fallback for Amiba theory tasks or other species. Prove complete quote state and actual Native payoffs before any timing claim.",
+    "Continue profiling state identity and read-only Native menu costs without dropping physical fields or necessary branches.",
+    "Keep256/600ms admission. After admission revalidate fixed roots and first two rounds, continue original R4 same-root teaching/assets comparison and only then one unique full game."
+  ]
+}

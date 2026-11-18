@@ -1,0 +1,10 @@
+{
+  "candidate": "v510/movementv8/valuev71",
+  "sourceFilesVerified": 43,
+  "unchangedBaseFiles": 522,
+  "base": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+  "patchSha256": "0ad14d2e541eea743af59fe1b6ab87297c56ac956b1b8b82f0525d6985b56519",
+  "nodeSyntaxFiles": 29,
+  "sealedRoot": "/private/tmp/seti-native-route-facts-sealed-20261118-392l0igs",
+  "promoted": false
+}
