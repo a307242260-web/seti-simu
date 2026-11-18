@@ -1,0 +1,5 @@
+{
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "SyntaxError: Non-UTF-8 code starting with '\\xe8' in file /Users/bilibili/code/seti-simu/adhoc/export-formal272-random20-20261119.py on line 154, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details\n"
+}

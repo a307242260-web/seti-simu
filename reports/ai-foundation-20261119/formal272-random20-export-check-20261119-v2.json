@@ -1,0 +1,7 @@
+{
+  "exitCode": 1,
+  "sourceSha256": "6a239ca07ad3d0d161a7e6c5cb0e5df177a74944914e36709ddda265751f5ba5",
+  "stdout": "",
+  "stderr": "SyntaxError: Non-UTF-8 code starting with '\\xe8' in file /Users/bilibili/code/seti-simu/adhoc/export-formal272-random20-20261119.py on line 154, but no encoding declared; see http://python.org/dev/peps/pep-0263/ for details\n",
+  "priorFailureBeforeAnyNativeReplay": true
+}

@@ -1,0 +1,8 @@
+{
+  "exitCode": 1,
+  "sourceSha256": "3b2bf7abad1247384d214de85c5f9424d20a3e533a60786d9381969b804fe454",
+  "stdout": "",
+  "stderr": "fatal: path 'tools/archive_research_replay.js' exists on disk, but not in 'HEAD'\nTraceback (most recent call last):\n  File \"/Users/bilibili/code/seti-simu/adhoc/export-formal272-random20-20261119.py\", line 40, in <module>\n    (RUNTIME / name).write_bytes(subprocess.check_output(['git', 'show', 'HEAD:' + name], cwd=ROOT))\n  File \"/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py\", line 424, in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n  File \"/Applications/Xcode.app/Contents/Developer/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py\", line 528, in run\n    raise CalledProcessError(retcode, process.args,\nsubprocess.CalledProcessError: Command '['git', 'show', 'HEAD:tools/archive_research_replay.js']' returned non-zero exit status 128.\n",
+  "priorFailuresBeforeAnyNativeReplay": true,
+  "reportSourceChange": "Wrapped long UTF8 HTML source lines; no AI or replay policy changed."
+}

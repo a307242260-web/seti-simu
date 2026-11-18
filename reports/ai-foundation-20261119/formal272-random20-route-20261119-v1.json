@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "formal272-original-random20-distribution-20261119",
+  "startedEpochSeconds": 1795044575,
+  "deadlineEpochSeconds": 1795046375,
+  "status": "frozen",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-preflight-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Evaluate the existing completed272 exact strategy on the original20 independent free-analysis boards, White only, other three PASS; no strategy change or frozen candidate revival. First verify source identity, existing tests/admission and per-decision gate; run only if feasible and deduplicated.",
+  "stop": "If exact frozen source or admission evidence cannot be reconstructed in this preflight, do not run a new game or broaden to test/strategy repairs.",
+  "closedEpochSeconds": 1795046198.250824,
+  "decision": "stopped after original board06 exceeded256 Native inputs; no strategy patch or more boards",
+  "completed": 5,
+  "failed": 1,
+  "notRun": 14
+}

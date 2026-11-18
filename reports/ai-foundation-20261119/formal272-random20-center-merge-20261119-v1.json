@@ -1,0 +1,19 @@
+{
+  "snapshot": "/private/tmp/seti-formal272-random20-publish-20261119",
+  "metadataPaths": [
+    "reports/iteration/versions.json",
+    "reports/iteration/registry.json",
+    "reports/robot-iteration.html"
+  ],
+  "sharedWorkingMetadataSha256": {
+    "reports/iteration/versions.json": "a05768443b8a6b16c4c2da3afc1faeed3288464402c6f81ac80a5054d232add5",
+    "reports/iteration/registry.json": "ea3ea2a282823da4dd31258e46136b9b905c6832f8b1acf80e0d896ed11bb2b1",
+    "reports/robot-iteration.html": "9fbb88a910d257a802cf609862083fe71a8dc827fc3fe8eba8d95a7eb6b92bc5"
+  },
+  "oldVersionEntriesPreserved": 369,
+  "oldRegistryEntriesPreserved": 363,
+  "registeredNewV2GroupResults": 6,
+  "allOldEntriesUnchanged": true,
+  "workingMetadataNotOverwritten": true,
+  "renderAssertionCorrection": "renderPage returns its output path; reused the already-written HTML rather than rerendering or repeating games."
+}

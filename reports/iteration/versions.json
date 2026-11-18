@@ -7,6 +7,27 @@
   },
   "versions": [
     {
+      "id": "formal272-original20-20261119",
+      "name": "272分策略·原20盘面：5完成、1失败、14未运行",
+      "date": "2026-11-19",
+      "baseline": null,
+      "head": "838395727df8ae4e4734b101028485aef59dc1b3",
+      "commits": [
+        "838395727df8ae4e4734b101028485aef59dc1b3"
+      ],
+      "summary": "已完成5盘均分138.6；第6盘第169步搜索闭合但302输入超限，停止批次；不代表20盘均分，未改策略",
+      "records": {
+        "86065535.83839572.full.json": {},
+        "ae77996a.83839572.full.json": {},
+        "bbaf8e37.83839572.full.json": {},
+        "1583b1ef.83839572.full.json": {},
+        "c5ad1d42.83839572.full.json": {},
+        "c014616d.83839572.full.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false
+    },
+    {
       "id": "ai-search-current-full-baseline-20261118",
       "aiGeneration": "v2",
       "agentType": "search",

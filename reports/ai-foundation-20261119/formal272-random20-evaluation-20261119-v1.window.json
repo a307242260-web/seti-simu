@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "formal272-random20-route-20261119-v1.json",
+  "startedEpochSeconds": 1795045120.981417,
+  "deadlineEpochSeconds": 1795046375,
+  "status": "failed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045121.3271391,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 78185,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045121.7775302
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045161.426432,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 78567,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045192.630052
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045348.6771278,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 12904,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045404.142817
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045500.216867,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 15823,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045500.265646
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045555.16976,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 16437,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045555.2187562
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045593.699876,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 16794,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045593.784524
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045657.1559849,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 17331,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045657.2045188
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045666.486824,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 17494,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045666.535501
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045688.0333939,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 17738,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045688.082109
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045739.833598,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 18309,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045739.92435
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045874.87504,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 19436,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045874.923504
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045919.9560058,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 20049,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045920.004575
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045949.6695218,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 20362,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045949.757565
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795045991.612409,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 20841,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795045998.659708
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795046107.66491,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795046375,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/formal272-random20-evaluation-20261119-v1.window.attempt-15.stderr.log",
+      "pid": 21829,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795046110.348002
+    }
+  ],
+  "scope": "Finish exact-source/data preflight after a missing named test-file read probe, then one registered guarded original-board pilot; expand only if pilot completes and original gates hold. No strategy edits or frozen-candidate recovery.",
+  "priorReadProbeFailure": "First work unit closed by nonzero read of absent research-free-analyze-random20.test.js; no AI search, Native submission or game occurred. Preserve the failed window and logs; do not reset it.",
+  "closedEpochSeconds": 1795046198.2510872,
+  "closure": "Games and archive checks completed; final center-render assertion failed after the HTML was already written. Reused that produced HTML in closure; no command or deadline restarted."
+}
