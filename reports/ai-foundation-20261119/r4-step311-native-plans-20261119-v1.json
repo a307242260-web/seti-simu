@@ -1,0 +1,88 @@
+{
+  "input": 311,
+  "plans": [
+    {
+      "root": {
+        "actionId": "scan:2d21a323",
+        "target": 21,
+        "value": 239.5,
+        "realization": 0,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "scan:sector:sector-4-b",
+          "kind": "scan-flow",
+          "nebulaId": "sector-4-b",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        "resourceGoalCount": 7,
+        "completion": "complete"
+      },
+      "actions": [
+        "scan:2d21a323",
+        "choose_target:80112417",
+        "choose_card:c5dcf800",
+        "choose_target:314aec90",
+        "choose_card:9f33eea7",
+        "place_data:8fd12fd3"
+      ],
+      "nodes": [
+        21,
+        55,
+        56
+      ],
+      "leaf": {
+        "node": 56,
+        "status": "turn-tail-value",
+        "boundary": "quiet-turn-tail-value",
+        "distance": 0,
+        "value": 239.5,
+        "completion": "reachable"
+      }
+    },
+    {
+      "root": {
+        "actionId": "research_tech:806ccfc8",
+        "target": 11,
+        "value": 236,
+        "realization": -4,
+        "preparationDebt": 0,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "tech:orange3:",
+          "kind": "research_tech",
+          "tileId": "orange3",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          }
+        },
+        "resourceGoalCount": 6,
+        "completion": "complete"
+      },
+      "actions": [
+        "research_tech:806ccfc8",
+        "choose_target:22eefebd",
+        "end_turn:b2f9b29d"
+      ],
+      "nodes": [
+        11,
+        72
+      ],
+      "leaf": {
+        "node": 72,
+        "status": "information-barrier",
+        "boundary": "tech_bonus_reveal",
+        "distance": 0,
+        "value": 236,
+        "completion": "reachable"
+      }
+    }
+  ],
+  "newSearches": 0,
+  "newNativeInputs": 0
+}

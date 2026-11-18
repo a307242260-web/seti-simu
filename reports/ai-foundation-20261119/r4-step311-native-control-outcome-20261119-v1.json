@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "seti-step311-native-business-outcome-v1",
+  "date": "2026-11-19",
+  "question": "Does scanning at actual fourth-round311 lose a later research opportunity, or preserve a time-sensitive scan chain?",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "root": {
+    "originalInput": 311,
+    "round": 4,
+    "turn": 8,
+    "nativeStateSha256": "534a00bb05a73edac210fa58e621ecfcb5940e357d87fd95e5fa1e1399e2874e",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    },
+    "fullOfficialObservationExact": true,
+    "legalActionEquality": "Every field equal after omitting only explicit decision:null, matching stored coordinator serialization.",
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 3,
+      "energy": 2,
+      "handSize": 4,
+      "publicity": 6,
+      "score": 153
+    }
+  },
+  "savedValueComparison": {
+    "selectedScan": 239.5,
+    "bestResearchOrange3": 236,
+    "tiedResearchOrange2": 236,
+    "theseAreModelValuesNotFinalScores": true
+  },
+  "nativeFindings": {
+    "scanFirstRecordedTail": {
+      "inputs": 44,
+      "terminalScore": 272,
+      "terminalReached": true,
+      "afterScanScore": 163,
+      "beforeScanScore": 153,
+      "scanScoreGain": 10,
+      "laterPaidTechnology": [
+        "orange2",
+        "orange3"
+      ],
+      "sameSourceHistoricalReplayNotNewAutonomousGame": true
+    },
+    "researchFirstAttempts": [
+      {
+        "technology": "orange2",
+        "researchInputs": 3,
+        "scanStartInputs": 1,
+        "declaredNextTarget": "sector-4-b",
+        "targetLegal": false,
+        "availableFirstStepTargets": [
+          "sector-2-a",
+          "sector-2-b",
+          "sector-4-a"
+        ],
+        "scanTurnFinished": false,
+        "fullPendingCheckpointPreserved": true
+      },
+      {
+        "technology": "orange3",
+        "researchInputs": 3,
+        "scanStartInputs": 1,
+        "declaredNextTarget": "sector-4-b",
+        "targetLegal": false,
+        "availableFirstStepTargets": [
+          "sector-2-a",
+          "sector-2-b",
+          "sector-4-a"
+        ],
+        "scanTurnFinished": false,
+        "fullPendingCheckpointPreserved": true
+      }
+    ],
+    "mechanism": {
+      "rule": "purple1 first scan step targets Earth and adjacent sectors",
+      "earthBeforeResearch": 3,
+      "earthAfterResearch": 2,
+      "wantedNebula": "绘架座β / sector-4-b",
+      "firstStepBefore": [
+        "sector-2-b",
+        "sector-4-a",
+        "sector-4-b"
+      ],
+      "firstStepAfter": [
+        "sector-2-a",
+        "sector-2-b",
+        "sector-4-a"
+      ],
+      "pureProductionHelpersMatchBothNativeMenus": true,
+      "importantLimit": "The sector is lost from the first Earth/adjacent scan step. This does not mean public-card scan can never mark that nebula; the original two-mark completion chain cannot be replayed unchanged."
+    }
+  },
+  "decision": {
+    "status": "reject-forced-research-first-proposal-at311",
+    "supported": [
+      "Scan311 does not by itself omit the two later research actions: baseline obtains orange2 and orange3.",
+      "Researching either tied best orange technology first rotates Earth and loses the initial drawing-sector scan window.",
+      "The scan preference therefore has a concrete timing/resource basis; an unchanged swap is infeasible."
+    ],
+    "notProven": [
+      "Scan311 is globally optimal among all new plans.",
+      "No alternative post-research scanning/card/funding route can win.",
+      "An extra full-game score improvement or20-board generalization."
+    ],
+    "AIChange": "none; neither candidate omission nor an erroneous research preference is established at this node."
+  },
+  "nextQuestion": {
+    "root": "Reuse the exact restored actual311 root; no repeated prefix needed.",
+    "candidate": "Held alien-chong-7-16 grants a purple technology for3credits and1publicity, is legal now, has existing root value229.5, and is later discarded as movement payment at actual332.",
+    "requiredControl": "Determine whether the complete card-technology development plan can outperform the selected scan route under legal funding, actual changed scan range and a shared completed outcome. Do not force the original now-illegal sector chain or reopen B101/Amiba1/v514.",
+    "executed": false
+  },
+  "executionAccounting": {
+    "prefixInputs": 69,
+    "baselineRecordedTailInputs": 44,
+    "orange2FirstInputs": 4,
+    "orange3FirstInputs": 4,
+    "totalSuccessfulNativeInputs": 121,
+    "repeatedSuccessfulInputs": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0,
+    "terminalObservationInputs": 0,
+    "rootVerificationInputs": 0,
+    "scanMechanismVerificationInputs": 0
+  },
+  "failuresAndLimitations": [
+    "Initial root verifier rejected explicit null decision fields omitted by the historical coordinator. Full observation already matched; separately verified exact fields with only null omission, repeated zero69-input prefix.",
+    "Terminal AnalysisPort.openRoot needs an acting owner and rejected the completed game; reused exact44-input checkpoint with the same pure read projection, repeated zero inputs.",
+    "The first attempted order swap stopped because the desired sector is truly absent, not because the simulator failed. Both attempts remain unfinished scan sessions in retained checkpoints; neither is advertised as a complete game.",
+    "Read-only source probes included missing historical paths; raw stderr retained."
+  ],
+  "methodTrial": {
+    "wallMinutesToClose": 16.420373332500457,
+    "originalDeadlineNeverExtended": true,
+    "closedBeforeOriginalDeadline": true,
+    "previousGoalTurnClassification": "progress: actual-scan and same-turn Amiba1 control rejected an apparent free4-point improvement",
+    "thisGoalTurnClassification": "progress: root311 restored exactly, known baseline reaches272, production helpers and two Native menus prove research/scan order is noncommutative at the desired target",
+    "businessMechanismEstablished": true,
+    "AIQualityImprovementProven": false
+  },
+  "formalCompletedScoreUnchanged": 272,
+  "formalGameWallSecondsPreviouslyMeasured": 16.1,
+  "newTimingMeasurement": null,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "sources": {
+    "reports/ai-foundation-20261119/r4-step311-native-root-20261119-v1.json": "461f4586c4596f5bebd34ce55ed5bb1a666b0d6dfaf64859b1e1b1a49c8e0d48",
+    "reports/ai-foundation-20261119/r4-step311-native-root-verification-20261119-v1.json": "d29624d0786d95d80add8453567b66d2d3d61943a0b5f491078e2f7c022e30af",
+    "reports/ai-foundation-20261119/r4-step311-native-plans-20261119-v1.json": "a225fff9ae41a455c370ea174a5583618c00591eeae7617779663741261bc44b",
+    "reports/ai-foundation-20261119/r4-step311-tied-orange2-plan-20261119-v1.json": "f43c929ed1136128f240fa8ad84201df31e18f549a0b9eafe0544f7079b6a5c8",
+    "reports/ai-foundation-20261119/r4-step311-native-order-20261119-v1.json": "0db52c8d04193637baaab4b5691f294cfdd913709da7576f8305aeafa222972e",
+    "reports/ai-foundation-20261119/r4-step311-native-order-20261119-v1-failed.json": "4633b6216a21e7940ec92c8243daac8767c09ce27d835ea7b6e3b961a521dee5",
+    "reports/ai-foundation-20261119/r4-step311-native-order-20261119-v2-infeasible.json": "8ac181ae7a0a0a7271e8e4ea37d018bd1c8471ac0fa17c495f4dc939b110cf50",
+    "reports/ai-foundation-20261119/r4-step311-scan-window-mechanism-20261119-v1.json": "2c258f9a4446baab3963b54d0ee4be6e8d384d519f2b8caa52ea51cb607692c8",
+    "reports/ai-foundation-20261119/r4-step311-actual-scan-ledger-20261119-v1.json": "91c88a7d88a5bcc3ba6108484b6eb038dacf3c4128232b45acc69ce669969334",
+    "reports/ai-foundation-20261119/r4-step311-prefix-checkpoint-20261119-v1.json.gz": "f8b098a31e1c426478cdff9b264c667b4646f66dba512fe6e457f442e7ed16b0",
+    "reports/ai-foundation-20261119/r4-step311-before-native-20261119-v1.json.gz": "fafe3f7e7924279b7ec7c1e1ce03d7f7b66fe2450129ab05bd778483ef45bfcc",
+    "reports/ai-foundation-20261119/r4-step311-order-baseline-checkpoint-20261119-v1.json.gz": "83cf3df2b6ac52c188a200ad195135ed4535614a20c8c008ddefce4a86194295",
+    "reports/ai-foundation-20261119/r4-step311-order-orange2-first-checkpoint-20261119-v1.json.gz": "9f19b3132f5ffceeb87d048627a975c7f90cc57dda700eaee4e740d666ea5fa4",
+    "reports/ai-foundation-20261119/r4-step311-order-orange3-first-checkpoint-20261119-v1.json.gz": "cdc98f05fa07f6b8876fd5102eec72e89b4c8cd2439dea1a18b96e474b822764",
+    "reports/ai-foundation-20261119/r4-step311-order-orange3-first-after-research-20261119-v1.json.gz": "8d798ac7b94579e57ee69927468f13ae8fd5c4a8ce3c7a5e34ad65dec999fd44"
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "nativeInputs": 0,
+  "aiSearches": 0,
+  "wantedNebulaId": "sector-4-b",
+  "wantedLabel": "绘架座β",
+  "rows": [
+    {
+      "label": "root",
+      "earthCoordinate": {
+        "x": 3,
+        "y": 1
+      },
+      "nominalImprovedScanNebulaIds": [
+        "sector-2-b",
+        "sector-4-a",
+        "sector-4-b"
+      ],
+      "actuallyScannableNebulaIds": [
+        "sector-2-b",
+        "sector-4-a",
+        "sector-4-b"
+      ],
+      "actuallyScannableLabels": [
+        "巴纳德",
+        "室女座61",
+        "绘架座β"
+      ],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 153
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "committedStateSha256": "534a00bb05a73edac210fa58e621ecfcb5940e357d87fd95e5fa1e1399e2874e",
+      "publicScanSourceMatchesNativeMenu": false
+    },
+    {
+      "label": "orange2-first",
+      "earthCoordinate": {
+        "x": 2,
+        "y": 1
+      },
+      "nominalImprovedScanNebulaIds": [
+        "sector-2-a",
+        "sector-2-b",
+        "sector-4-a"
+      ],
+      "actuallyScannableNebulaIds": [
+        "sector-2-a",
+        "sector-2-b",
+        "sector-4-a"
+      ],
+      "actuallyScannableLabels": [
+        "天狼星A",
+        "巴纳德",
+        "室女座61"
+      ],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 0,
+        "score": 155
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange2": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "committedStateSha256": "d54c707fd7b18afcff281bb85dbbaa4e31cfa604799f69724cc0b135cf9b67a8",
+      "publicScanSourceMatchesNativeMenu": true
+    },
+    {
+      "label": "orange3-first",
+      "earthCoordinate": {
+        "x": 2,
+        "y": 1
+      },
+      "nominalImprovedScanNebulaIds": [
+        "sector-2-a",
+        "sector-2-b",
+        "sector-4-a"
+      ],
+      "actuallyScannableNebulaIds": [
+        "sector-2-a",
+        "sector-2-b",
+        "sector-4-a"
+      ],
+      "actuallyScannableLabels": [
+        "天狼星A",
+        "巴纳德",
+        "室女座61"
+      ],
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 0,
+        "score": 158
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange3": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "committedStateSha256": "eb80d1ee81e1739736ddf46c1e120e018384c15b7d90eade84bdc06434b7e786",
+      "publicScanSourceMatchesNativeMenu": true
+    }
+  ],
+  "conclusion": "Research rotates the Earth sector; purple1 scans Earth and adjacent sectors, so current sector-4-b is lost from the first mandatory scan step after either research. This refutes a simple research/scan order swap, not every future alternative scan route.",
+  "phase": "verified"
+}

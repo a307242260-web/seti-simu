@@ -1,0 +1,11 @@
+{
+  "source": "same existing311 graph",
+  "actions": [
+    "research_tech:806ccfc8",
+    "choose_target:70b9a53f",
+    "end_turn:b2f9b29d"
+  ],
+  "value": 236,
+  "target": 10,
+  "newSearches": 0
+}

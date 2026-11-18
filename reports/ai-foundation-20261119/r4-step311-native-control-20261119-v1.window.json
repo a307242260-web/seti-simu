@@ -1,0 +1,446 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795031032.0,
+  "deadlineEpochSeconds": 1795032832.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import gzip,json,pathlib; d=pathlib.Path(\"reports/ai-foundation-20261119\");t=json.loads(gzip.decompress((d/\"r4-tech-step311-existing-evidence-20261119-v1.json.gz\").read_bytes()))[\"trace\"];print(\"SEARCH_KEYS\",list(t[\"search\"])); print(\"ROOTS\",str(t[\"search\"][\"roots\"])[:14000]);print(\"LINES\",str(t[\"search\"][\"lines\"])[:6000]);print(\"CHECKPOINTS\",[str(p) for p in d.glob(\"*checkpoint*.gz\")])"
+      ],
+      "startedEpochSeconds": 1795031049.9889941,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 38912,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031050.037408,
+      "stdoutSha256": "44ace3b17c868b6f86e1364c91ffe1e70d2ff3ebeb51a21d70623e89358670dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,gzip,json; t=json.loads(gzip.decompress(pathlib.Path(\"reports/ai-foundation-20261119/r4-tech-step311-existing-evidence-20261119-v1.json.gz\").read_bytes()))[\"trace\"];s=t[\"search\"];print(\"GRAPHCOUNT\",len(s[\"lines\"]));print(\"PLAN\",json.dumps({k:s[k] for k in [\"selectionPlan\",\"planEvidence\",\"candidates\"]},ensure_ascii=False)[:11000]);print(\"NODES\",json.dumps([n for n in s[\"lines\"] if n[\"node\"] in [11,21] or n.get(\"boundary\")],ensure_ascii=False)[:15000])"
+      ],
+      "startedEpochSeconds": 1795031060.9189079,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 39180,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031060.9673269,
+      "stdoutSha256": "9557e092a9fc568629793e9bc25a2741c0415ad8fbeb15675c13ba6dcb9f7299",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/extract-step311-plans-20261119.py"
+      ],
+      "startedEpochSeconds": 1795031083.343029,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 39557,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031083.3915331,
+      "stdoutSha256": "5cc5ba9ae2079254b985e07a6ccaf42ffdcb2f40335cacb2b16fd42de88e6f6b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -A 13 -B 4 \"orange3|orange2\" randomizer/game/tech.js docs/mechanics-reference.md | head -100; rg --files reports | rg \"(311|round-3.*checkpoint|r4.*root)\" | head -40"
+      ],
+      "startedEpochSeconds": 1795031090.4690912,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 39779,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031090.61587,
+      "stdoutSha256": "cda4a114dbc667ba4418052eb49598174a93ec1642d6439b3094915d3afc936e",
+      "stderrSha256": "8c1e62abb603292bc824471006b198a329e111a4464e67e7665f5e69e08a0722"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg --files randomizer/game | rg \"tech|science\"; rg -n -m 2 \"orange3|orange2\" randomizer/game --glob \"*.js\" | head -35"
+      ],
+      "startedEpochSeconds": 1795031097.212578,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 39933,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031097.236727,
+      "stdoutSha256": "a694ba11db0b1f41551cac70d91573ad5980e01ec8554e6fba8a6b8841bd73e7",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/replay-step311-root-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031205.7268639,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 40906,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031205.774307,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/replay-step311-root-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031210.719984,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 41128,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795031211.814687,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "1eca0dd7a285b16fed710b644e779b1a9b25ed32ae41acdc1d9ca439088c9dbc"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-step311-root-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031245.596673,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 41564,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031245.805234,
+      "stdoutSha256": "7a618ccb82424985ff193ab8018d5c701d29b2e5dada6f1b96af39f5ea2e006a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=json.loads((pathlib.Path(m[\"runtime\"])/m[\"recordPath\"]).read_text());ts=[json.loads(l) for l in pathlib.Path(r[\"agentTracePath\"]).read_text().splitlines() if l.strip()];ts=[t for t in ts if t[\"context\"][\"seatId\"]==\"player-white\"];o=[]\nfor t,s in zip(ts,r[\"metrics\"][\"searches\"]):\n if s[\"step\"] in [311,320,321,323,324,329,335,343,344,346,348,349,354]:\n  ob=t[\"context\"][\"observation\"];p=next(p for p in ob[\"publicState\"][\"players\"] if p[\"playerId\"]==\"player-white\");o.append({\"step\":s[\"step\"],\"turn\":ob[\"publicState\"][\"turnNumber\"],\"wallet\":{k:p[k] for k in [\"credits\",\"energy\",\"publicity\",\"availableData\",\"score\"]},\"hand\":[(c[\"id\"],c[\"cardId\"]) for c in ob[\"selfState\"][\"hand\"]]})\nprint(json.dumps(o))"
+      ],
+      "startedEpochSeconds": 1795031305.692244,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 42189,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031306.079809,
+      "stdoutSha256": "8d32b3e126a7076b28a1668b172fd8af9b5da6f5034bab06e6256d511e4c3ed6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/cards/effects.js\").read_text();start=s.index(\"\\\"chong_7.webp\\\": withSource\");print(s[start:start+2100]);print((Path(m[\"runtime\"])/\"randomizer/game/tech/catalog.js\").read_text()[:7500])"
+      ],
+      "startedEpochSeconds": 1795031336.720716,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 42586,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031336.745274,
+      "stdoutSha256": "e27f65fb7091ff22fd5579bfb6dff5ab133956fe3ce26cc65115543fe08cd473",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,gzip;d=Path(\"reports/ai-foundation-20261119\");t=json.loads(gzip.decompress((d/\"r4-tech-step311-existing-evidence-20261119-v1.json.gz\").read_bytes()))[\"trace\"];s=t[\"search\"];ns={n[\"node\"]:n for n in s[\"lines\"]};es=[e for e in ns[0][\"edges\"] if e.get(\"resourcePlan\",{}).get(\"goal\",{}).get(\"tileId\")==\"orange2\"];assert len(es)==1;e=es[0];ids=e[\"steps\"][:];n=ns[e[\"target\"]];print(\"TIED_ORANGE2\",{k:n.get(k) for k in [\"value\",\"distance\",\"boundary\"]},e[\"steps\"]);assert n[\"value\"]==236 and len(n[\"edges\"])==1;ids+=n[\"edges\"][0][\"steps\"];p=d/\"r4-step311-tied-orange2-plan-20261119-v1.json\";assert not p.exists();p.write_text(json.dumps({\"source\":\"same existing311 graph\",\"actions\":ids,\"value\":236,\"target\":e[\"target\"],\"newSearches\":0},indent=2)+\"\\n\");print(ids)"
+      ],
+      "startedEpochSeconds": 1795031424.131778,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 43296,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031424.180552,
+      "stdoutSha256": "f843d1c3952ce00ef5501eba7e59720697ad513ac71b2073943db7bc5c706ffa",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/compare-step311-native-order-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031516.017698,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 44659,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031516.065877,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-step311-native-order-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031529.687198,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 45195,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795031530.776148,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "f20a2ed3aadeca3c073c9c21725866850f6c42bdf9533b154cac24a8c1025623"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-step311-native-order-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031577.297602,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 46576,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795031577.807242,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "36feedc355df2074c777f61b414cf14521e5fcd8fe0be16182e1763fb1e2d6df"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-step311-native-order-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031663.779468,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-15.stderr.log",
+      "pid": 47670,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031664.281253,
+      "stdoutSha256": "23b9644d65da65b659aeabbda87e84c22340afc9c8dd6246ace473226c196f99",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n \"nebula|sectorX|scan.*choice|eligible\" randomizer/game/effects/science-session.js | head -65; rg --files randomizer/game | rg \"scan|solar\" | head -35"
+      ],
+      "startedEpochSeconds": 1795031686.6830971,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-16.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-16.stderr.log",
+      "pid": 47916,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031686.72837,
+      "stdoutSha256": "317ffdcf6db4e429639f9c1018699a109c5f76a65f1dda95f580380b60e8a921",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=Path(m[\"runtime\"]);s=(r/\"randomizer/game/effects/science-session.js\").read_text();at=s.index(\"function scanStepChoices\");print(s[at:at+4400]);s=(r/\"randomizer/game/abilities/scan.js\").read_text();print(s[:9000])"
+      ],
+      "startedEpochSeconds": 1795031694.980407,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-17.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-17.stderr.log",
+      "pid": 48077,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031695.0044942,
+      "stdoutSha256": "ddc1175c97246fa9ea35b8bae6466b3ae134791dbaba4cdf6c22f802c4e59f2b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=Path(m[\"runtime\"]);s=(r/\"randomizer/game/actions/scan-effects.js\").read_text();print(s[:15500]);s=(r/\"randomizer/game/effects/science-session.js\").read_text();at=s.index(\"function scanSourceChoices\") if \"function scanSourceChoices\" in s else s.index(\"const { nebulaIds } = source\");print(s[max(0,at-1400):at+1200])"
+      ],
+      "startedEpochSeconds": 1795031703.7585862,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-18.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-18.stderr.log",
+      "pid": 48480,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031703.783387,
+      "stdoutSha256": "a48d1852160c8795205dbc38a81a3c2b03d77d9517d5987631e06aaaac1a5e4c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/effects/science-session.js\").read_text();at=s.index(\"function getPlanetScanSource\");print(s[at:at+2300]);s=(Path(m[\"runtime\"])/\"randomizer/game/actions/research-tech.js\").read_text();print(s[:8000])"
+      ],
+      "startedEpochSeconds": 1795031716.212194,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-19.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-19.stderr.log",
+      "pid": 49025,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031716.237055,
+      "stdoutSha256": "3d2782021b7d7007b3c57d00469394878f9ceaa9f6b8d50da7f74532ae335c59",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/effects/science-session.js\").read_text();at=s.index(\"function getWorkingSlice\");print(s[at:at+1100]);s=(Path(m[\"runtime\"])/\"randomizer/game/tech/resolver.js\").read_text();print(\"ROTATION_LINES\",[(i+1,l) for i,l in enumerate(s.splitlines()) if \"rotate\" in l.lower()][:20])"
+      ],
+      "startedEpochSeconds": 1795031726.222263,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-20.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-20.stderr.log",
+      "pid": 49187,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031726.247036,
+      "stdoutSha256": "32c13a260defd06d403707e0b31f70d37ecadb9d915031e2105a3e2753815992",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,gzip;d=Path(\"reports/ai-foundation-20261119\");es=[json.loads(l) for l in (d/\"r4-step311-order-events-20261119-v1.jsonl\").read_text().splitlines()];print(\"HASHES\",[(e[\"branch\"],e[\"input\"],e[\"nativeStateSha256\"]) for e in es if e[\"branch\"]!=\"baseline\"]);c=json.loads(gzip.decompress((d/\"r4-step311-order-orange2-first-checkpoint-20261119-v1.json.gz\").read_bytes()));e=c[\"envelope\"];print(\"ENVELOPE\",list(e));print(\"SESSION\",list(e[\"session\"]));print(\"INNER\",list(e[\"session\"].get(\"session\",{})))"
+      ],
+      "startedEpochSeconds": 1795031738.0511491,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-21.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-21.stderr.log",
+      "pid": 49366,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031738.099972,
+      "stdoutSha256": "537c1345947f238c93d829f47679b0899a2f28a15f59c3d6e5e133220bfbe94c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-step311-scan-window-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795031809.976845,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-22.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-22.stderr.log",
+      "pid": 50748,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031810.108095,
+      "stdoutSha256": "89d6f9f6d5a0dae13eafeccf11d78ed971ba06beb67d99c06da0c1cc4dea74ae",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/extract-step311-scan-ledger-20261119.py"
+      ],
+      "startedEpochSeconds": 1795031924.7184331,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-23.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.window.attempt-23.stderr.log",
+      "pid": 52555,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795031925.049252,
+      "stdoutSha256": "7c9c170a00cbd68ad127baaa21e01fc31a5e3d508a3e02b54fec4441424dbfd1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Same actual formal272 root311, saved research vs scan plan and finite known continuations, no new policy/search/game",
+  "hypotheses": [
+    "Actual selected scan may preserve a later research opportunity, so choosing it is not a missing-tech defect.",
+    "One-turn value may prefer scan despite a concrete affordable development loss through a common later boundary."
+  ],
+  "nativeBranchInputCap": 96,
+  "nativePrefixInputCap": 69,
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "failureRule": "save full envelope after each input; resume exact checkpoint, never repeat successful prefix",
+  "stop": "one paired business comparison or original deadline; no new patch or chained subtask",
+  "declaredControl": {
+    "prefix": "Reuse verified after241 Native state; original242-310 exactly69 inputs, save every input; before311 full official observation/legal match required.",
+    "rootEconomy": "credits3 energy2 publicity6; same hand and board/RNG for both",
+    "baseline": "Actual311-354 to known completed272 terminal; verify original turn boundaries along the way.",
+    "counterfactual": "Saved best research orange3 first, then actual scan311-320, actual orange2 research321-323, original landing324-343 with declared one-energy funding adjustment only if native cost proves it, skip now-duplicate late orange3, retain original analyze/pass tail.",
+    "resourceHypothesis": "orange3 saves1 landing energy; with same total two techs before landing it may avoid the two-card energy exchange, unlike taking it after landing.",
+    "stateEquivalence": "restore exact full root/RNG before each branch; compare same two techs plus scan/landing/analyze completed, total own-turn count and complete final assets explicit",
+    "dedupAndPruning": "Fixed saved graph witnesses and declared order; no action/candidate enumeration, no beam/leaf cap called pruning; avoid repeated prefix by full checkpoints",
+    "executionCaps": "prefix69,96 each branch, original30minute wall deadline; no new AI search/policy/autonomous game",
+    "knowledge": "Retrospective fixed-order control with only currently legal/public selected card choices; no newly drawn card identity chooses branch/order. Any changed mandatory choice or resource infeasibility is explicit failure, not silent fallback",
+    "stop": "One Native order comparison, or original deadline. Do not add a strategy patch within this unit."
+  },
+  "recoveries": [
+    {
+      "observedEpochSeconds": 1795031245.5698261,
+      "reason": "All69 prefix inputs and full official observation were correct; raw legal actions include decision:null omitted by stored coordinator trace. Verify only that normalization separately from the existing full checkpoint, execute zero repeated Native inputs. Retain failed original receipt and same deadline."
+    },
+    {
+      "observedEpochSeconds": 1795031577.269969,
+      "reason": "Baseline44 known inputs reached terminal. AnalysisPort.openRoot requires an acting owner and rejects terminal; use the same read-only projection builder at terminal. Preserve failed driver/receipt, resume exact44-input checkpoint without repeating any Native input. Deadline unchanged."
+    },
+    {
+      "observedEpochSeconds": 1795031663.752001,
+      "reason": "Business hypothesis refuted: after orange2 research the original sector-4-b is absent from the Native scan menu. Baseline44 is complete272; branch4 inputs are preserved. Classify the targeted order swap as infeasible, do not choose another sector or replay it; inspect the predeclared orange3 witness similarly under original deadline."
+    }
+  ],
+  "declaredControlRefinement": {
+    "observedEpochSeconds": 1795031515.9906921,
+    "evidence": "Existing actual311-354 shows scan followed by orange2 and orange3. Graph has tied orange2 and orange3 research value236. After spending first6publicity only1 remains after scan, so immediate second paid research is not affordable.",
+    "finiteBranches": [
+      "Baseline actual311-354,44inputs, terminal272",
+      "Tied saved orange2-first3inputs then original311-320 and324-354,44inputs; compare same two-action boundary and recorded terminal",
+      "Saved chosen orange3-first3inputs plus original311-320,13inputs; compare same two-action assets, no infeasible immediate orange2 or invented full-game result"
+    ],
+    "totalPlannedBranchInputs": 101,
+    "prefixAlreadyExecuted": 69,
+    "sameRootRestoredEveryBranch": true,
+    "noPolicyOrNewSearch": true,
+    "originalDeadlineRetained": true,
+    "supersedes": "Initial speculative orange3-before-both-tech continuation is not executed because publicity lower bound contradicts affordability."
+  },
+  "closedEpochSeconds": 1795032017.2224,
+  "closeReason": "Research-first changes Earth scan range and invalidates the declared sector4b chain. Baseline scan-first still acquires both technologies and the recorded tail reaches272. No policy patch justified.",
+  "evidenceArchive": "reports/ai-foundation-20261119/r4-step311-native-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "f5c23e0866285a5ed9a3188e9f386a887a741c32977ba9503ee8122c4cb1ad4a"
+}

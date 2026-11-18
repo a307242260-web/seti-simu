@@ -1,0 +1,478 @@
+{
+  "sourceTrace": {
+    "path": "reports/research/2170d824.5fabd621.full.json.decisions.jsonl",
+    "sha256": "7c9842070b25d435e17bcb74eadd973309128ab8388d67e16c0bee2a7a32a542"
+  },
+  "rows": [
+    {
+      "beforeOriginalInput": 311,
+      "turn": 8,
+      "resources": {
+        "score": 153,
+        "finalScore": 218,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 6,
+        "availableData": 0,
+        "handCount": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "scan:2d21a323",
+        "family": "scan",
+        "target": {
+          "kind": "standard-scan"
+        },
+        "summary": "扫描"
+      }
+    },
+    {
+      "beforeOriginalInput": 312,
+      "turn": 8,
+      "resources": {
+        "score": 153,
+        "finalScore": 218,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "availableData": 0,
+        "handCount": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "choose_target:80112417",
+        "family": "choose_target",
+        "target": {
+          "choiceId": "nebula:sector-4-b",
+          "nebulaId": "sector-4-b",
+          "sectorX": null
+        },
+        "summary": "扫描 绘架座β"
+      }
+    },
+    {
+      "beforeOriginalInput": 313,
+      "turn": 8,
+      "resources": {
+        "score": 153,
+        "finalScore": 218,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 6,
+        "availableData": 1,
+        "handCount": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "choose_card:c5dcf800",
+        "family": "choose_card",
+        "target": {
+          "choiceId": "public:card-78-0:sector-4-b",
+          "cardInstanceId": "card-78-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-4-b"
+        },
+        "summary": "dlc_3.png → 绘架座β"
+      }
+    },
+    {
+      "beforeOriginalInput": 314,
+      "turn": 8,
+      "resources": {
+        "score": 156,
+        "finalScore": 221,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "availableData": 2,
+        "handCount": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "choose_target:314aec90",
+        "family": "choose_target",
+        "target": {
+          "choiceId": "trace:2:pink:chong:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink",
+          "speciesId": "chong",
+          "position": 4
+        },
+        "summary": "外星人 2 粉4号位（5分+外星人牌）"
+      }
+    },
+    {
+      "beforeOriginalInput": 315,
+      "turn": 8,
+      "resources": {
+        "score": 161,
+        "finalScore": 226,
+        "credits": 2,
+        "energy": 0,
+        "publicity": 7,
+        "availableData": 2,
+        "handCount": 4
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "choose_card:9f33eea7",
+        "family": "choose_card",
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:display:3",
+          "source": "display",
+          "cardIndex": 3
+        },
+        "summary": "获得展示的首次接触"
+      }
+    },
+    {
+      "beforeOriginalInput": 320,
+      "turn": 8,
+      "resources": {
+        "score": 163,
+        "finalScore": 228,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "availableData": 0,
+        "handCount": 5
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "end_turn:b2f9b29d",
+        "family": "end_turn",
+        "target": {
+          "kind": "end-turn"
+        },
+        "summary": "结束回合"
+      }
+    },
+    {
+      "beforeOriginalInput": 321,
+      "turn": 9,
+      "resources": {
+        "score": 163,
+        "finalScore": 228,
+        "credits": 2,
+        "energy": 1,
+        "publicity": 7,
+        "availableData": 0,
+        "handCount": 5
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "research_tech:806ccfc8",
+        "family": "research_tech",
+        "target": {
+          "kind": "research-tech"
+        },
+        "summary": "研究科技"
+      }
+    },
+    {
+      "beforeOriginalInput": 324,
+      "turn": 10,
+      "resources": {
+        "score": 165,
+        "finalScore": 230,
+        "credits": 2,
+        "energy": 2,
+        "publicity": 1,
+        "availableData": 0,
+        "handCount": 5
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true,
+          "orange2": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "quick_trade:f385e2ac",
+        "family": "quick_trade",
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "summary": "2信用点 → 1能量"
+      }
+    },
+    {
+      "beforeOriginalInput": 346,
+      "turn": 11,
+      "resources": {
+        "score": 182,
+        "finalScore": 255,
+        "credits": 1,
+        "energy": 0,
+        "publicity": 6,
+        "availableData": 1,
+        "handCount": 1
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true,
+          "orange2": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "research_tech:806ccfc8",
+        "family": "research_tech",
+        "target": {
+          "kind": "research-tech"
+        },
+        "summary": "研究科技"
+      }
+    },
+    {
+      "beforeOriginalInput": 354,
+      "turn": 13,
+      "resources": {
+        "score": 192,
+        "finalScore": 272,
+        "credits": 1,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 0,
+        "handCount": 1
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2,
+          "blue1": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true,
+          "purple1": true,
+          "orange1": true,
+          "blue1": true,
+          "orange2": true,
+          "orange3": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "selected": {
+        "actionId": "pass:a1f33c73",
+        "family": "pass",
+        "target": {
+          "kind": "pass"
+        },
+        "summary": "PASS"
+      }
+    }
+  ],
+  "actualScanScoreGain": 10,
+  "newNativeInputs": 0,
+  "newAISearches": 0
+}
