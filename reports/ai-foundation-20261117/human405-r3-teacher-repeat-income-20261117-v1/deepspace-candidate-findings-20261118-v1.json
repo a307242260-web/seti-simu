@@ -1,0 +1,118 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v487/movementv8/valuev71",
+  "promoted": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "change": {
+    "rules": "Native company activation body extracted without changing behavior; preview reuses that activation and existing choice/augmentation functions on owned mutable player containers",
+    "protocol": "One witnessed activation checkpoint per root; subsequent states receive their own marked base/working state, events and history. Each choice keeps its own session revision, journal, queue and wallet.",
+    "scope": "Quiet round4 DeepSpace, current owner, all opponents passed, known reserved/selected cards, no extra turn bonuses or ready fossil arrivals; unsupported effects fall back to Native",
+    "calibrationFix": "Trusted isolated Native session aliases activation base and working objects until its first pending decision; both already contain the industry-used mark. The old candidate compared the unmarked source and rejected all120 reusable starts.",
+    "stateEquivalence": "No source states or wallets merged. Only one bounded protocol template is reused, after re-executing authoritative pure rules for each transition. All resource/control/knowledge identities remain distinct."
+  },
+  "proof": {
+    "nativeCases": 121,
+    "pureStateChecks": 726,
+    "mutableAndFrozenSources": true,
+    "fullEnvelopeChecks": 363,
+    "onlyRenaming": "Current Session ID and its exact colon-qualified effect/group/decision references; other IDs, values, arrays, versions and RNG all exact",
+    "eachCase": {
+      "nativeCalibration": 1,
+      "typedInputs": 3
+    },
+    "rootAndRngPreserved": true,
+    "fixedHistoricalRoots": 317,
+    "fullReplayTerminalStateAndRngExact": true,
+    "allRootActionsValuesAndCompleteSearchGraphsIdentical": true,
+    "allowedGraphDiagnosticChange": "Known card ranking cache hit/miss labels only",
+    "nodeTestsUnique": 9,
+    "browserSmokesUnique": 5,
+    "valueInputAudit": "66 checks pass",
+    "patchProof": "deepspace-candidate-patch-proof-20261118-v1.json"
+  },
+  "performance": {
+    "kind": "Paired chronological fixed-root benchmark; no autonomous game; module processes are warmed by the historical corpus",
+    "teacher272": {
+      "beforeNative": 151,
+      "afterNative": 143,
+      "beforeMs": 677.4395000000004,
+      "afterMs": 662.0186659999999
+    },
+    "teacher289": {
+      "beforeNative": 825,
+      "afterNative": 463,
+      "savedNative": 362,
+      "fractionSaved": 0.4387878787878788,
+      "beforeMs": 2283.5209579999973,
+      "afterMs": 2260.503583999998,
+      "nativeCompanyStartsProved": 120,
+      "nativeCompanyHandsProved": 121,
+      "nativeCompanyPublicPicksProved": 121
+    },
+    "gate": {
+      "native": 256,
+      "ms": 600,
+      "passed": false
+    },
+    "failingRoots": [
+      {
+        "label": "teacher-input-272",
+        "native": 143,
+        "ms": 662.0186659999999,
+        "complete": true
+      },
+      {
+        "label": "teacher-input-289",
+        "native": 463,
+        "ms": 2260.503583999998,
+        "complete": true
+      }
+    ],
+    "conclusion": "Native submissions reduced44%, but whole-decision latency barely improves in the warm corpus. This is not performance admission."
+  },
+  "remainingNative": {
+    "total": 463,
+    "scienceAlienTrace": 195,
+    "alienCardChoice": 91,
+    "allOtherInputs": 177,
+    "traceBreakdown": {
+      "blue": 3,
+      "pink": 130,
+      "yellow": 62
+    },
+    "source": "deepspace-value-cost-profile-20261118-v1.json"
+  },
+  "costEvidence": {
+    "kind": "Instrumentation only, not timing admission",
+    "valueCalls": 1331,
+    "exactObservationUnique": 1318,
+    "exactObservationRepeats": 13,
+    "valueMilliseconds": 41.971067000000744,
+    "repeatValueMilliseconds": 0.21812399999970467,
+    "fullObservationBytesSerializedForDiagnostic": 25750000,
+    "rejectExtraFullObservationCache": "Only13 repeats save~0.22ms; would add hashing/serialization of25.75MB.",
+    "cpuSelfTime": "deepspace-cpu-self-time-20261118-v1.json",
+    "cpuNote": "Sampled leaf self time includes module startup; no summing recursive inclusive frames. Main costs include clone/copy, immutable input checking, freeze, identity serialization and GC."
+  },
+  "unresolved": [
+    "272 and289 still fail600ms;289 still exceeds256 Native inputs.",
+    "Do not equate fewer Native submissions with completed performance work; eliminate repeated copying/proof/catalog work using measured dependency contracts.",
+    "B117 known task8V boundary difference still diagnostic only; generic rule guarantee and value fix not implemented.",
+    "Full teacher fourth-round root coverage, new autonomous game and20-board evaluation remain incomplete."
+  ],
+  "next": [
+    "Measure exact repeated frozen subtrees/proof/catalog dependencies before any cache/change; avoid the previously rejected broad freeze-proof cache.",
+    "Audit trace195 and alien-card91 transitions using correct currentEffect metadata, preserving reward differences and pending triggers.",
+    "Prove the known B117 claim across the actual pickup write set and supported event triggers before changing valuation.",
+    "Re-run affected single-root gates after each actual change. No new whole game or batch until budget admission."
+  ],
+  "files": {
+    "source": "deepspace-candidate-source-20261118-v1.json",
+    "patch": "candidate-quiet-company-swap-20261118-v1.patch",
+    "corpus": "deepspace-native-transactions-20261118-v1.json.gz",
+    "benchmark": "deepspace-fixed-roots-20261118-v1.json.gz",
+    "pointComparison": "deepspace-point289-comparison-20261118-v1.json.gz"
+  }
+}

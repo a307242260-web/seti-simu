@@ -1,0 +1,7 @@
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+residual-domain-session production proofs passed
+effect session runtime tests passed
+SUMMARY unit passed=3 failed=0 total=3 time=0.40s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER architecture/effect-session tests=2

@@ -1,0 +1,3270 @@
+{
+  "kind": "V8 sampled leaf self time; whole process including module startup, no inclusive recursive double counting",
+  "totalSampleMs": 2569.958,
+  "rows": [
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "selfMs": 187.5
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 186.795
+    },
+    {
+      "function": "copy",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 160.088
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 175,
+      "selfMs": 106.377
+    },
+    {
+      "function": "freeze",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 131,
+      "selfMs": 91.661
+    },
+    {
+      "function": "serializeState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 263,
+      "selfMs": 66.501
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "line": 433,
+      "selfMs": 44.417
+    },
+    {
+      "function": "normalizeObject",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 233,
+      "selfMs": 44.165
+    },
+    {
+      "function": "stableHash",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 57,
+      "selfMs": 37.289
+    },
+    {
+      "function": "deepFreeze",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 42,
+      "selfMs": 33.625
+    },
+    {
+      "function": "searchDecision",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 14,
+      "selfMs": 33.417
+    },
+    {
+      "function": "normalize",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 212,
+      "selfMs": 33.084
+    },
+    {
+      "function": "stableSerialize",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 44,
+      "selfMs": 27.125
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 627,
+      "selfMs": 25.501
+    },
+    {
+      "function": "wrapSafe",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 1596,
+      "selfMs": 23.335
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 736,
+      "selfMs": 22.5
+    },
+    {
+      "function": "compileForInternalLoader",
+      "file": "node:internal/bootstrap/realm",
+      "line": 385,
+      "selfMs": 20.75
+    },
+    {
+      "function": "plan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 72,
+      "selfMs": 19.832
+    },
+    {
+      "function": "add",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 269,
+      "selfMs": 18.584
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/profile-deepspace-cpu-20261118-v1.cjs",
+      "line": 1,
+      "selfMs": 18.0
+    },
+    {
+      "function": "evaluateMission",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 477,
+      "selfMs": 17.668
+    },
+    {
+      "function": "expand",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2181,
+      "selfMs": 16.999
+    },
+    {
+      "function": "compactObject",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 45,
+      "selfMs": 16.833
+    },
+    {
+      "function": "decide",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/search-agent.js",
+      "line": 34,
+      "selfMs": 16.541
+    },
+    {
+      "function": "resourceSpec",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4072,
+      "selfMs": 15.623
+    },
+    {
+      "function": "computeIncomeTailPreview",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 986,
+      "selfMs": 15.083
+    },
+    {
+      "function": "createNode",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 596,
+      "selfMs": 15.0
+    },
+    {
+      "function": "finishChild",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5982,
+      "selfMs": 13.667
+    },
+    {
+      "function": "turnTailSummary",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7814,
+      "selfMs": 13.374
+    },
+    {
+      "function": "internPhysicalIdentity",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 384,
+      "selfMs": 12.041
+    },
+    {
+      "function": "describeCardPick",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2744,
+      "selfMs": 12.0
+    },
+    {
+      "function": "incomeTailEndpoint",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 382,
+      "selfMs": 11.999
+    },
+    {
+      "function": "exactClaimState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7681,
+      "selfMs": 11.956
+    },
+    {
+      "function": "collectPlanetLocations",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 666,
+      "selfMs": 11.875
+    },
+    {
+      "function": "findParentPackageJSON",
+      "file": "node:internal/modules/package_json_reader",
+      "line": 142,
+      "selfMs": 11.708
+    },
+    {
+      "function": "planningState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2556,
+      "selfMs": 10.5
+    },
+    {
+      "function": "redundantQuietFinalClaim",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7748,
+      "selfMs": 10.376
+    },
+    {
+      "function": "buildRuleObservation",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+      "line": 126,
+      "selfMs": 9.042
+    },
+    {
+      "function": "visit",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/low-coupling-slices.js",
+      "line": 110,
+      "selfMs": 9.042
+    },
+    {
+      "function": "quote",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 384,
+      "selfMs": 8.998
+    },
+    {
+      "function": "literal",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 38,
+      "selfMs": 8.959
+    },
+    {
+      "function": "listTransportArrivalEvents",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 932,
+      "selfMs": 8.958
+    },
+    {
+      "function": "enumerate",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 825,
+      "selfMs": 8.916
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 906,
+      "selfMs": 8.459
+    },
+    {
+      "function": "previewPlainPinkTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1834,
+      "selfMs": 8.417
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 355,
+      "selfMs": 8.167
+    },
+    {
+      "function": "prepareFinalRoundSwapMission",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 360,
+      "selfMs": 7.541
+    },
+    {
+      "function": "physicalBucket",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 344,
+      "selfMs": 7.541
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 160,
+      "selfMs": 7.501
+    },
+    {
+      "function": "result",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 96,
+      "selfMs": 7.499
+    },
+    {
+      "function": "plan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 336,
+      "selfMs": 7.46
+    },
+    {
+      "function": "toString",
+      "file": "node:buffer",
+      "line": 835,
+      "selfMs": 7.458
+    },
+    {
+      "function": "physicalCollisionKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 362,
+      "selfMs": 7.458
+    },
+    {
+      "function": "enumerate",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 226,
+      "selfMs": 7.25
+    },
+    {
+      "function": "validateLowCouplingInvariants",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/low-coupling-slices.js",
+      "line": 177,
+      "selfMs": 6.668
+    },
+    {
+      "function": "listCardSettlements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 931,
+      "selfMs": 6.624
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 441,
+      "selfMs": 6.167
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 176,
+      "selfMs": 6.084
+    },
+    {
+      "function": "expandWithCardPick",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2842,
+      "selfMs": 6.083
+    },
+    {
+      "function": "normalizeDescriptor",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 88,
+      "selfMs": 6.042
+    },
+    {
+      "function": "evaluateStateValue",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/state-value.js",
+      "line": 777,
+      "selfMs": 6.042
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 220,
+      "selfMs": 6.0
+    },
+    {
+      "function": "listAlienTraceChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 473,
+      "selfMs": 6.0
+    },
+    {
+      "function": "same",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 329,
+      "selfMs": 6.0
+    },
+    {
+      "function": "computePlayerTileScore",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 783,
+      "selfMs": 6.0
+    },
+    {
+      "function": "nodeIdentity",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 402,
+      "selfMs": 5.959
+    },
+    {
+      "function": "actor",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 75,
+      "selfMs": 5.958
+    },
+    {
+      "function": "getTradeAction",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/quick-trades.js",
+      "line": 79,
+      "selfMs": 5.917
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 568,
+      "selfMs": 5.917
+    },
+    {
+      "function": "chong.listTransportArrivalEvents.source",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1480,
+      "selfMs": 5.917
+    },
+    {
+      "function": "expansionKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 500,
+      "selfMs": 5.917
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7686,
+      "selfMs": 5.875
+    },
+    {
+      "function": "provedCommittedEnvelope",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1930,
+      "selfMs": 5.54
+    },
+    {
+      "function": "previewQuietEndHandoffs",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2269,
+      "selfMs": 5.084
+    },
+    {
+      "function": "buildProbeLocationData",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 46,
+      "selfMs": 4.917
+    },
+    {
+      "function": "collectMatchingTriggers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3960,
+      "selfMs": 4.584
+    },
+    {
+      "function": "buildProbeCandidateStructures",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 749,
+      "selfMs": 4.583
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+      "line": 172,
+      "selfMs": 4.582
+    },
+    {
+      "function": "listPendingFinalOwners",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2020,
+      "selfMs": 4.542
+    },
+    {
+      "function": "countPlayerPlanetMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4394,
+      "selfMs": 4.542
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5020,
+      "selfMs": 4.542
+    },
+    {
+      "function": "details",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/state-value.js",
+      "line": 840,
+      "selfMs": 4.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 1254,
+      "selfMs": 4.5
+    },
+    {
+      "function": "cardPickSpec",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2822,
+      "selfMs": 4.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 921,
+      "selfMs": 4.5
+    },
+    {
+      "function": "previewQuietLandingTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1985,
+      "selfMs": 4.5
+    },
+    {
+      "function": "getOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 161,
+      "selfMs": 4.5
+    },
+    {
+      "function": "buildState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 163,
+      "selfMs": 4.5
+    },
+    {
+      "function": "listTakeableTiles",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/resolver.js",
+      "line": 478,
+      "selfMs": 4.5
+    },
+    {
+      "function": "fixedFinalEndTask",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1738,
+      "selfMs": 4.5
+    },
+    {
+      "function": "RegExp: ^.*[\\\\/]",
+      "file": "",
+      "line": 0,
+      "selfMs": 4.459
+    },
+    {
+      "function": "resourceStep",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 3691,
+      "selfMs": 4.459
+    },
+    {
+      "function": "getBaseWheelCell",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 500,
+      "selfMs": 4.459
+    },
+    {
+      "function": "previewQuietSpecifiedScan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1312,
+      "selfMs": 4.459
+    },
+    {
+      "function": "prepareQuietPublicRefill",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2059,
+      "selfMs": 4.458
+    },
+    {
+      "function": "paid",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 122,
+      "selfMs": 4.458
+    },
+    {
+      "function": "pureOptional",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1986,
+      "selfMs": 4.458
+    },
+    {
+      "function": "getRoundOrderPlayerIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/turn-flow.js",
+      "line": 58,
+      "selfMs": 4.457
+    },
+    {
+      "function": "getOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 783,
+      "selfMs": 4.417
+    },
+    {
+      "function": "listBluePlacementRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 333,
+      "selfMs": 4.417
+    },
+    {
+      "function": "deepFreeze",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+      "line": 72,
+      "selfMs": 4.416
+    },
+    {
+      "function": "orderFinalOwnersFromOwner",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2007,
+      "selfMs": 4.416
+    },
+    {
+      "function": "moveRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 147,
+      "selfMs": 4.416
+    },
+    {
+      "function": "mod8",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 91,
+      "selfMs": 4.416
+    },
+    {
+      "function": "facts",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 18,
+      "selfMs": 4.167
+    },
+    {
+      "function": "listDeliveredFossilsForDestination",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 875,
+      "selfMs": 4.125
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 747,
+      "selfMs": 4.124
+    },
+    {
+      "function": "gainResources",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 307,
+      "selfMs": 3.959
+    },
+    {
+      "function": "augmentEffectResult",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1513,
+      "selfMs": 3.876
+    },
+    {
+      "function": "computePlayerCardScore",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 819,
+      "selfMs": 3.875
+    },
+    {
+      "function": "validateSerializableGraph",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+      "line": 118,
+      "selfMs": 3.792
+    },
+    {
+      "function": "countPlanetLandingPairs",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 450,
+      "selfMs": 3.208
+    },
+    {
+      "function": "stat",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 251,
+      "selfMs": 3.166
+    },
+    {
+      "function": "get physicalId",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 626,
+      "selfMs": 3.083
+    },
+    {
+      "function": "getAvailableBlueSlots",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/player-tech.js",
+      "line": 111,
+      "selfMs": 3.042
+    },
+    {
+      "function": "scanStepChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 853,
+      "selfMs": 3.042
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 717,
+      "selfMs": 3.042
+    },
+    {
+      "function": "resourceCatalog",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 3137,
+      "selfMs": 3.042
+    },
+    {
+      "function": "resolveNormalizedVisibleContent",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 599,
+      "selfMs": 3.042
+    },
+    {
+      "function": "sanitizePublicPlayer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 71,
+      "selfMs": 3.042
+    },
+    {
+      "function": "markerBelongsToPlayer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4227,
+      "selfMs": 3.042
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/quick-trades.js",
+      "line": 80,
+      "selfMs": 3.042
+    },
+    {
+      "function": "writeFileSync",
+      "file": "node:fs",
+      "line": 2417,
+      "selfMs": 3.042
+    },
+    {
+      "function": "incomePurpose",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 562,
+      "selfMs": 3.041
+    },
+    {
+      "function": "finalMark",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 25,
+      "selfMs": 3.041
+    },
+    {
+      "function": "inheritCardKnowledge",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 457,
+      "selfMs": 3.041
+    },
+    {
+      "function": "countTraceMarkersForPlayerOnSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/state.js",
+      "line": 99,
+      "selfMs": 3.041
+    },
+    {
+      "function": "applyHandoff",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2084,
+      "selfMs": 3.041
+    },
+    {
+      "function": "makeChoice",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 207,
+      "selfMs": 3.041
+    },
+    {
+      "function": "listEffectAlienTraceChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 553,
+      "selfMs": 3.041
+    },
+    {
+      "function": "getOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 757,
+      "selfMs": 3.041
+    },
+    {
+      "function": "listFossilArrivalEvents",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1468,
+      "selfMs": 3.041
+    },
+    {
+      "function": "fillNebulaData",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 285,
+      "selfMs": 3.0
+    },
+    {
+      "function": "readPlanningState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2591,
+      "selfMs": 3.0
+    },
+    {
+      "function": "getPlanetRecord",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/planet-stats.js",
+      "line": 47,
+      "selfMs": 3.0
+    },
+    {
+      "function": "getPlayerKeys",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 208,
+      "selfMs": 3.0
+    },
+    {
+      "function": "cloneReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 404,
+      "selfMs": 3.0
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 419,
+      "selfMs": 3.0
+    },
+    {
+      "function": "cloneEffect",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/planet-rewards.js",
+      "line": 328,
+      "selfMs": 3.0
+    },
+    {
+      "function": "taskConditionMet",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4526,
+      "selfMs": 3.0
+    },
+    {
+      "function": "describePostMainPlan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 8689,
+      "selfMs": 3.0
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2811,
+      "selfMs": 3.0
+    },
+    {
+      "function": "remember",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 6189,
+      "selfMs": 3.0
+    },
+    {
+      "function": "isControllablePlayerRocket",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 107,
+      "selfMs": 3.0
+    },
+    {
+      "function": "stableFinalClaimPolicy",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7668,
+      "selfMs": 3.0
+    },
+    {
+      "function": "activePlayerIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/initial-setup.js",
+      "line": 96,
+      "selfMs": 3.0
+    },
+    {
+      "function": "projectCounterfactualState",
+      "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+      "line": 12,
+      "selfMs": 3.0
+    },
+    {
+      "function": "incomeChoice",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 952,
+      "selfMs": 3.0
+    },
+    {
+      "function": "knownMoveGoals",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 245,
+      "selfMs": 3.0
+    },
+    {
+      "function": "pinkScoreBeforeUnknownFossil",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1418,
+      "selfMs": 3.0
+    },
+    {
+      "function": "previewDataRewardMenu",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 899,
+      "selfMs": 3.0
+    },
+    {
+      "function": "canStart",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/play-domain.js",
+      "line": 406,
+      "selfMs": 3.0
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 381,
+      "selfMs": 3.0
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 210,
+      "selfMs": 3.0
+    },
+    {
+      "function": "actor",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 115,
+      "selfMs": 3.0
+    },
+    {
+      "function": "previewKnownPositiveTaskSettlement",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1761,
+      "selfMs": 3.0
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 386,
+      "selfMs": 2.999
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 832,
+      "selfMs": 2.999
+    },
+    {
+      "function": "getTraceEntries",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 459,
+      "selfMs": 2.959
+    },
+    {
+      "function": "canPlayerTakeTile",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/player-tech.js",
+      "line": 122,
+      "selfMs": 2.959
+    },
+    {
+      "function": "unchangedCompanySource",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 313,
+      "selfMs": 2.959
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/high-coupling-slices.js",
+      "line": 227,
+      "selfMs": 2.959
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 351,
+      "selfMs": 2.959
+    },
+    {
+      "function": "listEligibleBlueBonusSlots",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 230,
+      "selfMs": 2.959
+    },
+    {
+      "function": "stableSerialize",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 23,
+      "selfMs": 2.959
+    },
+    {
+      "function": "getActor",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 123,
+      "selfMs": 2.958
+    },
+    {
+      "function": "getOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 333,
+      "selfMs": 2.958
+    },
+    {
+      "function": "previewComputerCompletion",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 2179,
+      "selfMs": 2.958
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 116,
+      "selfMs": 2.958
+    },
+    {
+      "function": "previewFinalEndPrelude",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1902,
+      "selfMs": 2.958
+    },
+    {
+      "function": "listPlayerMoveChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/rocket.js",
+      "line": 365,
+      "selfMs": 2.958
+    },
+    {
+      "function": "incomeTailPrefix",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 977,
+      "selfMs": 2.958
+    },
+    {
+      "function": "probeRouteTopologyKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 417,
+      "selfMs": 2.958
+    },
+    {
+      "function": "knownFinalPositiveTask",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1712,
+      "selfMs": 2.957
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 175,
+      "selfMs": 2.917
+    },
+    {
+      "function": "getProbeData",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 909,
+      "selfMs": 2.917
+    },
+    {
+      "function": "settleAmibaRegionReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/play-domain.js",
+      "line": 292,
+      "selfMs": 2.917
+    },
+    {
+      "function": "owner",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 12,
+      "selfMs": 2.917
+    },
+    {
+      "function": "inspect",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 293,
+      "selfMs": 2.916
+    },
+    {
+      "function": "getIndustryDefinition",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/industry/catalog.js",
+      "line": 83,
+      "selfMs": 2.876
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 510,
+      "selfMs": 2.875
+    },
+    {
+      "function": "previewQuietAlienDisplay",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1850,
+      "selfMs": 2.875
+    },
+    {
+      "function": "sanitizeSelfPlayer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 131,
+      "selfMs": 2.874
+    },
+    {
+      "function": "enumerate",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 143,
+      "selfMs": 2.625
+    },
+    {
+      "function": "collectReadyTasks",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4652,
+      "selfMs": 2.542
+    },
+    {
+      "function": "swapIntent",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 280,
+      "selfMs": 2.5
+    },
+    {
+      "function": "goals",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 89,
+      "selfMs": 2.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 168,
+      "selfMs": 2.499
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/resolver.js",
+      "line": 479,
+      "selfMs": 2.459
+    },
+    {
+      "function": "listPendingMarks",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/final-scoring.js",
+      "line": 128,
+      "selfMs": 2.417
+    },
+    {
+      "function": "(program)",
+      "file": "",
+      "line": 0,
+      "selfMs": 2.166
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7677,
+      "selfMs": 2.166
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 385,
+      "selfMs": 2.125
+    },
+    {
+      "function": "settleSector",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 576,
+      "selfMs": 2.084
+    },
+    {
+      "function": "knownFossilTraceQuotes",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1368,
+      "selfMs": 1.958
+    },
+    {
+      "function": "weighted",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 561,
+      "selfMs": 1.958
+    },
+    {
+      "function": "catalog",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 551,
+      "selfMs": 1.834
+    },
+    {
+      "function": "listPendingTriggerKeys",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3977,
+      "selfMs": 1.833
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5966,
+      "selfMs": 1.833
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 135,
+      "selfMs": 1.667
+    },
+    {
+      "function": "computePlayerFinalScore",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 882,
+      "selfMs": 1.625
+    },
+    {
+      "function": "openSync",
+      "file": "node:fs",
+      "line": 559,
+      "selfMs": 1.583
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 650,
+      "selfMs": 1.583
+    },
+    {
+      "function": "_copyActual",
+      "file": "node:buffer",
+      "line": 244,
+      "selfMs": 1.542
+    },
+    {
+      "function": "open",
+      "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+      "line": 9,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 402,
+      "selfMs": 1.542
+    },
+    {
+      "function": "add",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 552,
+      "selfMs": 1.542
+    },
+    {
+      "function": "basePurposeCapital",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/state-value.js",
+      "line": 530,
+      "selfMs": 1.542
+    },
+    {
+      "function": "quote",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/ready-analysis-capital.js",
+      "line": 94,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2276,
+      "selfMs": 1.542
+    },
+    {
+      "function": "finishProvedCommittedState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2165,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/initial-setup.js",
+      "line": 97,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 172,
+      "selfMs": 1.542
+    },
+    {
+      "function": "knownSwapPortfolioQuotes",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 254,
+      "selfMs": 1.542
+    },
+    {
+      "function": "formatResourceCost",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 234,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 92,
+      "selfMs": 1.542
+    },
+    {
+      "function": "chongClaimKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2861,
+      "selfMs": 1.542
+    },
+    {
+      "function": "getDiscardActionMoveRewardForCard",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 230,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1269,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1714,
+      "selfMs": 1.542
+    },
+    {
+      "function": "isPlainPinkTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 682,
+      "selfMs": 1.542
+    },
+    {
+      "function": "getResearchPublicityCost",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/resolver.js",
+      "line": 49,
+      "selfMs": 1.542
+    },
+    {
+      "function": "sanitizeCard",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 49,
+      "selfMs": 1.542
+    },
+    {
+      "function": "countPlutoMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4115,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 600,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1674,
+      "selfMs": 1.542
+    },
+    {
+      "function": "cardDecisionChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1058,
+      "selfMs": 1.542
+    },
+    {
+      "function": "isTriggerConsumed",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3871,
+      "selfMs": 1.542
+    },
+    {
+      "function": "select",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 48,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 2494,
+      "selfMs": 1.542
+    },
+    {
+      "function": "ending",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 15,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2578,
+      "selfMs": 1.542
+    },
+    {
+      "function": "cloneReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 261,
+      "selfMs": 1.542
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/state-value.js",
+      "line": 64,
+      "selfMs": 1.542
+    },
+    {
+      "function": "enumerateSourceChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-composition.js",
+      "line": 530,
+      "selfMs": 1.542
+    },
+    {
+      "function": "isTileDisabled",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/player-tech.js",
+      "line": 93,
+      "selfMs": 1.542
+    },
+    {
+      "function": "getVisibleContent",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/rocket.js",
+      "line": 76,
+      "selfMs": 1.542
+    },
+    {
+      "function": "describePostMainValueBound",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 8407,
+      "selfMs": 1.542
+    },
+    {
+      "function": "knownAmibaPinkPayout",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 406,
+      "selfMs": 1.542
+    },
+    {
+      "function": "tryExtensions",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 544,
+      "selfMs": 1.541
+    },
+    {
+      "function": "createCardDrawContext",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 686,
+      "selfMs": 1.541
+    },
+    {
+      "function": "pickupIncomePayment",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 147,
+      "selfMs": 1.541
+    },
+    {
+      "function": "noFinalRoundMarkCapital",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 205,
+      "selfMs": 1.541
+    },
+    {
+      "function": "getSectorOccupancy",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 216,
+      "selfMs": 1.541
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1665,
+      "selfMs": 1.541
+    },
+    {
+      "function": "formatTraceRewardLabel",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 583,
+      "selfMs": 1.541
+    },
+    {
+      "function": "countStateTraceMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 201,
+      "selfMs": 1.541
+    },
+    {
+      "function": "collectPlayerCardIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 337,
+      "selfMs": 1.541
+    },
+    {
+      "function": "shouldApplyThreatPenalty",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/jiuzhe.js",
+      "line": 827,
+      "selfMs": 1.541
+    },
+    {
+      "function": "getPublicSymbolState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 551,
+      "selfMs": 1.541
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4101,
+      "selfMs": 1.541
+    },
+    {
+      "function": "previewQuietChongEndPrelude",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1921,
+      "selfMs": 1.541
+    },
+    {
+      "function": "actionContext",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 97,
+      "selfMs": 1.541
+    },
+    {
+      "function": "",
+      "file": "node:internal/util/inspect",
+      "line": 214,
+      "selfMs": 1.5
+    },
+    {
+      "function": "internalBinding",
+      "file": "node:internal/bootstrap/realm",
+      "line": 185,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "node:internal/fs/utils",
+      "line": 1,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "node:internal/event_target",
+      "line": 1,
+      "selfMs": 1.5
+    },
+    {
+      "function": "Module.load",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 1432,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/layout.js",
+      "line": 1,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/placement.js",
+      "line": 1,
+      "selfMs": 1.5
+    },
+    {
+      "function": "realpathSync",
+      "file": "node:fs",
+      "line": 2722,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 1,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 10,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/industry/index.js",
+      "line": 28,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 23,
+      "selfMs": 1.5
+    },
+    {
+      "function": "validate",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+      "line": 305,
+      "selfMs": 1.5
+    },
+    {
+      "function": "buildTopologyBody",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 444,
+      "selfMs": 1.5
+    },
+    {
+      "function": "buildSectorWinRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 1178,
+      "selfMs": 1.5
+    },
+    {
+      "function": "installStore",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 583,
+      "selfMs": 1.5
+    },
+    {
+      "function": "automatic",
+      "file": "/private/tmp/seti-v481-recovery.jWXl4B/source/native-late-r3.js",
+      "line": 59,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+      "line": 61,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 987,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 491,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 934,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getLegalChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 1796,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getOrbitOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/planet.js",
+      "line": 224,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getSectorLaunchSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 422,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getWheelCellAtDisplayCoordinate",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 526,
+      "selfMs": 1.5
+    },
+    {
+      "function": "get collisionKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 625,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewQuietCardCornerTail",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1943,
+      "selfMs": 1.5
+    },
+    {
+      "function": "resolveDecision",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 1592,
+      "selfMs": 1.5
+    },
+    {
+      "function": "ensureSectorSettlementState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 129,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 685,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewQuietScan4Action",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1545,
+      "selfMs": 1.5
+    },
+    {
+      "function": "ensureCardEffectState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3855,
+      "selfMs": 1.5
+    },
+    {
+      "function": "sanitizeHiddenInformationObservation",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 196,
+      "selfMs": 1.5
+    },
+    {
+      "function": "rewardEquivalentValue",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 334,
+      "selfMs": 1.5
+    },
+    {
+      "function": "listTraceEntries",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 364,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isHiddenInformationBarrier",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 83,
+      "selfMs": 1.5
+    },
+    {
+      "function": "firstTraceBelongsToPlayer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/state.js",
+      "line": 76,
+      "selfMs": 1.5
+    },
+    {
+      "function": "knownPostMainActions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5955,
+      "selfMs": 1.5
+    },
+    {
+      "function": "clone",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 107,
+      "selfMs": 1.5
+    },
+    {
+      "function": "resolveDecision",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 1800,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 264,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 321,
+      "selfMs": 1.5
+    },
+    {
+      "function": "refillQuietScan4",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1262,
+      "selfMs": 1.5
+    },
+    {
+      "function": "incomePaymentAlternative",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 3067,
+      "selfMs": 1.5
+    },
+    {
+      "function": "shouldApplyJiuzheThreatPenalty",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 855,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/planet-rewards.js",
+      "line": 433,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 692,
+      "selfMs": 1.5
+    },
+    {
+      "function": "cloneTask",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 640,
+      "selfMs": 1.5
+    },
+    {
+      "function": "settleTaskCardConsumption",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1676,
+      "selfMs": 1.5
+    },
+    {
+      "function": "projectState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 1691,
+      "selfMs": 1.5
+    },
+    {
+      "function": "canStartActiveAbility",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/industry/abilities.js",
+      "line": 376,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getCardDefinition",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 469,
+      "selfMs": 1.5
+    },
+    {
+      "function": "applyFormalCardEffects",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1175,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isPassThroughCell",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 541,
+      "selfMs": 1.5
+    },
+    {
+      "function": "routeRequirementKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 360,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 277,
+      "selfMs": 1.5
+    },
+    {
+      "function": "sanitizeAlienPublicState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 161,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getCardTask",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 719,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 4404,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isAomomoPlanetId",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/planet.js",
+      "line": 45,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewPinkTraceCardMenu",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2729,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 88,
+      "selfMs": 1.5
+    },
+    {
+      "function": "cachePut",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 411,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/play-domain.js",
+      "line": 316,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getLaunchCost",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/rocket.js",
+      "line": 330,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getSymbolReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 289,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getCardDefinition",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 485,
+      "selfMs": 1.5
+    },
+    {
+      "function": "buildDecisionFromState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+      "line": 103,
+      "selfMs": 1.5
+    },
+    {
+      "function": "knownMovePayments",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 288,
+      "selfMs": 1.5
+    },
+    {
+      "function": "removeCardIdFromDrawPile",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 468,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/high-coupling-slices.js",
+      "line": 67,
+      "selfMs": 1.5
+    },
+    {
+      "function": "canStartCompany",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 185,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/simulation-contract.js",
+      "line": 77,
+      "selfMs": 1.5
+    },
+    {
+      "function": "direction",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 12,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 283,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 869,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getTraceReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 421,
+      "selfMs": 1.5
+    },
+    {
+      "function": "findNextComputerPlacementSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 248,
+      "selfMs": 1.5
+    },
+    {
+      "function": "listPlacementChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/data.js",
+      "line": 27,
+      "selfMs": 1.5
+    },
+    {
+      "function": "createActionContext",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 129,
+      "selfMs": 1.5
+    },
+    {
+      "function": "placed",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 13,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewForeignTurnAfterQuietHandoffs",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 1874,
+      "selfMs": 1.5
+    },
+    {
+      "function": "realizationForNode",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 74,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 356,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isTrade",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 14,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getHighestThreatPlayers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/jiuzhe.js",
+      "line": 811,
+      "selfMs": 1.5
+    },
+    {
+      "function": "validateTech",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/high-coupling-slices.js",
+      "line": 307,
+      "selfMs": 1.5
+    },
+    {
+      "function": "postMainValueBound",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 8329,
+      "selfMs": 1.5
+    },
+    {
+      "function": "ownLegalActions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 590,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewQuietAmibaRegion",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 2328,
+      "selfMs": 1.5
+    },
+    {
+      "function": "now",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 16,
+      "selfMs": 1.5
+    },
+    {
+      "function": "validateCards",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/high-coupling-slices.js",
+      "line": 223,
+      "selfMs": 1.5
+    },
+    {
+      "function": "observeEnvelope",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 566,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getFormulaId",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 535,
+      "selfMs": 1.5
+    },
+    {
+      "function": "countTraceMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 266,
+      "selfMs": 1.5
+    },
+    {
+      "function": "apply",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1359,
+      "selfMs": 1.5
+    },
+    {
+      "function": "pairedTracePickupPlan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2985,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 608,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 104,
+      "selfMs": 1.5
+    },
+    {
+      "function": "listMoveRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/rocket.js",
+      "line": 336,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isPlayerPassed",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/turn-flow.js",
+      "line": 64,
+      "selfMs": 1.5
+    },
+    {
+      "function": "cloneDiscardActionMoveReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 206,
+      "selfMs": 1.5
+    },
+    {
+      "function": "makeQuietCompany",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 855,
+      "selfMs": 1.5
+    },
+    {
+      "function": "maskUnknownCards",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 89,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 521,
+      "selfMs": 1.5
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4567,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getCardLabel",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 752,
+      "selfMs": 1.5
+    },
+    {
+      "function": "get physicalKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 620,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 332,
+      "selfMs": 1.5
+    },
+    {
+      "function": "readCommittedState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 651,
+      "selfMs": 1.5
+    },
+    {
+      "function": "planningCapital",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 212,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2575,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4950,
+      "selfMs": 1.5
+    },
+    {
+      "function": "resolveSymbolAtSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 635,
+      "selfMs": 1.5
+    },
+    {
+      "function": "chainScanFinalize",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/play-domain.js",
+      "line": 420,
+      "selfMs": 1.5
+    },
+    {
+      "function": "take",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/sequences.js",
+      "line": 25,
+      "selfMs": 1.5
+    },
+    {
+      "function": "valueOf",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 31,
+      "selfMs": 1.5
+    },
+    {
+      "function": "knownOrOpaque",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7859,
+      "selfMs": 1.5
+    },
+    {
+      "function": "isTaskCompleted",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3882,
+      "selfMs": 1.5
+    },
+    {
+      "function": "committedProjection",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 595,
+      "selfMs": 1.5
+    },
+    {
+      "function": "listTraceEntries",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 464,
+      "selfMs": 1.5
+    },
+    {
+      "function": "previewIncomeCompletion",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 2053,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getMappedCompanyBaseIncome",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 554,
+      "selfMs": 1.5
+    },
+    {
+      "function": "releaseBoundaryObservation",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 10754,
+      "selfMs": 1.5
+    },
+    {
+      "function": "preserveFundedResearchCorner",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 448,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4140,
+      "selfMs": 1.5
+    },
+    {
+      "function": "tokenIdentity",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 178,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 78,
+      "selfMs": 1.5
+    },
+    {
+      "function": "sum",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/value-arithmetic.js",
+      "line": 28,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getFormulaBaseValue",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 622,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 441,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getPassingPlayerIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 56,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getSectorRanking",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 545,
+      "selfMs": 1.5
+    },
+    {
+      "function": "Module._resolveLookupPaths",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 888,
+      "selfMs": 1.5
+    },
+    {
+      "function": "collectDiscardCardIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 390,
+      "selfMs": 1.5
+    },
+    {
+      "function": "nextMovementIntent",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5057,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/initial-setup.js",
+      "line": 297,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 278,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 932,
+      "selfMs": 1.5
+    },
+    {
+      "function": "prepareDecisionContinuation",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1792,
+      "selfMs": 1.5
+    },
+    {
+      "function": "addPlayerCountEntry",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 394,
+      "selfMs": 1.5
+    },
+    {
+      "function": "knownFreeScanDelivery",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4875,
+      "selfMs": 1.5
+    },
+    {
+      "function": "listSymbolsInRegion",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 581,
+      "selfMs": 1.5
+    },
+    {
+      "function": "passPlanningState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2585,
+      "selfMs": 1.5
+    },
+    {
+      "function": "prepareProbeRoutes",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 579,
+      "selfMs": 1.5
+    },
+    {
+      "function": "chongTaskPeekBoundary",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2882,
+      "selfMs": 1.5
+    },
+    {
+      "function": "countStateTraceMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 326,
+      "selfMs": 1.5
+    },
+    {
+      "function": "capacity",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 41,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getPublicTraceState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 559,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 334,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "node:internal/validators",
+      "line": 536,
+      "selfMs": 1.5
+    },
+    {
+      "function": "placeDataToComputer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 448,
+      "selfMs": 1.5
+    },
+    {
+      "function": "placeAlienTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 600,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 101,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 368,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5964,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4413,
+      "selfMs": 1.5
+    },
+    {
+      "function": "normalizeIndustryLabel",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/industry/catalog.js",
+      "line": 73,
+      "selfMs": 1.5
+    },
+    {
+      "function": "resourceValue",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 663,
+      "selfMs": 1.5
+    },
+    {
+      "function": "step",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 1330,
+      "selfMs": 1.5
+    },
+    {
+      "function": "getCurrentPlayer",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 496,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 301,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 6061,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3955,
+      "selfMs": 1.5
+    },
+    {
+      "function": "drain",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 712,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 85,
+      "selfMs": 1.5
+    },
+    {
+      "function": "now",
+      "file": "node:internal/perf/performance",
+      "line": 137,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 859,
+      "selfMs": 1.5
+    },
+    {
+      "function": "policyPhysicalKey",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 409,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 508,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 1718,
+      "selfMs": 1.5
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/yichangdian.js",
+      "line": 1,
+      "selfMs": 1.459
+    },
+    {
+      "function": "createRuleComposition",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 347,
+      "selfMs": 1.459
+    },
+    {
+      "function": "playerHasActiveTile",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/player-tech.js",
+      "line": 97,
+      "selfMs": 1.459
+    },
+    {
+      "function": "collectKnownCardIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 98,
+      "selfMs": 1.459
+    },
+    {
+      "function": "hasOwnVisitSource",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 6975,
+      "selfMs": 1.459
+    },
+    {
+      "function": "getCardModel",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3798,
+      "selfMs": 1.459
+    },
+    {
+      "function": "quoteFinalRoundValue",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 394,
+      "selfMs": 1.459
+    },
+    {
+      "function": "countTotalOwnedTech",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 358,
+      "selfMs": 1.459
+    },
+    {
+      "function": "previewQuietMovePayment",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 1240,
+      "selfMs": 1.459
+    },
+    {
+      "function": "scoreCardEndGameRule",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/end-game-scoring.js",
+      "line": 717,
+      "selfMs": 1.459
+    },
+    {
+      "function": "incomePlanSummary",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 8260,
+      "selfMs": 1.459
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 925,
+      "selfMs": 1.459
+    },
+    {
+      "function": "isAmibaCard",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 711,
+      "selfMs": 1.459
+    },
+    {
+      "function": "owner",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 12,
+      "selfMs": 1.459
+    },
+    {
+      "function": "normalizeEffect",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 47,
+      "selfMs": 1.459
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/high-coupling-slices.js",
+      "line": 76,
+      "selfMs": 1.459
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 2579,
+      "selfMs": 1.459
+    },
+    {
+      "function": "settleReadyTaskDirect",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1744,
+      "selfMs": 1.459
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 958,
+      "selfMs": 1.459
+    },
+    {
+      "function": "maskAlienSlots",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 163,
+      "selfMs": 1.459
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 321,
+      "selfMs": 1.459
+    },
+    {
+      "function": "prepareMainThreadExecution",
+      "file": "node:internal/process/pre_execution",
+      "line": 52,
+      "selfMs": 1.458
+    },
+    {
+      "function": "Module._load",
+      "file": "node:internal/modules/cjs/loader",
+      "line": 1169,
+      "selfMs": 1.458
+    },
+    {
+      "function": "sanitizeDrawPileCardIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 448,
+      "selfMs": 1.458
+    },
+    {
+      "function": "playerOwnsPurpleTech",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/scan-effects.js",
+      "line": 65,
+      "selfMs": 1.458
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 135,
+      "selfMs": 1.458
+    },
+    {
+      "function": "completeVisitOrbitFacts",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/residual-domain-session.js",
+      "line": 1502,
+      "selfMs": 1.458
+    },
+    {
+      "function": "buildPassEffects",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/probe-turn-session.js",
+      "line": 371,
+      "selfMs": 1.458
+    },
+    {
+      "function": "listPickCardChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/science-session.js",
+      "line": 950,
+      "selfMs": 1.458
+    },
+    {
+      "function": "playerOwnsTile",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/player-tech.js",
+      "line": 89,
+      "selfMs": 1.458
+    },
+    {
+      "function": "compare",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 462,
+      "selfMs": 1.458
+    },
+    {
+      "function": "getOptions",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/standard-action.js",
+      "line": 275,
+      "selfMs": 1.458
+    },
+    {
+      "function": "listSectorExtraMarks",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 418,
+      "selfMs": 1.458
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 3909,
+      "selfMs": 1.458
+    },
+    {
+      "function": "placeChongTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/chong.js",
+      "line": 432,
+      "selfMs": 1.458
+    },
+    {
+      "function": "getOccupiedSlotIndices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 229,
+      "selfMs": 1.458
+    },
+    {
+      "function": "loadRequirements",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 110,
+      "selfMs": 1.458
+    },
+    {
+      "function": "quoteIncomeTail",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 398,
+      "selfMs": 1.458
+    },
+    {
+      "function": "ensureFinalScoringState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/final-scoring.js",
+      "line": 56,
+      "selfMs": 1.458
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 368,
+      "selfMs": 1.458
+    },
+    {
+      "function": "funding",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 795,
+      "selfMs": 1.458
+    },
+    {
+      "function": "getNextDataIndex",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 139,
+      "selfMs": 1.458
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4273,
+      "selfMs": 1.458
+    },
+    {
+      "function": "getRocketSurface",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rockets.js",
+      "line": 147,
+      "selfMs": 1.458
+    },
+    {
+      "function": "gainIncome",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 425,
+      "selfMs": 1.458
+    },
+    {
+      "function": "rankIncomeChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 484,
+      "selfMs": 1.458
+    },
+    {
+      "function": "playerHasPassive",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/industry/passives.js",
+      "line": 26,
+      "selfMs": 1.458
+    },
+    {
+      "function": "scanStep",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 2554,
+      "selfMs": 1.458
+    },
+    {
+      "function": "readStoreSnapshot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js",
+      "line": 395,
+      "selfMs": 1.458
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/outcome-model.js",
+      "line": 1,
+      "selfMs": 1.417
+    },
+    {
+      "function": "serializeString",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/state-store.js",
+      "line": 81,
+      "selfMs": 1.417
+    },
+    {
+      "function": "normalizeSolarInput",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 162,
+      "selfMs": 1.417
+    },
+    {
+      "function": "getPlayerKeys",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/aomomo.js",
+      "line": 154,
+      "selfMs": 1.417
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 661,
+      "selfMs": 1.417
+    },
+    {
+      "function": "knownCards",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 455,
+      "selfMs": 1.417
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 26,
+      "selfMs": 1.417
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 485,
+      "selfMs": 1.417
+    },
+    {
+      "function": "isRunezuRevealedSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/runezu.js",
+      "line": 446,
+      "selfMs": 1.417
+    },
+    {
+      "function": "createInitialState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/state/initial-game-state.js",
+      "line": 15,
+      "selfMs": 1.416
+    },
+    {
+      "function": "selectionChoices",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/initial-setup.js",
+      "line": 294,
+      "selfMs": 1.416
+    },
+    {
+      "function": "applyImmediateIncomeReward",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 388,
+      "selfMs": 1.416
+    },
+    {
+      "function": "claimSourceSymbol",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/runezu.js",
+      "line": 709,
+      "selfMs": 1.416
+    },
+    {
+      "function": "normalizeResultArray",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/effects/session-runtime.js",
+      "line": 35,
+      "selfMs": 1.416
+    },
+    {
+      "function": "processChunkSync",
+      "file": "node:zlib",
+      "line": 407,
+      "selfMs": 1.375
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 462,
+      "selfMs": 1.375
+    },
+    {
+      "function": "compare",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/income-card-order.js",
+      "line": 9,
+      "selfMs": 1.375
+    },
+    {
+      "function": "probeEndpointOwnMarkers",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 889,
+      "selfMs": 1.292
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 335,
+      "selfMs": 1.292
+    },
+    {
+      "function": "technologyCapital",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/state-value.js",
+      "line": 56,
+      "selfMs": 1.208
+    },
+    {
+      "function": "spendResources",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/players.js",
+      "line": 262,
+      "selfMs": 1.208
+    },
+    {
+      "function": "formatRewardEffectsSummary",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/actions/planet-rewards.js",
+      "line": 430,
+      "selfMs": 1.167
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 195,
+      "selfMs": 1.167
+    },
+    {
+      "function": "normalizeString",
+      "file": "node:path",
+      "line": 93,
+      "selfMs": 1.125
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/goal-movement.js",
+      "line": 123,
+      "selfMs": 1.042
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 273,
+      "selfMs": 1.041
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 963,
+      "selfMs": 0.959
+    },
+    {
+      "function": "hasTradeInertReservations",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 6528,
+      "selfMs": 0.875
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 658,
+      "selfMs": 0.834
+    },
+    {
+      "function": "collectComputerPlacementBonuses",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 186,
+      "selfMs": 0.792
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 4540,
+      "selfMs": 0.792
+    },
+    {
+      "function": "getSymbolEntry",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 545,
+      "selfMs": 0.792
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 1720,
+      "selfMs": 0.792
+    },
+    {
+      "function": "certainSectorPayout",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 437,
+      "selfMs": 0.791
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 1009,
+      "selfMs": 0.791
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 6982,
+      "selfMs": 0.75
+    },
+    {
+      "function": "normalizeRotationState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 146,
+      "selfMs": 0.75
+    },
+    {
+      "function": "ensureAmibaState",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 163,
+      "selfMs": 0.708
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 953,
+      "selfMs": 0.708
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/decision-search.js",
+      "line": 1719,
+      "selfMs": 0.708
+    },
+    {
+      "function": "resolveCost",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/planet.js",
+      "line": 56,
+      "selfMs": 0.667
+    },
+    {
+      "function": "getPlacementKind",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 42,
+      "selfMs": 0.666
+    },
+    {
+      "function": "needs",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/resource-demand.js",
+      "line": 28,
+      "selfMs": 0.625
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 281,
+      "selfMs": 0.5
+    },
+    {
+      "function": "resolveVisibleContent",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/solar-system/core.js",
+      "line": 594,
+      "selfMs": 0.459
+    },
+    {
+      "function": "isOwnedProbe",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 31,
+      "selfMs": 0.458
+    },
+    {
+      "function": "normalizeTechTypeFilter",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/tech/resolver.js",
+      "line": 77,
+      "selfMs": 0.417
+    },
+    {
+      "function": "getCatalogEntryByCardId",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 130,
+      "selfMs": 0.416
+    },
+    {
+      "function": "collectRemovedFromGameCardIds",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 401,
+      "selfMs": 0.333
+    },
+    {
+      "function": "append",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js",
+      "line": 491,
+      "selfMs": 0.292
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 36,
+      "selfMs": 0.292
+    },
+    {
+      "function": "RegExp: ^industry:",
+      "file": "",
+      "line": 0,
+      "selfMs": 0.292
+    },
+    {
+      "function": "known",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 5958,
+      "selfMs": 0.291
+    },
+    {
+      "function": "(idle)",
+      "file": "",
+      "line": 0,
+      "selfMs": 0.25
+    },
+    {
+      "function": "getCardTypeCode",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.js",
+      "line": 2055,
+      "selfMs": 0.167
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/analysis-port.js",
+      "line": 7864,
+      "selfMs": 0.166
+    },
+    {
+      "function": "buildLandRewardSummary",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/planet.js",
+      "line": 180,
+      "selfMs": 0.042
+    },
+    {
+      "function": "hasMatchingTrigger",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/effects.js",
+      "line": 3948,
+      "selfMs": 0.042
+    },
+    {
+      "function": "canPlaceAmibaTrace",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 232,
+      "selfMs": 0.042
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/probe-capital.js",
+      "line": 272,
+      "selfMs": 0.042
+    },
+    {
+      "function": "describePlacementBonuses",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 206,
+      "selfMs": 0.042
+    },
+    {
+      "function": "getCardTypeCode",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js",
+      "line": 179,
+      "selfMs": 0.041
+    },
+    {
+      "function": "getTraceGrid",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/aliens/amiba.js",
+      "line": 185,
+      "selfMs": 0.041
+    },
+    {
+      "function": "",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/card-pick-planning.js",
+      "line": 288,
+      "selfMs": 0.041
+    },
+    {
+      "function": "getTokenOwnerColor",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/nebula-state.js",
+      "line": 183,
+      "selfMs": 0.0
+    },
+    {
+      "function": "getCardId",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 121,
+      "selfMs": 0.0
+    },
+    {
+      "function": "getDiscardActionRewardForCard",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 226,
+      "selfMs": 0.0
+    },
+    {
+      "function": "getIncomeGainForCard",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/cards/deck.js",
+      "line": 184,
+      "selfMs": 0.0
+    },
+    {
+      "function": "getLandRewardMarkerSequence",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/abilities/planet.js",
+      "line": 173,
+      "selfMs": 0.0
+    },
+    {
+      "function": "hasBlueTechInBoardSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 169,
+      "selfMs": 0.0
+    },
+    {
+      "function": "getBlueTechTileInBoardSlot",
+      "file": "/private/tmp/seti-current-full-z97c_km1/randomizer/game/data/state.js",
+      "line": 159,
+      "selfMs": 0.0
+    }
+  ]
+}

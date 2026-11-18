@@ -1,0 +1,3 @@
+{"name":"before","actionId":"land:d5ee03a2","value":230,"complete":true,"unresolved":[],"native":825,"ms":2460.3680839999997,"rootsHash":"1bb7acf6361d4c1308aef3a890a5f2b9d8240d3e3f15a73d3ab42d2610b951f5","linesHash":"e4d5cbc46753e02061f3d14faff0226abfdde60bd99aadd3cb412c50a3dd6592"}
+{"name":"after","actionId":"land:d5ee03a2","value":230,"complete":true,"unresolved":[],"native":463,"ms":2205.1962499999995,"rootsHash":"1bb7acf6361d4c1308aef3a890a5f2b9d8240d3e3f15a73d3ab42d2610b951f5","linesHash":"e4d5cbc46753e02061f3d14faff0226abfdde60bd99aadd3cb412c50a3dd6592"}
+{"strictFullSearchEquality":true,"nativeSaved":362,"company":{"starts":120,"hands":121,"swaps":121}}

@@ -1,0 +1,24 @@
+/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js:130
+    : viewerPlayerId || legalActions[0]?.actorId || turn.currentPlayerId || null;
+                                    ^
+
+TypeError: Cannot read properties of null (reading '0')
+    at buildRuleObservation (/private/tmp/seti-current-full-z97c_km1/randomizer/app/rule-observation.js:130:37)
+    at Object.projectCounterfactualState (/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/quiet-company-swap.test.js:29:73)
+    at Object.projectState (/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js:1713:19)
+    at committedProjection (/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js:597:33)
+    at Object.newGame (/private/tmp/seti-current-full-z97c_km1/randomizer/game/rule-composition.js:972:49)
+    at Object.newGame (/private/tmp/seti-current-full-z97c_km1/randomizer/game/production-kernel.js:1804:34)
+    at Object.<anonymous> (/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/quiet-company-swap.test.js:31:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+
+Node.js v22.22.0
+residual-domain-session production proofs passed
+effect session runtime tests passed
+SUMMARY unit passed=2 failed=1 total=3 time=0.25s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER architecture/effect-session tests=2
+FAIL randomizer/game/ai/quiet-company-swap.test.js status=1 signal=none

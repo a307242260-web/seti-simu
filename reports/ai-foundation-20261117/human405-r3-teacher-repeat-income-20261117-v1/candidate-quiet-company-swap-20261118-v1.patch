@@ -1,0 +1,601 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -476,7 +476,8 @@
+     let publicSeed = null, rootTurnKey = null;
+     let nodeCount = 0, identityMaterializations = 0;
+     let submissionCount = 0, provedFinalDataPlacements = {}, provedFinalDataMenuInputs = 0;
+-    let quietDataMenuTemplate = null;
++    let quietDataMenuTemplate = null, companyStartTemplate = null;
++    let provedCompanyStarts=0,provedCompanyHandMenus=0,provedCompanySwaps=0;
+     const dataRewardMenuTemplates = new Map();
+     let provedBlueTwoPickInputs = 0, provedComputerIncomeMenus = 0, provedCurrencyIncomeInputs = 0, provedFinalResourceCorners = 0;
+     let provedChongTransportInputs=0, provedChongTraceSkips=0, provedChongTraceMenus=0;
+@@ -682,7 +683,7 @@
+       cardPickRootStats = cardPickPlanner.getDiagnostics();
+       nodeCount = 0;
+       movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+-      submissionCount = 0; provedQuietSpecifiedScans=0; provedPinkCardMenus=0; provedAlienDisplays=0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
++      submissionCount = 0; companyStartTemplate=null;provedCompanyStarts=0;provedCompanyHandMenus=0;provedCompanySwaps=0; provedQuietSpecifiedScans=0; provedPinkCardMenus=0; provedAlienDisplays=0; provedAmibaYellowLandingInputs=0; provedFinalDataPlacements = {}; provedFinalDataMenuInputs = 0; provedBlueTwoPickInputs = 0; provedComputerIncomeMenus = 0; provedCurrencyIncomeInputs = 0; provedFinalResourceCorners = 0; provedActiveFinalTaskInputs = 0; provedFinalEndTaskInputs = 0; provedBluePickSettlements = 0; provedResearchPicks = 0; provedResearchSelections = 0; provedEmptyAmibaResearch = 0;
+       provedPinkRefills=0;provedPinkFossilMenus=0;provedLastPlainPinkInputs=0;quietEndPreludeTemplate=null; quietEndMarkTemplate=null; provedQuietEndMenus=0; provedQuietEndHandovers=0; provedOwnEndHandovers=0; provedScan4QuietMoves=0;provedScan4QuietLaunchSkips=0; provedPublicScanChoices=0; scan4RefillHits=0; scan4RefillCache.clear();
+       moveMenuTemplate=null; provedMoveMenus=0; provedMovePayments=0;
+       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
+@@ -816,6 +817,58 @@
+         || localPlans.hasPendingFossilArrival(state)
+         || action.stateVersion !== state.meta.stateVersion || action.decisionVersion !== (state.match?.decisionVersion ?? 0)) return null;
+       return state;
++    }
++
++    function previewQuietCompany(node,stored,action){
++      const s=stored.envelope.session?.session,head=s?.queue?.[0];
++      const start=node.status==="stable"&&!s&&action.family==="industry"&&action.target?.abilityId==="deepspace_swap_cards";
++      const choice=node.status==="decision"&&action.family==="choose_card"&&s?.phase==="awaiting_input"
++        &&s.queue.length===1&&!s.failure&&!s.interruptContext&&!s.irreversibleBarrier&&!s.undoFrames.length
++        &&head.type==="residual_company_decision"&&head.ownerId===seatId&&!head.allowQuickActions
++        &&s.journal.actions.length===1&&s.journal.actions[0].action.family==="industry"
++        &&s.journal.actions[0].action.target?.abilityId==="deepspace_swap_cards";
++      if(!resourcePlanning||!cardPickPlanning||!start&&!choice)return null;
++      const state=readIdentityState(stored.envelope),owner=state.players.players.find(p=>p.id===seatId),known=knownCards(stored.envelope);
++      if(owner.reservedCards.some(c=>!known.has(c.id))||choice&&!known.has(action.target?.cardInstanceId))return null;
++      const preview=residualSession.previewQuietDeepSpaceSwap(state,seatId,action,start?null:head);
++      if(!preview)return null;
++      preview.state={...preview.state,meta:quietSavedMeta(preview.state.meta)};
++      return {...preview,start};
++    }
++
++    function rememberCompanyStart(stored,action,preview,child){
++      const checkpoint=nodes.get(child).envelope.session,s=checkpoint?.session,j=s?.journal,head=s?.queue?.[0];
++      // Native isolated sessions own one mutable base/working object through
++      // the activation effect. Both snapshots contain the industry mark.
++      const base=preview.state;
++      if(child.status!=="decision"||s?.phase!=="awaiting_input"||s.queue.length!==1||s.revision!==1
++        ||s.nextEffectSequence!==2||s.nextGroupSequence!==2||s.committedState||s.failure||s.interruptContext
++        ||s.irreversibleBarrier||s.undoFrames.length||head.type!=="residual_company_decision"||head.ownerId!==seatId
++        ||head.payload.step!=="swap_hand"||head.allowQuickActions||j.actions.length!==1||j.effects.length!==1
++        ||j.decisions.length||j.rng.length||j.logs.length||j.replay.length!==1
++        ||!exactClaimState(j.events,preview.events)||!exactClaimState(j.history,preview.history)
++        ||!exactClaimState(s.baseState,base)||!exactClaimState(s.workingState,preview.state)
++        ||j.actions[0].action.actionId!==action.actionId)return;
++      companyStartTemplate={...checkpoint,session:{...s,baseState:null,workingState:null}};
++    }
++
++    function makeQuietCompany(stored,action,preview){
++      if(preview.start){
++        const template=companyStartTemplate,s=template?.session;
++        if(!s||s.journal.actions[0].action.actionId!==action.actionId)return null;
++        const source=readIdentityState(stored.envelope),base=preview.state,j=s.journal;
++        const checkpoint=freeze({...template,session:{...s,baseVersion:source.meta.stateVersion,baseState:base,
++          workingState:preview.state,journal:{...j,actions:[{...j.actions[0],action}],replay:[{...j.replay[0],action}],
++            events:preview.events,history:preview.history}}});
++        return {envelope:withEnvelopeSession(stored.envelope,checkpoint),inspection:{phase:"awaiting_input",
++          session:{irreversibleBarrier:null,decision:{choices:preview.choices}}}};
++      }
++      const prepared=prepareDecisionContinuation(stored,preview.state,action,preview,false,preview.choices);
++      if(prepared.prepared)return prepared.prepared;
++      if(!prepared.state||preview.spawnedEffects.length)return null;
++      const s=stored.envelope.session.session;
++      const state={...prepared.state,meta:quietSavedMeta(prepared.state.meta,s.baseVersion+1)};
++      return {envelope:provedCommittedEnvelope(stored,state),inspection:{phase:"idle",session:null}};
+     }
+
+     function rememberQuietDataMenu(action, child) {
+@@ -1736,9 +1789,9 @@
+       return prepareDecisionContinuation(stored,next,action,augmented);
+     }
+
+-    function prepareDecisionContinuation(stored,next,action,result,traceCardMenu=false){
++    function prepareDecisionContinuation(stored,next,action,result,traceCardMenu=false,quietChoices=null){
+       const checkpoint=stored.envelope.session,s=checkpoint.session,head=s.queue[0],types=scienceSession.EFFECT_TYPES;
+-      const revision=s.revision+1,barrier=traceCardMenu?s.irreversibleBarrier:{effectId:head.effectId,revision,...result.irreversible};
++      const revision=s.revision+1,barrier=traceCardMenu||quietChoices?s.irreversibleBarrier:{effectId:head.effectId,revision,...result.irreversible};
+       let nextEffectSequence=s.nextEffectSequence,nextGroupSequence=s.nextGroupSequence;
+       const queue=[...(result.spawnedEffects||[]).map(({effect})=>({
+         schemaVersion:head.schemaVersion,effectId:s.sessionId+":effect:"+(++nextEffectSequence),
+@@ -1747,11 +1800,11 @@
+         source:{parentEffectId:head.effectId,priority:"direct"},groupIndex:0,
+       })),...s.queue.slice(1)];
+       if(!queue.length)return {barrier,state:next};
+-      const pending=queue[0],choices=traceCardMenu
++      const pending=queue[0],choices=quietChoices|| (traceCardMenu
+         ?residualSession.alienCardChoices(next,seatId,pending.payload.speciesId)
+         :pending.type===types.PICK_CARD
+           ?scienceSession.formalizeChoices(next,seatId,scienceSession.listPickCardChoices(next))
+-          :localPlans.residualCardChoices(next,pending);
++          :localPlans.residualCardChoices(next,pending));
+       if(!choices.length)return null;
+       const j=s.journal,cursor=j.replay.length,decision={decisionId:head.effectId,decisionVersion:s.revision,ownerId:seatId,choice:action};
+       const effect={effectId:head.effectId,groupId:head.groupId,groupKind:head.groupKind,type:head.type,revision};
+@@ -2140,6 +2193,16 @@
+         cacheHits += 1;
+         return rememberPrefix(key,node,actionId,cache.get(key));
+       }
++      const companyPreview=previewQuietCompany(node,stored,requested);
++      const company=companyPreview&&makeQuietCompany(stored,requested,companyPreview);
++      if(company){
++        if(companyPreview.start)provedCompanyStarts++;
++        else if(companyPreview.choices)provedCompanyHandMenus++;else provedCompanySwaps++;
++        const control=stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null;
++        const child=finishChild({session:{irreversibleBarrier:stored.envelope.session?.session?.irreversibleBarrier}}, {},
++          movementPlanning?nextMovementIntent(node,requested):null,control,stored.informationBarrier,requested,stored,company);
++        return rememberPrefix(key,node,actionId,remember(key,child));
++      }
+       const activeClaim = resourcePlanning && node.status === "stable" && !stored.resourceControl && requested.family === "complete_task"
+         ? localPlans.previewFinalPositiveTaskClaim({state:readIdentityState(stored.envelope),seatId,
+           action:requested,knownCards:knownCards(stored.envelope)}) : null;
+@@ -2463,6 +2526,7 @@
+       const child = finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null,
+         stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null,
+         stored.informationBarrier, requested, stored);
++      if(companyPreview?.start&&!companyStartTemplate)rememberCompanyStart(stored,requested,companyPreview,child);
+       if(queuedPreview&&!chongQueuedTemplates.has(chongQueuedKey(stored,queuedPreview)))rememberChongQueuedTask(stored,requested,child,queuedPreview);
+       if(chongEndPrelude&&!chongEndTemplates.has(chongEndPrelude.shape))rememberChongEndMenu(requested,child,chongEndPrelude);
+       if(tracePreview&&!chongTraceMenuTemplate)rememberChongTraceMenu(requested,child,tracePreview);
+@@ -4259,7 +4323,18 @@
+       const satelliteBase=node===openedRoot&&state.turn.roundNumber===4&&!stored.resourceControl&&!stored.intent
+         ?node.status==="stable"?state:["place_data","scan"].includes(source?.family)&&session?.baseState
+           ?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):null:null;
+-      const satellite=satelliteBase&&satelliteScanSetup(satelliteBase,stored);
++      let satellite=satelliteBase&&satelliteScanSetup(satelliteBase,stored);
++      if(satellite&&node.status==="decision"&&source?.family==="scan"){
++        // A cold scan menu may already have followed another public route.
++        // Recover only a plan whose pre-scan funding and executed scan prefix
++        // actually match; a new purpose cannot rewrite those Native inputs.
++        const p=satelliteBase.players.players.find(p=>p.id===seatId);
++        const scanned=session.journal.decisions.map(row=>row.choice).filter(a=>a.target?.nebulaId);
++        if(data.listComputerPlacedTokens(p).map(t=>t.placementSlot).join(",")!=="1,2"
++          ||p.resources.availableData!==satellite.scanData||scanned.length>satellite.scans.length
++          ||scanned.some((a,i)=>a.target.nebulaId!==satellite.scans[i]
++            ||a.family==="choose_card"&&a.target.cardInstanceId!==satellite.publicCardId))satellite=null;
++      }
+       if(satellite)goals=[...goals,satellite];
+       for(const goal of goals){
+         const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
+@@ -9040,6 +9115,7 @@
+       movementValueBounds=new WeakMap();movementBoundQueries=0;movementRuleQueries=0;movementIntentRecoveries=0;completedMovementRecoveries=0;
+       observationReleasers = new WeakMap();
+       normalizedIdentityStates = new Map();
++      companyStartTemplate=null;
+       identitySubtrees.values=new WeakMap();
+       identitySlices.values=new WeakMap(); identitySlices.hits=0; identitySlices.stores=0;
+       movementPolicies = new WeakMap();
+@@ -10688,7 +10764,7 @@
+         companyIntentReusesThisRoot:picks.companyIntentReuses-cardPickRootStats.companyIntentReuses,
+         companyIntentRecoveriesThisRoot:picks.companyIntentRecoveries-cardPickRootStats.companyIntentRecoveries,
+         companyIntentGuardRejectsThisRoot:picks.companyIntentGuardRejects-cardPickRootStats.companyIntentGuardRejects}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, provedPinkRefills, provedPinkFossilMenus, provedLastPlainPinkInputs, provedQuietSpecifiedScans, provedPinkCardMenus, provedAlienDisplays, provedAmibaYellowLandingInputs, provedChongTransportInputs, provedChongTraceSkips, provedChongTraceMenus, provedChongEndMenus, provedChongQueuedTasks, provedFinalDataMenuInputs, provedBlueTwoPickInputs, provedComputerIncomeMenus, provedCurrencyIncomeInputs, provedFinalResourceCorners, provedActiveFinalTaskInputs, provedFinalEndTaskInputs, provedBluePickSettlements, provedResearchPicks, provedResearchSelections, provedEmptyAmibaResearch, provedQuietEndMenus, provedQuietEndHandovers, provedOwnEndHandovers, provedScan4QuietMoves, provedScan4QuietLaunchSkips, scan4RefillHits, scan4RefillCacheEntries:scan4RefillCache.size, provedMoveMenus, provedMovePayments, provedPublicScanChoices, provedFinalDataPlacements:{...provedFinalDataPlacements}, cacheHits, stableRestoreSkips, timingPrefixBuilds, timingPrefixReuses, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
+-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
++        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, provedCompanyStarts,provedCompanyHandMenus,provedCompanySwaps, companyTemplateReady:Boolean(companyStartTemplate), physicalBucketCount:physicalIdentityBuckets.size, identityBucketCollisions, identitySubtreeCacheHits:identitySubtrees.hits,identitySubtreeCacheStores:identitySubtrees.stores, identitySliceHits:identitySlices.hits, identitySliceStores:identitySlices.stores, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,movementBoundQueries,movementRuleQueries,movementIntentRecoveries,completedMovementRecoveries,
+         committedDecodeCount, committedDecodeHits, committedReferenceCount, committedReferenceHits, lazyCommittedEnvelopes,lazyPreviewSerializations,
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+
+-  const VERSION = "seti-complete-decision-search-v485";
++  const VERSION = "seti-complete-decision-search-v487";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+--- a/randomizer/game/ai/goal-movement.js
++++ b/randomizer/game/ai/goal-movement.js
+@@ -8,7 +8,7 @@
+   if(common)module.exports=api;else root.SetiGoalMovement=api;
+ })(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players,data){
+   "use strict";
+-  const VERSION='seti-goal-movement-policy-v7';
++  const VERSION='seti-goal-movement-policy-v8';
+   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
+     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
+   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
+@@ -188,9 +188,11 @@
+       }
+       if(pickup&&route?.path.length===1&&route.cost===allowance
+         &&(objectiveOnly||moving.some(a=>matches(a,ship.id,route.path[0])))){
++        // Printed landing rewards are already guaranteed; closing scans
++        // and the later unknown fossil are not prerequisites for this fee.
+         const eligible=candidate.endpointFamily==='land'&&candidate.endpointTarget?.type==='satellite'
+           &&['jupiter','saturn'].includes(candidate.planetId)&&!ship.fossilId
+-          &&knownSatelliteSectorCount(state,owner,candidate.endpointFacts.rewards)>=2;
++          &&candidate.endpointFacts.rewards.every(e=>['gain_resources','choose_colored_nebula_scan'].includes(e.type));
+         const ordinary=players.canAfford(owner,cost);
+         const standardCost=ordinary?(cost.credits||0)+(cost.energy||0):Infinity;
+         const cardCost=eligible?pickup.cost.credits+1:Infinity;
+--- a/randomizer/game/ai/free-scan-funded-prefix.test.js
++++ b/randomizer/game/ai/free-scan-funded-prefix.test.js
+@@ -52,3 +52,57 @@
+  }finally{currentPort.close()}
+  console.log(JSON.stringify({fundedFreePrefix:true,nativePrintedLanding:13,actualRemainingEnergy:1,noInterveningRotation:true,rootAndRngIsolated:true}));
+ }finally{p.close();c.dispose()}
++
++// A funded one-step landing remains a purpose even when neither satellite
++// scan can close a sector. The printed score does not depend on a fossil.
++{
++ const one=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/free-scan-one-step-20261118-v1.json.gz'))));
++ const k2=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
++  projectCounterfactualState:(s,v,x)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:x?.trustedCommitted===true})});
++ k2.newGame({seed});const comp=k2.composition;assert(comp.lifecycle.restore(one.root).ok);
++ const original=comp.lifecycle.save().envelope,port=createAnalysisPort({composition:comp,seatId:seat,maxCacheEntries:0});
++ const legal=()=>comp.inspect().session?.decision?.choices||comp.inputPort.enumerateActions({});
++ const current=()=>{const e=comp.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState)};
++ const resources=()=>current().players.players.find(p=>p.id===seat).resources;
++ function apply(a){assert(a);const d=comp.inspect().session?.decision,r=d?comp.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?comp.inputPort.submitQuickAction(a):comp.inputPort.submitAction(a);assert(r.ok);}
++ try{
++  port.setMovementPlanning(true);const root=port.openRoot(),q=port.goalMovementSpec(root),a=legal().find(a=>a.actionId===q.selectedActionId);
++  assert.equal(a?.target.deltaX,0,'one free step must reach the held-card landing rather than assume a rotation');assert.equal(a.target.deltaY,1);
++  assert.equal(q.chosenGoal.planetId,'saturn');assert.equal(q.chosenGoal.cardId,one.knownSupplierCardId);assert.equal(q.intent.path.length,1);
++  assert.equal(q.chosenGoal.movementTiming,undefined,'funded same-seat endpoint must not borrow a future rotation');
++  const source=one.root.session.session.workingState,session=one.root.session.session;
++  const endpoint=native.getProbeRouteRequirements(source,seat,session.queue[0]).candidates.find(c=>c.rocketId===7&&c.endpointTarget?.satelliteId==='enceladus');
++  assert.equal(movement.knownSatelliteSectorCount(source,source.players.players.find(p=>p.id===seat),endpoint.endpointFacts.rewards),0);
++  for(const kind of ['draw-pile','alien-decks','zero-energy','no-fee','opponent-active','unknown-card','temporary-move']){
++   const s=structuredClone(source),owner=s.players.players.find(p=>p.id===seat);
++   if(kind==='draw-pile')s.cards.drawPileCardIds.reverse();
++   if(kind==='alien-decks'){s.aliens.chong.cardDeck.reverse();s.aliens.amiba.cardDeck.reverse()}
++   if(kind==='zero-energy')owner.resources.energy=0;
++   if(kind==='no-fee')owner.resources.credits=0;
++   if(kind==='opponent-active')s.turn.passedPlayerIds=s.turn.passedPlayerIds.filter(id=>id!=='player-green');
++   if(kind==='unknown-card')owner.hand.find(c=>c.id===one.knownSupplierCardId).hidden=true;
++   if(kind==='temporary-move')s.turn.cardTurnEventBonuses.push({playerId:seat,movementModifiers:{ignoreAsteroidRestriction:true}});
++   const frozen=structuredClone(s),result=movement.plan({state:s,seatId:seat,actions:root.legalActions,status:'decision',session,
++    endpoints:()=>native.getProbeRouteRequirements(s,seat,session.queue[0]).candidates,
++    compareTiming:(id,path,free)=>native.comparePlannedMovementTiming(s,seat,id,path,free)});
++   assert.deepEqual(s,frozen);
++   if(['draw-pile','alien-decks','zero-energy'].includes(kind))assert.equal(result.selectedActionId,q.selectedActionId,kind);
++   else assert.notEqual(result.chosenGoal?.cardId,one.knownSupplierCardId,kind+' cannot claim a funded held-card landing');
++  }
++  assert.deepEqual(comp.lifecycle.save().envelope,original);port.close();
++  const agentPort=createAnalysisPort({composition:comp,seatId:seat,maxCacheEntries:0});
++  try{
++   const result=require('./search-agent').createSearchAgent({seatId:seat,analysisPort:agentPort}).decide({seatId:seat,legalActions:legal()});
++   assert(result.search.complete);assert.equal(result.actionId,a.actionId,'a cold scan root must not recover a different already-executed public scan plan');
++   assert(result.search.diagnostics.nativeExecutions<=256);assert.deepEqual(comp.lifecycle.save().envelope,original);
++  }finally{agentPort.close()}
++  apply(a);let beforeLanding;
++  for(const old of one.tailAfterFreeMove){
++   if(old.family==='play_card'){beforeLanding=structuredClone(resources());assert.deepEqual(current().solarSystem.rotation,source.solarSystem.rotation)}
++   apply(legal().find(a=>a.actionId===old.actionId&&a.actorId===old.actorId));
++  }
++  assert.equal(resources().score,beforeLanding.score+13);assert.equal(resources().credits,beforeLanding.credits-1);assert.equal(resources().energy,beforeLanding.energy);
++  assert(legal().every(a=>a.target?.nebulaId),'stop with the printed scans pending, before the unknown fossil');
++  console.log(JSON.stringify({fundedOneStep:true,readySectorClosures:0,printedLanding:13,extraLandingEnergy:0,hiddenDeckIndependent:true}));
++ }finally{port.close();comp.dispose()}
++}
+--- a/randomizer/game/effects/residual-domain-session.js
++++ b/randomizer/game/effects/residual-domain-session.js
+@@ -670,6 +670,98 @@
+       return fail("COMPANY_DECISION_UNKNOWN", `未知公司 Decision: ${step}`);
+     }
+     return { ok: true, spawnedEffects, irreversible, events };
++  }
++
++  function applyCompanyAction(root, action, player) {
++    const start = canStartCompany(root, player);
++    if (!start.ok
++      || start.label !== action?.target?.companyId
++      || start.abilityId !== action?.target?.abilityId) {
++      return fail("COMPANY_ACTION_STALE", "公司行动已失效");
++    }
++    const marked = industry.markIndustryAction(player, roundOf(root), { turnNumber: turnOf(root) });
++    if (!marked.ok) return marked;
++    const flow = industryAbilities.buildActiveAbilityFlow(
++      player, start.label, roundOf(root), turnOf(root),
++    );
++    if (!flow.ok) return flow;
++    const spawnedEffects = companyQueue(root, player, flow);
++    // 哨兵探测网络：若本轮先打牌、本次 1x 才武装哨兵，补开该打出的牌的
++    // 弃牌角标节点（不弃牌；节点执行走统一 industry_sentinel_corner 执行器）。
++    if (flow.flowType === "sentinel_arm_play_corner") {
++      const sentinelNodes = industryAbilities.buildSentinelPlayCornerEffectNodes?.(
++        cards,
++        player,
++        roundOf(root),
++        turnOf(root),
++        player.industryLastPlayedCardThisRound,
++      ) || [];
++      spawnedEffects.unshift(...sentinelNodes.map((node) => ({
++        priority: "direct",
++        effect: {
++          type: node.type,
++          ownerId: player.id,
++          payload: { node },
++        },
++      })));
++    }
++    return {
++      ok: true,
++      spawnedEffects,
++      events: [{
++        type: "company_action",
++        playerId: player.id,
++        companyId: start.label,
++        abilityId: start.abilityId,
++      }],
++      history: [{
++        type: "company_action",
++        playerId: player.id,
++        companyId: start.label,
++        executorId: EXECUTOR_ID,
++      }],
++    };
++  }
++
++  // Quiet R4 company swap: run the authoritative mark/queue/choice rules on
++  // an owned player/card container. The caller supplies protocol envelopes;
++  // no settled wallet or resulting state is shared between source states.
++  function previewQuietDeepSpaceSwap(root, ownerId, action, effect = null) {
++    const source=actor(root,ownerId),turn=root.turn,definition=industry.getPlayerIndustryDefinition(source);
++    if(!source||turn.roundNumber!==4||turn.currentPlayerId!==ownerId||turn.gameEnded
++      ||source.passCompletionPending||turn.passedPlayerIds.includes(ownerId)
++      ||!turn.activePlayerIds.includes(ownerId)||turn.activePlayerIds.some(id=>id!==ownerId&&!turn.passedPlayerIds.includes(id))
++      ||definition?.activeAbilityId!=="deepspace_swap_cards"
++      ||definition.passiveIds.length!==1||definition.passiveIds[0]!=="deepspace_free_analyze"
++      ||turn.cardTurnEventBonuses?.length||listFossilArrivalEvents(root).length||action.actorId!==ownerId)return null;
++    const player=clone(source),next={...root,players:{...root.players,players:root.players.players.map(p=>p===source?player:p)}};
++    let result;
++    if(!effect){
++      if(action.family!=="industry"||action.phase!=="quick"||action.target?.abilityId!=="deepspace_swap_cards")return null;
++      result=applyCompanyAction(next,action,player);
++      if(!result.ok)return null;
++    }else{
++      const payload=effect.payload;
++      if(action.family!=="choose_card"||effect.type!==EFFECT_TYPES.COMPANY_DECISION||effect.ownerId!==ownerId
++        ||effect.allowQuickActions||payload?.companyId!==industry.getPlayerIndustryLabel(player)
++        ||payload.abilityId!=="deepspace_swap_cards"||!["swap_hand","swap_public"].includes(payload.step))return null;
++      const legal=listCompanyChoices(next,effect).find(a=>a.actionId===action.actionId);
++      if(!legal||legal.actorId!==ownerId)return null;
++      if(payload.step==="swap_public")next.cards={...root.cards,publicCards:[...root.cards.publicCards]};
++      result=applyCompanyChoice(next,effect,legal);
++      if(!result.ok||result.irreversible||result.events.length)return null;
++    }
++    const augmented=augmentEffectResult(next,result,effect||{type:EFFECT_TYPES.EXECUTE,ownerId});
++    const pending=augmented.spawnedEffects;
++    const needsChoice=!effect||effect.payload.step==="swap_hand";
++    if(augmented.irreversible||pending.length!==Number(needsChoice)
++      ||needsChoice&&(pending[0].priority!=="direct"||pending[0].effect.type!==EFFECT_TYPES.COMPANY_DECISION
++        ||pending[0].effect.ownerId!==ownerId||pending[0].effect.kind!=="decision"
++        ||pending[0].effect.payload.step!==(!effect?"swap_hand":"swap_public"))
++      ||augmented.events.length!==Number(!effect))return null;
++    const choices=needsChoice?listCompanyChoices(next,pending[0].effect):null;
++    if(needsChoice&&!choices.length)return null;
++    return {state:next,...augmented,choices};
+   }
+
+   function initializeAlienReveal(root, slotId, speciesId, owner, options = {}) {
+@@ -2366,53 +2458,8 @@
+           }],
+         });
+       }
+-      const start = canStartCompany(root, player);
+-      if (!start.ok
+-        || start.label !== action?.target?.companyId
+-        || start.abilityId !== action?.target?.abilityId) {
+-        return fail("COMPANY_ACTION_STALE", "公司行动已失效");
+-      }
+-      const marked = industry.markIndustryAction(player, roundOf(root), { turnNumber: turnOf(root) });
+-      if (!marked.ok) return marked;
+-      const flow = industryAbilities.buildActiveAbilityFlow(
+-        player, start.label, roundOf(root), turnOf(root),
+-      );
+-      if (!flow.ok) return flow;
+-      const spawnedEffects = companyQueue(root, player, flow);
+-      // 哨兵探测网络：若本轮先打牌、本次 1x 才武装哨兵，补开该打出的牌的
+-      // 弃牌角标节点（不弃牌；节点执行走统一 industry_sentinel_corner 执行器）。
+-      if (flow.flowType === "sentinel_arm_play_corner") {
+-        const sentinelNodes = industryAbilities.buildSentinelPlayCornerEffectNodes?.(
+-          cards,
+-          player,
+-          roundOf(root),
+-          turnOf(root),
+-          player.industryLastPlayedCardThisRound,
+-        ) || [];
+-        spawnedEffects.unshift(...sentinelNodes.map((node) => ({
+-          priority: "direct",
+-          effect: {
+-            type: node.type,
+-            ownerId: player.id,
+-            payload: { node },
+-          },
+-        })));
+-      }
+-      return result(state, root, "company_action", {
+-        spawnedEffects,
+-        events: [{
+-          type: "company_action",
+-          playerId: player.id,
+-          companyId: start.label,
+-          abilityId: start.abilityId,
+-        }],
+-        history: [{
+-          type: "company_action",
+-          playerId: player.id,
+-          companyId: start.label,
+-          executorId: EXECUTOR_ID,
+-        }],
+-      });
++      const applied = applyCompanyAction(root, action, player);
++      return applied.ok ? result(state, root, "company_action", applied) : applied;
+     });
+     runtime.registerExecutor(EFFECT_TYPES.COMPANY_DECISION, {
+       getLegalChoices(state, effect, context) {
+@@ -2686,6 +2733,7 @@
+     previewQuietAmibaYellowLanding,
+     previewEmptyAmibaResearchTrigger,
+     previewQuietResourceCorner,
++    previewQuietDeepSpaceSwap,
+     hasPendingFossilArrival:root=>listFossilArrivalEvents(root).length>0,
+     cardDecisionChoices,
+     chongTaskFossilChoices,
+--- /dev/null
++++ b/randomizer/game/ai/quiet-company-swap.test.js
+@@ -0,0 +1,86 @@
++"use strict";
++const fs = require("node:fs"), path = require("node:path"), z = require("node:zlib");
++const assert = require("node:assert/strict");
++const { createAnalysisPort } = require("./analysis-port");
++const residual = require("../effects/residual-domain-session");
++const { createSimulationRuleComposition } = require("../../training/simulation-rule-composition");
++const { createSeededRandom } = require("../random");
++const { buildRuleObservation } = require("../../app/rule-observation");
++const fixture = JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,
++  "fixtures/quiet-company-swap-20261118-v1.json.gz"))));
++const seat = "player-white";
++const state = e => e.session?.session?.workingState || JSON.parse(e.committedState);
++function frozen(value) {
++  if (value && typeof value === "object" && !Object.isFrozen(value)) {
++    Object.values(value).forEach(frozen); Object.freeze(value);
++  }
++  return value;
++}
++function canonicalEnvelope(envelope) {
++  const id = envelope.session?.session?.sessionId;
++  const references = new Set(["sessionId", "effectId", "groupId", "parentEffectId", "decisionId"]);
++  return JSON.parse(JSON.stringify(envelope, (key, value) => key === "committedState" ? JSON.parse(value)
++    : id && references.has(key) && typeof value === "string" && (value===id||value.startsWith(id+":"))
++      ? "$session" + value.slice(id.length) : value));
++}
++for (const example of fixture.cases) {
++  const seed = state(example.before).meta.seed;
++  const kernel = createSimulationRuleComposition({seed, random:createSeededRandom(seed), activePlayerCount:4,
++    trustedProjectionReader:true, projectCounterfactualState:(s,v,c) => buildRuleObservation(s,seed,v?.playerId,[],
++      {cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
++  kernel.newGame({seed}); const comp=kernel.composition; assert(comp.lifecycle.restore(example.before).ok);
++  let fork;
++  const facade = {...comp, counterfactualPort:{...comp.counterfactualPort,
++    // The fixture is already a Native counterfactual world. Preserve that world
++    // to compare every protocol field, rather than re-sample its hidden deck.
++    prepareRoot:e=>e, createFork(...args) { const f=comp.counterfactualPort.createFork(...args); fork=f.composition||f; return f; }} };
++  const port=createAnalysisPort({composition:facade,seatId:seat,maxCacheEntries:0});
++  try {
++    const root=port.openRoot(); port.setCardPickPlanning(true); port.setResourcePlanning(true);
++    port.expand(root,example.steps[0].action.actionId);
++    assert(port.getDiagnostics().companyTemplateReady);
++    // Clear the edge cache, retaining only the bounded, witnessed protocol.
++    port.setResourcePlanning(true);
++    let node=root;
++    for (const step of example.steps) {
++      node=port.expand(node,step.action.actionId); void node.observation;
++      assert.deepEqual(canonicalEnvelope(fork.lifecycle.save().envelope),canonicalEnvelope(step.after));
++      assert.deepEqual(comp.lifecycle.save().envelope,example.before,"source and RNG must remain unchanged");
++    }
++    const d=port.getDiagnostics(); assert.equal(d.submissionCount,1);
++    assert.equal(d.provedCompanyStarts,1);assert.equal(d.provedCompanyHandMenus,1);assert.equal(d.provedCompanySwaps,1);
++  } finally { port.close();comp.dispose(); }
++  // The pure rule path owns every mutated container and rejects unsupported
++  // contexts; it never consults a hidden replacement card or draw pile.
++  for (const freeze of [false,true]) {
++    let previous=example.before;
++    for (const [i,step] of example.steps.entries()) {
++      const source=structuredClone(state(previous)), untouched=structuredClone(source);
++      if(freeze)frozen(source);
++      const q=residual.previewQuietDeepSpaceSwap(source,seat,step.action,previous.session?.session?.queue[0]);
++      assert(q); assert.deepEqual(source,untouched);assert.deepEqual(q.state.meta,source.meta);
++      const actual=structuredClone(q.state);actual.meta.stateVersion+=Number(i===2);
++      delete actual.meta.rngState.branch;
++      assert.deepEqual(actual,state(step.after));previous=step.after;
++    }
++  }
++}
++const first=fixture.cases[0], source=state(first.before), action=first.steps[0].action;
++for (const kind of ["earlier-round","other-owner","opponent-active","already-used","pass-pending","other-company","turn-bonus","empty-hand"]) {
++  const s=structuredClone(source), p=s.players.players.find(p=>p.id===seat);
++  if(kind==="earlier-round")s.turn.roundNumber=3;
++  if(kind==="other-owner")s.turn.currentPlayerId=s.turn.activePlayerIds.find(id=>id!==seat);
++  if(kind==="opponent-active")s.turn.passedPlayerIds=[];
++  if(kind==="already-used"){p.industryRoundMarkRound=4;p.industryRoundMarkTurn=s.turn.turnNumber;}
++  if(kind==="pass-pending")p.passCompletionPending=true;
++  if(kind==="other-company")p.initialSelection.industry.label="图灵系统";
++  if(kind==="turn-bonus")s.turn.cardTurnEventBonuses=[{playerId:seat}];
++  if(kind==="empty-hand")p.hand=[];
++  const before=structuredClone(s);assert.equal(residual.previewQuietDeepSpaceSwap(s,seat,action),null,kind);assert.deepEqual(s,before);
++}
++const hidden=structuredClone(source); hidden.cards.drawPileCardIds.reverse();
++hidden.aliens.amiba.cardDeck.reverse();hidden.aliens.chong.cardDeck.reverse();
++const a=residual.previewQuietDeepSpaceSwap(source,seat,action), b=residual.previewQuietDeepSpaceSwap(hidden,seat,action);
++assert.deepEqual(a.choices,b.choices);assert.deepEqual(a.events,b.events);
++assert.deepEqual(a.state.players,b.state.players);assert.deepEqual(b.state.cards,hidden.cards);
++console.log("quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass");
+--- a/tools/node-test-inventory.js
++++ b/tools/node-test-inventory.js
+@@ -7,6 +7,7 @@
+ module.exports = Object.freeze({
+   schemaVersion: "seti-node-test-inventory-v2",
+   unit: Object.freeze([
++    entry("randomizer/game/ai/quiet-company-swap.test.js", "architecture/analysis-port", "末轮独席公司换牌逐步复用原生规则并保留完整会话、钱包与RNG", "共享不同钱包结算、遗漏公司额度或日志、偷看隐藏牌及不支持触发仍走快速路径"),
+     entry("randomizer/game/ai/free-scan-funded-prefix.test.js", "policy/decision-search", "末轮独席免费移动绑定当前已筹资的多步登陆目的；剩余费用原生兑现且无虚构旋转", "因不存在的旋转改向、借未来资源、隐藏牌堆影响移动或将未知登陆牌当作已持有"),
+     entry("randomizer/game/ai/known-data-scan-cycle.test.js", "policy/decision-search", "已知三数据供应、货币收入和两次扫描闭合公开星区目标，逐步计费且不看新补牌", "遗漏数据的可支付连续用途、透视未来牌、未计模拟或复用旧准备计划"),
+     entry("randomizer/game/ai/analysis-before-orbit.test.js", "policy/decision-search", "无人争抢时比较可支付的扫描分析研究与同一环绕，已知原生证据逐步计费且隐藏补牌不影响策略", "为眼前环绕遗漏可兑现发展、偷看补牌、少计模拟或把对手未来盘面当成保证"),
+--- a/tools/browser-smoke-inventory.js
++++ b/tools/browser-smoke-inventory.js
+@@ -1,6 +1,71 @@
+ "use strict";
+
+ const smokes = [
++  Object.freeze({
++    id: "production-quiet-company-swap",
++    file: "randomizer/index.html",
++    readyExpression: "Boolean(window.SetiAnalysisPort && window.SetiResidualDomainSession)",
++    actionExpression: `(async () => {
++      const response=await fetch('/randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz');
++      if(!response.ok)throw Error('company fixture missing');
++      const fixture=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text());
++      const seat='player-white',refs=new Set(['sessionId','effectId','groupId','parentEffectId','decisionId']);
++      const ordered=x=>Array.isArray(x)?x.map(ordered):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,ordered(x[k])])):x;
++      const canonical=e=>{const id=e.session?.session?.sessionId;return JSON.stringify(ordered(JSON.parse(JSON.stringify(e,(key,v)=>key==='committedState'?JSON.parse(v):id&&refs.has(key)&&typeof v==='string'&&(v===id||v.startsWith(id+':'))?'$session'+v.slice(id.length):v))))};
++      for(const example of fixture.cases){
++        const seed=JSON.parse(example.before.committedState).meta.seed;
++        const kernel=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
++          projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
++        kernel.newGame({seed});const comp=kernel.composition;if(!comp.lifecycle.restore(example.before).ok)throw Error('company restore failed');
++        let fork;const facade={...comp,counterfactualPort:{...comp.counterfactualPort,prepareRoot:e=>e,createFork(...args){const f=comp.counterfactualPort.createFork(...args);fork=f.composition||f;return f}}};
++        const port=window.SetiAnalysisPort.createAnalysisPort({composition:facade,seatId:seat,maxCacheEntries:0});
++        try{
++          const root=port.openRoot();port.setCardPickPlanning(true);port.setResourcePlanning(true);
++          port.expand(root,example.steps[0].action.actionId);
++          if(!port.getDiagnostics().companyTemplateReady)throw Error('company Native calibration rejected');
++          port.setResourcePlanning(true);let node=root;
++          for(const step of example.steps){node=port.expand(node,step.action.actionId);void node.observation;
++            if(canonical(fork.lifecycle.save().envelope)!==canonical(step.after))throw Error('company Native envelope differs');
++            if(canonical(comp.lifecycle.save().envelope)!==canonical(example.before))throw Error('company changed root/RNG');}
++          const d=port.getDiagnostics();if(d.submissionCount!==1||d.provedCompanyStarts!==1||d.provedCompanyHandMenus!==1||d.provedCompanySwaps!==1)throw Error('company steps did not use proved protocol');
++        }finally{port.close();comp.dispose()}
++      }
++      window.__quietCompanySwap={ok:true};
++    })()`,
++    successExpression: "window.__quietCompanySwap?.ok === true",
++    obligation: "Browser公司换牌逐步复用原生规则，完整提交态、基态、队列和日志保持一致，原根与RNG不变",
++    counterexample: "Browser错用Node私有依赖、重用结算钱包或丢失公司额度和会话语义",
++  }),
++  Object.freeze({
++    id: "production-free-scan-one-step",
++    file: "randomizer/index.html",
++    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
++    actionExpression: `(async () => {
++      const response=await fetch('/randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz');
++      if(!response.ok)throw Error('one-step fixture missing');
++      const f=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text()),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';
++      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
++        projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
++      k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.root).ok)throw Error('one-step restore failed');
++      const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
++      const menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
++      const state=()=>{const e=c.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState)};
++      const wallet=()=>state().players.players.find(p=>p.id===seat).resources;
++      const apply=a=>{if(!a)throw Error('one-step Native input missing');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('one-step Native input rejected')};
++      try{
++        const q=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p}).decide({seatId:seat,legalActions:menu()}).search,a=menu().find(a=>a.actionId===q.actionId);
++        if(!q.complete||a?.target.deltaX!==0||a.target.deltaY!==1||q.diagnostics.nativeExecutions>256||q.rootAndSearchMilliseconds>600)throw Error('one-step Browser direction or budget differs');
++        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('one-step search changed root/RNG');
++        apply(a);let prior;
++        for(const old of f.tailAfterFreeMove){if(old.family==='play_card'){prior={...wallet()};if(JSON.stringify(state().solarSystem.rotation)!==JSON.stringify(f.root.session.session.workingState.solarSystem.rotation))throw Error('unexpected rotation')};apply(menu().find(a=>a.actionId===old.actionId&&a.actorId===old.actorId))}
++        const after=wallet();if(after.score!==prior.score+13||after.credits!==prior.credits-1||after.energy!==prior.energy)throw Error('one-step printed landing does not match Native');
++        window.__freeScanOneStep={ok:true,native:q.diagnostics.nativeExecutions};
++      }finally{p.close();c.dispose()}
++    })()`,
++    successExpression: "window.__freeScanOneStep?.ok === true",
++    obligation: "Browser保留不封闭扫描区域也可兑现13分的已筹资一步登陆，额外只付1钱、不借旋转或未知化石",
++    counterexample: "仍因扫描封闭数拒绝已持有牌的合法一步用途、错误绕行、超预算或污染原根",
++  }),
+   Object.freeze({
+     id: "production-free-scan-funded-prefix",
+     file: "randomizer/index.html",

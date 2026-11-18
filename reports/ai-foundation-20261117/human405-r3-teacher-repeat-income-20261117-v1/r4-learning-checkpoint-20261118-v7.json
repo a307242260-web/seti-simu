@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v7",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v6.json",
+  "publishedParent": "98b8eca5d46d254a46f2bb05f4a831cadc5c899c",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v487/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "previousGoalTurnClassification": "no progress: status verification/restatement only",
+  "thisGoalTurnClassification": "progress: corrected Native activation ownership contract, implemented full3-step bounded company protocol reuse, verified121 Native cases and317 fixed search roots, proved substantial Native reduction but minimal timing improvement, profiled actual CPU and rejected full-observation cache direction",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "deepspace-candidate-findings-20261118-v1.json",
+  "openGates": [
+    {
+      "label": "teacher-input-272",
+      "native": 143,
+      "ms": 662.0186659999999,
+      "complete": true
+    },
+    {
+      "label": "teacher-input-289",
+      "native": 463,
+      "ms": 2260.503583999998,
+      "complete": true
+    }
+  ],
+  "next": [
+    "Measure exact repeated frozen subtrees/proof/catalog dependencies before any cache/change; avoid the previously rejected broad freeze-proof cache.",
+    "Audit trace195 and alien-card91 transitions using correct currentEffect metadata, preserving reward differences and pending triggers.",
+    "Prove the known B117 claim across the actual pickup write set and supported event triggers before changing valuation.",
+    "Re-run affected single-root gates after each actual change. No new whole game or batch until budget admission."
+  ]
+}

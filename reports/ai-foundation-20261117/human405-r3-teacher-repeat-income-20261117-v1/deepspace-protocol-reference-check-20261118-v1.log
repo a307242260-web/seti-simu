@@ -1,0 +1,4 @@
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+SUMMARY unit passed=1 failed=0 total=1 time=0.30s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
