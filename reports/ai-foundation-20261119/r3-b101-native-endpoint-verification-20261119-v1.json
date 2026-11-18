@@ -1,0 +1,11 @@
+{
+  "selectedDlc31EndpointMatchesOriginalBeforeInput172": true,
+  "fullOfficialDecisionObservationExact": true,
+  "restoredFullNativeEnvelopeExact": true,
+  "nativeObservationHash": "9c1dba1e42c76c42b4cae2f31ab2ed7fad77b54f5e675b5e510e6b1260fa4592",
+  "baselineObservationHash": "9c1dba1e42c76c42b4cae2f31ab2ed7fad77b54f5e675b5e510e6b1260fa4592",
+  "rootAndRngUnchanged": true,
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "observerOnly": true
+}

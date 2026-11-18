@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795027593.0,
+  "deadlineEpochSeconds": 1795029393.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg --files tools adhoc | rg \"verify.*replay|replay.*verify|teacher.*legal|formal.*(game|272)|native.*(game|verify)|replay.*fixture\" | head -45"
+      ],
+      "startedEpochSeconds": 1795027620.725394,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 83359,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027620.763937,
+      "stdoutSha256": "3b4e3639bb78e6734c4da98851bdcb1b4aa94ba1ef7c34f5790468c86f4c319c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg --files tools | rg \"replay|fixture|restore|verify\" | head -45; rg -n -l \"nativeStateSha256|completeNativeStateEqual|canonicalReplayVerifiedUsing\" adhoc -g \"*20261118*\" | head -15; sed -n \"1,105p\" adhoc/verify-v189-teacher-current-replay-20261105-v1.js; sed -n \"1,120p\" tools/fast_forward_save.js"
+      ],
+      "startedEpochSeconds": 1795027630.654081,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 83540,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027630.692715,
+      "stdoutSha256": "70c78bf95a8ac7c168b7d8faabd65b590bab71f57fda2a2fefe36d7eb90b3d4d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "sed -n \"1,150p\" tools/archive_research_replay.js; sed -n \"1,100p\" tools/replay_white_strict.js; rg -n -l \"teacher-current-legal-reference|nativeStateSha256\" adhoc -g \"*.py\" -g \"*.js\" -g \"*.cjs\" | head -20"
+      ],
+      "startedEpochSeconds": 1795027674.92662,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 83963,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027675.004164,
+      "stdoutSha256": "9d3fc2ccd07ebe48df57cc65b109f003fdf1e24d63a96577451952095251197f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import subprocess,json,pathlib; commit=\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0\"; r=json.loads(subprocess.check_output([\"git\",\"show\",commit+\":reports/research/2170d824.5fabd621.full.json\"])); paths=[r[\"savePath\"],r[\"rounds\"][1][\"checkpointPath\"],r[\"roundEnds\"][1][\"checkpointPath\"]]; print(\"ROUND2_REFERENCE\",r[\"rounds\"][1].get(\"checkpointSha256\"),r[\"rounds\"][1][\"steps\"])\nfor p in paths:\n q=subprocess.run([\"git\",\"cat-file\",\"-s\",commit+\":\"+p],capture_output=True,text=True); print(\"GIT_SIZE\",p,q.stdout.strip() if q.returncode==0 else \"absent\")\np=pathlib.Path(paths[0]); print(\"WORKING_SAVE_EXISTS\",p.exists()); s=json.loads(p.read_text()) if p.exists() else {}; print(\"SAVE_KEYS\",list(s)); print(\"REPLAY0_KEYS\",list((s.get(\"replaySteps\") or [{}])[0])); print(\"REPLAY_COUNT\",len(s.get(\"replaySteps\") or []))"
+      ],
+      "startedEpochSeconds": 1795027675.313948,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 84074,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027675.391757,
+      "stdoutSha256": "54a89b33aca5e58c82806b7f8370c3e85ad4047b36e1c23d2f8b6bd2b7489734",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import subprocess,json; c=\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0\"; r=json.loads(subprocess.check_output([\"git\",\"show\",c+\":reports/research/2170d824.5fabd621.full.json\"])); cp=json.loads(subprocess.check_output([\"git\",\"show\",c+\":\"+r[\"rounds\"][1][\"checkpointPath\"]])); s=json.loads(subprocess.check_output([\"git\",\"show\",c+\":\"+r[\"savePath\"]])); print(\"CP_KEYS\",list(cp)); print(\"CORE_KEYS\",list(cp[\"coreState\"])); print(\"CURSOR\",cp.get(\"replayCursor\")); print(\"ENVELOPE_KEYS\",list(cp[\"coreState\"].get(\"compositionEnvelope\",{}))); print(\"AFTER159\",s[\"replaySteps\"][158].get(\"after\")); print(\"SOURCE838_KERNEL_SIZE\",subprocess.check_output([\"git\",\"cat-file\",\"-s\",\"838395727df8ae4e4734b101028485aef59dc1b3:randomizer/game/production-kernel.js\"]).decode().strip())"
+      ],
+      "startedEpochSeconds": 1795027742.593966,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 84611,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027742.671885,
+      "stdoutSha256": "14d5b69d2e1672691b46d8cb655b96b49dc7f01858214ea27fecafa8bc2c03fe",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "/private/tmp/prepare-seti-b101-native-control-20261119.py"
+      ],
+      "startedEpochSeconds": 1795027868.0535412,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 86826,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795027868.571713,
+      "stdoutSha256": "85aac5fbe30d4cd8ea398d529ed4567ca624c53f7a48cfba34271c6744e80325",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/replay-b101-control-root-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795027993.7929769,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 88982,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795027994.305227,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "1b49ee5d22e29ca5c778c5c9e9953cf30ae25cce64d94f86071d3c66ba9ea091"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/replay-b101-control-root-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795028061.396699,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 91779,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028061.969407,
+      "stdoutSha256": "6760134093bbad8e3001ce32d6e670ccc8899cfc419655934038f93e51ca68a1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n \"function createDecisionObservation|createDecisionObservation\" /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/machine-player-coordinator.js /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/observation.js /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/policy-port.js 2>/dev/null || true; rg -n -l \"function createDecisionObservation\" /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer | head -8"
+      ],
+      "startedEpochSeconds": 1795028083.555817,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 92181,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028083.5935411,
+      "stdoutSha256": "4b41adedb772db0c2912543c1010ff6840a9a071ad36499a0540092fc6e081f9",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "sed -n \"48,72p\" /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/machine-player-coordinator.js; rg -n \"function createDecisionObservation|probeRouteRequirements|dataAnalyzeRequirements\" /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/outcome-model.js | head -10; sed -n \"1,115p\" /var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/outcome-model.js"
+      ],
+      "startedEpochSeconds": 1795028098.563335,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 92562,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028098.57384,
+      "stdoutSha256": "41e9c28e34306f5495a4bf6255b3aa06487ac9f11e48712eecaf1b52c7f04dd7",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text()); s=json.loads((pathlib.Path(m[\"runtime\"])/m[\"savePath\"]).read_text()); start=159; end=next(i for i in range(start,len(s[\"replaySteps\"])) if s[\"replaySteps\"][i][\"action\"][\"family\"]==\"end_turn\" and s[\"replaySteps\"][i][\"action\"][\"actorId\"]==\"player-white\"); print(\"ORIGINAL_TURN_END\",end+1); print(\"FOLLOWING_NATIVE_INPUTS\",[(i+1,s[\"replaySteps\"][i][\"action\"]) for i in range(end,min(end+4,len(s[\"replaySteps\"])))])"
+      ],
+      "startedEpochSeconds": 1795028178.9916139,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 94645,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028179.032615,
+      "stdoutSha256": "ccc4b33c45ee093d5eed6afb8df61791fd26493f0c982c9389fbef1ae5973d47",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-b101-native-plans-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795028267.7224162,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 96620,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795028267.799967,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "4057edec0ec7e790650efbbff91e42fe6b129cbaaa91032e4cb31953e5eaf089"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-b101-native-plans-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795028294.758153,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 97274,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028295.217249,
+      "stdoutSha256": "bfd171101f120efcd14e845c63a0f7782f0a9947e34307f84c603ac275078298",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-b101-native-endpoints-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795028459.344952,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 99919,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028459.675673,
+      "stdoutSha256": "f257f50c77c2a7ff0538b12343e733aaf3e5680529e0e71e2b1ce79606d91a22",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,gzip; root=pathlib.Path.cwd(); d=json.loads((root/\"reports/ai-foundation-20261119/r3-b101-native-comparison-20261119-v1.json\").read_text()); print(\"COMPARISON_ASSETS\",[{\"name\":b[\"name\"],\"data\":b[\"result\"][\"data\"],\"ownedPieces\":b[\"result\"][\"ownedPieces\"],\"reserved\":b[\"result\"][\"reserved\"]} for b in d[\"branches\"]]); allrows=[json.loads(x) for x in (root/\"reports/research/2170d824.5fabd621.full.json.decisions.jsonl\").read_text().splitlines() if x.strip()]; white=[t for t in allrows if t[\"context\"][\"seatId\"]==\"player-white\"]; import subprocess; rec=json.loads(subprocess.check_output([\"git\",\"show\",\"aad43e42ab5be10e8c645a8001eb2c9ede0579d0:reports/research/2170d824.5fabd621.full.json\"])); matches=[]\nfor t,s in zip(white,rec[\"metrics\"][\"searches\"]):\n if s[\"step\"]<172: continue\n a=next(a for a in t[\"context\"][\"legalActions\"] if a[\"actionId\"]==t[\"actionId\"])\n if (a.get(\"target\") or {}).get(\"cardInstanceId\")==\"alien-amiba-1-2\": matches.append({\"input\":s[\"step\"],\"action\":a,\"value\":(t.get(\"search\") or {}).get(\"value\"),\"round\":t[\"context\"][\"observation\"][\"publicState\"][\"roundNumber\"]})\nprint(\"NEXT_ALIEN_CARD_USE\",matches)"
+      ],
+      "startedEpochSeconds": 1795028575.3966432,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-15.stderr.log",
+      "pid": 1911,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028575.785711,
+      "stdoutSha256": "d92c32951abdf834bba7a08e7e8b06d060ce570e808953abe2f69ff81c15322b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json,gzip; base=pathlib.Path(\"reports/ai-foundation-20261119\"); names={\"root\":\"r3-b101-before-input160-native-20261119-v2.json.gz\",\"tech\":\"r3-b101-native-tech-checkpoint-20261119-v1.json.gz\",\"dlc31\":\"r3-b101-native-dlc31-checkpoint-20261119-v1.json.gz\"}\nfor label,name in names.items():\n d=json.loads(gzip.decompress((base/name).read_bytes())); state=json.loads(d[\"envelope\"][\"committedState\"]); print(label,{k:{\"revealed\":v[\"revealed\"],\"alienId\":v.get(\"alienId\")} for k,v in state[\"aliens\"][\"aliens\"].items()}); print(label,\"turn\",state[\"turn\"][\"turnNumber\"])\n"
+      ],
+      "startedEpochSeconds": 1795028653.783966,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-16.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-16.stderr.log",
+      "pid": 3254,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028653.83313,
+      "stdoutSha256": "6e769349ff9413a5bd238489e43e7a0fc357a553714736497ad8ca029a1d1c42",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "node --check adhoc/replay-b101-control-root-20261119.cjs && node --check adhoc/replay-b101-control-root-20261119-v1-failed.cjs && node --check adhoc/compare-b101-native-plans-20261119.cjs && node --check adhoc/verify-b101-native-endpoints-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795028654.146894,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-17.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.window.attempt-17.stderr.log",
+      "pid": 3354,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795028654.287311,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "One Native same-root160 comparison using formal272 source/seed and saved graph plans; no AI search, policy edit, v514 restart or autonomous game",
+  "hypotheses": [
+    "The model preference reflects a real same-turn asset trade-off, rather than B101 being omitted.",
+    "A saved root quote/plan may not match its fully executed Native assets or completion boundary."
+  ],
+  "branchNativeInputCap": 64,
+  "baselinePrefixReplayInputs": 159,
+  "requiredIdentity": "actual baseline source, full canonical root and RNG; exact recorded viewer observation and legal-action semantics",
+  "exit": "one supported comparison or explicit identity/plan failure; no chained patch",
+  "recoveries": [
+    {
+      "reason": "Native prefix30 succeeded, but diagnostic omitted the mandatory rule projection and failed before saving full root. Preserve failed script/log; repeat30 once with exact same original deadline, projection configured and full Native checkpoint saved after every input. No AI or game retry.",
+      "observedEpochSeconds": 1795028061.368595,
+      "priorSuccessfulNativeInputsNotReusable": 30
+    },
+    {
+      "reason": "Pre-branch source check decoded binary gz fixtures as UTF8 before hashing. Correct byte hashing; no Native branch input executed and saved root is reused, no prefix replay.",
+      "failedDiagnosticSourceSha256": "d2e3021ea5e83f50194de1620be600e8a1f0a62db0b0f76dda741f1e72235512",
+      "observedEpochSeconds": 1795028294.730411,
+      "originalDeadlineRetained": true
+    }
+  ],
+  "closedEpochSeconds": 1795028826.565824,
+  "closeReason": "one Native same-root comparison and original-endpoint verification complete; no AI modification or new game",
+  "evidenceArchive": "reports/ai-foundation-20261119/r3-b101-native-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "04ab9cba6645f0583c17daac52f480f64d609d6deb8cbc9f2b57460f6e45b94d"
+}

@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "seti-b101-same-root-native-control-v1",
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "sourceFilesVerified": 533,
+  "rootBeforeActualAIInput": 160,
+  "rootNativeStateSha256": "c92cc1148f8e47478a7805501d2b670195bf87dc7471ac985ee9fa3aa0a324e3",
+  "rootRng": {
+    "algorithm": "seti-simulation-mulberry32-v1",
+    "state": 3171573311
+  },
+  "fullOfficialRootObservationAndLegalActionsExact": true,
+  "commonBoundary": "round3, next own turn6 after full turn5 and mandatory effects; no next action executed",
+  "tech": {
+    "savedPlanValue": 118,
+    "nativeInputs": 3,
+    "score": 56,
+    "currentProjectedFinalScore": 70,
+    "credits": 2,
+    "energy": 1,
+    "publicity": 5,
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": [
+      "blue2",
+      "blue3",
+      "orange4",
+      "purple4"
+    ],
+    "handCount": 1,
+    "hand": [
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png",
+        "knownAtRoot": true
+      }
+    ],
+    "ordinaryProbeCount": 1,
+    "computerData": 3,
+    "blueData": 1
+  },
+  "dlc31": {
+    "savedPlanValue": 132,
+    "nativeInputs": 12,
+    "score": 65,
+    "currentProjectedFinalScore": 83,
+    "credits": 2,
+    "energy": 1,
+    "publicity": 7,
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "technology": [
+      "blue2",
+      "blue3",
+      "purple4"
+    ],
+    "handCount": 4,
+    "hand": [
+      {
+        "id": "card-63-0",
+        "cardId": "dlc_19.png",
+        "knownAtRoot": false
+      },
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp",
+        "knownAtRoot": false
+      },
+      {
+        "id": "alien-amiba-1-2",
+        "cardId": "amiba_1.webp",
+        "knownAtRoot": false
+      },
+      {
+        "id": "alien-amiba-3-3",
+        "cardId": "amiba_3.webp",
+        "knownAtRoot": false
+      }
+    ],
+    "ordinaryProbeCount": 0,
+    "computerData": 4,
+    "blueData": 2
+  },
+  "dlc31MinusTech": {
+    "score": 9,
+    "currentProjectedFinalScore": 13,
+    "publicity": 2,
+    "handIncome": 1,
+    "handCount": 3,
+    "technologyCount": -1,
+    "credits": 0,
+    "energy": 0
+  },
+  "amibaRevealed": {
+    "root": false,
+    "tech": false,
+    "dlc31": true
+  },
+  "interpretation": {
+    "supported": "The selected DLC31/Mars plan has concrete same-turn score, income, publicity, data and card/reveal benefits. B101 retains orange4, a probe and unplayed DLC31. This is a real asset trade-off; forcing B101 based only on teacher tech count is not justified.",
+    "notProven": [
+      "DLC31 is globally optimal or necessarily better through round3/game end.",
+      "The current value model is correct for every future purpose.",
+      "Original14-value root difference equals the final-game score difference."
+    ],
+    "knowledgeBoundary": "DLC31 saved graph stops at a hidden-card reveal after income. Closure uses only the original known place-data/blue-slot/end-turn steps; no newly received card identity was used to choose actions. Result hand knownAtRoot means only present in original hand, not complete public-knowledge status.",
+    "teacherComparison": "Replayed the actual AI best B101 orange4 plan, not the teacher orange2 action from a different state."
+  },
+  "selectedEndpoint": {
+    "matchesOriginalBeforeInput172": true,
+    "fullDecisionObservationSha256": "9c1dba1e42c76c42b4cae2f31ab2ed7fad77b54f5e675b5e510e6b1260fa4592"
+  },
+  "nativeExecutionAccounting": {
+    "firstPrefixSuccessfulButNotCheckpointed": 30,
+    "repeatedPrefixAfterDiagnosticRepair": 30,
+    "techBranch": 3,
+    "dlc31BranchIncludingKnownDataClosure": 12,
+    "totalSuccessfulRecordedInputSubmissions": 75,
+    "repeatedDueToDiagnosticFault": 30,
+    "observerVerificationInputs": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0
+  },
+  "failuresRetained": [
+    "Initial prefix driver omitted rule observation projection and failed after30 inputs before saving a reusable full root. Replayed30 once; fixed driver saves full checkpoint after every input.",
+    "Initial source fingerprint check decoded binary gz fixtures as UTF8; failed before any branch input. Corrected byte hash, reused saved root without prefix replay."
+  ],
+  "nextQuestion": {
+    "existingBaselineFact": "The newly received alien-amiba-1-2 is later used as income at original input203, rather than retained as a research-trigger engine.",
+    "source": "existing formal272 trace; no new experiment",
+    "requiredNext": "Locate an earlier actual free main-action window where amiba1 is held and affordable, then compare its engine use with the selected plan under the same root and boundary. Do not blindly change the conditional203 income picker.",
+    "notExecuted": true
+  },
+  "methodTrial": {
+    "wallMinutesToClose": 20.5594304005305,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "boundedBusinessControlDelivered": true,
+    "AIQualityImprovementProven": false
+  },
+  "formalScoreUnchanged": 272,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "sources": {
+    "reports/ai-foundation-20261119/r3-b101-native-root-20261119-v2.json": "c52fa536a51f232e041a5ee074a81f4b04b081dee1e9b4461d3ce865d724714f",
+    "reports/ai-foundation-20261119/r3-b101-native-comparison-20261119-v1.json": "e99ae666c701feb16cb5e4c5951acfd8354d1e81f663bc3a7dd3bb7345c6a3d9",
+    "reports/ai-foundation-20261119/r3-b101-native-endpoint-verification-20261119-v1.json": "6f4865a8617b3c36d85012959aacd820e1c5fe8732163656e4ff89e1be40b2b4",
+    "reports/ai-foundation-20261119/r3-b101-before-input160-native-20261119-v2.json.gz": "895097a2e3121805f538ae2bda02788c34d2f8f01a01f41d88e234d24ac8923a",
+    "reports/ai-foundation-20261119/r3-b101-native-tech-checkpoint-20261119-v1.json.gz": "bcc540b0e5f9a44aaed1bc80904351f0ede35a513b09c9914fc9e2fe06212352",
+    "reports/ai-foundation-20261119/r3-b101-native-dlc31-checkpoint-20261119-v1.json.gz": "11cb34456c2610f72123a0fd72c23d8d060959db42bfbeff51bf9ff031495584"
+  },
+  "previousGoalTurnClassification": "progress: linked current formal272 technology/publicity ledger and B101 income path, selected same-root control",
+  "thisGoalTurnClassification": "progress: same Native root verified; both saved plans executed to common own-turn end, actual selected endpoint reproduced, real trade-off established; no policy change justified yet"
+}

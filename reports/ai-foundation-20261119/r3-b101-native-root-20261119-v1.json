@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "checkpointPath": "reports/research/2170d824.5fabd621.full.json.round-2.checkpoint.json",
+  "checkpointSha256": "5ba69afc1efcd3f22a96994f5c8724b6c4d7e897823cb767d3ca2cfebd532b8d",
+  "checkpointCursor": 129,
+  "targetBeforeInput": 160,
+  "prefixInputs": 30,
+  "aiSearches": 0,
+  "phase": "failed",
+  "failure": {
+    "message": "Cannot read properties of undefined (reading 'board')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'board')\n    at Object.openRoot (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-b101-native-control-20261119-86w5i4xc/randomizer/game/ai/analysis-port.js:692:67)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/replay-b101-control-root-20261119.cjs:26:19)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
