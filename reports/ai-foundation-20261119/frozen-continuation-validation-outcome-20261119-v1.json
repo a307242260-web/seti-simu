@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-19",
+  "parent": "5b26046444504113fc4f29b60b8f5f78b71463aa",
+  "change": "V123/V189/V661/R4/staged continuations validate runtime identity before archived payloads; retain all later archive and prefix checks.",
+  "regression": {
+    "beforeFailedWithMissingArchive": true,
+    "selfContainedChecksPassed": 21,
+    "existingContinuationTestsPassed": 2,
+    "uniqueFullFlowPassed": true,
+    "v72OriginalR4FailureNowPassedInValidationOnlyOverlay": true
+  },
+  "sourceAndScope": {
+    "headSnapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+    "ownedSourceHashes": {
+      "tools/research-human405-full.js": "e7805eb146ff9b56d948c51311dd59797c86590014f2c1e37bc10502f2c41d86",
+      "tools/research-frozen-continuation-identity.test.js": "29e487e45902dd75d2111e4cbc6f6f0848747a6e38a0f2273988ce14d2249488",
+      "tools/node-test-inventory.js": "1871e7972079721da2e682415b1d8da29344fc3b90c143ae2eb7f58296d234be",
+      "docs/rl-simulation-env.md": "e95e4e527190d91802d5ed6fbe4e7636424cee614a61fe1487c3354c97c17aae"
+    },
+    "sharedOldWorkingFilesPreserved": {
+      "tools/research-human405-full.js": "b0a2c8c0579fe4910ee647b0d7d1407a01e02ed797bd222be045ce263bfad388",
+      "tools/research-frozen-continuation-identity.test.js": null,
+      "tools/node-test-inventory.js": "6a2bebb6a05ef5f108965f61b7a819332e28f10e5a0b6f6dcd628b39a82412dc",
+      "docs/rl-simulation-env.md": "3d693cf8191db6068e37ecda071d3f342329dfd42be9e9e677ad43de37446cb4"
+    },
+    "validationOnlyBackportRuntime": "/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve",
+    "newProofMetadataBytes": 20090,
+    "noHistoricalGamePayloadNeededForDriftRejection": true
+  },
+  "AI": {
+    "strategyChanged": false,
+    "newAutonomousGames": 0,
+    "formalScoreUnchanged": 272,
+    "previouslyMeasuredFormalGameSeconds": 16.1,
+    "publicIncomeCandidateStillFrozen": true
+  },
+  "remaining": [
+    "Other historical test contracts and the public-income capital ceiling still need resolution; this maintenance does not admit the candidate or prove a score improvement."
+  ],
+  "method": {
+    "previousGoalTurnClassification": "progress: candidate admission audit and freeze",
+    "thisGoalTurnClassification": "progress: real validation-order bug reproduced before fix and passed in both HEAD and the original research variant",
+    "wallMinutes": 16.62019278605779,
+    "originalDeadlineEpochSeconds": 1795042406.663111,
+    "originalStrategyRouteNotReopened": true
+  },
+  "wholeGoalComplete": false
+}

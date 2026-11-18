@@ -1,0 +1,6 @@
+{
+  "exitCode": 0,
+  "stdout": "standard full-flow v2 passed\nSUMMARY unit passed=0 failed=0 total=0 time=0.00s\nSUMMARY fullFlow passed=1 failed=0 total=1 time=0.50s\nOWNER full-flow/standard-flow-v1 tests=1\n",
+  "stderr": "",
+  "runtime": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk"
+}

@@ -15,14 +15,20 @@ const IDS=Object.freeze([ID,V189_ID,V661_ID,R4_ID,STAGED_LANDING_ID]);
 const isGuarded=id=>id===R4_ID||id===STAGED_LANDING_ID;
 const read=p=>JSON.parse(fs.readFileSync(path.join(ROOT,p))),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT,p))).digest('hex');
 function v189Continuation(){
- const record=read(V189_SOURCE),proof=read(V189_PROOF),save=read(record.savePath),state=JSON.parse(save.committedState);
+ const proof=read(V189_PROOF);
+ for(const [p,h]of Object.entries(proof.runtimeSourceHashes))if(p.startsWith('randomizer/'))assert.equal(sha(p),h,'FULL_CONTINUATION_STRATEGY_DRIFT:'+p);
+ const record=read(V189_SOURCE),save=read(record.savePath),state=JSON.parse(save.committedState);
  assert.equal(record.gitCommit,'93989585');assert.equal(record.steps,125);assert.equal(record.scenario.id,firstRound.TWO_ROUND_ID);assert(!record.terminal);assert.equal(state.turn.roundNumber,3);assert.equal(save.session,null);
  assert.deepEqual(record.roundEnds.map(r=>[r.round,r.score]),[[1,15],[2,50]]);assert(proof.firstTwoRoundLearningRequirementsProven);
  const verification=read('reports/ai-foundation-20261104/two-rounds-teacher-v2/v189-first2-native-verification-20261105-v1.json');
  for(const [p,h]of [[V189_SOURCE,verification.recordSha256],[record.savePath,verification.saveSha256],[record.agentTracePath,verification.traceSha256]])assert.equal(sha(p),h,'V189_CONTINUATION_SOURCE_DRIFT:'+p);
  assert.deepEqual(save.replaySteps.slice(0,23).map(e=>[e.actorPlayerId,e.action]),firstRound.opening().checkpoint.replaySteps.map(e=>[e.actorPlayerId,e.action]));
- for(const [p,h]of Object.entries(proof.runtimeSourceHashes))if(p.startsWith('randomizer/'))assert.equal(sha(p),h,'FULL_CONTINUATION_STRATEGY_DRIFT:'+p);
  return{record,save,provenance:{recordPath:V189_SOURCE,recordSha256:sha(V189_SOURCE),savePath:record.savePath,saveSha256:sha(record.savePath),tracePath:record.agentTracePath,traceSha256:sha(record.agentTracePath),proofPath:V189_PROOF,proofSha256:sha(V189_PROOF),sourceCommit:proof.sourceCommit,steps:125,sourceCompletedRounds:2,sourceGameWallMs:record.wallMs,sourceRoundWallMs:record.wallMs}};
+}
+function v661RuntimeHashes(){
+ const admission=read(V661_DIR+'v661-source-admission-proof-20261109-v1.json');
+ assert.equal(sha(admission.manifest),admission.manifestSha256,'V661_CONTINUATION_SOURCE_DRIFT:'+admission.manifest);
+ return read(admission.manifest).runtimeHashes;
 }
 function v661Source(){
  const record=read(V661_SOURCE),proof=read(V661_PROOF),save=read(record.savePath),state=JSON.parse(save.committedState);
@@ -43,14 +49,20 @@ function v661Source(){
   sourceCommit:proof.sourceCommit,steps:259,sourceCompletedRounds:3,sourceGameWallMs:record.wallMs,sourceRoundWallMs:record.wallMs}};
 }
 function v661Continuation(){
+ const runtimeHashes=v661RuntimeHashes();
+ for(const [p,h] of Object.entries(runtimeHashes))assert.equal(sha(p),h,'V661_CONTINUATION_SOURCE_DRIFT:'+p);
  const {originalRuntimeHashes,...source}=v661Source();
- for(const [p,h] of Object.entries(originalRuntimeHashes))assert.equal(sha(p),h,'V661_CONTINUATION_SOURCE_DRIFT:'+p);
+ assert.deepEqual(originalRuntimeHashes,runtimeHashes,'V661_CONTINUATION_SOURCE_DRIFT:runtime-manifest');
  return source;
 }
 function r4Continuation(){
- const {originalRuntimeHashes,...source}=v661Source(),admission=read(R4_ADMISSION);
+ const admission=read(R4_ADMISSION);
  assert.equal(admission.schemaVersion,'seti-r4-continuation-admission-v1');
  assert.equal(admission.scenario,R4_ID);
+ for(const [p,h] of Object.entries(admission.runtimeHashes))assert.equal(sha(p),h,'R4_CANDIDATE_SOURCE_DRIFT:'+p);
+ const expectedRuntimeHashes=v661RuntimeHashes();
+ assert(Object.keys(expectedRuntimeHashes).every(p=>Object.hasOwn(admission.runtimeHashes,p)),'R4_ADMISSION_RUNTIME_MISSING');
+ const {originalRuntimeHashes,...source}=v661Source();
  assert.equal(admission.prefixSourceCommit,source.provenance.sourceCommit);
  assert.equal(sha(admission.gateEvidence.path),admission.gateEvidence.sha256,'R4_GATE_EVIDENCE_DRIFT');
  const evidence=read(admission.gateEvidence.path);
@@ -58,7 +70,6 @@ function r4Continuation(){
  assert.deepEqual(Object.keys(evidence.gates).sort(),['root-249','root-255','root-259','root-265','root-314','root-317','root-318','root-351','root-354','root-355','root-359','root-official']);
  assert(Object.values(evidence.gates).every(({candidate:c})=>c.passed===3&&c.native<=256&&c.rangeMs[1]<=600),'R4_COLD_GATE_NOT_ADMITTED');
  assert(Object.keys(originalRuntimeHashes).every(p=>Object.hasOwn(admission.runtimeHashes,p)),'R4_ADMISSION_RUNTIME_MISSING');
- for(const [p,h] of Object.entries(admission.runtimeHashes))assert.equal(sha(p),h,'R4_CANDIDATE_SOURCE_DRIFT:'+p);
  return {...source,provenance:{...source.provenance,candidateAdmissionPath:R4_ADMISSION,
   candidateAdmissionSha256:sha(R4_ADMISSION),policyContinuation:'restart-white-plan-at-verified-round4-boundary'}};
 }
@@ -66,9 +77,14 @@ function stagedLandingContinuation(){
  const runtime='randomizer/game/ai/analysis-port.js';
  const admissionPath=STAGED_LANDING_ADMISSIONS.find(file=>read(file).runtimeHashes[runtime]===sha(runtime));
  assert(admissionPath,'STAGED_LANDING_RUNTIME_DRIFT:'+runtime);
- const admission=read(admissionPath),record=read(STAGED_LANDING_RECORD),save=read(record.savePath);
+ const admission=read(admissionPath);
  assert.equal(admission.schemaVersion,'seti-staged-landing-continuation-v1');
  assert.equal(admission.scenario,STAGED_LANDING_ID);
+ for(const [file,hash] of Object.entries(admission.runtimeHashes))
+  assert.equal(sha(file),hash,'STAGED_LANDING_RUNTIME_DRIFT:'+file);
+ for(const file of Object.keys(read(R4_ADMISSION).runtimeHashes))
+  assert(Object.hasOwn(admission.runtimeHashes,file),'STAGED_LANDING_RUNTIME_MISSING:'+file);
+ const record=read(STAGED_LANDING_RECORD),save=read(record.savePath);
  assert.equal(record.gitCommit,'5135a5a0e');
  assert.equal(record.scenario.id,firstRound.FIRST_THREE_ROUNDS_ID);
  assert.equal(record.stopReason,'first-three-rounds-settled');
@@ -92,10 +108,6 @@ function stagedLandingContinuation(){
   assert(proof.candidate.length>=5&&proof.candidate.every(row=>row.native<=256&&row.ms<=600&&row.closed&&row.unchangedRoot&&row.equalQuotes),
     'STAGED_LANDING_HOST_GATE_NOT_ADMITTED');
  }
- for(const file of Object.keys(read(R4_ADMISSION).runtimeHashes))
-  assert(Object.hasOwn(admission.runtimeHashes,file),'STAGED_LANDING_RUNTIME_MISSING:'+file);
- for(const [file,hash] of Object.entries(admission.runtimeHashes))
-  assert.equal(sha(file),hash,'STAGED_LANDING_RUNTIME_DRIFT:'+file);
  assert.deepEqual(save.replaySteps.slice(0,23).map(e=>[e.actorPlayerId,e.action]),
   firstRound.opening().checkpoint.replaySteps.map(e=>[e.actorPlayerId,e.action]));
  return {record,save,provenance:{recordPath:STAGED_LANDING_RECORD,recordSha256:admission.recordSha256,
@@ -110,10 +122,11 @@ function continuation(id=ID){
  if(id===V661_ID)return v661Continuation();
  if(id===V189_ID)return v189Continuation();
  assert.equal(id,ID,'RESEARCH_SCENARIO_UNKNOWN');
- const record=read(SOURCE),proof=read(PROOF),save=read(record.savePath),state=JSON.parse(save.committedState);
+ const proof=read(PROOF);
+ for(const [p,h]of Object.entries(proof.runtimeSourceHashes))if(p.startsWith('randomizer/'))assert.equal(sha(p),h,'FULL_CONTINUATION_STRATEGY_DRIFT:'+p);
+ const record=read(SOURCE),save=read(record.savePath),state=JSON.parse(save.committedState);
  assert.equal(record.gitCommit,'94530144');assert.equal(record.steps,64);assert.equal(record.scenario.id,firstRound.ID);assert(record.scenarioResult.firstRoundSettled&&!record.terminal);assert.equal(state.turn.roundNumber,2);assert.equal(save.session,null);
  assert.deepEqual(save.replaySteps.slice(0,23).map(e=>[e.actorPlayerId,e.action]),firstRound.opening().checkpoint.replaySteps.map(e=>[e.actorPlayerId,e.action]));
- for(const [p,h]of Object.entries(proof.runtimeSourceHashes))if(p.startsWith('randomizer/'))assert.equal(sha(p),h,'FULL_CONTINUATION_STRATEGY_DRIFT:'+p);
  return{record,save,provenance:{recordPath:SOURCE,recordSha256:sha(SOURCE),savePath:record.savePath,saveSha256:sha(record.savePath),tracePath:record.agentTracePath,traceSha256:sha(record.agentTracePath),proofPath:PROOF,proofSha256:sha(PROOF),sourceCommit:proof.sourceCommit,steps:64,sourceRoundWallMs:record.wallMs}};
 }
 function describe(identity,options={}){

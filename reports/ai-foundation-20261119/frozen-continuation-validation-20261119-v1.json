@@ -1,0 +1,37 @@
+{
+  "parent": "5b26046444504113fc4f29b60b8f5f78b71463aa",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0,
+  "productionStrategyChanged": false,
+  "checks": {
+    "before": {
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:assert:602\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: The input did not match the regular expression /FULL_CONTINUATION_STRATEGY_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-frozen-identity-QJttGd/reports/research/19bd7474.94530144.quick-200.json'\"\n\n    at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/tools/research-frozen-continuation-identity.test.js:50:10)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: Error: ENOENT: no such file or directory, open '/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-frozen-identity-QJttGd/reports/research/19bd7474.94530144.quick-200.json'\n      at Object.openSync (node:fs:560:18)\n      at Object.readFileSync (node:fs:444:35)\n      at Object.readFileSync (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/tools/research-frozen-continuation-identity.test.js:23:119)\n      at read (/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-frozen-identity-QJttGd/tools/research-human405-full.js:16:29)\n      at Object.continuation (/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-frozen-identity-QJttGd/tools/research-human405-full.js:113:15)\n      at /private/tmp/seti-frozen-validation-head-20261119-j59jljhk/tools/research-frozen-continuation-identity.test.js:50:32\n      at getActual (node:assert:609:5)\n      at Function.throws (node:assert:757:24)\n      at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/tools/research-frozen-continuation-identity.test.js:50:10)\n      at Module._compile (node:internal/modules/cjs/loader:1706:14) {\n    errno: -2,\n    code: 'ENOENT',\n    syscall: 'open',\n    path: '/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-frozen-identity-QJttGd/reports/research/19bd7474.94530144.quick-200.json'\n  },\n  expected: /FULL_CONTINUATION_STRATEGY_DRIFT/,\n  operator: 'throws',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    },
+    "after": {
+      "exitCode": 0,
+      "stdout": "{\"frozenContinuationIdentity\":\"passed\",\"checks\":21,\"sourceBeforePayload\":true,\"matchingRuntimeStillChecksRecordSaveTraceAndPrefix\":true,\"newNativeInputs\":0}\nSUMMARY unit passed=1 failed=0 total=1 time=0.09s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER training/reporting tests=1\n",
+      "stderr": ""
+    },
+    "existing": {
+      "exitCode": 0,
+      "stdout": "{\"frozenV123Continuation\":\"correctly-rejected-for-new-runtime\",\"newStrategyCannotReuseOldR1\":true}\n{\"frozenV189Continuation\":\"correctly-rejected-for-new-runtime\",\"newStrategyCannotReuseOldR2\":true}\nArchived R4 continuations reject the changed runtime\nSUMMARY unit passed=2 failed=0 total=2 time=0.20s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER training/reporting tests=2\n",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\n"
+    }
+  },
+  "ownedPaths": [
+    "tools/research-human405-full.js",
+    "tools/research-frozen-continuation-identity.test.js",
+    "tools/node-test-inventory.js",
+    "docs/rl-simulation-env.md"
+  ],
+  "ownedHashes": {
+    "tools/research-human405-full.js": "e7805eb146ff9b56d948c51311dd59797c86590014f2c1e37bc10502f2c41d86",
+    "tools/research-frozen-continuation-identity.test.js": "29e487e45902dd75d2111e4cbc6f6f0848747a6e38a0f2273988ce14d2249488",
+    "tools/node-test-inventory.js": "1871e7972079721da2e682415b1d8da29344fc3b90c143ae2eb7f58296d234be",
+    "docs/rl-simulation-env.md": "e95e4e527190d91802d5ed6fbe4e7636424cee614a61fe1487c3354c97c17aae"
+  },
+  "passed": true
+}

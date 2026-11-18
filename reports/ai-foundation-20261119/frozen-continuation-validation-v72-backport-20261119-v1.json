@@ -1,0 +1,43 @@
+{
+  "runtime": "/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve",
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "loaderSha256": "e7805eb146ff9b56d948c51311dd59797c86590014f2c1e37bc10502f2c41d86",
+  "checks": [
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/tools/research-frozen-continuation-identity.test.js",
+        "/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-full.js"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"frozenContinuationIdentity\":\"passed\",\"checks\":21,\"sourceBeforePayload\":true,\"matchingRuntimeStillChecksRecordSaveTraceAndPrefix\":true,\"newNativeInputs\":0}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "tools/research-human405-r4.test.js"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:assert:602\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: The input did not match the regular expression /STAGED_LANDING_RUNTIME_DRIFT/. Input:\n\n\"Error: ENOENT: no such file or directory, open '/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v3.json'\"\n\n    at Object.<anonymous> (/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-r4.test.js:16:36)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: Error: ENOENT: no such file or directory, open '/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v3.json'\n      at Object.openSync (node:fs:560:18)\n      at Object.readFileSync (node:fs:444:35)\n      at read (/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-full.js:16:29)\n      at /private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-full.js:78:59\n      at Array.find (<anonymous>)\n      at stagedLandingContinuation (/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-full.js:78:48)\n      at Object.continuation (/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-full.js:120:35)\n      at /private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/tools/research-human405-r4.test.js:16:58\n      at getActual (node:assert:609:5)\n      at Function.throws (node:assert:757:24) {\n    errno: -2,\n    code: 'ENOENT',\n    syscall: 'open',\n    path: '/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve/reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v3.json'\n  },\n  expected: /STAGED_LANDING_RUNTIME_DRIFT/,\n  operator: 'throws',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    },
+    {
+      "command": [
+        "node",
+        "tools/research-human405-full.test.js"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"frozenV123Continuation\":\"correctly-rejected-for-new-runtime\",\"newStrategyCannotReuseOldR1\":true}\n{\"frozenV189Continuation\":\"correctly-rejected-for-new-runtime\",\"newStrategyCannotReuseOldR2\":true}\n",
+      "stderr": "fatal: not a git repository (or any of the parent directories): .git\nfatal: not a git repository (or any of the parent directories): .git\n"
+    }
+  ],
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0,
+  "passed": false
+}

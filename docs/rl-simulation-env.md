@@ -12,6 +12,10 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 - `randomizer/game/rule-composition.js`：Browser/Simulation 共用的规则生命周期。
 - `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：常驻采样。
 
+## 冻结教学续局
+
+固定版本续局先读取小型源码准入证明，核对当前运行时的完整哈希集合，再读取历史记录、存档、痕迹和检查点。源码不匹配时直接报告对应的源码漂移错误；历史载荷缺失或损坏不能遮蔽这个拒绝原因。分阶段续局不能只凭一个模块匹配就读取旧盘面。源码匹配后，记录、存档、痕迹、原始开局前缀与已有准入条件仍须逐项校验；本顺序不放宽任何续局准入条件。
+
 ## 环境 API
 
 `createSimulationEnv()` 暴露：

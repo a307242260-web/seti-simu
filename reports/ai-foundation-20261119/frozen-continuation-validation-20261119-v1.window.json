@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795041206.663111,
+  "deadlineEpochSeconds": 1795042406.663111,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795041207.0338602,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 39628,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795041207.124269
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795041720.3933032,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 43271,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795041720.4838011
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/fix-frozen-continuation-validation-20261119.py"
+      ],
+      "startedEpochSeconds": 1795041903.416526,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 44799,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795041904.498343
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042013.5701602,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 45734,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042014.0715919
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042065.235452,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 46232,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042065.38621
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042124.489525,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/frozen-continuation-validation-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 46745,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042125.111331
+    }
+  ],
+  "scope": "Baseline validation maintenance only: frozen continuation checks current runtime before reading historical record/save/trace/checkpoint; no AI strategy changes or game. Do not reopen the frozen public-income candidate route.",
+  "requirements": [
+    "self-contained wrong-runtime/missing-archive regression",
+    "matching runtime still reads and validates archives",
+    "unknown scenario rejects before I/O",
+    "required source and Node checks, documentation and isolated commit"
+  ],
+  "closedEpochSeconds": 1795042203.8746781,
+  "closeReason": "Validation-order fix passed isolated current-source and original research checks; no strategy or autonomous game.",
+  "evidenceArchive": "reports/ai-foundation-20261119/frozen-continuation-validation-evidence-20261119-v1.json.gz"
+}

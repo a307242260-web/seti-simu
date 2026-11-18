@@ -1,0 +1,16 @@
+{
+  "runtime": "/private/tmp/seti-v72-validation-only-20261119-3zb2s1ve",
+  "metadataInput": {
+    "path": "reports/ai-foundation-20261113/prepass-funded-landing/r4-staged-landing-admission-20261113-v3.json",
+    "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+    "bytes": 20090,
+    "sha256": "64b9ebc9322253227618defbefad0e9b44689efcf9d9faa2ec1479695db2f7a4"
+  },
+  "exitCode": 0,
+  "stdout": "Archived R4 continuations reject the changed runtime\n",
+  "stderr": "",
+  "strategyHashesUnchanged": true,
+  "originalCandidateNotModified": true,
+  "newNativeInputs": 0,
+  "newAutonomousGames": 0
+}
