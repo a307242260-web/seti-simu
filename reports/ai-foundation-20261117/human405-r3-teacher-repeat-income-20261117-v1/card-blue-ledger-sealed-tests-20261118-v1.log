@@ -1,0 +1,9 @@
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":11,"maxMs":46.136708999999996,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":11,"maxMs":22.599208999999973,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":21.254042000000027,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":18.775458999999955,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":11,"maxMs":18.59504199999992,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":11,"maxMs":18.852499999999964,"actualInputs":12}]}
+{"quietR4Ledger":"passed","value":235.5,"nativeFullFormalCompactExact":true,"unrealizedAndDebtZero":true,"pendingGoldDeclined":true,"rootAndRngPreserved":true}
+{"traceScorePairs":"passed","pairs":79,"cardPairs":0,"guards":5,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+{"traceCardPairs":"passed","cardExamples":26,"cardBranches":234,"sourceCombinations":["blind→blind","blind→cancel","blind→display","cancel→blind","cancel→cancel","cancel→display","display→blind","display→cancel","display→display"],"fullFirstNativeStateExact":true,"cardBeforeRegion":true,"complementaryFutureFillExact":true}
+SUMMARY unit passed=4 failed=0 total=4 time=11.79s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER policy/decision-search tests=3

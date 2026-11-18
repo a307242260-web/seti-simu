@@ -1,0 +1,380 @@
+{"traceScorePairs":"passed","pairs":76,"cardPairs":0,"guards":5,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: same next Native decision after card acquisition
++ actual - expected
+... Skipped lines
+
+  [
+    {
+      actionId: 'choose_target:3ef0c79f',
+      actorId: 'player-white',
+      decision: null,
+...
+    {
++     actionId: 'choose_target:a47b34e4',
+-     actionId: 'choose_target:c4e4834a',
+      actorId: 'player-white',
+      decision: null,
+      decisionVersion: 1,
+      family: 'choose_target',
+      payload: {},
+...
+      stateVersion: 119,
++     summary: '外星人 1 粉4号位（1分+外星人牌）',
+-     summary: '外星人 1 粉3号位（外星人牌）',
+      target: {
+        alienSlotId: 1,
++       choiceId: 'trace:1:pink:amiba:4',
+-       choiceId: 'trace:1:pink:amiba:3',
+        kind: 'planet-reward-alien-trace',
++       position: 4,
+-       position: 3,
+        speciesId: 'amiba',
+        traceType: 'pink'
+      }
+    },
+    {
+
+    at Object.<anonymous> (/private/tmp/seti-trace-card-pairs-20261118-cb17n7_p/randomizer/game/ai/trace-score-pairs.test.js:48:12)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:3ef0c79f',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:state-extra',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        stateExtra: true
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 额外痕迹位（3分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:51429f22',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:1',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 1
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉1号位'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:59bd8770',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:2',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 2
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉2号位（1分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:a47b34e4',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:4',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 4
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉4号位（1分+外星人牌）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:e8c82757',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:state-extra',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        stateExtra: true
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 额外痕迹位（3分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:bf39b96e',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:1',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 1
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉1号位（4分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:84f5ee90',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:2',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 2
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉2号位（5分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:8a3fe86a',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:3',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 3
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉3号位（3分+外星人牌）'
+    }
+  ],
+  expected: [
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:3ef0c79f',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:state-extra',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        stateExtra: true
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 额外痕迹位（3分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:51429f22',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:1',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 1
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉1号位'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:59bd8770',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:2',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 2
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉2号位（1分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:c4e4834a',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:1:pink:amiba:3',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 1,
+        traceType: 'pink',
+        speciesId: 'amiba',
+        position: 3
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 1 粉3号位（外星人牌）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:e8c82757',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:state-extra',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        stateExtra: true
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 额外痕迹位（3分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:bf39b96e',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:1',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 1
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉1号位（4分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:84f5ee90',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:2',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 2
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉2号位（5分）'
+    },
+    {
+      schemaVersion: 'seti-standard-action-v1',
+      family: 'choose_target',
+      phase: 'conditional',
+      actionId: 'choose_target:8a3fe86a',
+      actorId: 'player-white',
+      stateVersion: 119,
+      decisionVersion: 1,
+      target: {
+        choiceId: 'trace:2:pink:chong:3',
+        kind: 'planet-reward-alien-trace',
+        alienSlotId: 2,
+        traceType: 'pink',
+        speciesId: 'chong',
+        position: 3
+      },
+      payload: {},
+      decision: null,
+      summary: '外星人 2 粉3号位（3分+外星人牌）'
+    }
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=3.21s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+FAIL randomizer/game/ai/trace-score-pairs.test.js status=1 signal=none

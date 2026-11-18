@@ -1,0 +1,34 @@
+{
+  "candidateBase": "5afbd2179fc039e45640c75b3f2c0edecbad0420",
+  "reproduction": "Restore combined candidate, then override only the named three core files from each gzip; v500 source bundle is the previous baseline. No production promotion.",
+  "versions": {
+    "v501": {
+      "analysis-port": {
+        "artifact": "card-blue-ledger-benchmark-v501-analysis-port-20261118-v1.js.gz",
+        "sha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6"
+      },
+      "local-decision-plans": {
+        "artifact": "card-blue-ledger-benchmark-v501-local-decision-plans-20261118-v1.js.gz",
+        "sha256": "eb4496f678792162fd097cda9367ec2a502e55232cdeba99b721335bd07e2393"
+      },
+      "decision-search": {
+        "artifact": "card-blue-ledger-benchmark-v501-decision-search-20261118-v1.js.gz",
+        "sha256": "bceb7c5893ca0bab9b082ed6f814ae3c4945481f6b4a507d2c2afd8214839972"
+      }
+    },
+    "v502": {
+      "analysis-port": {
+        "artifact": "card-blue-ledger-benchmark-v502-analysis-port-20261118-v1.js.gz",
+        "sha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6"
+      },
+      "local-decision-plans": {
+        "artifact": "card-blue-ledger-benchmark-v502-local-decision-plans-20261118-v1.js.gz",
+        "sha256": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc"
+      },
+      "decision-search": {
+        "artifact": "card-blue-ledger-benchmark-v502-decision-search-20261118-v1.js.gz",
+        "sha256": "c1686267ce47417de7e16011d0c1551400bcabbfa1d47a2bd3c52c71bb53ea93"
+      }
+    }
+  }
+}

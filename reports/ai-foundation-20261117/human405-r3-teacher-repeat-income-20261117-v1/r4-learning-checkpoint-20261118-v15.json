@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v15",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v14.json",
+  "publishedParent": "5afbd2179fc039e45640c75b3f2c0edecbad0420",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v503/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Extend third-round teaching alignment through fourth-round same-root decisions and full assets; preserve first two rounds, reproducibility and fixed budgets.",
+  "previousGoalTurnClassification": "no progress: user requested status, only inspected existing authoritative evidence",
+  "thisGoalTurnClassification": "progress: completed missing Chong counterfactual Native coverage,14 Browser tests,68 value-input audits and independently restored33 candidate files plus524 unchanged base files; four sealed critical tests passed",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "card-blue-ledger-candidate-findings-20261118-v1.json",
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1563.284625,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "next": [
+    "继续依据CPU采样检查固定流程中的状态复制、身份规范化和任务时机证明，不能靠任意节点截断达标。",
+    "单点600ms后完成固定根及前两轮回归，再进行第四轮同起点学习和唯一整局。"
+  ]
+}

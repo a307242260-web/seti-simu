@@ -1,0 +1,5 @@
+{"traceScorePairs":"passed","pairs":79,"cardPairs":0,"guards":5,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+{"traceCardPairs":"passed","cardExamples":26,"cardBranches":234,"sourceCombinations":["blind→blind","blind→cancel","blind→display","cancel→blind","cancel→cancel","cancel→display","display→blind","display→cancel","display→display"],"fullFirstNativeStateExact":true,"cardBeforeRegion":true,"complementaryFutureFillExact":true}
+SUMMARY unit passed=1 failed=0 total=1 time=7.35s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

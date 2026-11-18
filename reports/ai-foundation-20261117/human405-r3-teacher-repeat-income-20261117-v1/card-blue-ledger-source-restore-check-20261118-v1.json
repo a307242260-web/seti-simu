@@ -1,0 +1,9 @@
+{
+  "base": "5afbd2179fc039e45640c75b3f2c0edecbad0420",
+  "candidate": "v503/movementv8/valuev71",
+  "sourceFilesVerified": 33,
+  "unchangedBaseFiles": 524,
+  "sealedRoot": "/private/tmp/seti-card-blue-ledger-sealed-20261118-f9ly7ql9",
+  "allChangedJavaScriptSyntaxChecked": true,
+  "runtimePromoted": false
+}

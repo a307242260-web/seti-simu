@@ -1,0 +1,182 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v503/movementv8/valuev71",
+  "candidatePromoted": false,
+  "formalAIUnchanged": 272,
+  "teacherLegalReference": 384,
+  "noNewFullGameOrBatch": true,
+  "changes": [
+    {
+      "version": 501,
+      "change": "同类3/4选牌奖励保留高分格；同样选牌来源并遵循Native先选牌后区域结算次序",
+      "proof": "26组234分支，含两份明确标注虫族空位反事实；display/blind/cancel的全部9种前后组合；完整游戏状态及奖励/RNG一致，仅首次打印分数及格位差异",
+      "rootGraphNodesBefore": 2435,
+      "rootGraphNodesAfter": 1998
+    },
+    {
+      "version": 502,
+      "change": "仅阿米巴蓝色1/2分数对保留高分格；虫族蓝色和阿米巴蓝色3/4继续原策略",
+      "proof": "3份实际Native蓝色输入上下文，纯分数对总计79组；完整首次游戏状态和互补填位一致",
+      "rootGraphNodesBefore": 1998,
+      "rootGraphNodesAfter": 1986
+    },
+    {
+      "version": 503,
+      "change": "受限末轮无普通探测器且所有金标记已结算时，默认估值直接读取同一终局分/钱包/手牌账本；拾取和运输用途优先保留",
+      "proof": {
+        "kind": "all invoked no-probe ledger leaves checked against independent full/formal/compact evaluator; no timing admission or game",
+        "checks": 15,
+        "observationEvaluations": 45,
+        "native": 210,
+        "value": 235.5,
+        "rootAndRngPreserved": true,
+        "sourceSha256": "dcc8437d7db7409fb2e107c952b4c371142ceb9a364399b4784897c2d604d76c"
+      },
+      "graphChanged": false
+    }
+  ],
+  "pairedComparisons": [
+    {
+      "file": "trace-card-pair-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+          "local-decision-plans": "7d42d46434e05e1d20d0cd6a88f74598d0072610ec49858a89eebed9fa1439c3",
+          "decision-search": "19e3321c02e143590cba449b911867b6905171e7529596331577127abc8f5912"
+        },
+        "sourceSha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 221,
+        "ms": 1945.3919170000001,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+          "local-decision-plans": "eb4496f678792162fd097cda9367ec2a502e55232cdeba99b721335bd07e2393",
+          "decision-search": "bceb7c5893ca0bab9b082ed6f814ae3c4945481f6b4a507d2c2afd8214839972"
+        },
+        "sourceSha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1598.568541,
+        "complete": true,
+        "unresolved": []
+      },
+      "semanticRootsExact": true,
+      "fullGraphsExact": null,
+      "graphChangedByDominance": true
+    },
+    {
+      "file": "trace-blue-pair-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+          "local-decision-plans": "eb4496f678792162fd097cda9367ec2a502e55232cdeba99b721335bd07e2393",
+          "decision-search": "bceb7c5893ca0bab9b082ed6f814ae3c4945481f6b4a507d2c2afd8214839972"
+        },
+        "sourceSha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1673.979667,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "c1686267ce47417de7e16011d0c1551400bcabbfa1d47a2bd3c52c71bb53ea93"
+        },
+        "sourceSha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1558.444167,
+        "complete": true,
+        "unresolved": []
+      },
+      "semanticRootsExact": true,
+      "fullGraphsExact": null,
+      "graphChangedByDominance": true
+    },
+    {
+      "file": "no-probe-ledger-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "c1686267ce47417de7e16011d0c1551400bcabbfa1d47a2bd3c52c71bb53ea93"
+        },
+        "sourceSha256": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1654.864,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "dcc8437d7db7409fb2e107c952b4c371142ceb9a364399b4784897c2d604d76c",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "afae154ce47ff489d33cd9338aa987100f54e0d2dabe3f1f5bebcf973d080d92"
+        },
+        "sourceSha256": "dcc8437d7db7409fb2e107c952b4c371142ceb9a364399b4784897c2d604d76c",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1563.284625,
+        "complete": true,
+        "unresolved": []
+      },
+      "semanticRootsExact": null,
+      "fullGraphsExact": true,
+      "graphChangedByDominance": null
+    }
+  ],
+  "timingCaveat": "每一对是同一进程先旧后新的单次对照；不同批次不能拼为累计速度曲线，不是普遍时延承诺。",
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1563.284625,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "verification": {
+    "nodeRelated": 24,
+    "updatedTraceTestAfterAddingControlledFixtures": "card-blue-ledger-trace-unit-20261118-v2.log",
+    "browser": 14,
+    "vInputAudit": 68,
+    "sealedTests": 4,
+    "sourceRestore": {
+      "base": "5afbd2179fc039e45640c75b3f2c0edecbad0420",
+      "candidate": "v503/movementv8/valuev71",
+      "sourceFilesVerified": 33,
+      "unchangedBaseFiles": 524,
+      "sealedRoot": "/private/tmp/seti-card-blue-ledger-sealed-20261118-f9ly7ql9",
+      "allChangedJavaScriptSyntaxChecked": true,
+      "runtimePromoted": false
+    }
+  },
+  "correctedValidationIssues": [
+    "Browser第一版遗漏粉色样本；第二版要求虫族选牌覆盖但原样本中成对格已经被占，新增明确标注的粉/黄空位反事实后通过。",
+    "账本语料检查最初误设>100次阈值；实际全部15个命中叶节点共45次独立对照通过，不用虚构覆盖次数。"
+  ],
+  "next": [
+    "继续依据CPU采样检查固定流程中的状态复制、身份规范化和任务时机证明，不能靠任意节点截断达标。",
+    "单点600ms后完成固定根及前两轮回归，再进行第四轮同起点学习和唯一整局。"
+  ],
+  "cpuEvidence": "trace-blue-point289-cpu-summary-20261118-v1.json",
+  "sourceBundle": "card-blue-ledger-candidate-source-20261118-v1.json"
+}

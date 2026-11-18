@@ -1,0 +1,5 @@
+PASS production-quiet-r4-ledger http://127.0.0.1:57999/randomizer/index.html
+Error: production-trace-card-blue-pairs 操作异常：Error: card and blue coverage missing
+    at <anonymous>:13:62
+    at runInteractiveSmoke (/private/tmp/seti-no-probe-ledger-20261118-7062odcz/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-no-probe-ledger-20261118-7062odcz/tools/run_browser_smokes.js:294:11)

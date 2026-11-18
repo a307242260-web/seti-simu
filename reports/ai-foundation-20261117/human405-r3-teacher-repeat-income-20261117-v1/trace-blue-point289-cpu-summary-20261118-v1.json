@@ -1,0 +1,550 @@
+{
+  "scope": "v502 instrumented single-point CPU sample; not timing admission, no game",
+  "recursiveFramesCountedOncePerSample": true,
+  "overlappingFunctionsMustNotBeSummed": true,
+  "rawProfile": "trace-blue-point289-cpu-profile-20261118-v1.json.gz",
+  "inclusive": [
+    {
+      "function": "(root)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 1913.666
+    },
+    {
+      "function": "",
+      "file": "run_main_module",
+      "line": 1,
+      "milliseconds": 1756.044
+    },
+    {
+      "function": "Module._load",
+      "file": "loader",
+      "line": 1169,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "traceSync",
+      "file": "node:diagnostics_channel",
+      "line": 326,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "wrapModuleLoad",
+      "file": "loader",
+      "line": 230,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "",
+      "file": "profile-queue-native-fallbacks-20261118-v3.cjs",
+      "line": 1,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "Module._compile",
+      "file": "loader",
+      "line": 1656,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "Module._extensions..js",
+      "file": "loader",
+      "line": 1804,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "Module.load",
+      "file": "loader",
+      "line": 1432,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "executeUserEntryPoint",
+      "file": "run_main",
+      "line": 157,
+      "milliseconds": 1754.544
+    },
+    {
+      "function": "automatic",
+      "file": "native-root-harness-20261118-v1.cjs",
+      "line": 59,
+      "milliseconds": 1583.461
+    },
+    {
+      "function": "decide",
+      "file": "search-agent.js",
+      "line": 34,
+      "milliseconds": 1573.045
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "milliseconds": 1556.586
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 2262,
+      "milliseconds": 646.752
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 269,
+      "milliseconds": 627.083
+    },
+    {
+      "function": "expandWithCardPick",
+      "file": "analysis-port.js",
+      "line": 2939,
+      "milliseconds": 376.548
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "line": 4669,
+      "milliseconds": 278.292
+    },
+    {
+      "function": "valueForNode",
+      "file": "decision-search.js",
+      "line": 57,
+      "milliseconds": 240.54
+    },
+    {
+      "function": "finishChild",
+      "file": "analysis-port.js",
+      "line": 6207,
+      "milliseconds": 208.665
+    },
+    {
+      "function": "get identity",
+      "file": "analysis-port.js",
+      "line": 632,
+      "milliseconds": 182.205
+    },
+    {
+      "function": "identity",
+      "file": "analysis-port.js",
+      "line": 11068,
+      "milliseconds": 182.205
+    },
+    {
+      "function": "internPhysicalIdentity",
+      "file": "analysis-port.js",
+      "line": 384,
+      "milliseconds": 176.206
+    },
+    {
+      "function": "get physicalId",
+      "file": "analysis-port.js",
+      "line": 627,
+      "milliseconds": 176.206
+    },
+    {
+      "function": "runWithWorkingStateContext",
+      "file": "rule-composition.js",
+      "line": 407,
+      "milliseconds": 160.125
+    },
+    {
+      "function": "redundantQuietFinalClaim",
+      "file": "analysis-port.js",
+      "line": 7976,
+      "milliseconds": 159.583
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 4174,
+      "milliseconds": 159.002
+    },
+    {
+      "function": "runWithWorkingState",
+      "file": "production-kernel.js",
+      "line": 1669,
+      "milliseconds": 158.625
+    },
+    {
+      "function": "quietFinalValue",
+      "file": "analysis-port.js",
+      "line": 10984,
+      "milliseconds": 145.124
+    },
+    {
+      "function": "quietLeaf",
+      "file": "decision-search.js",
+      "line": 40,
+      "milliseconds": 145.124
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 142.164
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "analysis-port.js",
+      "line": 160,
+      "milliseconds": 141.83
+    },
+    {
+      "function": "get physicalKey",
+      "file": "analysis-port.js",
+      "line": 621,
+      "milliseconds": 135.497
+    },
+    {
+      "function": "copyForkData",
+      "file": "state-store.js",
+      "line": 43,
+      "milliseconds": 135.079
+    },
+    {
+      "function": "copy",
+      "file": "state-store.js",
+      "line": 46,
+      "milliseconds": 133.663
+    },
+    {
+      "function": "enumerateActions",
+      "file": "rule-composition.js",
+      "line": 808,
+      "milliseconds": 131.373
+    },
+    {
+      "function": "serializeState",
+      "file": "analysis-port.js",
+      "line": 263,
+      "milliseconds": 129.662
+    },
+    {
+      "function": "",
+      "file": "rule-composition.js",
+      "line": 815,
+      "milliseconds": 128.332
+    },
+    {
+      "function": "enumerate",
+      "file": "production-composition.js",
+      "line": 825,
+      "milliseconds": 126.832
+    },
+    {
+      "function": "legalActions",
+      "file": "analysis-port.js",
+      "line": 137,
+      "milliseconds": 126.832
+    },
+    {
+      "function": "readActions",
+      "file": "analysis-port.js",
+      "line": 6249,
+      "milliseconds": 125.332
+    },
+    {
+      "function": "enumerate",
+      "file": "standard-action.js",
+      "line": 143,
+      "milliseconds": 119.415
+    },
+    {
+      "function": "Module.require",
+      "file": "loader",
+      "line": 1455,
+      "milliseconds": 116.917
+    },
+    {
+      "function": "require",
+      "file": "helpers",
+      "line": 146,
+      "milliseconds": 116.917
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "line": 5245,
+      "milliseconds": 113.71
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 109.702
+    }
+  ],
+  "self": [
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 142.164
+    },
+    {
+      "function": "copy",
+      "file": "state-store.js",
+      "line": 46,
+      "milliseconds": 133.663
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 109.702
+    },
+    {
+      "function": "serializeState",
+      "file": "analysis-port.js",
+      "line": 263,
+      "milliseconds": 63.787
+    },
+    {
+      "function": "normalizeObject",
+      "file": "analysis-port.js",
+      "line": 233,
+      "milliseconds": 43.46
+    },
+    {
+      "function": "freeze",
+      "file": "analysis-port.js",
+      "line": 131,
+      "milliseconds": 39.167
+    },
+    {
+      "function": "readFileSync",
+      "file": "node:fs",
+      "line": 433,
+      "milliseconds": 31.543
+    },
+    {
+      "function": "wrapSafe",
+      "file": "loader",
+      "line": 1596,
+      "milliseconds": 30.584
+    },
+    {
+      "function": "stableHash",
+      "file": "standard-action.js",
+      "line": 57,
+      "milliseconds": 25.542
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "milliseconds": 22.417
+    },
+    {
+      "function": "normalize",
+      "file": "analysis-port.js",
+      "line": 212,
+      "milliseconds": 22.415
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "resource-demand.js",
+      "line": 175,
+      "milliseconds": 22.294
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 2262,
+      "milliseconds": 19.627
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 4174,
+      "milliseconds": 17.917
+    },
+    {
+      "function": "internPhysicalIdentity",
+      "file": "analysis-port.js",
+      "line": 384,
+      "milliseconds": 16.376
+    },
+    {
+      "function": "compileForInternalLoader",
+      "file": "realm",
+      "line": 385,
+      "milliseconds": 16.334
+    },
+    {
+      "function": "stat",
+      "file": "loader",
+      "line": 251,
+      "milliseconds": 16.332
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "line": 736,
+      "milliseconds": 16.169
+    },
+    {
+      "function": "evaluateMission",
+      "file": "probe-capital.js",
+      "line": 477,
+      "milliseconds": 15.709
+    },
+    {
+      "function": "",
+      "file": "profile-queue-native-fallbacks-20261118-v3.cjs",
+      "line": 1,
+      "milliseconds": 13.5
+    },
+    {
+      "function": "stableSerialize",
+      "file": "standard-action.js",
+      "line": 44,
+      "milliseconds": 13.417
+    },
+    {
+      "function": "findParentPackageJSON",
+      "file": "package_json_reader",
+      "line": 142,
+      "milliseconds": 13.209
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "file": "production-kernel.js",
+      "line": 906,
+      "milliseconds": 13.209
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 269,
+      "milliseconds": 11.959
+    },
+    {
+      "function": "augmentEffectResult",
+      "file": "residual-domain-session.js",
+      "line": 1530,
+      "milliseconds": 11.75
+    },
+    {
+      "function": "",
+      "file": "analysis-port.js",
+      "line": 355,
+      "milliseconds": 10.792
+    },
+    {
+      "function": "deepFreeze",
+      "file": "rule-composition.js",
+      "line": 42,
+      "milliseconds": 10.417
+    },
+    {
+      "function": "collectReadyTasks",
+      "file": "effects.js",
+      "line": 4652,
+      "milliseconds": 10.333
+    },
+    {
+      "function": "owner",
+      "file": "resource-demand.js",
+      "line": 12,
+      "milliseconds": 9.043
+    },
+    {
+      "function": "turnTailSummary",
+      "file": "analysis-port.js",
+      "line": 8042,
+      "milliseconds": 8.875
+    },
+    {
+      "function": "localDecisionSpec",
+      "file": "analysis-port.js",
+      "line": 3206,
+      "milliseconds": 8.874
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "line": 5245,
+      "milliseconds": 8.709
+    },
+    {
+      "function": "collectPlanetLocations",
+      "file": "core.js",
+      "line": 666,
+      "milliseconds": 8.5
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 72,
+      "milliseconds": 8.416
+    },
+    {
+      "function": "prepareFinalRoundSwapMission",
+      "file": "probe-capital.js",
+      "line": 360,
+      "milliseconds": 7.542
+    },
+    {
+      "function": "enumerate",
+      "file": "production-composition.js",
+      "line": 825,
+      "milliseconds": 7.542
+    },
+    {
+      "function": "previewQuietEndHandoffs",
+      "file": "residual-domain-session.js",
+      "line": 2286,
+      "milliseconds": 7.501
+    },
+    {
+      "function": "validateSerializableGraph",
+      "file": "state-store.js",
+      "line": 118,
+      "milliseconds": 7.459
+    },
+    {
+      "function": "toString",
+      "file": "node:buffer",
+      "line": 835,
+      "milliseconds": 7.458
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 627,
+      "milliseconds": 7.458
+    },
+    {
+      "function": "knownFundedCargoQuote",
+      "file": "analysis-port.js",
+      "line": 4843,
+      "milliseconds": 7.417
+    },
+    {
+      "function": "countPlayerPlanetMarkers",
+      "file": "effects.js",
+      "line": 4394,
+      "milliseconds": 7.125
+    },
+    {
+      "function": "",
+      "file": "decision-search.js",
+      "line": 441,
+      "milliseconds": 6.584
+    },
+    {
+      "function": "listCardSettlements",
+      "file": "residual-domain-session.js",
+      "line": 931,
+      "milliseconds": 6.125
+    },
+    {
+      "function": "listTraceEntries",
+      "file": "chong.js",
+      "line": 464,
+      "milliseconds": 6.082
+    }
+  ]
+}
