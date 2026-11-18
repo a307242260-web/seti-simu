@@ -1,0 +1,286 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "stages": [
+    {
+      "label": "blue1-after-tech",
+      "resourcePlans": [
+        {
+          "id": "data:analyze:6",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "firstActionId": "place_data:8fd12fd3",
+          "mode": "greedy",
+          "reason": "data-placement-for-goal"
+        }
+      ],
+      "cardPickPolicy": {
+        "policy": "seti-purpose-card-pick-policy-v17",
+        "isEquivalence": false,
+        "kind": "card-acquisition-plan",
+        "goal": null,
+        "selectedActionId": null,
+        "selection": null,
+        "discardIds": [],
+        "companySwap": null,
+        "retainedActionIds": [
+          "play_card:684d5f30",
+          "pass:a1f33c73",
+          "card_corner:782ed1f3",
+          "place_data:8fd12fd3"
+        ],
+        "excludedActionIds": [
+          "industry:e887dc52"
+        ],
+        "reason": "no-pick-purpose"
+      },
+      "legalActions": [
+        {
+          "family": "play_card",
+          "actionId": "play_card:684d5f30",
+          "target": {
+            "cardInstanceId": "card-42-0"
+          }
+        },
+        {
+          "family": "pass",
+          "actionId": "pass:a1f33c73",
+          "target": {
+            "kind": "pass"
+          }
+        },
+        {
+          "family": "industry",
+          "actionId": "industry:e887dc52",
+          "target": {
+            "companyId": "深空探测",
+            "abilityId": "deepspace_swap_cards"
+          }
+        },
+        {
+          "family": "card_corner",
+          "actionId": "card_corner:782ed1f3",
+          "target": {
+            "cardInstanceId": "card-42-0"
+          }
+        },
+        {
+          "family": "place_data",
+          "actionId": "place_data:8fd12fd3",
+          "target": {
+            "kind": "place-data"
+          }
+        }
+      ]
+    },
+    {
+      "label": "blue1-after-dlc37",
+      "resourcePlans": [
+        {
+          "id": "data:analyze:6",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "firstActionId": "place_data:8fd12fd3",
+          "mode": "greedy",
+          "reason": "data-placement-for-goal"
+        }
+      ],
+      "cardPickPolicy": {
+        "policy": "seti-purpose-card-pick-policy-v17",
+        "isEquivalence": false,
+        "kind": "card-acquisition-plan",
+        "goal": {
+          "kind": "income",
+          "id": "income:computer:4",
+          "amount": 1,
+          "priority": 5,
+          "protectedCardId": null
+        },
+        "selectedActionId": "quick_trade:71814d67",
+        "selection": {
+          "cardId": "card-18-0",
+          "blind": false,
+          "cache": "miss"
+        },
+        "discardIds": [],
+        "companySwap": null,
+        "retainedActionIds": [
+          "pass:a1f33c73",
+          "quick_trade:71814d67",
+          "place_data:8fd12fd3"
+        ],
+        "excludedActionIds": [],
+        "reason": "explicit-pick-purpose"
+      },
+      "legalActions": [
+        {
+          "family": "pass",
+          "actionId": "pass:a1f33c73",
+          "target": {
+            "kind": "pass"
+          }
+        },
+        {
+          "family": "quick_trade",
+          "actionId": "quick_trade:71814d67",
+          "target": {
+            "tradeId": "publicity-for-card"
+          }
+        },
+        {
+          "family": "place_data",
+          "actionId": "place_data:8fd12fd3",
+          "target": {
+            "kind": "place-data"
+          }
+        }
+      ]
+    }
+  ],
+  "valueLedger": [
+    {
+      "name": "blue1",
+      "afterTech": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 97.75,
+        "components": {
+          "realizedScore": 39,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterDlc37": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 97.75,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 4,
+          "hand": 0,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterContinuation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 99.5,
+        "components": {
+          "realizedScore": 51,
+          "currentEndGameBonus": 7,
+          "resources": 2.5,
+          "hand": 0,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "continuityDelta": 1.75
+    },
+    {
+      "name": "blue3",
+      "afterTech": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 36,
+          "currentEndGameBonus": 7,
+          "resources": 2.5,
+          "hand": 2,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 2.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterDlc37": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 45,
+          "currentEndGameBonus": 7,
+          "resources": 3.5,
+          "hand": 1,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 2.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterContinuation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 1,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "continuityDelta": 0
+    }
+  ],
+  "preferenceFlipsUnderSameModel": true
+}

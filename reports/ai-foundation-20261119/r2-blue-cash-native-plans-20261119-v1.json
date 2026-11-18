@@ -1,0 +1,1705 @@
+{
+  "phase": "complete",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "nativeInputs": 18,
+  "sharedPrefixInputs": 1,
+  "aiSearches": 0,
+  "newAutonomousGames": 0,
+  "branches": [
+    {
+      "name": "blue1",
+      "nativeInputs": 6,
+      "quotedValue": 97.75,
+      "logicalSavedPlanInputs": 7,
+      "savedActions": [
+        "research_tech:806ccfc8",
+        "choose_target:0cbf059c",
+        "place_data:8fd12fd3",
+        "choose_target:29b5215c",
+        "place_data:8fd12fd3",
+        "choose_target:7be78a55",
+        "end_turn:b2f9b29d"
+      ],
+      "afterResearch": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 37
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-19",
+              "index": 12,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-20",
+              "index": 13,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 6,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 9,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 44,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 97.75,
+          "components": {
+            "realizedScore": 37,
+            "currentEndGameBonus": 7,
+            "resources": 3,
+            "hand": 1,
+            "income": 19,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 1.1666666666666667,
+            "researchIncomePotential": 0,
+            "dataPotential": 2.5833333333333335,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "4d354b6ab47b3f1edfc7cf979233367921b37f6f3de094f9554430b147faee62"
+      },
+      "beforeEnd": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 39
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-19",
+              "index": 12,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-20",
+              "index": 13,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 6,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 9,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 46,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 97.75,
+          "components": {
+            "realizedScore": 39,
+            "currentEndGameBonus": 7,
+            "resources": 3,
+            "hand": 1,
+            "income": 19,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 1.75,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "1f66c74d3565af7a6cb504e71db623c2aeacba6161fd921f2891e95d3cdec39f"
+      },
+      "result": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 1,
+          "score": 39
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-19",
+              "index": 12,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-20",
+              "index": 13,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 7,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 10,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 46,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 97.75,
+          "components": {
+            "realizedScore": 39,
+            "currentEndGameBonus": 7,
+            "resources": 3,
+            "hand": 1,
+            "income": 19,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 1.75,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "394a85dca40676eb02d15850e34f5d71d1e656a51fbbf9959400a46e74757320"
+      },
+      "coldRestoreExact": true,
+      "complete": true
+    },
+    {
+      "name": "blue3",
+      "nativeInputs": 11,
+      "quotedValue": 98,
+      "logicalSavedPlanInputs": 12,
+      "savedActions": [
+        "research_tech:806ccfc8",
+        "choose_target:c86683cc",
+        "choose_card:56497dc2",
+        "place_data:8fd12fd3",
+        "choose_target:29b5215c",
+        "place_data:8fd12fd3",
+        "choose_target:29b5215c",
+        "choose_card:b27d2a0c",
+        "place_data:8fd12fd3",
+        "choose_target:7be78a55",
+        "choose_card:859d2a59",
+        "end_turn:b2f9b29d"
+      ],
+      "afterResearch": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 34
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "blue3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-19",
+              "index": 12,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-20",
+              "index": 13,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-18-0",
+            "cardId": "b_48.webp",
+            "price": 1,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 6,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 9,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 41,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 97.33333333333333,
+          "components": {
+            "realizedScore": 34,
+            "currentEndGameBonus": 7,
+            "resources": 3,
+            "hand": 2,
+            "income": 19,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 1.1666666666666667,
+            "researchIncomePotential": 0,
+            "dataPotential": 4.166666666666667,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "e66e528cd73016aa8cf11899eae76f8ade8120b613d23326645c88c6eaeb2a9b"
+      },
+      "beforeEnd": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 36
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "blue3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-19",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-20",
+              "index": 13,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-49-0",
+            "cardId": "dlc_32.png",
+            "price": 1,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 6,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 9,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 43,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 98,
+          "components": {
+            "realizedScore": 36,
+            "currentEndGameBonus": 7,
+            "resources": 2.5,
+            "hand": 2,
+            "income": 21,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 2.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "1a30e974a83f97b938de93073e757c39cb447625a363d586062b6762b49d574a"
+      },
+      "result": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 1,
+          "score": 36
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "tech": {
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "blue3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-15",
+              "index": 8,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-18",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-19",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-20",
+              "index": 13,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-21",
+              "index": 14,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-22",
+              "index": 15,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "hand": [
+          {
+            "id": "card-42-0",
+            "cardId": "dlc_37.png",
+            "price": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-49-0",
+            "cardId": "dlc_32.png",
+            "price": 1,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          }
+        ],
+        "reserved": [
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "b_117.webp"
+            },
+            "cardId": "b_117.webp",
+            "cardTypeCode": 2,
+            "discardActionCode": 2,
+            "faceUp": true,
+            "id": "card-13-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 3,
+            "set": "basic"
+          },
+          {
+            "cardEffectState": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [],
+              "modelCardId": "dlc_9.png"
+            },
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "probes": [],
+        "turn": {
+          "actionCycleNumber": 7,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "roundNumber": 2,
+          "startPlayerId": "player-green",
+          "turnNumber": 10,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "finalScoring": {
+          "thresholds": [
+            25,
+            50,
+            70
+          ],
+          "tileVariants": {
+            "a": 2,
+            "b": 1,
+            "c": 1,
+            "d": 2
+          },
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        "currentProjectedFinalScore": 43,
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 98,
+          "components": {
+            "realizedScore": 36,
+            "currentEndGameBonus": 7,
+            "resources": 2.5,
+            "hand": 2,
+            "income": 21,
+            "technologyPotential": 18,
+            "handPotential": 9,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 2.5,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "9517fe98fca64c841442cc3760877db928f324a5ecfc256a28216265e8f019fc"
+      },
+      "originalFullObservationExactBefore116": true,
+      "coldRestoreExact": true,
+      "complete": true
+    }
+  ],
+  "initial": {
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 5,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 1,
+      "publicity": 7,
+      "score": 32
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "tech": {
+      "blueBoardSlots": {
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-15",
+          "index": 8,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-16",
+          "index": 9,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-17",
+          "index": 10,
+          "placementKind": "computer",
+          "placementSlot": 2
+        }
+      ],
+      "poolTokens": [
+        {
+          "id": "data-token-18",
+          "index": 11,
+          "slotIndex": 1
+        },
+        {
+          "id": "data-token-19",
+          "index": 12,
+          "slotIndex": 2
+        },
+        {
+          "id": "data-token-20",
+          "index": 13,
+          "slotIndex": 3
+        },
+        {
+          "id": "data-token-21",
+          "index": 14,
+          "slotIndex": 4
+        },
+        {
+          "id": "data-token-22",
+          "index": 15,
+          "slotIndex": 5
+        }
+      ]
+    },
+    "hand": [
+      {
+        "id": "card-42-0",
+        "cardId": "dlc_37.png",
+        "price": 0,
+        "corner": {
+          "code": 0,
+          "label": "弃牌换1宣传",
+          "gain": {
+            "publicity": 1
+          },
+          "dataCount": 0
+        }
+      }
+    ],
+    "reserved": [
+      {
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "b_117.webp"
+        },
+        "cardId": "b_117.webp",
+        "cardTypeCode": 2,
+        "discardActionCode": 2,
+        "faceUp": true,
+        "id": "card-13-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 3,
+        "set": "basic"
+      },
+      {
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "dlc_9.png"
+        },
+        "cardId": "dlc_9.png",
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-15-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 2,
+        "set": "space-agency"
+      }
+    ],
+    "probes": [],
+    "turn": {
+      "actionCycleNumber": 6,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [],
+      "currentPlayerId": "player-white",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "roundNumber": 2,
+      "startPlayerId": "player-green",
+      "turnNumber": 9,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "finalScoring": {
+      "thresholds": [
+        25,
+        50,
+        70
+      ],
+      "tileVariants": {
+        "a": 2,
+        "b": 1,
+        "c": 1,
+        "d": 2
+      },
+      "tiles": {
+        "a": {
+          "id": "a",
+          "marks": []
+        },
+        "b": {
+          "id": "b",
+          "marks": []
+        },
+        "c": {
+          "id": "c",
+          "marks": []
+        },
+        "d": {
+          "id": "d",
+          "marks": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        }
+      }
+    },
+    "currentProjectedFinalScore": 39,
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 97.33333333333333,
+      "components": {
+        "realizedScore": 32,
+        "currentEndGameBonus": 7,
+        "resources": 6,
+        "hand": 1,
+        "income": 19,
+        "technologyPotential": 13,
+        "handPotential": 9,
+        "researchPotential": 7,
+        "probePotential": 0,
+        "analysisPotential": 1.1666666666666667,
+        "researchIncomePotential": 2.1666666666666665,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    },
+    "nativeStateSha256": "f68982f1bdb3a778b6c2e8d51bc2f9051ef8cd7613237908ac5ff5fd7dd6d423"
+  },
+  "sharedCheckpointExact": true,
+  "rootAndRngRestoredAtExit": true
+}

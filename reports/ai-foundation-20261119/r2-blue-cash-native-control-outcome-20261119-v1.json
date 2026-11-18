@@ -1,0 +1,551 @@
+{
+  "schemaVersion": "seti-blue-cash-same-root-native-outcome-v1",
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "question": "Does the earlier blue1 cash slot improve a currently known development chain, and why does the current model prefer blue3 by0.25?",
+  "root": {
+    "actualInput": 104,
+    "nativeStateSha256": "f68982f1bdb3a778b6c2e8d51bc2f9051ef8cd7613237908ac5ff5fd7dd6d423",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    },
+    "fullOfficialObservationExact": true,
+    "legalActionMatch": "all fields exact after omitting only decision:null absent in historical coordinator serialization",
+    "sourceCheckpoint": "immutable original after62, then actual63-103 only41 inputs"
+  },
+  "savedPlanBoundary": {
+    "scope": "next own-turn10, no pending effect",
+    "blue1": 97.75,
+    "blue3": 98,
+    "sourcePreference": "blue3 by0.25",
+    "allPlansColdRestoreExact": true
+  },
+  "commonContinuationBoundary": "round2 next own-turn12, after research, known held DLC37 and analysis, before PASS reserve-card selection/next income; close any newly triggered score mark first",
+  "baselineBlue3": {
+    "boardScore": 48,
+    "credits": 0,
+    "energy": 1,
+    "publicity": 4,
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "hand": [
+      {
+        "id": "card-49-0",
+        "cardId": "dlc_32.png",
+        "price": 1,
+        "corner": {
+          "code": 1,
+          "label": "弃牌换1数据",
+          "gain": {},
+          "dataCount": 1
+        }
+      }
+    ],
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "blue3": true,
+        "purple4": true
+      }
+    },
+    "probes": [],
+    "turn": {
+      "actionCycleNumber": 9,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [],
+      "currentPlayerId": "player-white",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "roundNumber": 2,
+      "startPlayerId": "player-green",
+      "turnNumber": 12,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "finalMarks": {
+      "thresholds": [
+        25,
+        50,
+        70
+      ],
+      "tileVariants": {
+        "a": 2,
+        "b": 1,
+        "c": 1,
+        "d": 2
+      },
+      "tiles": {
+        "a": {
+          "id": "a",
+          "marks": []
+        },
+        "b": {
+          "id": "b",
+          "marks": []
+        },
+        "c": {
+          "id": "c",
+          "marks": []
+        },
+        "d": {
+          "id": "d",
+          "marks": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        }
+      }
+    },
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 98,
+      "components": {
+        "realizedScore": 48,
+        "currentEndGameBonus": 7,
+        "resources": 3,
+        "hand": 1,
+        "income": 21,
+        "technologyPotential": 18,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "counterfactualBlue1": {
+    "boardScore": 51,
+    "credits": 1,
+    "energy": 1,
+    "publicity": 1,
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "hand": [],
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "probes": [],
+    "turn": {
+      "actionCycleNumber": 9,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [],
+      "currentPlayerId": "player-white",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "roundNumber": 2,
+      "startPlayerId": "player-green",
+      "turnNumber": 12,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "finalMarks": {
+      "thresholds": [
+        25,
+        50,
+        70
+      ],
+      "tileVariants": {
+        "a": 2,
+        "b": 1,
+        "c": 1,
+        "d": 2
+      },
+      "tiles": {
+        "a": {
+          "id": "a",
+          "marks": [
+            {
+              "id": "final-mark-2",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 50,
+              "tileId": "a"
+            }
+          ]
+        },
+        "b": {
+          "id": "b",
+          "marks": []
+        },
+        "c": {
+          "id": "c",
+          "marks": []
+        },
+        "d": {
+          "id": "d",
+          "marks": [
+            {
+              "id": "final-mark-1",
+              "playerColor": "white",
+              "playerId": "player-white",
+              "slot3Order": null,
+              "slotIndex": 1,
+              "threshold": 25,
+              "tileId": "d"
+            }
+          ]
+        }
+      }
+    },
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v71",
+      "total": 99.5,
+      "components": {
+        "realizedScore": 51,
+        "currentEndGameBonus": 7,
+        "resources": 2.5,
+        "hand": 0,
+        "income": 21,
+        "technologyPotential": 18,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 0,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    }
+  },
+  "blue1MinusBlue3": {
+    "boardScore": 3,
+    "credits": 1,
+    "energy": 0,
+    "publicity": -3,
+    "handCount": -1,
+    "permanentIncomeDifference": 0,
+    "computerDataDifference": 0,
+    "modelValue": 1.5,
+    "currentA2MarkCount": 1
+  },
+  "continuation": {
+    "both": "Use the already-held no-data conditional scan DLC37 and the same two currently known signal sectors, then complete the same known blue analysis.",
+    "blue3": "Exact actual116-127; full official observations before116 and128 match.",
+    "blue1": "Spend3real publicity to acquire currently public B48 specifically for computer4 energy income; fill4-6, receive same energy income, analyze and end turn.51points triggers50-point mark; choosea using the same baseline-known d,a,b order.",
+    "knowledge": "No B101, later alien card, unknown public refill or future fossil identity determines this earlier choice. B48 was visible at104 and remains public when bought.",
+    "notDominance": "Blue1 retains no DLC32 hand card and spends3more publicity; it is better under the same current model through this known continuation, not proven better through a whole game."
+  },
+  "valueContinuity": [
+    {
+      "name": "blue1",
+      "afterTech": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 97.75,
+        "components": {
+          "realizedScore": 39,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterDlc37": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 97.75,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 4,
+          "hand": 0,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterContinuation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 99.5,
+        "components": {
+          "realizedScore": 51,
+          "currentEndGameBonus": 7,
+          "resources": 2.5,
+          "hand": 0,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "continuityDelta": 1.75
+    },
+    {
+      "name": "blue3",
+      "afterTech": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 36,
+          "currentEndGameBonus": 7,
+          "resources": 2.5,
+          "hand": 2,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 9,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 2.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterDlc37": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 45,
+          "currentEndGameBonus": 7,
+          "resources": 3.5,
+          "hand": 1,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 2.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "afterContinuation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 98,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 1,
+          "income": 21,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "continuityDelta": 0
+    }
+  ],
+  "verifiedCause": {
+    "candidateOmission": false,
+    "currentExecutionAlreadyHasPurpose": {
+      "at": "blue1 afterDLC37",
+      "goal": "income:computer:4",
+      "action": "3publicity public pick",
+      "selection": "card-18-0 / B48",
+      "blind": false,
+      "newNativeInputsInAudit": 0
+    },
+    "capitalGap": "The existing prepared-analysis quote rejects computer prefixes shorter than4; at3filled slots it retains only prorated prepaid value1.75. It does not quote the currently funded public income-card acquisition plus computer4 and analysis. Actual net closure without that old allowance is3.5, replacing1.75; blue1 current value therefore drifts upward1.75.",
+    "sourceGuard": {
+      "path": "randomizer/game/ai/ready-analysis-capital.js",
+      "line": 103,
+      "sha256": "41d215d4352f339fe452090fb4fbeb3d9ede174b98149ae953e6b75c93139679"
+    },
+    "prepaidSourceLines": [
+      63,
+      71,
+      78,
+      92
+    ],
+    "existingConditionalCardPortfolio": {
+      "path": "randomizer/game/ai/sector-card-capital.js",
+      "sha256": "6382ba6bbb9d79ababcf257ce716f3cd56582cf299cdbc6e0f788e0215af27c6",
+      "behavior": "quotes portfolio(after) using actual earned publicity. Once the analysis forecast is corrected, this existing composition can propagate the value before DLC37; no larger search horizon has been demonstrated necessary."
+    },
+    "limits": [
+      "This identifies one missing known preparation closure, not an explanation of all112 final-score points.",
+      "It does not establish that blue1 is always better than blue3 or recover the teacher second-round4cash/one-probe position.",
+      "No production code has been changed."
+    ]
+  },
+  "nextBoundedImplementation": {
+    "type": "isolated forecast prototype; keep original source/runtime unchanged",
+    "target": "Quote a currently affordable, visible, ordinary currency-income-card supplier for computer4 plus ready analysis, reusing the existing explicit acquisition purpose and all real costs.",
+    "expectedTarget": "afterDLC37 analysisPotential3.5 instead of1.75; pre-DLC37 portfolio/held-card composition should propagate the extra1.75. Blue3 stays98; do not blindly add3.5 to the old prepaid1.75.",
+    "constraints": [
+      "No card name, seed, teacher step or forced blue technology preference.",
+      "Current shared wallet must pay3publicity, current pool must fill every remaining computer slot; known income immediate/permanent gain, caps and card consumption must be accounted once.",
+      "No guessed public refill, alien identity, unseen income card, duplicated data or unpaid card acquisition.",
+      "Preserve existing guards for unknown species/triggers and counterexamples where publicity<3, no suitable visible supplier, insufficient data, an existing held supplier, or unavailable income step.",
+      "Same-state source preservation and migration examples, then relevant source checks/input audit and single-decision256/600ms benchmark; no new full game until admission."
+    ],
+    "originalFormalAIUnchanged": true
+  },
+  "nativeExecutionAccounting": {
+    "prefix": 41,
+    "sharedResearchPrefix": 1,
+    "blue1SavedRemainder": 6,
+    "blue3SavedRemainder": 11,
+    "baselineKnownSuffix": 12,
+    "blue1KnownSuffixIncludingForcedMark": 18,
+    "total": 89,
+    "successfulInputsRepeated": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0,
+    "planningAuditNativeSubmissions": 0
+  },
+  "methodTrial": {
+    "wallMinutesToClose": 22.769860049088795,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "failuresRetained": [
+      "Read-only Python probe typo, no Native work.",
+      "Diagnostic expected4publicity afterDLC37; actual3 was sufficient. Resumed the saved5-input checkpoint without repeating it.",
+      "The better-scoring continuation genuinely raised a50-point mandatory mark. Settled the exact pending checkpoint with the baseline mark order, no continuation replay."
+    ],
+    "previousGoalTurnClassification": "progress: exact112-point scoring bridge prioritized earlier blue-cash decision104",
+    "thisGoalTurnClassification": "progress: same-root Native plans and known continuation establish a1.75 value-continuity gap, existing execution supplier and exact capital guard located",
+    "candidateCausalFixIdentified": true,
+    "AIQualityImprovementProven": false
+  },
+  "formalCompletedScoreUnchanged": 272,
+  "formalWallSecondsPreviouslyMeasured": 16.1,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "sources": {
+    "reports/ai-foundation-20261119/r2-blue-cash-native-root-20261119-v1.json": "0e19147dee383f90056607fe9e181de10f442d04d2e868f60c446763b9903f1e",
+    "reports/ai-foundation-20261119/r2-blue-cash-native-plans-20261119-v1.json": "48df1ff6d563c967db05b7a9d545a3b45b5512ba6a61ad7e8a5381eb462f9694",
+    "reports/ai-foundation-20261119/r2-blue-cash-known-continuation-20261119-v1.json": "bd98a520b8dd6748f4b39c877702b2099c6e01aeae31e9f1f54d46ea4c0efefa",
+    "reports/ai-foundation-20261119/r2-blue-cash-known-continuation-20261119-v1-failed.json": "dff29197ec85736349848ebeacf690c134c0cd1233be09b7f3e3a26e719196d0",
+    "reports/ai-foundation-20261119/r2-blue-cash-known-continuation-20261119-v2-forced-mark.json": "c8d450efac1296974e3e1a1f5bab7945d1a7a66dccfd38fa8c6ba78c0c1b837a",
+    "reports/ai-foundation-20261119/r2-blue-cash-continuity-audit-20261119-v1.json": "6125b04acd6ae6cd69172ce6f959c4521b232368f4bd5b799c9fba776501a4b5",
+    "reports/ai-foundation-20261119/r2-blue-cash-prefix-checkpoint-20261119-v1.json.gz": "42f0bb8dcdf984b154dbf12284ea757d962c85166c4bb6ade833c98b236c93a6",
+    "reports/ai-foundation-20261119/r2-blue-cash-before104-native-20261119-v1.json.gz": "c7629af0c9c789b54d40b9d81e189387c50b38f17b109a01f0bf340b636e2f0d",
+    "reports/ai-foundation-20261119/r2-blue-cash-shared-research-checkpoint-20261119-v1.json.gz": "5503c2141c905fd9c0ee2e68d3bad31c668e640547f55976f9b09ee453ebb9aa",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue1-checkpoint-20261119-v1.json.gz": "db98797f616f4f550caf69e34d31efb88c52b252dbf5d97ee789039ea5cf49a9",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue1-before-end-checkpoint-20261119-v1.json.gz": "35318f16ebf5d7a1c8a8a1fd324be4ad412ef2eaa77348812792dff1a468da20",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue1-after-research-checkpoint-20261119-v1.json.gz": "a608175661a82b9a5fb002b1b975c6a65ad7f61cd53d8e50508de246fe261648",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue3-checkpoint-20261119-v1.json.gz": "3c86e5badc2a651a0242058a3d5fcc8ed2f73531645ef48c3b4853c1f8c0933b",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue3-before-end-checkpoint-20261119-v1.json.gz": "471330ab659114ee620ecf7ddd6eab5c2a6e038424011dbe141626ec7dd193a7",
+    "reports/ai-foundation-20261119/r2-blue-cash-blue3-after-research-checkpoint-20261119-v1.json.gz": "0565ece99d9c9b0e3dc4c13ff97d4e6ef013db0cea97b5c502e68ffa60c7cb1e",
+    "reports/ai-foundation-20261119/r2-blue-cash-continued-blue3-checkpoint-20261119-v1.json.gz": "575257f9f0b37fa22a8f7f7024bf632e24b560de9087524c2ed93d14eddada74",
+    "reports/ai-foundation-20261119/r2-blue-cash-continued-blue3-after-dlc37-checkpoint-20261119-v1.json.gz": "49cf5c4fb887d1b150ebb00414161056a3d444485c6b1ee5e0d7f09081dd0be5",
+    "reports/ai-foundation-20261119/r2-blue-cash-continued-blue1-checkpoint-20261119-v1.json.gz": "abc88a45a66be8e0a54035761fa428190ce942566e306343b7400a5eb37735fd",
+    "reports/ai-foundation-20261119/r2-blue-cash-continued-blue1-after-dlc37-checkpoint-20261119-v1.json.gz": "172c7afc7f26b52b8c8026aa29ac962df8d271fad8d89cc50d226aa0d6e05895",
+    "reports/ai-foundation-20261119/r2-blue-liquidity-existing-case104-20261119-v1.json.gz": "11e80c05db96cd7be7589b29b2658ccf66f80ad419dc3bbcd186907d57b98bfe"
+  }
+}

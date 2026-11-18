@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795034982.0,
+  "deadlineEpochSeconds": 1795036782.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,pathlib; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());b=subprocess.check_output([\"git\",\"show\",m[\"recordCommit\"]+\":reports/research/2170d824.5fabd621.full.json.round-1.checkpoint.json\"]);c=json.loads(b);print(\"KEYS\",list(c));print(\"ENVELOPE\",[(k,list(v)[:8]) for k,v in c.items() if isinstance(v,dict)]);s=json.loads((pathlib.Path(m[\"runtime\"])/m[\"savePath\"]).read_text());print(\"SOURCE116_127\",[(i+1,x[\"action\"][\"family\"],x[\"action\"].get(\"target\")) for i,x in enumerate(s[\"replaySteps\"]) if116<=i+1<=127])"
+      ],
+      "startedEpochSeconds": 1795035074.398813,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 80858,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795035074.423079,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "132fe74b162718068a531c79c54ccd6e34a846fd71e3f24561ffb194a43545b6"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,subprocess,pathlib; m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());b=subprocess.check_output([\"git\",\"show\",m[\"recordCommit\"]+\":reports/research/2170d824.5fabd621.full.json.round-1.checkpoint.json\"]);c=json.loads(b);print(\"KEYS\",list(c));print(\"ENVELOPE\",[(k,list(v)[:8]) for k,v in c.items() if isinstance(v,dict)])"
+      ],
+      "startedEpochSeconds": 1795035088.530855,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 81046,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035088.571723,
+      "stdoutSha256": "7bfec8971bd24ff5311783edf47c6aff4d4f95512f1ede101bad682dc32075a7",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/replay-blue-cash-root104-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035125.239548,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 81410,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035125.9691489,
+      "stdoutSha256": "c1e934e13e0a482b3806a79b4059c721f0d69cec35eff53f8ff8abdfa4acad49",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-blue-cash-plans104-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035198.934635,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 82034,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035199.602457,
+      "stdoutSha256": "a821b4b130d9df93da0df6ae15143ed74a9fe52d391fe06d3f8d6f1abbcd1245",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json;m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=pathlib.Path(m[\"runtime\"]);s=(r/\"randomizer/game/cards/effects.js\").read_text();at=s.index(\"\\\"dlc_37.png\\\": withSource\");print(s[at:at+1800]);s=(r/\"randomizer/game/abilities/data.js\").read_text();print(\"ANALYZE_COST_LINES\",[(i+1,l) for i,l in enumerate(s.splitlines()) if \"cost\" in l.lower() or \"blue\" in l.lower()][:40])"
+      ],
+      "startedEpochSeconds": 1795035288.61969,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 82809,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035288.644097,
+      "stdoutSha256": "b48284d78db9f90b70f476a44b3d60bf4621bd33bd83d1bc9dc42217a0f6cfbf",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-blue-cash-known-continuation-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035402.919895,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 83711,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795035403.584137,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "d435566e5939511a37d66bb5e2ee02bd890a095f63fb6a664835541a06a2fa7c"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-blue-cash-known-continuation-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035435.705178,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 84030,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795035436.2073338,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "8517b8221a6a8bfee452d1162bd2473ad1b61fd92893828bdcb4bcdd7dea1758"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/settle-blue-cash-threshold-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035555.6992462,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 85041,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035556.1470442,
+      "stdoutSha256": "d0d225e778c4165581fc1b1e39ad88444de0a8856a947b7bfc9af38afda16947",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/audit-blue-cash-continuity104-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795035697.483548,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 86122,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035697.690061,
+      "stdoutSha256": "1d6ef59144ded422de73401a1862a6bd4c3c5dbd6dd50c6dd64b5ad7ebeb17ef",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=Path(m[\"runtime\"])\nfor rel,pat,length in [(\"randomizer/game/ai/resource-demand.js\",\"function planningAnalysisCapital\",6500),(\"randomizer/game/ai/sector-card-capital.js\",\"\",8500),(\"randomizer/game/ai/ready-analysis-capital.js\",\"\",7500)]:\n s=(r/rel).read_text();at=s.index(pat) if pat else 0;print(\"SOURCE\",rel,\"LINE\",s[:at].count(\"\\n\")+1);print(s[at:at+length])"
+      ],
+      "startedEpochSeconds": 1795035766.501774,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 86699,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795035766.5263731,
+      "stdoutSha256": "e9bc87ed9ebdd5a3f5256264d941321888ab31a578be4e07ebc1adcdb4032e14",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import pathlib,json;m=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());p=pathlib.Path(m[\"runtime\"])/\"randomizer/game/ai/ready-analysis-capital.js\";s=p.read_text();lines=s.splitlines();print(\"GUARD_LINES\",[(i+1,l) for i,l in enumerate(lines) if \"placed.length<4\" in l or \"count/data.ANALYZE\" in l or \"best*count\" in l]);x=json.loads(pathlib.Path(\"reports/ai-foundation-20261119/r2-blue-cash-continuity-audit-20261119-v1.json\").read_text());print(\"ACTUAL_EXISTING_PICK\",x[\"stages\"][1][\"cardPickPolicy\"]);print(\"COUNTS\",[(n,len(pathlib.Path(\"reports/ai-foundation-20261119\",n).read_text().splitlines())) for n in [\"r2-blue-cash-prefix-events-20261119-v1.jsonl\",\"r2-blue-cash-plan-events-20261119-v1.jsonl\",\"r2-blue-cash-known-continuation-events-20261119-v1.jsonl\"]])"
+      ],
+      "startedEpochSeconds": 1795036045.9717429,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 88755,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795036045.996362,
+      "stdoutSha256": "e02cf6faca734a47179018b991460aacee7608eed52b976f1ff5e78744b439cd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,hashlib;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=Path(m[\"runtime\"]);paths=[\"randomizer/game/ai/ready-analysis-capital.js\",\"randomizer/game/ai/sector-card-capital.js\"];print({p:hashlib.sha256((r/p).read_bytes()).hexdigest() for p in paths});x=json.loads(Path(\"reports/ai-foundation-20261119/r2-blue-cash-known-continuation-20261119-v1.json\").read_text());print(\"SAME_BOUNDARY\",[(b[\"name\"],b[\"result\"][\"turn\"][\"turnNumber\"],b[\"result\"][\"resources\"],b[\"result\"][\"income\"],b[\"result\"][\"value\"][\"total\"]) for b in x[\"branches\"]])"
+      ],
+      "startedEpochSeconds": 1795036210.196183,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 90019,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795036210.22086,
+      "stdoutSha256": "8bb1714ac1a9c4913c810c693d0dc7a032c7423d8ca2259ada66b40aad61e957",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Same actual104 root, saved blue1 vs blue3 plans and currently known DLC37/data/income continuation to a shared second-round boundary; no new AI search/policy/full game",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "hypotheses": [
+    "Earlier blue1 cash can improve a currently known later data/income chain despite the0.25 lower turn value.",
+    "The missing blue3 card and resource timing may fully explain its preference; do not assume teacher tech is better."
+  ],
+  "prefixInputCap": 41,
+  "branchInputCap": 96,
+  "globalNativeInputCap": 256,
+  "stop": "one paired complete asset control or original deadline, no additional speculative card sequence",
+  "recoveries": [
+    {
+      "observedEpochSeconds": 1795035088.503535,
+      "reason": "Read-only checkpoint probe had a missing space in a Python list-comprehension condition. No Native input or search; use the same original deadline."
+    },
+    {
+      "observedEpochSeconds": 1795035435.678208,
+      "reason": "The diagnostic asserted4publicity after DLC37, but observed3 is exactly sufficient for the declared3-publicity acquisition. Baseline12 and blue1 DLC37 five inputs are checkpointed. Replace unsupported equality with actual affordability; resume saved blue1 state, no successful input repeated, same deadline."
+    },
+    {
+      "observedEpochSeconds": 1795035555.66974,
+      "reason": "Blue1 continuation genuinely reaches51 instead of baseline48, raising mandatory50-point final-mark choice. Preserve completed17-input continuation; settle only that forced menu with fixed baseline-known d,a,b order (choosea), rather than treating the extra score threshold as failure. Zero successful continuation inputs repeated; original deadline unchanged."
+    }
+  ],
+  "declaredControl": {
+    "recordedEpochSeconds": 1795035125.211473,
+    "root": "Exact formal272 actual104, immutable after62 checkpoint, original63-103 only41 inputs; full observation and legal actions (null-decision serialization only) must match before branches.",
+    "firstBoundary": "execute both saved complete blue1-slot2 (7inputs) and blue3-slot2 (12inputs) plans to next own-turn, same root/RNG/knowledge",
+    "secondBoundary": "currently held free DLC37 gives two known black scans, then data/income/analyze to same round2 end beforePASS; missing income-card acquisition must be explicitly funded from currently public B48, not later unknown cards",
+    "hypothesisDetail": "Blue1 plan has cash sooner but no free B48 income card or DLC32 reward; test actual3publicity card acquisition for the specific computer4 income need rather than assuming these missing assets are free.",
+    "stateEquivalenceAndDedup": "shared full root restored for both; retain each branch checkpoint and Native cursor, no repeated successful driver prefixes; no root-state edits or resource injection",
+    "search": "No new search enumeration, beam, leaf cap or AI decision; fixed saved witnesses and predeclared known-card purpose only",
+    "budgets": "41prefix,96perbranch,256totalNative, original30minute wall deadline; AI256/600ms and180s gates unchanged",
+    "stop": "one paired settled-asset comparison; no strategy patch or new autonomous fullgame in this unit"
+  },
+  "declaredContinuation": {
+    "recordedEpochSeconds": 1795035402.8893938,
+    "both": "Reuse settled technology checkpoints, original held DLC37 play116-120. Its conditional scans do not gain data.",
+    "baseline": "actual121-127 to exact original before128",
+    "blue1": "spend actual3publicity to buy currently public B48; computer4 uses B48 for same energy income; fill5/6, same analyze and alien-blue trace, endturn",
+    "sharedBoundary": "round2 next own-turn12, beforePASS and next income. Same3 main actions; record differing tech, card, wallet and score. No new card identity is chosen from future knowledge.",
+    "expected": "Blue1 has1cash but missing the blue3 bonus/reward cards; replacing the income card costs3publicity, not free. Compare actual outcomes without demanding improvement.",
+    "nativeBudget": "96total continuation inputs; overall256 and original deadline unchanged",
+    "nextIfUnavailable": "save exact failure checkpoint and stop/review; no automatic replacement income card or resource injection"
+  },
+  "closedEpochSeconds": 1795036348.191603,
+  "closeReason": "Paired same-root known continuation proves analysis-income acquisition quote gap: blue197.75->99.5 vs blue398->98, with all resource costs charged. No policy patch or new game.",
+  "evidenceArchive": "reports/ai-foundation-20261119/r2-blue-cash-native-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "6bf23c711dd5ebaada088fde2ab2fc9217c6ad3fb4fe50ada92ff2cdf06582c1"
+}
