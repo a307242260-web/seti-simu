@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-blue-cash-prerequisite-proof-v1",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "teacher": {
+    "blue1Slot": 2,
+    "requiredComputerSlot": 3,
+    "minimumDataFromEmptyComputerIncludingCashReward": 4
+  },
+  "ai": {
+    "blue1Slot": 3,
+    "requiredComputerSlot": 5,
+    "minimumDataFromEmptyComputerIncludingCashReward": 6
+  },
+  "additionalComputerDataBeforeCash": 2,
+  "nextRoot": {
+    "input": 104,
+    "round1Checkpoint": {
+      "gitCommit": "aad43e42ab5be10e8c645a8001eb2c9ede0579d0",
+      "path": "reports/research/2170d824.5fabd621.full.json.round-1.checkpoint.json",
+      "sha256": "0d6afee82d26b26d30928d6aa38171ce5246394e6c91c2c2134d8fea82c9e08f",
+      "bytes": 337729,
+      "replayCursor": {
+        "seed": "seti-free-analyze-v1",
+        "stepIndex": 62
+      }
+    },
+    "prefixRequired": "original63-103 exactly41Native inputs; not executed"
+  },
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "notProven": "The prerequisite difference alone does not prove how much of the112-point final gap is caused by this choice."
+}

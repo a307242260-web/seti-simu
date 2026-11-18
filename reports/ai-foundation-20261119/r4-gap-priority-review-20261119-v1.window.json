@@ -1,0 +1,198 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795033936.0,
+  "deadlineEpochSeconds": 1795035136.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,gzip; proof=json.loads(Path(\"reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-proof-20261118-v1.json\").read_text());p=Path(proof[\"save\"]);print(\"TEACHER_SAVE\",p.exists(),p.stat().st_size if p.exists() else None);x=json.loads(p.read_text()) if p.exists() else {};print(\"SAVE_KEYS\",list(x));p=Path(\"reports/ai-foundation-20261119/r4-step311-order-baseline-checkpoint-20261119-v1.json.gz\");e=json.loads(gzip.decompress(p.read_bytes()))[\"envelope\"];s=json.loads(e[\"committedState\"]);w=next(p for p in s[\"players\"][\"players\"] if p[\"id\"]==\"player-white\");print(\"STATE_KEYS\",list(s));print(\"PLAYER_KEYS\",list(w));print(\"TURN\",s[\"turn\"]);print(\"SCORING\",str(s.get(\"scoring\"))[:5000]);print(\"SCORE_FIELDS\",{k:v for k,v in w.items() if \"score\" in k.lower()});"
+      ],
+      "startedEpochSeconds": 1795033968.740119,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 71401,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795033968.7884421,
+      "stdoutSha256": "544d0fb79b4f875d2d56f04e49ddcc932bcc884575a218eabb5f42b7547683ad",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json; x=json.loads(Path(\"seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json\").read_text());s=json.loads(x[\"committedState\"]) if isinstance(x[\"committedState\"],str) else x[\"committedState\"];w=next(p for p in s[\"players\"][\"players\"] if p[\"id\"]==\"player-white\");print(\"FINAL\",json.dumps(w[\"finalScoreBreakdown\"],ensure_ascii=False));print(\"SOURCES\",w[\"scoreSources\"]);print(\"READABLE\",list(x[\"readableState\"])[:10] if isinstance(x.get(\"readableState\"),dict) else type(x.get(\"readableState\")));print(\"CARDS\",[(c[\"id\"],c[\"cardId\"]) for c in w[\"reservedCards\"]]);print(\"RULES\",Path(\"assets/final/final_detail.md\").read_text()[:11000])"
+      ],
+      "startedEpochSeconds": 1795033989.075401,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 71642,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795033989.099804,
+      "stdoutSha256": "2ad02a0cc7bba6cde6a076f9b74088e5eb0b94b0564c4272a83c91bacf2396b0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "rg -n -i \"blue1.*blue3|blue3.*blue1|蓝1|蓝3|现金.*循环|回款|蓝色.*槽|amiba.?7\" docs/human405-research-comparison-learning-20261107.md docs/ai-design.md | head -100; rg -n \"getAnalyze.*Cost|AnalyzeEnergy|analyze.*cost|blue3\" randomizer/game/data/index.js randomizer/game/abilities/data.js | head -45"
+      ],
+      "startedEpochSeconds": 1795034110.924714,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 72592,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034110.972805,
+      "stdoutSha256": "3f5639e1812541e7b05233887981e0ddaa83beec479aeea98904a099904ad5bb",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "/bin/zsh",
+        "-c",
+        "sed -n \"1,110p\" docs/ai-design.md; sed -n \"1100,1145p\" docs/ai-design.md; rg -n \"blue1|blue3|蓝1|蓝3|slot|槽|第二轮|现金\" docs/human405-first2-v189* docs/human405-first2-v17* docs/human405-third-round-*.md | head -100"
+      ],
+      "startedEpochSeconds": 1795034118.872751,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 72724,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034118.885122,
+      "stdoutSha256": "2f6294dbfe97561190712876adc10fbe69973c391e9069a9a6a1297ce3249a3f",
+      "stderrSha256": "7e750899b6e1eecd12bf02d2e23af641d7501db26f867558dcf9938dd9aa2966"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,gzip;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());a=json.loads((Path(m[\"runtime\"])/m[\"savePath\"]).read_text());t=json.loads(Path(\"seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json\").read_text());print(\"LEN\",len(a[\"replaySteps\"]),len(t[\"replaySteps\"]));print(\"SAMPLE\",a[\"replaySteps\"][23],t[\"replaySteps\"][23]);first=None\nfor i,(x,y) in enumerate(zip(a[\"replaySteps\"],t[\"replaySteps\"])):\n ax,ay=x[\"action\"],y[\"action\"];sig=lambda v:(v[\"family\"],v[\"actorId\"],v.get(\"target\"),v.get(\"payload\"))\n if sig(ax)!=sig(ay):first=(i+1,ax,ay);break\nprint(\"FIRST\",first);print(\"EARLY_AI_TECH\",[(i+1,x[\"action\"][\"target\"]) for i,x in enumerate(a[\"replaySteps\"]) if i<130 and x[\"action\"][\"family\"]==\"choose_target\" and x[\"action\"].get(\"target\",{}).get(\"tileId\")]);print(\"EARLY_TEACHER_TECH\",[(i+1,x[\"action\"][\"target\"]) for i,x in enumerate(t[\"replaySteps\"]) if i<106 and x[\"action\"][\"family\"]==\"choose_target\" and x[\"action\"].get(\"target\",{}).get(\"tileId\")])"
+      ],
+      "startedEpochSeconds": 1795034170.606622,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 73220,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034170.655025,
+      "stdoutSha256": "a0cceecce012cb41be274d69f97bfbe43494ed3f42ad2d700bef27b636022f61",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/end-game-scoring.js\").read_text();print(s[-2400:]);print(\"\\nVALUE_FORECAST\\n\",(Path(m[\"runtime\"])/\"randomizer/game/ai/state-value.js\").read_text()[3500:6800])"
+      ],
+      "startedEpochSeconds": 1795034336.2969978,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 74450,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034336.321394,
+      "stdoutSha256": "7751036e3980bd31a2d2ef0548312cd50881e6caba2aceefa72a1e8ec02764f0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/end-game-scoring.js\").read_text();\nfor p in [\"function getPlayerTraceCounts(\",\"function getFormulaBaseValue(\",\"function computePlayerFinalScore(\"]:\n a=s.index(p);print(s[a:a+1650])"
+      ],
+      "startedEpochSeconds": 1795034349.99678,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 74641,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034350.021512,
+      "stdoutSha256": "d4df11dce3ef362c8739615513f1740f173ed84749bc5e2f5df89fa09995299a",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/audit-teacher-ai-score-sources-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795034403.224712,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 75108,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034403.369065,
+      "stdoutSha256": "067d6a9ac6d4f5d40a8146648510947f78602e1b42c9bdda0ec9653cb9c60c48",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/audit-ai-development-priorities-20261119.py"
+      ],
+      "startedEpochSeconds": 1795034651.851487,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 76931,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034652.2421482,
+      "stdoutSha256": "0a747dc929d6983de6b89c652d30dde8629eb3cab7b1cb7d8ef01a7953d6d065",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prepare-blue-liquidity-case104-20261119.py"
+      ],
+      "startedEpochSeconds": 1795034737.584586,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 77629,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034737.915421,
+      "stdoutSha256": "d7c145950c3322d901c45c684adac6322f497e341dc562f6ed49f96df7eacb0c",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-blue-cash-prerequisites-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795034810.075733,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 78249,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795034810.1660311,
+      "stdoutSha256": "35d926e6665694200d445b71326a66ad26043edeebfdb9b1c5893574ae6ad4a9",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Read-only teacher384 vs formalAI272 score-source and round-asset gap audit; rank major causes before selecting more counterfactuals. No Native input, AI search, policy edit or game.",
+  "priorClassification": "progress: completed card-first250 counterfactual rejects that proposal, formal272 unchanged",
+  "stop": "Deliver a source-backed gap ranking and one justified next intervention; do not automatically chain another late-hand-card experiment",
+  "closedEpochSeconds": 1795034902.574528,
+  "closeReason": "Exact scoring bridge explains112 points and prioritizes earlier blue-cash slot decision104 over more late card controls. No Native inputs, new search or policy change.",
+  "evidenceArchive": "reports/ai-foundation-20261119/r4-gap-priority-review-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "7a3514da15e1ee0429b7853b1f223160dac6ee14ee6c78b8131639caaa6965ac"
+}

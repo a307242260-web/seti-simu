@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "seti-gap-priority-review-outcome-v1",
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "question": "Which actual development gap deserves the next learning control after several current-state late alternatives failed to improve?",
+  "scoringBridge": {
+    "teacherCurrentLegalReference": 384,
+    "formalAI": 272,
+    "gap": 112,
+    "board": 47,
+    "endgame": 65,
+    "endgameBreakdown": {
+      "balancedThreeTraceMinimum": 24,
+      "traceEndgameCards": 26,
+      "planetLandingEndgameCard": 6,
+      "totalTechTile": 7,
+      "differentSelectedTileRealizations": 2
+    }
+  },
+  "traceFacts": {
+    "teacher": {
+      "blue": 8,
+      "pink": 7,
+      "yellow": 6
+    },
+    "ai": {
+      "blue": 6,
+      "pink": 5,
+      "yellow": 3
+    },
+    "aiBottleneck": "yellow3; blue6 and pink5 do not increase the b1 minimum beyond3",
+    "interpretation": "50 of65 endgame points is trace balance and trace-card scoring. Technology can enable these outcomes, but directly adding the total-tech tile accounts for7 points of this realized difference."
+  },
+  "finalMarkFinding": {
+    "teacherOwnAssetFirstSlotQuotes": [
+      {
+        "formulaId": "b1",
+        "base": 6,
+        "multiplier": 8,
+        "score": 48
+      },
+      {
+        "formulaId": "d2",
+        "base": 5,
+        "multiplier": 7,
+        "score": 35
+      },
+      {
+        "formulaId": "c1",
+        "base": 6,
+        "multiplier": 4,
+        "score": 24
+      },
+      {
+        "formulaId": "a2",
+        "base": 0,
+        "multiplier": 11,
+        "score": 0
+      }
+    ],
+    "aiOwnAssetFirstSlotQuotes": [
+      {
+        "formulaId": "d2",
+        "base": 4,
+        "multiplier": 7,
+        "score": 28
+      },
+      {
+        "formulaId": "b1",
+        "base": 3,
+        "multiplier": 8,
+        "score": 24
+      },
+      {
+        "formulaId": "a2",
+        "base": 2,
+        "multiplier": 11,
+        "score": 22
+      },
+      {
+        "formulaId": "c1",
+        "base": 4,
+        "multiplier": 4,
+        "score": 16
+      }
+    ],
+    "bothChosenSetsMaximizeTheirRealizedFinalAssets": true,
+    "limit": "Static final-asset valuation is not a counterfactual mark-order experiment. The2-point different-tile contribution is an accounting item, not evidence that changing the AI mark would recover2."
+  },
+  "earlierDevelopmentFinding": {
+    "firstRound": "Teacher and current formalAI both15, exact technology slots and permanent income equal at the defined boundary.",
+    "secondRound": {
+      "aiScore": 48,
+      "teacherScore": 34,
+      "aiBlueSlot2": "blue3(card reward)",
+      "teacherBlueSlot2": "blue1(credit reward)",
+      "aiEndCash": 0,
+      "teacherEndCash": 4,
+      "aiIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "teacherIncome": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      }
+    },
+    "laterCashLocation": {
+      "teacherBlue1Slot": 2,
+      "requiredComputerDataPosition": 3,
+      "aiBlue1Slot": 3,
+      "aiRequiredComputerDataPosition": 5,
+      "additionalComputerPositionsBeforeCash": 2
+    },
+    "sourceOfProof": "Exact common production placement helper; no speculative rule or repeated game.",
+    "importantLimit": "Different earlier decisions and states also change the trajectories. The prerequisite difference does not causally explain all112 points. Historical V189 concrete slot alignment is not proof that current formal272 preserved that alignment."
+  },
+  "knownCardFates": {
+    "ai": [
+      {
+        "beforeInput": 206,
+        "round": 3,
+        "turn": 10,
+        "cardId": "amiba_7.webp",
+        "instanceId": "alien-amiba-7-10",
+        "family": "card_corner",
+        "target": {
+          "cardInstanceId": "alien-amiba-7-10"
+        },
+        "resources": {
+          "credits": 1,
+          "energy": 2,
+          "publicity": 5,
+          "availableData": 0
+        }
+      },
+      {
+        "beforeInput": 309,
+        "round": 4,
+        "turn": 7,
+        "cardId": "chong_2.webp",
+        "instanceId": "alien-chong-2-17",
+        "family": "choose_card",
+        "target": {
+          "choiceId": "income:alien-chong-2-17",
+          "cardInstanceId": "alien-chong-2-17"
+        },
+        "resources": {
+          "credits": 3,
+          "energy": 2,
+          "publicity": 6,
+          "availableData": 0
+        }
+      }
+    ],
+    "teacher": [
+      {
+        "input": 164,
+        "cardId": "amiba_7.webp",
+        "instanceId": "alien-amiba-7-5",
+        "round": 3
+      },
+      {
+        "input": 283,
+        "cardId": "chong_2.webp",
+        "instanceId": "alien-chong-2-8",
+        "round": 4
+      },
+      {
+        "input": 469,
+        "cardId": "amiba_6.webp",
+        "instanceId": "alien-amiba-6-30",
+        "round": 4
+      }
+    ],
+    "limit": "AI Amiba7 corner at206 and Chong2 income at309 replace real data/income uses. Their teacher endgame scores are not freely recoverable; retaining them must fund deployment and replace foregone resources."
+  },
+  "nextSingleControl": {
+    "root": "actual AI104, where blue1-slot2 is legal and evaluated97.75 against selected blue3-slot2 value98",
+    "savedPlans": "both complete existing graph witnesses extracted, ending at own-turn boundary; no new search",
+    "restore": "verified original round1 checkpoint62 from immutable Git, then only original63-103 (41 Native inputs); not executed this unit",
+    "comparison": "one source/RNG/root/knowledge; compare both actual settled asset endpoints and resource uses, then a predeclared common development continuation to test whether the two-data cash delay matters",
+    "noForeknowledge": "Do not use later B101/alien-card identities to decide the earlier root; known current blue rewards and data/cash prerequisites suffice to state the hypothesis.",
+    "constraints": "256 inputs/600ms remains the AI decision gate; diagnostic control gets one bounded Native budget and fixed wall deadline. No production patch, new autonomous game or20-board batch before causal gain/admission.",
+    "stop": "Reject or freeze if the earlier cash purpose does not improve complete assets; do not automatically reopen the late Amiba1/Chong7 or frozen v514 routes."
+  },
+  "methodTrial": {
+    "wallMinutesToClose": 16.10957546631495,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "newNativeInputs": 0,
+    "newAISearches": 0,
+    "newGames": 0,
+    "previousGoalTurnClassification": "progress: corrected Chong7 two-scan witness reaches250 versus272, proposal rejected",
+    "thisGoalTurnClassification": "progress: exact source scoring reconciles112-point gap, proves mark-choice scores are not the primary discrepancy, and locates an earlier concrete cash-slot choice with a verified same-state saved comparison",
+    "diagnosticNotes": "Read-only path/glob probes had errors; no experiment retried. One prelude expected a failed window although shell pipeline status remained open; no window state or deadline was changed by that failed assertion.",
+    "AIQualityImprovementProven": false
+  },
+  "formalScoreUnchanged": 272,
+  "formalWallSecondsPreviouslyMeasured": 16.1,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "sources": {
+    "reports/ai-foundation-20261119/teacher384-ai272-score-source-bridge-20261119-v1.json": "e78a69d01192d7215788f00f76be50f1c4a0d6793304b63075d2cbfd0ca304d7",
+    "reports/ai-foundation-20261119/teacher384-ai272-development-priority-20261119-v1.json": "abe6c614a445bca3169963788e25972a28bdce99f2f37f5e5e8793a56e99b15f",
+    "reports/ai-foundation-20261119/blue-cash-prerequisite-proof-20261119-v1.json": "d8ea402c579eae743430f046aa7199466ad9a280e5063d04dca61fdf02847a35",
+    "reports/ai-foundation-20261119/r2-blue-liquidity-existing-case104-20261119-v1.json.gz": "11e80c05db96cd7be7589b29b2658ccf66f80ad419dc3bbcd186907d57b98bfe"
+  }
+}

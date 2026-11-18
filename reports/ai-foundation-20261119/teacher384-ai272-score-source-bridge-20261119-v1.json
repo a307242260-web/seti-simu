@@ -1,0 +1,503 @@
+{
+  "schemaVersion": "seti-teacher-ai-score-source-bridge-v1",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "seed": "seti-free-analyze-v1",
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "newGames": 0,
+  "players": {
+    "teacher": {
+      "final": {
+        "playerId": "player-white",
+        "baseScore": 239,
+        "tileScore": 107,
+        "cardScore": 38,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 384,
+        "totalScore": 384,
+        "tileScoresById": {
+          "a": 0,
+          "b": 48,
+          "c": 24,
+          "d": 35
+        },
+        "tiles": [
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 8,
+            "score": 48
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 4,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 5,
+            "multiplier": 7,
+            "score": 35
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_7.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "blue",
+              "scorePer": 2
+            },
+            "score": 8
+          },
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 10
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_6.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "yellow",
+              "scorePer": 2
+            },
+            "score": 8
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "scoreSources": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 38,
+        "alienTraceBlueScore": 15,
+        "alienTracePinkScore": 22,
+        "alienTraceYellowScore": 15,
+        "blueTechScore": 40,
+        "cardEffectScore": 0,
+        "cardQuickScore": 4,
+        "industryEffectScore": 0,
+        "initialScore": 6,
+        "landScore": 41,
+        "orbitScore": 3,
+        "scanScore": 21,
+        "taskCardScore": 6,
+        "techBonusScore": 28
+      },
+      "traceCounts": {
+        "blue": 8,
+        "pink": 7,
+        "yellow": 6
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1,
+          "blue3": 4,
+          "blue4": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "blue4": true,
+          "orange1": true,
+          "orange2": true,
+          "orange3": true,
+          "orange4": true,
+          "purple1": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 7,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "completedTaskCount": 6,
+      "hand": [
+        {
+          "id": "card-77-0",
+          "cardId": "dlc_6.png"
+        },
+        {
+          "id": "card-90-0",
+          "cardId": "b_56.webp"
+        },
+        {
+          "id": "card-91-0",
+          "cardId": "b_130.webp"
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp"
+        },
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp"
+        },
+        {
+          "id": "alien-chong-2-8",
+          "cardId": "chong_2.webp"
+        },
+        {
+          "id": "alien-amiba-5-24",
+          "cardId": "amiba_5.webp"
+        },
+        {
+          "id": "alien-amiba-6-30",
+          "cardId": "amiba_6.webp"
+        }
+      ],
+      "sameAssetsFirstSlotTileQuotes": [
+        {
+          "formulaId": "b1",
+          "base": 6,
+          "multiplier": 8,
+          "score": 48
+        },
+        {
+          "formulaId": "d2",
+          "base": 5,
+          "multiplier": 7,
+          "score": 35
+        },
+        {
+          "formulaId": "c1",
+          "base": 6,
+          "multiplier": 4,
+          "score": 24
+        },
+        {
+          "formulaId": "a2",
+          "base": 0,
+          "multiplier": 11,
+          "score": 0
+        }
+      ],
+      "realizedMarksAlreadyMaximizeTheseFinalAssets": true,
+      "nativeFinalScoringRecomputedExactly": true
+    },
+    "ai": {
+      "final": {
+        "playerId": "player-white",
+        "baseScore": 192,
+        "tileScore": 74,
+        "cardScore": 6,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 272,
+        "totalScore": 272,
+        "tileScoresById": {
+          "a": 22,
+          "b": 24,
+          "c": 0,
+          "d": 28
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 8,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 4,
+            "multiplier": 7,
+            "score": 28
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "scoreSources": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 32,
+        "alienTraceBlueScore": 15,
+        "alienTracePinkScore": 14,
+        "alienTraceYellowScore": 13,
+        "blueTechScore": 28,
+        "cardEffectScore": 0,
+        "cardQuickScore": 2,
+        "industryEffectScore": 0,
+        "initialScore": 6,
+        "landScore": 26,
+        "orbitScore": 13,
+        "scanScore": 11,
+        "taskCardScore": 10,
+        "techBonusScore": 22
+      },
+      "traceCounts": {
+        "blue": 6,
+        "pink": 5,
+        "yellow": 3
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange2": true,
+          "orange3": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "completedTaskCount": 4,
+      "hand": [
+        {
+          "id": "card-77-0",
+          "cardId": "dlc_6.png"
+        }
+      ],
+      "reserved": [
+        {
+          "id": "card-51-0",
+          "cardId": "dlc_31.png"
+        },
+        {
+          "id": "alien-amiba-5-12",
+          "cardId": "amiba_5.webp"
+        }
+      ],
+      "sameAssetsFirstSlotTileQuotes": [
+        {
+          "formulaId": "d2",
+          "base": 4,
+          "multiplier": 7,
+          "score": 28
+        },
+        {
+          "formulaId": "b1",
+          "base": 3,
+          "multiplier": 8,
+          "score": 24
+        },
+        {
+          "formulaId": "a2",
+          "base": 2,
+          "multiplier": 11,
+          "score": 22
+        },
+        {
+          "formulaId": "c1",
+          "base": 4,
+          "multiplier": 4,
+          "score": 16
+        }
+      ],
+      "realizedMarksAlreadyMaximizeTheseFinalAssets": true,
+      "nativeFinalScoringRecomputedExactly": true
+    }
+  },
+  "sources": {
+    "seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json": "b8d6e45acb87828a8e2b0113323a69f3aea90f3a649287972137d344e42ab03e",
+    "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-proof-20261118-v1.json": "c8198312a2bd76d773ff68cc0689ffd15ba9c6c71904777e0bb63cd405e88448",
+    "reports/ai-foundation-20261119/r4-step311-order-baseline-checkpoint-20261119-v1.json.gz": "83cf3df2b6ac52c188a200ad195135ed4535614a20c8c008ddefce4a86194295"
+  },
+  "gap": {
+    "total": 112,
+    "board": 47,
+    "endgame": 65,
+    "commonBalanceTraceTile": 24,
+    "commonTechnologyTile": 7,
+    "differentSelectedTiles": 2,
+    "traceEndgameCards": 26,
+    "landingEndgameCard": 6
+  },
+  "boardSourceDeltas": [
+    {
+      "key": "landScore",
+      "teacher": 41,
+      "ai": 26,
+      "difference": 15
+    },
+    {
+      "key": "blueTechScore",
+      "teacher": 40,
+      "ai": 28,
+      "difference": 12
+    },
+    {
+      "key": "scanScore",
+      "teacher": 21,
+      "ai": 11,
+      "difference": 10
+    },
+    {
+      "key": "alienTracePinkScore",
+      "teacher": 22,
+      "ai": 14,
+      "difference": 8
+    },
+    {
+      "key": "alienEffectScore",
+      "teacher": 38,
+      "ai": 32,
+      "difference": 6
+    },
+    {
+      "key": "techBonusScore",
+      "teacher": 28,
+      "ai": 22,
+      "difference": 6
+    },
+    {
+      "key": "alienTraceYellowScore",
+      "teacher": 15,
+      "ai": 13,
+      "difference": 2
+    },
+    {
+      "key": "cardQuickScore",
+      "teacher": 4,
+      "ai": 2,
+      "difference": 2
+    },
+    {
+      "key": "alienCardQuickScore",
+      "teacher": 0,
+      "ai": 0,
+      "difference": 0
+    },
+    {
+      "key": "alienTraceBlueScore",
+      "teacher": 15,
+      "ai": 15,
+      "difference": 0
+    },
+    {
+      "key": "cardEffectScore",
+      "teacher": 0,
+      "ai": 0,
+      "difference": 0
+    },
+    {
+      "key": "industryEffectScore",
+      "teacher": 0,
+      "ai": 0,
+      "difference": 0
+    },
+    {
+      "key": "initialScore",
+      "teacher": 6,
+      "ai": 6,
+      "difference": 0
+    },
+    {
+      "key": "taskCardScore",
+      "teacher": 6,
+      "ai": 10,
+      "difference": -4
+    },
+    {
+      "key": "orbitScore",
+      "teacher": 3,
+      "ai": 13,
+      "difference": -10
+    }
+  ],
+  "interpretation": {
+    "supported": "50 of the65 endgame-point difference is realized alien-trace balance and trace-card scoring, while direct total-technology-tile difference is7. Both selected three final tiles already maximize their own realized final assets.",
+    "notCausal": "These are accounting differences between divergent trajectories, not recoverable effects of a single policy change. Static final-tile quotes do not prove an alternate mark sequence was possible or optimal earlier."
+  }
+}
