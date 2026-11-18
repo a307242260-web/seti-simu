@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v11",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v10.json",
+  "publishedParent": "bcf8bc99f6eaf6a9bab36800c37888150f492f44",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v494/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets; fixed budgets and reproducibility remain required.",
+  "previousGoalTurnClassification": "no progress toward AI objective: status and disk audit only; revalidated live files and took next safe implementation action",
+  "thisGoalTurnClassification": "progress: fixed Native trace/alien-card queue protocol implemented, 230 full Native envelope oracles and hidden information controls verified; paired logical graph unchanged with 203 fewer Native inputs than v492; CPU bottleneck located",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "native-queue-candidate-findings-20261118-v1.json",
+  "unpassedGate": {
+    "evidence": "alien-queue-point289-comparison-20261118-v2.json.gz",
+    "before": {
+      "native": 379,
+      "ms": 2589.353209,
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "complete": true,
+      "sourceSha256": "65b613ce0f770b65fa4bf3d4225877dc9e0fa5bcbaab0ec2af6e333f0e72d711"
+    },
+    "after": {
+      "native": 278,
+      "ms": 2463.05275,
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "complete": true,
+      "sourceSha256": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e"
+    },
+    "fullLogicalGraphsAndRootsExact": true,
+    "allowedDiagnosticDifference": "card pick cache hit/miss only",
+    "budgetPassed": false,
+    "limits": {
+      "native": 256,
+      "ms": 600
+    },
+    "timingLimit": "one process before/after measurement; not a general cold-start speed claim"
+  },
+  "next": [
+    "Profile conditional B117 claim timing equivalence proof (inclusive sample approximately379ms, overlapping).",
+    "Reduce state copy/serialization and repeat query costs only with immutable ownership/state identity proof.",
+    "Close remaining single-decision 256-input/600ms gate before any new autonomous full or batch run.",
+    "Then resume R4 same-root teaching and round-end assets comparison without changing first two rounds."
+  ],
+  "remainingNativeDistribution": "native-queue-candidate-findings-20261118-v1.json#remainingNativeFallbacks"
+}

@@ -1,0 +1,30 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/decision-search.test.js:581:74)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=2 failed=1 total=3 time=6.14s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER policy/decision-search tests=2
+FAIL randomizer/game/ai/decision-search.test.js status=1 signal=none

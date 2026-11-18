@@ -1,0 +1,8 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":11,"maxMs":48.60775000000004,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":11,"maxMs":24.705291999999986,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":22.38608299999987,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":22.091417000000092,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":11,"maxMs":20.862625000000207,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":11,"maxMs":20.8412500000004,"actualInputs":12}]}
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+SUMMARY unit passed=4 failed=0 total=4 time=14.82s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=2
+OWNER policy/decision-search tests=2

@@ -1,0 +1,3 @@
+{"kind":"before","sourceSha256":"65b613ce0f770b65fa4bf3d4225877dc9e0fa5bcbaab0ec2af6e333f0e72d711","actionId":"land:d5ee03a2","value":235.5,"native":379,"ms":2548.9338749999997,"complete":true,"unresolved":[]}
+{"kind":"after","sourceSha256":"c584967baa264c7cd14d45e2ce711fb2c8657a3a56ab5d3f008f4e1df1dcaead","actionId":"land:d5ee03a2","value":235.5,"native":278,"ms":2533.954666,"complete":true,"unresolved":[]}
+{"fullGraphsExact":true,"native":278,"millisecondsBefore":2548.9338749999997,"millisecondsAfter":2533.954666,"budgetPassed":false}

@@ -1,0 +1,251 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v494/movementv8/valuev71",
+  "promoted": false,
+  "source": "native-queue-candidate-source-20261118-v1.json",
+  "formalAIUnchanged": {
+    "score": 272,
+    "runtime": "v485/valuev71",
+    "gameSeconds": 16.1
+  },
+  "teacherLegalReference": 384,
+  "scope": "Same-root bounded fixed reward queue execution; no policy or value change, no full game or 20-board batch",
+  "nativeEnvelopeVerification": {
+    "plainPinkCases": 136,
+    "alienCardCases": 94,
+    "canonicalization": "sort object keys, parse committedState, rename only current sessionId and effect/group/decision references; every other field exact including RNG, versions, queue and journal",
+    "blindDeckRotations": 4,
+    "blindVisibleFactsAndContinuationEqual": true,
+    "sourceRootAndRngPreserved": true
+  },
+  "pairedFinalSingleDecision": {
+    "evidence": "alien-queue-point289-comparison-20261118-v2.json.gz",
+    "before": {
+      "native": 379,
+      "ms": 2589.353209,
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "complete": true,
+      "sourceSha256": "65b613ce0f770b65fa4bf3d4225877dc9e0fa5bcbaab0ec2af6e333f0e72d711"
+    },
+    "after": {
+      "native": 278,
+      "ms": 2463.05275,
+      "actionId": "land:d5ee03a2",
+      "value": 235.5,
+      "complete": true,
+      "sourceSha256": "725c42f8fb75a82d64ed7c913980af092b26e53c6bd62510d11058084186f73e"
+    },
+    "fullLogicalGraphsAndRootsExact": true,
+    "allowedDiagnosticDifference": "card pick cache hit/miss only",
+    "budgetPassed": false,
+    "limits": {
+      "native": 256,
+      "ms": 600
+    },
+    "timingLimit": "one process before/after measurement; not a general cold-start speed claim"
+  },
+  "progressAcrossProtocols": {
+    "v492Native": 481,
+    "v493Native": 379,
+    "v494Native": 278,
+    "nativeInputsSaved": 203,
+    "percentSaved": 42.2,
+    "v492vs493Evidence": "plain-trace-point289-comparison-20261118-v1.json.gz"
+  },
+  "verification": {
+    "node": 19,
+    "browserHeadless": 10,
+    "valueInputAudit": 67,
+    "sealedSourceTests": 4,
+    "restoredSourceFiles": 25,
+    "unchangedBaseFiles": 525
+  },
+  "initialFailuresAndResolution": [
+    "Shared scan preview deck was frozen; own deck before Native refill/cached assignment. Exact helper transaction fixture and graph parity rerun.",
+    "General alien continuation now follows existing specialized display helper, preserving faster established paths and their proofs.",
+    "Two historical test fixtures missing in shared worktree; restored original Git blobs only inside isolated verification trees, no shared worktree restoration."
+  ],
+  "cpuEvidence": "alien-queue-cpu-summary-20261118-v1.json",
+  "next": [
+    "Profile conditional B117 claim timing equivalence proof (inclusive sample approximately379ms, overlapping).",
+    "Reduce state copy/serialization and repeat query costs only with immutable ownership/state identity proof.",
+    "Close remaining single-decision 256-input/600ms gate before any new autonomous full or batch run.",
+    "Then resume R4 same-root teaching and round-end assets comparison without changing first two rounds."
+  ],
+  "remainingNativeFallbacks": {
+    "evidence": "queue-native-fallbacks-20261118-v1.json.gz",
+    "native": 278,
+    "recordedCalls": 278,
+    "byFamilyHeadAndTrace": [
+      {
+        "family": "choose_target",
+        "head": "science_domain_alien_trace",
+        "traceType": "yellow",
+        "count": 62
+      },
+      {
+        "family": "play_card",
+        "head": null,
+        "traceType": null,
+        "count": 22
+      },
+      {
+        "family": "choose_target",
+        "head": "science_domain_place_data",
+        "traceType": null,
+        "count": 21
+      },
+      {
+        "family": "choose_target",
+        "head": "science_domain_scan_action_4",
+        "traceType": null,
+        "count": 21
+      },
+      {
+        "family": "choose_card",
+        "head": "residual_alien_card_decision",
+        "traceType": null,
+        "count": 21
+      },
+      {
+        "family": "choose_card",
+        "head": "science_domain_pick_card",
+        "traceType": null,
+        "count": 21
+      },
+      {
+        "family": "choose_target",
+        "head": "probe_land_choice",
+        "traceType": null,
+        "count": 15
+      },
+      {
+        "family": "end_turn",
+        "head": null,
+        "traceType": null,
+        "count": 11
+      },
+      {
+        "family": "choose_payment",
+        "head": "probe_turn_move_payment",
+        "traceType": null,
+        "count": 10
+      },
+      {
+        "family": "land",
+        "head": null,
+        "traceType": null,
+        "count": 10
+      },
+      {
+        "family": "choose_card",
+        "head": "science_domain_income",
+        "traceType": null,
+        "count": 9
+      },
+      {
+        "family": "choose_target",
+        "head": "card_play_domain_effect:decision:chong_land_for_pickup",
+        "traceType": null,
+        "count": 6
+      },
+      {
+        "family": "choose_target",
+        "head": "science_domain_alien_trace",
+        "traceType": "pink",
+        "count": 6
+      },
+      {
+        "family": "pass",
+        "head": null,
+        "traceType": null,
+        "count": 5
+      },
+      {
+        "family": "research_tech",
+        "head": null,
+        "traceType": null,
+        "count": 5
+      },
+      {
+        "family": "scan",
+        "head": null,
+        "traceType": null,
+        "count": 5
+      },
+      {
+        "family": "choose_target",
+        "head": "science_domain_scan_step",
+        "traceType": null,
+        "count": 5
+      },
+      {
+        "family": "quick_trade",
+        "head": null,
+        "traceType": null,
+        "count": 3
+      },
+      {
+        "family": "analyze",
+        "head": null,
+        "traceType": null,
+        "count": 3
+      },
+      {
+        "family": "choose_payment",
+        "head": "standard_action_session_decision",
+        "traceType": null,
+        "count": 3
+      },
+      {
+        "family": "choose_target",
+        "head": "science_domain_alien_trace",
+        "traceType": "blue",
+        "count": 3
+      },
+      {
+        "family": "choose_target",
+        "head": "card_play_domain_effect:decision:chong_orbit_or_land_for_pickup",
+        "traceType": null,
+        "count": 3
+      },
+      {
+        "family": "choose_card",
+        "head": "probe_turn_pass_discard",
+        "traceType": null,
+        "count": 2
+      },
+      {
+        "family": "choose_card",
+        "head": "standard_action_session_decision",
+        "traceType": null,
+        "count": 2
+      },
+      {
+        "family": "industry",
+        "head": null,
+        "traceType": null,
+        "count": 1
+      },
+      {
+        "family": "place_data",
+        "head": null,
+        "traceType": null,
+        "count": 1
+      },
+      {
+        "family": "move",
+        "head": null,
+        "traceType": null,
+        "count": 1
+      },
+      {
+        "family": "complete_task",
+        "head": null,
+        "traceType": null,
+        "count": 1
+      }
+    ]
+  }
+}

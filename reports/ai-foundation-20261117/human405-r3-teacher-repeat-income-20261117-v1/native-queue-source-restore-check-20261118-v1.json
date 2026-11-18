@@ -1,0 +1,12 @@
+{
+  "base": "bcf8bc99f6eaf6a9bab36800c37888150f492f44",
+  "candidate": "v494",
+  "sourceFilesVerified": 25,
+  "unchangedBaseFiles": 525,
+  "sealedRoot": "/private/tmp/seti-native-queue-sealed-20261118-ba38oya6",
+  "testDependenciesRestoredFromBase": [
+    "reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz",
+    "reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz"
+  ],
+  "sharedRuntimePromoted": false
+}

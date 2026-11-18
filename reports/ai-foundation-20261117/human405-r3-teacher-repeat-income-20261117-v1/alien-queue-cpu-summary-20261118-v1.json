@@ -1,0 +1,430 @@
+{
+  "scope": "Single decision CPU sampling; includes startup. Inclusive times overlap and must not be added. Diagnostic source prior to refill-copy and specialized-fast-path ordering fix; physical graph unchanged in final paired comparison.",
+  "sourceOverride": "alien-queue-benchmark-before-refill-isolation-20261118-v1.js.gz",
+  "profile": "alien-queue-point289-cpu-20261118-v1.cpuprofile.gz",
+  "self": [
+    {
+      "function": "structuredClone",
+      "source": "node:internal/worker/js_transferable",
+      "line": 112,
+      "sampledMs": 272.418
+    },
+    {
+      "function": "(garbage collector)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 247.624
+    },
+    {
+      "function": "copy",
+      "source": "game/state/state-store.js",
+      "line": 46,
+      "sampledMs": 192.079
+    },
+    {
+      "function": "freeze",
+      "source": "game/ai/analysis-port.js",
+      "line": 131,
+      "sampledMs": 86.669
+    },
+    {
+      "function": "serializeState",
+      "source": "game/ai/analysis-port.js",
+      "line": 263,
+      "sampledMs": 78.711
+    },
+    {
+      "function": "immutableCapitalInput",
+      "source": "game/ai/resource-demand.js",
+      "line": 175,
+      "sampledMs": 54.039
+    },
+    {
+      "function": "normalizeObject",
+      "source": "game/ai/analysis-port.js",
+      "line": 233,
+      "sampledMs": 47.541
+    },
+    {
+      "function": "expand",
+      "source": "game/ai/analysis-port.js",
+      "line": 2259,
+      "sampledMs": 40.752
+    },
+    {
+      "function": "normalize",
+      "source": "game/ai/analysis-port.js",
+      "line": 212,
+      "sampledMs": 38.585
+    },
+    {
+      "function": "readFileSync",
+      "source": "node:fs",
+      "line": 433,
+      "sampledMs": 37.669
+    },
+    {
+      "function": "resourceSpec",
+      "source": "game/ai/analysis-port.js",
+      "line": 4169,
+      "sampledMs": 36.002
+    },
+    {
+      "function": "stableSerialize",
+      "source": "game/actions/standard-action.js",
+      "line": 44,
+      "sampledMs": 34.624
+    },
+    {
+      "function": "searchDecision",
+      "source": "game/ai/decision-search.js",
+      "line": 14,
+      "sampledMs": 31.75
+    },
+    {
+      "function": "findParentPackageJSON",
+      "source": "node:internal/modules/package_json_reader",
+      "line": 142,
+      "sampledMs": 31.291
+    },
+    {
+      "function": "wrapSafe",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 1596,
+      "sampledMs": 30.704
+    },
+    {
+      "function": "stableHash",
+      "source": "game/actions/standard-action.js",
+      "line": 57,
+      "sampledMs": 26.292
+    },
+    {
+      "function": "probeStructureKey",
+      "source": "game/production-kernel.js",
+      "line": 736,
+      "sampledMs": 25.21
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "source": "game/production-kernel.js",
+      "line": 627,
+      "sampledMs": 25.084
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "source": "game/production-kernel.js",
+      "line": 906,
+      "sampledMs": 21.585
+    },
+    {
+      "function": "compileForInternalLoader",
+      "source": "node:internal/bootstrap/realm",
+      "line": 385,
+      "sampledMs": 20.875
+    },
+    {
+      "function": "buildProbeCandidateStructures",
+      "source": "game/production-kernel.js",
+      "line": 749,
+      "sampledMs": 18.958
+    },
+    {
+      "function": "",
+      "source": "file:///Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/profile-alien-queue-point289-20261118-v1.cjs",
+      "line": 1,
+      "sampledMs": 18.083
+    },
+    {
+      "function": "deepFreeze",
+      "source": "game/rule-composition.js",
+      "line": 42,
+      "sampledMs": 17.96
+    },
+    {
+      "function": "evaluateMission",
+      "source": "game/ai/probe-capital.js",
+      "line": 477,
+      "sampledMs": 17.917
+    },
+    {
+      "function": "add",
+      "source": "game/ai/decision-search.js",
+      "line": 269,
+      "sampledMs": 16.25
+    },
+    {
+      "function": "plan",
+      "source": "game/ai/goal-movement.js",
+      "line": 72,
+      "sampledMs": 15.041
+    },
+    {
+      "function": "physicalBucket",
+      "source": "game/ai/analysis-port.js",
+      "line": 344,
+      "sampledMs": 14.875
+    },
+    {
+      "function": "exactClaimState",
+      "source": "game/ai/analysis-port.js",
+      "line": 7903,
+      "sampledMs": 14.624
+    },
+    {
+      "function": "physicalCollisionKey",
+      "source": "game/ai/analysis-port.js",
+      "line": 362,
+      "sampledMs": 13.625
+    },
+    {
+      "function": "previewPlainPinkTrace",
+      "source": "game/effects/residual-domain-session.js",
+      "line": 1851,
+      "sampledMs": 13.624
+    },
+    {
+      "function": "augmentEffectResult",
+      "source": "game/effects/residual-domain-session.js",
+      "line": 1530,
+      "sampledMs": 12.667
+    },
+    {
+      "function": "nodeIdentity",
+      "source": "game/ai/analysis-port.js",
+      "line": 402,
+      "sampledMs": 12.25
+    },
+    {
+      "function": "stat",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 251,
+      "sampledMs": 10.711
+    },
+    {
+      "function": "collectPlanetLocations",
+      "source": "solar-system/core.js",
+      "line": 666,
+      "sampledMs": 10.501
+    },
+    {
+      "function": "normalizeDescriptor",
+      "source": "game/actions/standard-action.js",
+      "line": 88,
+      "sampledMs": 10.5
+    }
+  ],
+  "inclusive": [
+    {
+      "function": "(root)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 2895.792
+    },
+    {
+      "function": "executeUserEntryPoint",
+      "source": "node:internal/modules/run_main",
+      "line": 157,
+      "sampledMs": 2630.501
+    },
+    {
+      "function": "",
+      "source": "node:internal/main/run_main_module",
+      "line": 1,
+      "sampledMs": 2630.501
+    },
+    {
+      "function": "Module._load",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 1169,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "traceSync",
+      "source": "node:diagnostics_channel",
+      "line": 326,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "wrapModuleLoad",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 230,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "",
+      "source": "file:///Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/profile-alien-queue-point289-20261118-v1.cjs",
+      "line": 1,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "Module._compile",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 1656,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "Module._extensions..js",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 1804,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "Module.load",
+      "source": "node:internal/modules/cjs/loader",
+      "line": 1432,
+      "sampledMs": 2628.96
+    },
+    {
+      "function": "automatic",
+      "source": "file:///Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-root-harness-20261118-v1.cjs",
+      "line": 59,
+      "sampledMs": 2450.793
+    },
+    {
+      "function": "decide",
+      "source": "game/ai/search-agent.js",
+      "line": 34,
+      "sampledMs": 2438.835
+    },
+    {
+      "function": "searchDecision",
+      "source": "game/ai/decision-search.js",
+      "line": 14,
+      "sampledMs": 2419.503
+    },
+    {
+      "function": "expand",
+      "source": "game/ai/analysis-port.js",
+      "line": 2259,
+      "sampledMs": 976.992
+    },
+    {
+      "function": "add",
+      "source": "game/ai/decision-search.js",
+      "line": 269,
+      "sampledMs": 930.671
+    },
+    {
+      "function": "expandWithCardPick",
+      "source": "game/ai/analysis-port.js",
+      "line": 2935,
+      "sampledMs": 619.576
+    },
+    {
+      "function": "redundantQuietFinalClaim",
+      "source": "game/ai/analysis-port.js",
+      "line": 7970,
+      "sampledMs": 378.501
+    },
+    {
+      "function": "valueForNode",
+      "source": "game/ai/decision-search.js",
+      "line": 57,
+      "sampledMs": 365.501
+    },
+    {
+      "function": "expandResourcePlan",
+      "source": "game/ai/analysis-port.js",
+      "line": 4664,
+      "sampledMs": 330.419
+    },
+    {
+      "function": "finishChild",
+      "source": "game/ai/analysis-port.js",
+      "line": 6201,
+      "sampledMs": 325.539
+    },
+    {
+      "function": "resourceSpec",
+      "source": "game/ai/analysis-port.js",
+      "line": 4169,
+      "sampledMs": 287.082
+    },
+    {
+      "function": "structuredClone",
+      "source": "node:internal/worker/js_transferable",
+      "line": 112,
+      "sampledMs": 272.418
+    },
+    {
+      "function": "(garbage collector)",
+      "source": "",
+      "line": 0,
+      "sampledMs": 247.624
+    },
+    {
+      "function": "runWithWorkingState",
+      "source": "game/production-kernel.js",
+      "line": 1669,
+      "sampledMs": 247.243
+    },
+    {
+      "function": "runWithWorkingStateContext",
+      "source": "game/rule-composition.js",
+      "line": 407,
+      "sampledMs": 247.243
+    },
+    {
+      "function": "get identity",
+      "source": "game/ai/analysis-port.js",
+      "line": 632,
+      "sampledMs": 240.754
+    },
+    {
+      "function": "identity",
+      "source": "game/ai/analysis-port.js",
+      "line": 11062,
+      "sampledMs": 240.754
+    },
+    {
+      "function": "quietFinalValue",
+      "source": "game/ai/analysis-port.js",
+      "line": 10978,
+      "sampledMs": 234.29
+    },
+    {
+      "function": "quietLeaf",
+      "source": "game/ai/decision-search.js",
+      "line": 40,
+      "sampledMs": 234.29
+    },
+    {
+      "function": "get physicalId",
+      "source": "game/ai/analysis-port.js",
+      "line": 627,
+      "sampledMs": 225.546
+    },
+    {
+      "function": "internPhysicalIdentity",
+      "source": "game/ai/analysis-port.js",
+      "line": 384,
+      "sampledMs": 224.004
+    },
+    {
+      "function": "knownCargoFuture",
+      "source": "game/ai/analysis-port.js",
+      "line": 4914,
+      "sampledMs": 220.747
+    },
+    {
+      "function": "readActions",
+      "source": "game/ai/analysis-port.js",
+      "line": 6243,
+      "sampledMs": 210.745
+    },
+    {
+      "function": "enumerateActions",
+      "source": "game/rule-composition.js",
+      "line": 808,
+      "sampledMs": 207.619
+    },
+    {
+      "function": "",
+      "source": "game/rule-composition.js",
+      "line": 815,
+      "sampledMs": 206.16
+    }
+  ],
+  "next": "Profile conditional final-task timing proof and state copying/identity before changing policy or running any full game."
+}

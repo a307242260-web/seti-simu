@@ -1,0 +1,92 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+{"analysisBeforeOrbit":true,"hiddenWorlds":3,"valueChecks":104,"futureValueChecks":5,"rows":[{"index":0,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":49.237791999999985},{"index":1,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":41.72000000000003},{"index":3,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":39.974459000000024}]}
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/search-agent.js:62
+        throw error;
+        ^
+
+TypeError: Cannot assign to read only property '0' of object '[object Array]'
+    at Array.shift (<anonymous>)
+    at takeNextEntryForDraw (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/cards/deck.js:487:54)
+    at Object.replenishPublicSlot (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/cards/deck.js:606:20)
+    at refillQuietScan4 (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/analysis-port.js:1281:18)
+    at prepareQuietScienceContinuation (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/analysis-port.js:1418:15)
+    at previewQuietSpecifiedScan (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/analysis-port.js:1349:14)
+    at expand (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/analysis-port.js:2514:23)
+    at Object.expandResourcePlan (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/analysis-port.js:4705:54)
+    at Object.searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/decision-search.js:749:28)
+    at Object.decide (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/search-agent.js:42:31)
+
+Node.js v22.22.0
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/decision-search.test.js:544:74)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz'
+}
+
+Node.js v22.22.0
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+{"fundedFreePrefix":true,"nativePrintedLanding":13,"actualRemainingEnergy":1,"noInterveningRotation":true,"rootAndRngIsolated":true}
+{"fundedOneStep":true,"readySectorClosures":0,"printedLanding":13,"extraLandingEnergy":0,"hiddenDeckIndependent":true}
+{"knownDataScanCycle":true,"valueChecks":190,"futureChecks":8,"rows":[{"name":"beforePlay","index":0,"n":81,"extra":38,"ms":103.99904100000003,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":1,"n":81,"extra":38,"ms":99.99958300000003,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":3,"n":81,"extra":38,"ms":87.96179199999983,"value":143.25,"previous":141.58333333333334},{"name":"beforeDiscard","index":0,"n":42,"extra":37,"ms":37.20437500000003,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":1,"n":42,"extra":37,"ms":37.58425000000011,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":3,"n":42,"extra":37,"ms":36.327208000000155,"value":143.25,"previous":138.16666666666666}]}
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":11,"maxMs":46.91720800000002,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":11,"maxMs":24.23291699999993,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":21.719833000000108,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":19.633749999999964,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":11,"maxMs":20.49070900000015,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":11,"maxMs":20.522457999999915,"actualInputs":12}]}
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/randomizer/game/ai/resource-demand.test.js:156:100)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-alien-queue-20261118-j_khui09/reports/ai-foundation-20261113/prepass-funded-landing/board19-funded-venus-20261113-v1.json.gz'
+}
+
+Node.js v22.22.0
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+generic card orbit: Production printed rewards, grantRewards=false and following effects pass
+card play domain production composition tests passed
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+planet stats tests passed
+SUMMARY unit passed=16 failed=3 total=19 time=24.31s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=3
+OWNER architecture/effect-session tests=2
+OWNER policy/decision-search tests=11
+OWNER rules/actions tests=1
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
+FAIL randomizer/game/ai/chong-pickup-information-boundary.test.js status=1 signal=none
+FAIL randomizer/game/ai/decision-search.test.js status=1 signal=none
+FAIL randomizer/game/ai/resource-demand.test.js status=1 signal=none

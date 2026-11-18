@@ -1,0 +1,15 @@
+{
+  "baseCandidate": "native-queue-candidate-source-20261118-v1.json",
+  "v493Overrides": {
+    "queue-benchmark-v493-analysis-port-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/analysis-port.js",
+      "uncompressedSha256": "65b613ce0f770b65fa4bf3d4225877dc9e0fa5bcbaab0ec2af6e333f0e72d711"
+    },
+    "queue-benchmark-v493-decision-search-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/decision-search.js",
+      "uncompressedSha256": "4fb34fe0a6b103357ec8e1f162f73fd5857e46ab47697316810247818f266f55"
+    }
+  },
+  "v494PriorRefillIsolation": "alien-queue-benchmark-before-refill-isolation-20261118-v1.js.gz",
+  "priorAnalysisSha256": "c584967baa264c7cd14d45e2ce711fb2c8657a3a56ab5d3f008f4e1df1dcaead"
+}
