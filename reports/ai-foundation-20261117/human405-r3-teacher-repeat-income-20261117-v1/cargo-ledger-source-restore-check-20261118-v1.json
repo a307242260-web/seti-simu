@@ -1,0 +1,8 @@
+{
+  "base": "e411689d1b469dacac6d54a7718b7bb9708dda96",
+  "candidate": "v498/movementv8/valuev71",
+  "sourceFilesVerified": 29,
+  "unchangedBaseFiles": 524,
+  "sealedRoot": "/private/tmp/seti-cargo-ledger-sealed-20261118-64curgpw",
+  "runtimePromoted": false
+}

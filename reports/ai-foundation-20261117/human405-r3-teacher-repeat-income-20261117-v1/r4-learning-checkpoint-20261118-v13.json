@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v13",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v12.json",
+  "publishedParent": "e411689d1b469dacac6d54a7718b7bb9708dda96",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v498/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets; fixed budgets and reproducibility remain required.",
+  "previousGoalTurnClassification": "progress: 234 Native inputs with complete graph parity and full transaction proof; time still fails",
+  "thisGoalTurnClassification": "progress: measured zero identical cargo quote input repeats, rejected unsupported cache, eliminated1477 ledger evaluations with exact paired graph parity and existing private copier; verification complete for unpromoted candidate",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "cargo-ledger-candidate-findings-20261118-v1.json",
+  "gate": {
+    "nativeActual": 234,
+    "nativeLimit": 256,
+    "nativePassed": true,
+    "millisecondsActual": 2202.7198330000006,
+    "millisecondsLimit": 600,
+    "timePassed": false,
+    "allPassed": false,
+    "scope": "independent paired single-point processes; not a general cold-start claim"
+  },
+  "next": [
+    "Profile closed post-main states with only task/end-turn alternatives and their resource reachability requirements; examine existing resource caps before generating early-claim proof nodes.",
+    "Preserve required candidate coverage, exact state equivalence and Native resource feasibility. Do not replace proof by an arbitrary leaf/node cap.",
+    "After the single-point time gate passes, revalidate fixed roots, preserve first two rounds, then resume R4 teaching comparisons and unique autonomous game."
+  ]
+}

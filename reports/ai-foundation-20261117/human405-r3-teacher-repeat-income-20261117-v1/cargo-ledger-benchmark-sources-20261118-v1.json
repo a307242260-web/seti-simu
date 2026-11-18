@@ -1,0 +1,14 @@
+{
+  "finalSource": "cargo-ledger-candidate-source-20261118-v1.json",
+  "v496Source": "yellow-trace-candidate-source-20261118-v1.json",
+  "v497Overrides": {
+    "cargo-ledger-benchmark-v497-analysis-port-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/analysis-port.js",
+      "uncompressedSha256": "2dd84989c97e186bbbedb97af96776fed95836f753045b3e4f2847b7f5df1548"
+    },
+    "cargo-ledger-benchmark-v497-decision-search-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/decision-search.js",
+      "uncompressedSha256": "7ef79966b1f13bea7da89a2f4bded7a958ab47771930f5fc171f4e39d511aebd"
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v498/movementv8/valuev71",
+  "promoted": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "scope": "reuse exact Native ledger results, defer unused ledger work and use existing exact fork copier on same private write slices; no policy/value/search candidate changes",
+  "rejectedCache": {
+    "evidence": "cargo-quote-repeat-profile-20261118-v1.json.gz",
+    "summary": {
+      "calls": 1269,
+      "unique": 1269,
+      "repeat": 0,
+      "repeatMs": 0,
+      "supported": 736,
+      "frozen": 1168
+    },
+    "conclusion": "1269 calls have no identical state/known-set/forbidden-coordinate object input; no wider cache added"
+  },
+  "ledgerReuse": {
+    "before": {
+      "native": 234,
+      "ms": 2444.527042,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "d7990e3a2e9a06cca82a80c6c8de8ea966476f45741d0cd6f368183be480ae85",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "78767a931415fdda75b0f71a944f62ec8bb073eac29dfb9dc99139004caae1af"
+      }
+    },
+    "after": {
+      "native": 234,
+      "ms": 2300.819542,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "2dd84989c97e186bbbedb97af96776fed95836f753045b3e4f2847b7f5df1548",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "7ef79966b1f13bea7da89a2f4bded7a958ab47771930f5fc171f4e39d511aebd"
+      }
+    },
+    "allRootsAndLogicalGraphExact": true,
+    "evidence": "cargo-ledger-point289-comparison-20261118-v1.json.gz"
+  },
+  "privateCopyAndLazyBeforeLedger": {
+    "before": {
+      "native": 234,
+      "ms": 2348.402709,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "2dd84989c97e186bbbedb97af96776fed95836f753045b3e4f2847b7f5df1548",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "7ef79966b1f13bea7da89a2f4bded7a958ab47771930f5fc171f4e39d511aebd"
+      }
+    },
+    "after": {
+      "native": 234,
+      "ms": 2202.7198330000006,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "650ed81fd9f63ede73e042bd00ab7abfd8a5a3e33778eb1e613d16a6b642b552",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "d76dbdaa29a5dfe7f704c22902710d0dbb9774799f6986d61013b98b40c04f47"
+      }
+    },
+    "allRootsAndLogicalGraphExact": true,
+    "evidence": "cargo-private-copy-point289-comparison-20261118-v1.json.gz"
+  },
+  "ledgerEvaluationCounts": {
+    "kind": "single-decision exact Native cargo ledger invocation count; no timing admission or game",
+    "rows": [
+      {
+        "label": "before",
+        "sourceSha256": "d7990e3a2e9a06cca82a80c6c8de8ea966476f45741d0cd6f368183be480ae85",
+        "native": 234,
+        "value": 235.5,
+        "ledgerEvaluations": 2949
+      },
+      {
+        "label": "after",
+        "sourceSha256": "650ed81fd9f63ede73e042bd00ab7abfd8a5a3e33778eb1e613d16a6b642b552",
+        "native": 234,
+        "value": 235.5,
+        "ledgerEvaluations": 1472
+      }
+    ],
+    "saved": 1477,
+    "rootAndRngPreserved": true
+  },
+  "gate": {
+    "nativeActual": 234,
+    "nativeLimit": 256,
+    "nativePassed": true,
+    "millisecondsActual": 2202.7198330000006,
+    "millisecondsLimit": 600,
+    "timePassed": false,
+    "allPassed": false,
+    "scope": "independent paired single-point processes; not a general cold-start claim"
+  },
+  "verification": {
+    "node": 22,
+    "headlessBrowser": 11,
+    "valueInputAudit": 67,
+    "sealedSourceTests": 3,
+    "restoredSourceFiles": 29,
+    "unchangedBaseFiles": 524
+  },
+  "source": "cargo-ledger-candidate-source-20261118-v1.json",
+  "next": [
+    "Profile closed post-main states with only task/end-turn alternatives and their resource reachability requirements; examine existing resource caps before generating early-claim proof nodes.",
+    "Preserve required candidate coverage, exact state equivalence and Native resource feasibility. Do not replace proof by an arbitrary leaf/node cap.",
+    "After the single-point time gate passes, revalidate fixed roots, preserve first two rounds, then resume R4 teaching comparisons and unique autonomous game."
+  ]
+}

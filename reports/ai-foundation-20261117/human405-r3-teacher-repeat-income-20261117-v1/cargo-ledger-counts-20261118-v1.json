@@ -1,0 +1,21 @@
+{
+  "kind": "single-decision exact Native cargo ledger invocation count; no timing admission or game",
+  "rows": [
+    {
+      "label": "before",
+      "sourceSha256": "d7990e3a2e9a06cca82a80c6c8de8ea966476f45741d0cd6f368183be480ae85",
+      "native": 234,
+      "value": 235.5,
+      "ledgerEvaluations": 2949
+    },
+    {
+      "label": "after",
+      "sourceSha256": "650ed81fd9f63ede73e042bd00ab7abfd8a5a3e33778eb1e613d16a6b642b552",
+      "native": 234,
+      "value": 235.5,
+      "ledgerEvaluations": 1472
+    }
+  ],
+  "saved": 1477,
+  "rootAndRngPreserved": true
+}
