@@ -1,0 +1,55 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "restoredDependencies": [
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "bytes": 31134,
+      "sha256": "b436e02d566778ecd7e87a45e9e2cfca705a51e5ab3b2893ebfedcda2ce94be9"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+      "bytes": 624961,
+      "sha256": "0b3f35ebc045aac1b4ae86131ab8f7cb8dba3c1898f9a7272082282c85452768"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "bytes": 38729,
+      "sha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "bytes": 42143,
+      "sha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c"
+    },
+    {
+      "path": "adhoc/fixed-decision-final-mark-20261028-v1.json",
+      "bytes": 179893,
+      "sha256": "2106628010641d72b8a133af3c6fab52486352cfb7ec4f12a8aa166774a28988"
+    },
+    {
+      "path": "adhoc/six-greedy-plan-fixtures-20261028-v1.json",
+      "bytes": 1649849,
+      "sha256": "70529f84ac985ed2156d1cc346cd6b08a4eafedddad620605bf38ee8884bbe2c"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json",
+      "bytes": 42562,
+      "sha256": "2530fec9a1c6045aab8c624128e3f6404b992c07f0ea5530f1df1f24c0d44ac5"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "bytes": 45478,
+      "sha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v214-actual123-corner-safety-purple2-prefix-20261106-v1.checkpoint.json",
+      "bytes": 965181,
+      "sha256": "e264b266a576fc4806b7d895239d38144ac44761e48132367c8fe5b84a90dfbf"
+    }
+  ],
+  "check": {
+    "exitCode": 0,
+    "stdout": "[INFO(需装配)] env.observe(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection\n[PASS] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=total=217.0\n[PASS] independent-state-value: total=49 model=seti-purpose-capital-state-value-v72-public-income-prototype\n[PASS] independent-value-projection: total=46.5 fullFactsEqual=true weightedEqual=true\n[PASS] independent-card-choice-model-guard: total=47.5 nativeChoices=3 inputs=3\n[PASS] independent-public-pick-barrier: total=47.5\n[PASS] independent-opening-money-capacity: delta=1\n[PASS] independent-opening-plan: total=48\n[PASS] independent-opening-pass-normal-form: total=44\n[PASS] independent-initial-information: offer=34.5 income=40\n[PASS] independent-post-main-income: delta=3 retainedData=2\n[PASS] independent-alien-opening-sector-task: card=opening total=47\n[PASS] independent-standard-scan-refill-bound: stages=3 leaves=6\n[PASS] independent-company-card-trade: card=opening total=46\n[PASS] independent-alien-opening-sector-task: card=b_114.webp total=44\n[PASS] independent-quiet-bound-composition: root=44 leaf=45.5 upper=74 legacyAttainment=false\n[PASS] independent-company-card-trade: card=b_114.webp total=40\n[PASS] independent-alien-opening-sector-task: card=dlc_9.png total=42.5\n[PASS] independent-company-card-trade: card=dlc_9.png total=41.5\n[PASS] independent-pass-reserve-choice: total=44 inputs=5\n[PASS] independent-shared-search-agent: root=37 leaf=47\n[PASS] independent-resource-prefix-evidence: root=46 leaf=47.5 mode=hit coldInputs=9\n[PASS] independent-known-card-money: case=062 root=45.5 poor=42.5\n[PASS] independent-trade-reservation: case=062 leaf=43.5\n[PASS] independent-known-card-money: case=105 root=40 poor=38\n[PASS] independent-trade-reservation: case=105 leaf=39\n[PASS] independent-known-card-money: case=152 root=32.5 poor=30.5\n[PASS] independent-trade-reservation: case=152 leaf=31.5\n[PASS] independent-post-main-borrow: root=43 inputs=2 excluded=7\n[PASS] independent-post-main-continuation: earlyProbeDeclined=true actualNativeEnd=true\n[PASS] independent-goal-movement: inputs=4 goal=rocket:5:land:neptune:satellite:triton\n[PASS] independent-fixed-card-pick: inputs=4 fixedChoices=4\n[PASS] independent-resource-goal-preparation: inputs=9 goal=data:income:4\n[PASS] independent-shared-resource-prefix: goals=11 inputs=18 nativeInputs=13 proved=5 states=19\n[PASS] independent-local-final-mark: nativeFormulaAndSelectedSuccessor\n[PASS] independent-scan-purpose: allNativePrefixes\n[PASS] independent-fixed-data-plan: nativePrefixesAndSingleIncome\n[PASS] independent-six-greedy-plans: allNativePrefixesAndPolicyRoots\n[PASS] independent-movement-preview-copy: frozenObservationsAndNativePrefixes\n[PASS] independent-post-main-corner-choice: value=26 excluded=1\n[PASS] independent-post-main-inert-reservations: value=29.5 excluded=11\n[PASS] independent-pre-main-data-plan: root=45.5 cashPass=50 oldPass=49\n[PASS] heuristic-leaf(反事实叶): schema=true scoring=true progress=true assets=true hand=true V=total=223.0\n[INFO(需装配)] vguided-fork(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection\n[PASS] browser-info-layer(机器席位观察): schema=true scoring=true progress=true assets=true hand=true V=total=0.0\n[PASS] independent-probe-plan-native-fallback: value=68.16666666666667 nativeControlInputs=4 inventedSuccessor=false\n[PASS] independent-pass-investment-window: native PASS queue, formal IDs unchanged, held/paid terms and full/compact/canonical agree\n[PASS] independent-mission-data-continuation: state/formal occupied-blue and computer progress agree; shared native-funded purpose with prepaid computer ledger; root/RNG unchanged\n[PASS] independent-public-income-option: 4 native prefixes, formal/state/confirmed-hidden-slot parity; root/RNG restored\n[PASS] independent-known-sector-analysis: 4 existing native checkpoints, formal/state parity82.5, no invented observation or root/RNG mutation\n[PASS] independent-known-movement-tool: 3 native prefixes, formal/valueOnly/state quote and preparation debt agree; no invented observation or root/RNG change\n[PASS] independent-sector-mission-composition: 5 native prefixes, formal/valueOnly/state shared-wallet quote agrees; no invented refill, observation or root/RNG mutation\n[PASS] independent-known-symbol-card: native/formal/full/compact shared2.5 purpose, hand-history guard, current layout and root/RNG agree\n[PASS] independent-mixed-blue-analysis: formal/full/compact/native complete public counts2/2/1, funded analysis3V and last data retained for the next main purpose, no hidden future inputs or root/RNG mutation\n[PASS] independent-ready-amiba-analysis: native/full/compact shared analysis, computer3 quote equals preferred B48 Native outcome and earned-B pending/claimed120; formal following threshold, no unknown identity funding or root/RNG mutation\n[PASS] independent-research-symbol-composition: native/formal/full/compact ledger123.583333 agrees; no fabricated Native observation/entity or root/RNG mutation\n[PASS] independent-known-postdraw-tail: full/formal/compact anonymous slots and fixed income/blue/end125.25 agree; no new identity, successor observation or root/RNG mutation\n[PASS] independent-known-postdraw-native-data: four actual held-data inputs, full/formal/compact130.08333333333334 and anonymous cards agree; root/RNG unchanged\n[PASS] independent-multi-anonymous-data: two opaque cards, full/formal/compact and each Native prefix138-to140 agree; no new entity payment or root/RNG change\n[PASS] independent-public-alien-acquisition: root-public model and actual new ID agree with Native, full/formal/compact and every known data prefix; blind/refill unknown and root/RNG unchanged\n[PASS] independent-deferred-publicity-capital: original known sources already price exact Native early/late funded endpoint; full/formal/compact and Native0bonus fact agree, no forced future-purpose burn or root/RNG mutation\n[PASS] independent-singleton-income: fixed real known supplier, Native submission and full/formal/compact values agree; no fabricated zero loss, observation or root/RNG mutation\n[PASS] independent-company-fixed-intent: original known source purpose, both cold menu restores, full/formal/compact values and charged Native3/2/1 inputs agree; no new valuation field or root/RNG mutation\n[PASS] independent-scalar-capital-cache: complete mutable fact quotes match full portfolio and Native observation components; changed wallet rekeys, scalar only, no root/RNG mutation\n[PASS] independent-blue-data-analysis: canonical completion2 not legacy1; Native/formal/full/compact one-event-one-slot, consumed endpoint completion3 and same-wallet capital agree; root/RNG unchanged\n[PASS] independent-next-income-probe: existing known wallet/income/hand and public Earth layout, Native/full/formal/compact agree;2C replacement against1E, income not duplicated, root/RNG unchanged\n[PASS] independent-final-round-proof-domain: deployed viewer probe rejects legacy linear proof in Native/formal/compact28 observations; two24-ceiling counterexamples declined, no-probe scope retained and source/RNG unchanged\n[PASS] independent-single-research-score-ceiling: Native/full/formal/compact contexts derive the same bound from public symbols, one supported rule per color and unchanged value; source/RNG exact\n\nV 输入审计全部通过\n",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,487 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795036489.0,
+  "deadlineEpochSeconds": 1795038289.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json,gzip;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());print(\"PICK_FILES\",[p for p in m[\"sourceFiles\"] if \"pick\" in p and p.endswith(\".js\")]);x=json.loads(gzip.decompress(Path(\"reports/ai-foundation-20261119/r2-blue-cash-continued-blue1-after-dlc37-checkpoint-20261119-v1.json.gz\").read_bytes()));s=json.loads(x[\"envelope\"][\"committedState\"]);print(\"PUBLIC\",s[\"cards\"][\"publicCards\"]);print(\"ROUND_MARK\",s[\"finalScoring\"]);print(\"PENDING_KEYS\",list(x[\"envelope\"]))"
+      ],
+      "startedEpochSeconds": 1795036647.3744159,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 94098,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795036647.398785,
+      "stdoutSha256": "5971ce37def22d03b402fa4aa7664ed364c57f592220c0402727ef67114702e3",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=Path(m[\"runtime\"]);s=(r/\"randomizer/game/ai/state-value.js\").read_text().splitlines();print(\"STATE_HEAD\\n\"+\"\\n\".join(s[:36]));print(\"STATE795_850\\n\"+\"\\n\".join(s[794:850]));s=(r/\"randomizer/game/ai/card-pick-planning.js\").read_text();print(\"PICK_INCOME_REFS\",[(i+1,l)for i,l in enumerate(s.splitlines())if \"income\" in l.lower() and (\"value\" in l.lower()or\"prior\"in l.lower()or\"compare\"in l.lower())][:35])"
+      ],
+      "startedEpochSeconds": 1795036839.356946,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 95545,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795036839.381354,
+      "stdoutSha256": "369e6c0d480dd387995c47293dd62adac35eba259367d2ed3c56baf72837940b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037041.8369348,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 97989,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037041.927283,
+      "stdoutSha256": "f2cc8609dc66ace9dda5319d55152a62765b97b077ea7a88f295d07a9f4c222f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037066.567049,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 98275,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037066.61552,
+      "stdoutSha256": "f5e05b32be98d0e9129aa3b9c97caed9e49b6ef6d91613b86daffcd6ddba2a5f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037096.5528069,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 98687,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037096.577247,
+      "stdoutSha256": "4c95aa37e99ff1013f4e2bf48fa205aa2926c6f52b62a22c06d1c4cfb1a97107",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037132.0011818,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 99026,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037132.025831,
+      "stdoutSha256": "bac91cf099ee3d04d038511cbbae5ef095b100fc9da28336ac912809d003b17e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prototype-blue-income-forecast-20261119.py"
+      ],
+      "startedEpochSeconds": 1795037196.9405,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 99684,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795037197.138282,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "47eb8982d2303d24588fe7d4bfe3b01bd9b161380975a382c2b8307c4e15a24a"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prototype-blue-income-forecast-20261119.py"
+      ],
+      "startedEpochSeconds": 1795037303.390132,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 1318,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037303.540778,
+      "stdoutSha256": "6c70e192e391a22a2764f5a196b2805682634609c77ef724988c2b3470b4aba1",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-blue-income-forecast-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795037353.6145658,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 1859,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037353.935256,
+      "stdoutSha256": "9b5137c8b58ee91c0a41f2d20215a975d137c0f88aa17ce5488e968414505f50",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037363.863183,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 2050,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037363.887784,
+      "stdoutSha256": "e409f486e2842e1c8ee6f0ab6c2fb2b0613d14aaf28b01ec6c85131f0b8dbd4e",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-blue-income-forecast-20261119.cjs",
+        "v2"
+      ],
+      "startedEpochSeconds": 1795037375.656597,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 2348,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037375.976758,
+      "stdoutSha256": "0d32681ad27a0ec43164d249326f624195fb11d6a5f6c4c6fef5fdd002bb11dd",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037389.425222,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 2538,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037389.473813,
+      "stdoutSha256": "f1674633dff3ca9e3d49f3b693b777571cfb36dbd9e90a38f6adb8ef48a5db39",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037401.193503,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 2815,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037401.242402,
+      "stdoutSha256": "1e1c9a6d49e0b2e68aecb13859f956e5243445096c9308a4a993c158734cbb22",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037415.507782,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 3028,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037415.532607,
+      "stdoutSha256": "91e9450f177ef275a7e76a38a0bb40406523033b6e1e33c5498387c1fcab98f6",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/benchmark-blue-income-root104-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795037445.254823,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-15.stderr.log",
+      "pid": 3431,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037445.5768902,
+      "stdoutSha256": "6811d1bbc9bf75a70f15bd88fd7efcae9e32a6dca76ea379101552670533765f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/benchmark-blue-income-root104-20261119.cjs",
+        "v2"
+      ],
+      "startedEpochSeconds": 1795037468.39696,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-16.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-16.stderr.log",
+      "pid": 3899,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037468.663006,
+      "stdoutSha256": "f66467d221305e61fe56163a106cec4bac73779c1640eb58ee25c25247ed3701",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037479.8064709,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-17.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-17.stderr.log",
+      "pid": 4077,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037491.395512,
+      "stdoutSha256": "4ebf8720cbcd8c57dea64f2256024a5f95c386e1f1e38609c86a8c8bac1ddf84",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037509.898678,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-18.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-18.stderr.log",
+      "pid": 4387,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795037509.923501,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "205d1ce12cb8abc5988af71d0d68a974adf06792fc28747789c21c384024f043"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037537.591626,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-19.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-19.stderr.log",
+      "pid": 4783,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037537.862418,
+      "stdoutSha256": "9a1883820b666ce2ee0ce71057c86e8039b61b4bc945624d1dacca50bc37c491",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037557.351991,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-20.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-20.stderr.log",
+      "pid": 5052,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037577.0462441,
+      "stdoutSha256": "e93674c96a0bc376a0c1865947ee876eb73255b60ad49a2421acb69137c06efe",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037582.0741692,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-21.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-21.stderr.log",
+      "pid": 5277,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037582.0989609,
+      "stdoutSha256": "d1028cef13be0ba6e2f2025ba398852d81d0064ae2f343bbc816c828b9200b43",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037663.3819258,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-22.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-22.stderr.log",
+      "pid": 5998,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037676.754477,
+      "stdoutSha256": "8be5c1a4679e0e65bad350014410fbcdd6a331c3ef677ba55a4df13031d0c1d0",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037693.344629,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-23.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-23.stderr.log",
+      "pid": 6506,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037693.3695612,
+      "stdoutSha256": "28fdbd598d628061fb6fcd43fe4106d3d1a5aae81f0cf449eaba051f01a6088b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037720.199862,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-24.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-24.stderr.log",
+      "pid": 6772,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037734.816951,
+      "stdoutSha256": "1b0c0031228cca2aa3503c49e52ba92e84f67d5ad9eee4b323ec92b3cf126083",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037791.6327271,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-25.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-25.stderr.log",
+      "pid": 7387,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037791.657635,
+      "stdoutSha256": "fb4318593a01b6198c1485257b352a800d38c6bd78203f59205ff18bf6e84c18",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795037792.000455,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-26.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-26.stderr.log",
+      "pid": 7488,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037798.619371,
+      "stdoutSha256": "5ac6e8da46db55d32ee267d41e2f360dbab3c5694e19176a26838f230699b0ea",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-blue-income-input-routes-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795037882.156912,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-27.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-27.stderr.log",
+      "pid": 8296,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795037882.47732,
+      "stdoutSha256": "00d921f041bac912def418a73135cdfffd6c1ce108040ba4b806086695b30359",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/close-blue-income-forecast-20261119.py"
+      ],
+      "startedEpochSeconds": 1795037978.482413,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-28.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/blue-income-forecast-prototype-20261119-v1.window.attempt-28.stderr.log",
+      "pid": 9172,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795037978.5310998,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "622fb512cca3a9e29c7cfbc28e4fcba97fe4520ffb6ef80c43f6a21e9cb2231c"
+    }
+  ],
+  "scope": "Isolated public-income prepared-analysis forecast prototype and target/counterexample/performance validation; original runtime and formalAI frozen",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "hypotheses": [
+    "A currently funded public currency income prefix closes the witnessed1.75 quote gap and propagates through existing conditional-card portfolio.",
+    "Gates, shared-wallet accounting and unseen-card boundaries can preserve existing other paths without new search expansion."
+  ],
+  "nativeSearchBudget": "If a single-decision test is reached,256submissions/600ms and explicit global graph/node/time budgets; no fullgame unless all existing admission gates pass",
+  "routePrior": "Native control22.77minutes; prior score-priority review16.11minutes; this prototype30minute unit, do not restart deadlines",
+  "stop": "prove bounded prototype or freeze within original deadline; do not broaden generic planning or automatically patch another superlimit",
+  "commandFailureRecoveries": [
+    {
+      "atEpochSeconds": 1795037303.038466,
+      "failedAttempt": 7,
+      "reason": "Pre-write source replacement assertion caused by one extra leading space. Corrected literal; original deadline and failed logs retained. Explicit recovery of build tooling only, not strategy or admission failure.",
+      "originalDeadlineEpochSeconds": 1795038289.0
+    },
+    {
+      "atEpochSeconds": 1795037537.244551,
+      "failedAttempt": 18,
+      "reason": "Read-only dependency-review Python did not parse (or0 token). No candidate execution or strategy test failure. Original deadline unchanged; retain stderr.",
+      "originalDeadlineEpochSeconds": 1795038289.0
+    }
+  ],
+  "closedEpochSeconds": 1795037991.160726,
+  "closeReason": "Bounded prototype target and related validation completed; retain candidate pending proof-domain and full admission, do not start another strategy patch.",
+  "evidenceArchive": "reports/ai-foundation-20261119/blue-income-forecast-tooling-evidence-20261119-v1.json.gz",
+  "evidenceArchiveSha256": "c9d451a2a385de362f57a55fa07eb458eade7036f90600cdf27beb4c13d10a06"
+}

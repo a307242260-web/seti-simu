@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "classification": "isolated strategy prototype with causal target, counterexamples, actual decision change, input parity and related checks; not adopted",
+  "previousGoalTurnClassification": "no progress: status verification and restatement only",
+  "currentGoalTurnClassification": "progress: implemented and tested known public-income analysis closure; root104 changes to blue1/slot2",
+  "formal": {
+    "completedScoreUnchanged": 272,
+    "previouslyMeasuredGameSeconds": 16.1,
+    "newAutonomousGames": 0,
+    "new20BoardDistribution": false,
+    "productionChanged": false
+  },
+  "target": {
+    "input": 104,
+    "oldBlue1Value": 97.75,
+    "newBlue1Value": 99.5,
+    "blue3ValueUnchanged": 98,
+    "blue1AnalysisPotential": 3.5,
+    "knownPreparationIncrement": 1.75,
+    "notAFullGameScoreGain": true,
+    "winner": {
+      "actionId": "research_tech:806ccfc8",
+      "target": 5,
+      "value": 99.5,
+      "realization": -12.5,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "tech:blue1:2",
+        "kind": "research_tech",
+        "tileId": "blue1",
+        "blueSlot": 2,
+        "required": {
+          "publicity": 6
+        }
+      },
+      "resourceGoalCount": 10,
+      "completion": "complete"
+    }
+  },
+  "singleDecisionGate": {
+    "complete": true,
+    "nativeSubmissions": 38,
+    "rootAndSearchMilliseconds": 117.87904199999998,
+    "limits": {
+      "transitions": 256,
+      "nodes": 1024,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "rootAndRngPreserved": true,
+    "notAStableLatencyDistribution": true
+  },
+  "checks": {
+    "sixRecordedNativeStages": true,
+    "sevenUnavailablePathCounterexamples": true,
+    "stateFullFormalCompactParity": true,
+    "inputAuditPassed": true,
+    "readyAnalysisTestPassed": true,
+    "stateValueTestPassed": true,
+    "syntheticWallets": 588,
+    "syntheticMonotonicComparisons": 1547,
+    "patchReconstructsChangedFiles": true,
+    "original533SourceHashesUnchanged": true
+  },
+  "testMigration": {
+    "file": "randomizer/game/ai/ready-analysis-capital.test.js",
+    "removed": "Literal maximumAnalysisLinear 0/13/11 from the old no-income closure",
+    "retained": "Actual complete Native post-main search result <= evaluated root plus declared bound, with reachable/unreachable and contested/owned-mark controls",
+    "productionForecastCodeUnchangedFromBenchmark": true,
+    "notWholeDomainProof": true
+  },
+  "remainingAdmission": [
+    "Review the changed capital ceiling over its full supported domain; root104 does not exercise post-main bound pruning.",
+    "Complete source-specific required regression and unique full-flow admission, classifying every failure rather than inheriting the rejected v514 result.",
+    "Only after admission, register one autonomous fixed-opening game and compare every round asset; do not infer a new total score from checkpoint value.",
+    "Later R3/R4 alignment and the twenty-board distribution remain part of the full goal."
+  ],
+  "nativeAccounting": {
+    "newDecisionSearches": 1,
+    "decisionSearchSubmissions": 38,
+    "readyAnalysisBehaviorTestSubmissions": 840,
+    "inputAuditIncludesAdditionalNativeControls": true,
+    "inputAuditNativeSubmissionTotalNotInstrumented": true,
+    "checkpointValueAndWalletGridNativeSubmissions": 0,
+    "old89InputCausalExperimentNotReplayed": true
+  },
+  "workWindow": {
+    "originalDeadlineEpochSeconds": 1795038289.0,
+    "unitWallMinutesToClose": 25.0360121011734,
+    "priorRouteWallMinutes": 38.87986004908879,
+    "cumulativeRouteWallMinutes": 63.91587215026219,
+    "remainingRouteMinutesMaximum": 56.08412784973781,
+    "deadlineNeverExtended": true,
+    "manualToolingRecoveries": [
+      {
+        "atEpochSeconds": 1795037303.038466,
+        "failedAttempt": 7,
+        "reason": "Pre-write source replacement assertion caused by one extra leading space. Corrected literal; original deadline and failed logs retained. Explicit recovery of build tooling only, not strategy or admission failure.",
+        "originalDeadlineEpochSeconds": 1795038289.0
+      },
+      {
+        "atEpochSeconds": 1795037537.244551,
+        "failedAttempt": 18,
+        "reason": "Read-only dependency-review Python did not parse (or0 token). No candidate execution or strategy test failure. Original deadline unchanged; retain stderr.",
+        "originalDeadlineEpochSeconds": 1795038289.0
+      }
+    ],
+    "limit": "Only command launch and execution are mechanically timed; reasoning and manual state recovery are not enforced by the guard."
+  },
+  "wholeGoalComplete": false
+}

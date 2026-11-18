@@ -1,0 +1,22 @@
+{
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "productionChanged": false,
+  "routes": [
+    {
+      "full": 99.5,
+      "formal": 99.5,
+      "compact": 99.5,
+      "statePurpose": 3.5,
+      "analysisPotential": 3.5
+    }
+  ],
+  "syntheticMoneyGrid": {
+    "scope": "unit-only wallets derived from the exact after-DLC37 observation, not additional legal game states",
+    "checks": 1547,
+    "failures": [],
+    "wallets": 588
+  },
+  "rootAndRngPreserved": true,
+  "passed": true
+}

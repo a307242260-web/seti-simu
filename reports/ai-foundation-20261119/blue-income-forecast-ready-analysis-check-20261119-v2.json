@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "candidateChangedFiles": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "contractMigration": {
+    "file": "randomizer/game/ai/ready-analysis-capital.test.js",
+    "removed": "Literal maximumAnalysisLinear 0/13/11 from the old no-income closure",
+    "retained": "Actual complete Native post-main search result <= evaluated root plus declared bound, with reachable/unreachable and contested/owned-mark controls",
+    "productionForecastCodeUnchangedFromBenchmark": true,
+    "notWholeDomainProof": true
+  },
+  "exitCode": 0,
+  "stdout": "{\"nativeFundedControls\":176,\"unfunded\":16,\"nativeInputs\":840,\"moneyMonotone\":true,\"stateObservationParity\":true,\"rootAndRngUnchanged\":true}\nready analysis and research ordering share funded portfolio value with immutable native inputs\n",
+  "stderr": ""
+}

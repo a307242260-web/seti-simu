@@ -1,0 +1,125 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "entries": [
+    {
+      "path": "reports/ai-foundation-20261022/analysis-root-input-v2.json",
+      "bytes": 148163,
+      "error": null
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json",
+      "bytes": 325755,
+      "error": null
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-after-pass-20261031-v1.json",
+      "bytes": 416420,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "bytes": 32561,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-public-refill-funding-native-20261105-v2.json",
+      "bytes": 404318,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-known-sector-card-continuation-native-20261105-v2.json",
+      "bytes": 3270506,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json",
+      "bytes": 1254195,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-sector-mission-prefix-native-20261105-v1.json",
+      "bytes": 1778656,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-133-20261105-v1.checkpoint.json",
+      "bytes": 564320,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json",
+      "bytes": 578470,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-160-20261105-v1.checkpoint.json",
+      "bytes": 665941,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+      "bytes": 39213,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json",
+      "bytes": 39744,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json",
+      "bytes": 40661,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json",
+      "bytes": 2661188,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/native-commutation-20261107-v1.json",
+      "bytes": 927398,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-income-factor-prefixes-20261106-v1.checkpoint.json",
+      "bytes": 2804637,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261107/company-fixed-intent-v1/native-three-input-control-20261107-v1.json",
+      "bytes": 1283831,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v254-blue-data-before-analysis-root-20261106-v1.json",
+      "bytes": 41611,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/scan-launch-final-tail-native-control-20261107-v1.checkpoint.json",
+      "bytes": 1404558,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-proof-audit-v1/native-income-vs-old-bound-20261107-v2.json",
+      "bytes": 41837,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-127-20261105-v1.checkpoint.json",
+      "bytes": 541066,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-research-analysis-order-native-20261104-v1.json",
+      "bytes": 244366,
+      "error": null
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-capital-native-controls-20261104-v1.json",
+      "bytes": 71291,
+      "error": null
+    }
+  ]
+}

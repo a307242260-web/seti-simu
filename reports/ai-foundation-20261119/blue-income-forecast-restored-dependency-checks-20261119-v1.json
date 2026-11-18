@@ -1,0 +1,144 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "restoredDependencies": [
+    {
+      "path": "reports/ai-foundation-20261022/analysis-root-input-v2.json",
+      "bytes": 148163,
+      "sha256": "0c5f5d8e5eeeb7c065fc41bc1cd13d4b205e149a2e694697b11e2bfb261543fc"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json",
+      "bytes": 325755,
+      "sha256": "6c76c7cfc6963c713ceaf6753cbd1e2c9187bab236a2f22186a37ceb494a6650"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-after-pass-20261031-v1.json",
+      "bytes": 416420,
+      "sha256": "c7fb7908a8c8fd198ebdf52a0f9c3625374613694374a7ec54cca968489a7ef5"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "bytes": 32561,
+      "sha256": "7c2a6cbcb9159b7f5451184e25fd5fc8f8512b736bca38eb6057cd1827aa6990"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-public-refill-funding-native-20261105-v2.json",
+      "bytes": 404318,
+      "sha256": "46922e03f7a04be4e5083b0c92c0130cc55bd537890a37df8c3fdcf71a2aebab"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-known-sector-card-continuation-native-20261105-v2.json",
+      "bytes": 3270506,
+      "sha256": "0edcac502393993464bd1e77c703ea187cc87b60877ed9ef2bca2dbfe961d985"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-dlc5-native-prefix-20261105-v1.json",
+      "bytes": 1254195,
+      "sha256": "7e596b00bdf0e3f39e0c4aa48744b64c9aed9b101a315cfa022f290738e18074"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v187-sector-mission-prefix-native-20261105-v1.json",
+      "bytes": 1778656,
+      "sha256": "7c98bb5de5fa0179b0df7727669dd60966a0594c1e1a4a29069bac3c54ffa8e3"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-133-20261105-v1.checkpoint.json",
+      "bytes": 564320,
+      "sha256": "19c787556178976016875f527b9728054e04230b60728f4aaac4f77cb704c096"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v264-ready-analysis-extra-blue-native-control-20261106-v1.json",
+      "bytes": 578470,
+      "sha256": "387b8ffbeca87b565ecbf3e9e8babf311f71364ab403e99e97df1d2e182133c3"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-160-20261105-v1.checkpoint.json",
+      "bytes": 665941,
+      "sha256": "7bd179e81676be154f52f59971c9b5896472ea0655ef7ba28826f3996e9cecc2"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v218-corner-safety-purple2-3-root-20261106-v1.json",
+      "bytes": 39213,
+      "sha256": "e90d6ad8c7203b1b4a0e4db062cb84514ebeb714d91057afc0506b1d6117e820"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json",
+      "bytes": 39744,
+      "sha256": "5b79644ca497f8b339c6d92f4cb21ffbf7d1fc00f62bfd179d054d2fa2d1e47d"
+    },
+    {
+      "path": "reports/ai-foundation-20261106/analysis-blue-choice-v1/teacher167-root-20261106-v1.json",
+      "bytes": 40661,
+      "sha256": "d8906bfe0b11dd46f1de27953638a9f39bd45e9d0f2e4ea2be78a918cca4f2ac"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/anonymous-data-continuation-v1/actual156-blue4-known-data-native-20261107-v1.json",
+      "bytes": 2661188,
+      "sha256": "340c1c0d36aaa5b7281cde297a8693683c7efc5a2f3af922818de5083c9d1a3d"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/publicity-deferral-learning-v1/native-commutation-20261107-v1.json",
+      "bytes": 927398,
+      "sha256": "7ea0c5417cc2d6fb23737f52a25462d0a081815c737455ab3012b3db9c3033db"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v208-income-factor-prefixes-20261106-v1.checkpoint.json",
+      "bytes": 2804637,
+      "sha256": "d786a22baf809dc17f4e0a54dd2432b250309d7fa771e506756fb2e844e97e40"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/company-fixed-intent-v1/native-three-input-control-20261107-v1.json",
+      "bytes": 1283831,
+      "sha256": "2d45aad877548170672b331c5c055ca74070a2cfb738658848cbde028534f54f"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/v254-blue-data-before-analysis-root-20261106-v1.json",
+      "bytes": 41611,
+      "sha256": "d233fd44474e0db58f08dc9b470e856ebf80476a0a00a44de87e2434bfbeb620"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/orange-tech-fixed-tail-v1/scan-launch-final-tail-native-control-20261107-v1.checkpoint.json",
+      "bytes": 1404558,
+      "sha256": "ba695542d42833427af984c555b45046d97803a68f0cbad5f53dadef734c8b5c"
+    },
+    {
+      "path": "reports/ai-foundation-20261107/final-round-proof-audit-v1/native-income-vs-old-bound-20261107-v2.json",
+      "bytes": 41837,
+      "sha256": "78e240deec5810532a998b98a8868518b399bd9dd6b878481f54d958c5e292b3"
+    },
+    {
+      "path": "reports/ai-foundation-20261105/third-round-teacher-v1/teacher-before-input-127-20261105-v1.checkpoint.json",
+      "bytes": 541066,
+      "sha256": "3537d80eb28c6637972acd5b7be36d5a3e2154d3bd1ac93c5e2171817cc40d46"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-research-analysis-order-native-20261104-v1.json",
+      "bytes": 244366,
+      "sha256": "ecaec5ce4e4c283ccaf0090c844029a1e165b744490ae7191ca01dfe545f3c2b"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-capital-native-controls-20261104-v1.json",
+      "bytes": 71291,
+      "sha256": "b9a5586710e2d8cce691cbe3e9e2f37eb78e7ffc20b601653839ebe1b1f23634"
+    },
+    {
+      "path": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-092-20261104-v1.json",
+      "bytes": 36740,
+      "sha256": "621b38badbac19bf97d3d81d78507cc8f858395a9bf40ade7a7de22a946b1b35"
+    }
+  ],
+  "checks": [
+    {
+      "file": "tools/audit_v_state_inputs.js",
+      "exitCode": 1,
+      "stdout": "[INFO(需装配)] env.observe(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection\n[PASS] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=total=217.0\n[PASS] independent-state-value: total=49 model=seti-purpose-capital-state-value-v72-public-income-prototype\n[PASS] independent-value-projection: total=46.5 fullFactsEqual=true weightedEqual=true\n[PASS] independent-card-choice-model-guard: total=47.5 nativeChoices=3 inputs=3\n[PASS] independent-public-pick-barrier: total=47.5\n[PASS] independent-opening-money-capacity: delta=1\n[PASS] independent-opening-plan: total=48\n[PASS] independent-opening-pass-normal-form: total=44\n[PASS] independent-initial-information: offer=34.5 income=40\n[FAIL] independent-card-choice-equivalence: ENOENT: no such file or directory, open '/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json'\n[PASS] heuristic-leaf(反事实叶): schema=true scoring=true progress=true assets=true hand=true V=total=223.0\n[INFO(需装配)] vguided-fork(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection\n[PASS] browser-info-layer(机器席位观察): schema=true scoring=true progress=true assets=true hand=true V=total=0.0\n[PASS] independent-probe-plan-native-fallback: value=68.16666666666667 nativeControlInputs=4 inventedSuccessor=false\n[FAIL] independent-pass-investment-window: ENOENT: no such file or directory, open 'adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/teacher58-after-pass-20261031-v1.json'\n[PASS] independent-mission-data-continuation: state/formal occupied-blue and computer progress agree; shared native-funded purpose with prepaid computer ledger; root/RNG unchanged\n[PASS] independent-public-income-option: 4 native prefixes, formal/state/confirmed-hidden-slot parity; root/RNG restored\n[PASS] independent-known-sector-analysis: 4 existing native checkpoints, formal/state parity82.5, no invented observation or root/RNG mutation\n[PASS] independent-known-movement-tool: 3 native prefixes, formal/valueOnly/state quote and preparation debt agree; no invented observation or root/RNG change\n[PASS] independent-sector-mission-composition: 5 native prefixes, formal/valueOnly/state shared-wallet quote agrees; no invented refill, observation or root/RNG mutation\n[PASS] independent-known-symbol-card: native/formal/full/compact shared2.5 purpose, hand-history guard, current layout and root/RNG agree\n[PASS] independent-mixed-blue-analysis: formal/full/compact/native complete public counts2/2/1, funded analysis3V and last data retained for the next main purpose, no hidden future inputs or root/RNG mutation\n[FAIL] independent-ready-amiba-analysis: ENOENT: no such file or directory, open 'reports/ai-foundation-20261105/third-round-teacher-v1/v204-actual-safety-choice-native-20261106-v1.json'\n[PASS] independent-research-symbol-composition: native/formal/full/compact ledger123.583333 agrees; no fabricated Native observation/entity or root/RNG mutation\n[FAIL] independent-known-postdraw-tail: ENOENT: no such file or directory, open 'reports/ai-foundation-20261105/third-round-teacher-v1/v239-free-alien-card-boundary-control-20261106-v1.checkpoint.json'\n[PASS] independent-known-postdraw-native-data: four actual held-data inputs, full/formal/compact130.08333333333334 and anonymous cards agree; root/RNG unchanged\n[PASS] independent-multi-anonymous-data: two opaque cards, full/formal/compact and each Native prefix138-to140 agree; no new entity payment or root/RNG change\n[PASS] independent-public-alien-acquisition: root-public model and actual new ID agree with Native, full/formal/compact and every known data prefix; blind/refill unknown and root/RNG unchanged\n[PASS] independent-deferred-publicity-capital: original known sources already price exact Native early/late funded endpoint; full/formal/compact and Native0bonus fact agree, no forced future-purpose burn or root/RNG mutation\n[PASS] independent-singleton-income: fixed real known supplier, Native submission and full/formal/compact values agree; no fabricated zero loss, observation or root/RNG mutation\n[PASS] independent-company-fixed-intent: original known source purpose, both cold menu restores, full/formal/compact values and charged Native3/2/1 inputs agree; no new valuation field or root/RNG mutation\n[PASS] independent-scalar-capital-cache: complete mutable fact quotes match full portfolio and Native observation components; changed wallet rekeys, scalar only, no root/RNG mutation\n[PASS] independent-blue-data-analysis: canonical completion2 not legacy1; Native/formal/full/compact one-event-one-slot, consumed endpoint completion3 and same-wallet capital agree; root/RNG unchanged\n[PASS] independent-next-income-probe: existing known wallet/income/hand and public Earth layout, Native/full/formal/compact agree;2C replacement against1E, income not duplicated, root/RNG unchanged\n[FAIL] independent-final-round-proof-domain: ENOENT: no such file or directory, open 'reports/ai-foundation-20261107/final-round-proof-audit-v1/native-income-vs-old-bound-20261107-v2.checkpoint.json'\n[PASS] independent-single-research-score-ceiling: Native/full/formal/compact contexts derive the same bound from public symbols, one supported rule per color and unchanged value; source/RNG exact\n\nV 输入审计有 FAIL（见上，检查对应调用点装配）\n",
+      "stderr": ""
+    },
+    {
+      "file": "randomizer/game/ai/ready-analysis-capital.test.js",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:assert:150\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n14 !== 11\n\n    at Object.<anonymous> (/private/tmp/seti-blue-income-prototype-20261119-wyp2cc__/randomizer/game/ai/ready-analysis-capital.test.js:51:191)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: 14,\n  expected: 11,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    }
+  ]
+}
