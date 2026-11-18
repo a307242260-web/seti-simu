@@ -1,0 +1,95 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v500/movementv8/valuev71",
+  "promoted": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "scope": "Final round uncontested post-main same-species same-color slots1/2, identical region reward and no card reward; retain higher score. Explicit dominance, not state equality. No full game.",
+  "rejectedSimplification": {
+    "evidence": "quiet-claim-proof-comparison-20261118-v1.json.gz",
+    "withProofMs": 2219.1400830000002,
+    "ordinaryGraphClosureMs": 2251.9279169999995,
+    "semanticRootsExact": true,
+    "conclusion": "explicit expansion did not improve latency; dedicated task timing proof retained"
+  },
+  "dominanceContract": {
+    "scoreAdvantage": "higher immediate printed score; same resources, counts, reward type and choices",
+    "futureCoupling": "if remaining paired slot is later filled, cumulative printed score equals; formal region results and pending effects equal. Marker sequence records order and is not read by audited rules.",
+    "isEquivalence": false,
+    "guards": [
+      "R4, only white active, DeepSpace with sole free-analyze passive and no borrowed tech",
+      "main action completed, all own cards known, all three gold marks already settled",
+      "only audited position-independent reserved tasks and final scoring; no score conditions in owned models or pending effects",
+      "pending effects belong to this seat; no active event bonus, interrupt, undo frames or pending cargo arrival",
+      "unreviewed queued effect types decline this proof; current tail covers Native scan, printed probe reward or known fossil pickup"
+    ],
+    "notPruned": "slots3/4 card rewards, different species/colors/regions, unknown or unreviewed rule contexts"
+  },
+  "nativeProofs": {
+    "examples": 76,
+    "cardRewardExamples": 0,
+    "guardCases": 5,
+    "evidence": "trace-score-pair-node-tests-20261118-v2.log",
+    "firstPlacement": "complete Production game state, excluding decision journal, differs only by score and paired marker position",
+    "laterComplement": "same Native state and pending formal region effects after both slots, apart from historical marker sequence",
+    "rngPreserved": true
+  },
+  "comparison": {
+    "before": {
+      "native": 234,
+      "ms": 2303.800291,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "650ed81fd9f63ede73e042bd00ab7abfd8a5a3e33778eb1e613d16a6b642b552",
+        "local-decision-plans": "1474988ca2979d2381b1cb94347ae871e3f57783f49faaa0879edfbd6dc14385",
+        "decision-search": "d76dbdaa29a5dfe7f704c22902710d0dbb9774799f6986d61013b98b40c04f47"
+      }
+    },
+    "after": {
+      "native": 221,
+      "ms": 1906.1092079999999,
+      "value": 235.5,
+      "actionId": "land:d5ee03a2",
+      "complete": true,
+      "sourceFiles": {
+        "analysis-port": "5595538e9213ab8ecdf6384c74b3bc3c4e88746f04aedd22a6d36b6066a9cef6",
+        "local-decision-plans": "7d42d46434e05e1d20d0cd6a88f74598d0072610ec49858a89eebed9fa1439c3",
+        "decision-search": "19e3321c02e143590cba449b911867b6905171e7529596331577127abc8f5912"
+      }
+    },
+    "semanticRootsExact": true,
+    "graphBefore": 3096,
+    "graphAfter": 2435,
+    "graphNodesSaved": 661,
+    "graphIntentionallyChanged": true,
+    "evidence": "trace-score-pair-point289-comparison-20261118-v3.json.gz",
+    "timingLimit": "one process, old then new; not a universal cold-start speed claim"
+  },
+  "gate": {
+    "nativeActual": 221,
+    "nativeLimit": 256,
+    "nativePassed": true,
+    "millisecondsActual": 1906.1092079999999,
+    "millisecondsLimit": 600,
+    "timePassed": false,
+    "allPassed": false
+  },
+  "verification": {
+    "node": 23,
+    "headlessBrowser": 12,
+    "valueInputAudit": 67,
+    "sealedSourceTests": 3,
+    "restoredSourceFiles": 30,
+    "unchangedBaseFiles": 524
+  },
+  "source": "trace-score-pair-candidate-source-20261118-v1.json",
+  "next": [
+    "Examine same-purpose card reward pairs3/4 only after comparing Native card-choice outcomes and the second coupled reward in correct effect order; keep current search until proved.",
+    "Measure remaining graph generation and post-main policy work; preserve reachable plans and required branches, without arbitrary leaf limits.",
+    "After single-point600ms gate, revalidate fixed roots and first two rounds, resume R4 same-root assets and strategy learning, then unique full game."
+  ],
+  "sourceRestoreProof": "trace-score-pair-source-restore-check-20261118-v2.json"
+}

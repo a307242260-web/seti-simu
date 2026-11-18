@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v14",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v13.json",
+  "publishedParent": "175d62a03affbe64c2a766921c5fc6fa4bcf7c09",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v500/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets; fixed budgets and reproducibility remain required.",
+  "previousGoalTurnClassification": "progress: Native cargo ledger reuse eliminated1477 evaluations with exact graph parity;234 inputs, time still fails",
+  "thisGoalTurnClassification": "progress: measured and rejected removing task-timing proof; introduced audited same-reward trace dominance verified by76 Native state pairs and coupled future fills, shrank graph by661 nodes, all semantic root outcomes unchanged",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "trace-score-pair-candidate-findings-20261118-v1.json",
+  "gate": {
+    "nativeActual": 221,
+    "nativeLimit": 256,
+    "nativePassed": true,
+    "millisecondsActual": 1906.1092079999999,
+    "millisecondsLimit": 600,
+    "timePassed": false,
+    "allPassed": false
+  },
+  "next": [
+    "Examine same-purpose card reward pairs3/4 only after comparing Native card-choice outcomes and the second coupled reward in correct effect order; keep current search until proved.",
+    "Measure remaining graph generation and post-main policy work; preserve reachable plans and required branches, without arbitrary leaf limits.",
+    "After single-point600ms gate, revalidate fixed roots and first two rounds, resume R4 same-root assets and strategy learning, then unique full game."
+  ]
+}

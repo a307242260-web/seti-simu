@@ -1,0 +1,22 @@
+{
+  "finalSource": "trace-score-pair-candidate-source-20261118-v1.json",
+  "v498Source": "cargo-ledger-candidate-source-20261118-v1.json",
+  "v499Overrides": {
+    "trace-pair-benchmark-v499-analysis-port-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/analysis-port.js",
+      "uncompressedSha256": "ac84dfea4a47cec6d4a5a69ac98e7a9f0d103b827e17e1fdc8c9698147971ad5"
+    },
+    "trace-pair-benchmark-v499-local-decision-plans-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/local-decision-plans.js",
+      "uncompressedSha256": "d631000a54af8d5de091a30bfb556277bebbcce56f9e08febd66e7b83b279258"
+    },
+    "trace-pair-benchmark-v499-decision-search-20261118-v1.js.gz": {
+      "destination": "randomizer/game/ai/decision-search.js",
+      "uncompressedSha256": "9f9a7f68693dbc4bef0e1a77a615dc954055362db2c2e3690ed2701a41d63c74"
+    }
+  },
+  "v499PriorLocalPlans": "trace-pair-benchmark-prior-guards-20261118-v1.js.gz",
+  "v500PriorLocalPlans": "trace-score-pair-benchmark-prior-queue-guards-20261118-v1.js.gz",
+  "notes": "Core source override recreates each captured comparison. Docs and browser inventory are verification surface only, not search input.",
+  "v500PriorTailGuardLocalPlans": "trace-score-pair-benchmark-prior-tail-guards-20261118-v1.js.gz"
+}

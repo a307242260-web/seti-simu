@@ -1,0 +1,6 @@
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":11,"maxMs":50.10483300000001,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":11,"maxMs":23.77608399999997,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":22.385833000000048,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":20.36454200000003,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":11,"maxMs":20.528915999999754,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":11,"maxMs":20.576374999999643,"actualInputs":12}]}
+{"traceScorePairs":"passed","pairs":76,"cardPairs":0,"guards":5,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+SUMMARY unit passed=3 failed=0 total=3 time=7.63s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3

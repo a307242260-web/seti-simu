@@ -1,0 +1,4 @@
+{"traceScorePairs":"passed","pairs":76,"cardPairs":0,"guards":4,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+SUMMARY unit passed=1 failed=0 total=1 time=3.07s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

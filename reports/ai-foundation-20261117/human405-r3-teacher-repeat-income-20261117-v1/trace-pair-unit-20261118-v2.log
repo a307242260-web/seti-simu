@@ -1,0 +1,4 @@
+{"chongTracePairs":"passed","pairs":38,"cardPairs":0,"guards":4,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+SUMMARY unit passed=1 failed=0 total=1 time=1.63s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
