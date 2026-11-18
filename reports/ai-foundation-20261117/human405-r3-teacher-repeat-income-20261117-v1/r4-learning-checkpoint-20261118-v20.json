@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v20",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v19.json",
+  "publishedParent": "417ce2d3049dc6dadafd18c950839429b98f6b60",
+  "goalStatus": "active",
+  "scope": "Original teaching/asset alignment goal remains intact. Current user instruction changes the phase to methodology review and validation before further AI implementation.",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续。",
+  "phase": "methodology-first",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "lastUnpromotedCandidate": "v510/movementv8/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "previousGoalTurnClassification": "progress: v510 Native directory reuse validated and archived as417ce2d30; end-to-end strategy milestone remains unchanged.",
+  "thisGoalTurnClassification": "progress: read-only review of six checkpoints, full graph and CPU samples rejects the planned micro-optimization route as insufficient; clarifies submission-count meaning; separates equal known value floors from unequal assets. Records a candidate research loop and explicit implementation hold. No AI or Native input executed after methodology steering.",
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v1.json",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "methodologyStatus": "candidate; retrospective screening passed, prospective causal pilot and AI-quality benefit unproven",
+  "resumeGate": [
+    "One same-start causal decision dossier identifies a specific reproducible missing/incorrect candidate, greedy plan, boundary, valuation, execution or reuse issue, or demonstrates a justified equivalent tradeoff and selects the next genuine unresolved case.",
+    "State an observation that would falsify the proposed cause and the expected corrected action/assets; hidden seed outcomes are not public knowledge.",
+    "Provide a plausible quantified computation path under existing constraints. Do not resume the previously queued cargo-copy/identity/menu micro-optimization loop merely because its local checks can pass."
+  ],
+  "next": [
+    "Continue methodology validation only: construct one same-start R4 decision dossier from existing evidence. Inspect both known235.5 floors and the different wallets/hand/new cargo opportunity before calling the routes equivalent or inferior.",
+    "Identify only the missing bounded causal control. Reuse existing results; no new whole game,20-board batch or AI implementation until resume gate is evidenced.",
+    "Review/promote or revise the candidate loop using the decision contract. Original first-two-round, asset, Native/RNG and256/600ms/180s requirements remain unchanged."
+  ]
+}

@@ -223,5 +223,10 @@
     "sealedNodePassed": 12,
     "exactNativeDirectoryQueries": 802,
     "warmColdDirectoryComparisons": 128
+  },
+  "metricDefinitions": {
+    "nativeExecutions": "Successful complete input-port submissions (submissionCount); excludes proven previews, graph construction and valuation work. Not total computation or all simulated transitions.",
+    "milliseconds": "Root plus entire decision wall time; includes all previews, graph/valuation work and Native submissions.",
+    "nativeAdmissionLimit": "Existing256-counter criterion retained; not a newly defined total-work budget."
   }
 }

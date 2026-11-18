@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-18",
+  "kind": "read-only methodology review; no AI or Native input executed",
+  "candidate": "v510/movementv8/valuev71",
+  "sourceSha256": {
+    "native-route-facts-point289-comparison-20261118-v1.json.gz": "f23d217553fffe2db49ebfcac0afe4b3c344bc2078838679c172f85ff5aed8d0",
+    "native-route-facts-point289-cpu-20261118-v1.json.gz": "3d04906e79de427cace0a91ff490047372e340730135d3c52fea5b4b72177dfa",
+    "native-route-facts-candidate-source-20261118-v1.json": "731522747e8b53ff4383824939a1bdeb91adf02b94e2639bba07afd299b6f440",
+    "cargo-fair-candidate-findings-20261118-v1.json": "6a6653c4e2d9398db409b886377a65b76c0e86c2a7ab5fbf6b83948b0f8b7bf8",
+    "r4-learning-checkpoint-20261118-v14.json": "183b4658d719cc70e46ecc653dee84a7e8e269a094e2f74745b53f4fe2c7bc4d",
+    "r4-learning-checkpoint-20261118-v15.json": "b864d2a844595ea3ce4b0c6be9981a0bd5051d2c8f448dae4b9ed082760bab68",
+    "r4-learning-checkpoint-20261118-v16.json": "1fa2744302925a60788e1466c4d4fcfa8fc36f25bd1e14fee2a113a9c708b404",
+    "r4-learning-checkpoint-20261118-v17.json": "eca35a31509c5964706a0f230e6d584b34bf78b74dbca9ed4bf7371b871564ac",
+    "r4-learning-checkpoint-20261118-v18.json": "6be5819b75ae5068204dd415450b3fff31139693a48d7ca1cef24f78bbd13281",
+    "r4-learning-checkpoint-20261118-v19.json": "4fc7d535dac180cf50cf05ddfaaed9f985248a46267514df9d740a884285a988"
+  },
+  "plateau": {
+    "checkpointsReviewed": 6,
+    "formalScore": 272,
+    "candidatePromoted": false,
+    "newGameOutcomeAcrossTheseCheckpoints": false
+  },
+  "computation": {
+    "completeRuleSubmissions": 209,
+    "graphNodes": 1949,
+    "edges": 2307,
+    "branchingNodes": 406,
+    "singleExitNodes": 638,
+    "leaves": 905,
+    "statusCounts": {
+      "stable": 734,
+      "decision": 310,
+      "terminal": 5,
+      "information-barrier": 734,
+      "turn-boundary": 166
+    },
+    "meaning": "nativeExecutions is submissionCount, incremented after executeCurrent submit. Proven previews and graph/valuation work are not included;209 is not total computation. Single-exit count alone does not prove removable work."
+  },
+  "costScreen": {
+    "selectedBlocks": [
+      [
+        "analysis-port.js",
+        "identity"
+      ],
+      [
+        "analysis-port.js",
+        "knownCargoFuture"
+      ],
+      [
+        "analysis-port.js",
+        "readActions"
+      ]
+    ],
+    "searchSampleMilliseconds": 1657.337,
+    "selectedUnionSampleMilliseconds": 476.625,
+    "selectedUnionFraction": 0.28758484243096005,
+    "measuredUninstrumentedMilliseconds": 1528.445541,
+    "requiredReductionFractionTo600": 0.607444306057876,
+    "optimisticMillisecondsIfSelectedBlocksFree": 1088.8877709272115,
+    "decision": "Reject these three hotspots as the main route to600ms. Any secondary micro-optimization must belong to a quantified end-to-end plan.",
+    "limit": "A screening estimate using CPU sample proportions and a separate uninstrumented run; not measured speedup or proof that architecture redesign will meet600ms."
+  },
+  "strategyScreen": {
+    "sameKnownReachableFloor": 235.5,
+    "ordinaryEndWallet": {
+      "credits": 6,
+      "energy": 0,
+      "hand": 5
+    },
+    "cardEndWallet": {
+      "credits": 5,
+      "energy": 2,
+      "hand": 4
+    },
+    "cardRetainsNewTransport": true,
+    "decision": "Equal current known lower bounds do not establish equal strategic assets. Reclassify the remaining comparison as an unresolved opportunity/valuation question; graph parity cannot answer it.",
+    "limit": "These are controlled reachable floors and assets, not matched autonomous round-end outcomes. Do not price a hidden fossil from its actual seed identity."
+  },
+  "methodologyValidation": {
+    "retrospectiveScreeningPassed": true,
+    "prospectiveCausalPilotPassed": false,
+    "AIQualityImprovementProven": false,
+    "AIImplementationResumeAllowed": false,
+    "next": "One evidence-first same-start decision dossier: candidate inclusion, greedy funding, comparable boundary, valuation components and actual assets. Reuse known branches, execute only genuinely missing bounded Native controls after the dossier identifies what they distinguish."
+  }
+}
