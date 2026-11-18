@@ -1,0 +1,132 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -721,0 +722 @@
++      cargoGainQuotes.clear();for(const key of Object.keys(cargoGainStats))cargoGainStats[key]=0;
+@@ -5014,0 +5016,38 @@
++    const cargoGainQuotes=new Map();
++    const cargoGainStats={hits:0,misses:0,bypasses:0,stores:0,evictions:0,maxKeyCharacters:0};
++    function cargoGainReuseKey(state,known,forbiddenCoordinate){
++      const t=state.turn,p=state.players.players.find(q=>q.id===seatId),cargo=state.aliens.chong;
++      if(!p||t.roundNumber!==4||t.currentPlayerId!==seatId||t.gameEnded
++        ||p.passCompletionPending||t.passedPlayerIds.includes(seatId)||!t.activePlayerIds.includes(seatId)
++        ||t.activePlayerIds.some(id=>id!==seatId&&!t.passedPlayerIds.includes(id))
++        ||t.cardTurnEventBonuses?.length||state.match.initialSetup||p.industryBorrowedTechTileId
++        ||!Number.isSafeInteger(p.resources.score)||!cargo?.revealInitialized
++        ||!knownRootAlienIds.has("虫")||!knownRootAlienIds.has("阿米巴")
++        ||Object.values(state.aliens.aliens).some(s=>!s.revealed||!["虫","阿米巴"].includes(s.alienId))
++        ||[...p.hand,...p.reservedCards].some(c=>!known.has(c.id))
++        ||state.pieces.rockets.some(r=>r.playerId===seatId&&rockets.isControllablePlayerRocket(r))
++        ||cardEffects.listPendingTriggerKeys(p,t).length
++        ||p.reservedCards.some(c=>{const done=c.cardEffectState?.consumedTriggerIds||[];return cardEffects.getCardModel(c)?.triggers?.some(trigger=>!done.includes(trigger.id)&&trigger.event?.type!=="researchTech");})
++        ||endScoring.shouldApplyJiuzheThreatPenalty(p,state)
++        ||p.reservedCards.some(c=>{const rule=endScoring.resolveCardEndGameRule(c,cardEffects);
++          return rule&&!["planetLandingPairs","amibaTraceCount","chongTraceCount"].includes(rule.kind);}))return null;
++      const company=industryCatalog.getPlayerIndustryDefinition(p);
++      if(company?.activeAbilityId!=="deepspace_swap_cards"||company.passiveIds.length!==1
++        ||company.passiveIds[0]!=="deepspace_free_analyze"
++        ||state.finalScoring.thresholds.some(n=>!Object.values(state.finalScoring.tiles)
++          .some(tile=>tile.marks.some(m=>m.playerId===seatId&&m.threshold===n))))return null;
++      const pool=p.dataState?.poolTokens;
++      if(!Array.isArray(pool)||pool.length!==p.resources.availableData
++        ||pool.some(token=>!Number.isInteger(token.slotIndex)||!Object.hasOwn(data.DATA_POOL_SLOTS,token.slotIndex))
++        ||new Set(pool.map(token=>token.slotIndex)).size!==pool.length)return null;
++      const jobs=cargo.transportTasksByRocketId;
++      if(!jobs||Object.values(jobs).some(job=>!cargo.fossilsById?.[job.fossilId]))return null;
++      const owner={...p,resources:{...p.resources,score:null},scoreSources:null,dataState:{poolCount:pool.length}};
++      // The cache stores a value delta, never a Native successor. Discard/draw
++      // history, token IDs, scan marks and unchanged scoring terms cancel.
++      // Actual wallet caps, card runtime state, task count, collision geometry,
++      // job/fossil status and the public forbidden pickup coordinate remain.
++      const fossils=Object.fromEntries(Object.values(jobs).map(job=>[job.fossilId,cargo.fossilsById[job.fossilId]]));
++      return JSON.stringify([owner,t,state.pieces,state.solarSystem,state.finalScoring,
++        jobs,fossils,cargo.panelFossilSlots,cargo.unlockedBluePositions,forbiddenCoordinate]);
++    }
+@@ -5015,0 +5055,22 @@
++      const key=cargoGainReuseKey(state,known,forbiddenCoordinate);
++      if(key!==null){
++        const saved=cargoGainQuotes.get(key);
++        if(saved){
++          cargoGainStats.hits++;
++          const p=state.players.players.find(q=>q.id===seatId);
++          return {value:stateValue.sumValueParts([finalNoProbeValue(state,p),saved.gain]),
++            gain:saved.gain,plans:copyForkData(saved.plans)};
++        }
++        cargoGainStats.misses++;
++      }else cargoGainStats.bypasses++;
++      const result=uncachedKnownCargoFuture(state,known,forbiddenCoordinate);
++      if(key!==null&&result){
++        // Eviction changes work only: a miss executes the same complete Native
++        // continuation. No Native state or successor is retained in this cache.
++        if(cargoGainQuotes.size>=64){cargoGainQuotes.delete(cargoGainQuotes.keys().next().value);cargoGainStats.evictions++;}
++        cargoGainQuotes.set(key,{gain:result.gain,plans:copyForkData(result.plans)});
++        cargoGainStats.stores++;cargoGainStats.maxKeyCharacters=Math.max(cargoGainStats.maxKeyCharacters,key.length);
++      }
++      return result;
++    }
++    function uncachedKnownCargoFuture(state,known,forbiddenCoordinate=null){
+@@ -9465,0 +9527 @@
++      cargoGainQuotes.clear();
+@@ -11190 +11252 @@
+-      return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
++      return freeze({ cargoGainReuse:{...cargoGainStats,entries:cargoGainQuotes.size,maxEntries:64},cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v513";
++  const VERSION = "seti-complete-decision-search-v514";
+--- a/tools/node-test-inventory.js
++++ b/tools/node-test-inventory.js
+@@ -22,0 +23 @@
++    entry("randomizer/game/ai/cargo-gain-reuse.test.js", "policy/decision-search", "运输增量缓存重算当前盘面分，保留真实筹资与原生后缀，并拒绝未支持上下文", "把不同钱包或任务合并、复用旧盘面分、漏掉触发与隐藏信息或污染源状态"),
+--- a/docs/ai-design.md
++++ b/docs/ai-design.md
+@@ -1359,0 +1360,4 @@
++
++### v514已知运输增量复用
++
++末轮固定已知运输只在两种已揭示物种、无待处理事件及可观测搬运事件的卡牌触发（仅researchTech触发可保留）、全金标记已记入及受支持终局公式下缓存收益增量与固定计划。键保留钱包、精确手牌／任务、任务计数、科技、飞船、太阳系、运输与化石状态、终局板和禁止经过坐标。数据池须与资源一致且槽位合法。命中时按当前完整原生计分重新计算基准，既不合并原生状态，也不复用原生后继；其他上下文仍执行原函数。每个分析根最多保留64条，淘汰仅增加重算，关闭或重开根时清空；运行时搜索额度和必要分支不变。
+--- a/tools/browser-smoke-inventory.js
++++ b/tools/browser-smoke-inventory.js
+@@ -3,0 +4 @@
++  Object.freeze({"id": "production-cargo-gain-cache", "file": "randomizer/index.html", "readyExpression": "Boolean(window.SetiProductionKernel && window.SetiAnalysisPort && window.SetiSearchAgent)", "actionExpression": "(async()=>{\n const response=await fetch('/randomizer/game/ai/fixtures/cargo-gain-reuse-20261118-v1.json.gz');if(!response.ok)throw Error('cargo cache fixture missing');const f=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text());\n const seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true,trustedFrozenWorking:c?.trustedFrozenWorking===true})});k.newGame({seed});const c=k.composition;let port;\n try{if(!c.lifecycle.restore(f.root).ok)throw Error('cargo cache root restore failed');const before=JSON.stringify(c.lifecycle.save().envelope);port=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});const agent=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:port}),legal=c.inputPort.enumerateActions({}),q=agent.decide({seatId:seat,legalActions:legal}).search;\n const digest=async x=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(x))))).map(x=>x.toString(16).padStart(2,'0')).join('');const stats=port.getDiagnostics().cargoGainReuse,evidence={value:q.value,native:q.diagnostics.nativeExecutions,nodes:q.lines.length,milliseconds:q.rootAndSearchMilliseconds,complete:q.complete&&!q.unresolved.length,graph:await digest(q.lines),roots:await digest(q.roots),stats,sourceAndRngExact:JSON.stringify(c.lifecycle.save().envelope)===before};window.__cargoGainCache=evidence;\n if(!evidence.complete||evidence.value!==239.5||evidence.native!==69||evidence.nodes!==601||!evidence.sourceAndRngExact||!stats.hits||stats.entries>64||evidence.graph!=='5a1ca04b28c7038d4e5fc85de5d125ab5933171378bf45a6c945334bc09bc5af'||evidence.roots!=='f8e7e9e181e1cfe77ac3610037d128e59af63f8a886e512d002597ff6720b16b'||evidence.milliseconds>600)throw Error('cargo cache Browser evidence: '+JSON.stringify(evidence));\n }finally{port?.close();c.dispose()}\n})()", "successExpression": "window.__cargoGainCache?.complete && window.__cargoGainCache.value === 239.5 && window.__cargoGainCache.milliseconds <= 600", "obligation": "Browser exact cargo-delta reuse preserves the complete601-node graph/69 Native inputs/value239.5, source/RNG and600ms gate; no state merge", "counterexample": "Wrong value rebasing, unsafe task/trigger reuse, source mutation, lost graph coverage or over-budget decision"}),
+--- /dev/null
++++ b/randomizer/game/ai/cargo-gain-reuse.test.js
+@@ -0,0 +1,38 @@
++"use strict";
++const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),z=require("node:zlib"),Module=require("node:module");
++const {createSimulationRuleComposition}=require("../../training/simulation-rule-composition"),{createSeededRandom}=require("../random"),{buildRuleObservation}=require("../../app/rule-observation"),score=require("../end-game-scoring"),effects=require("../cards/effects"),rockets=require("../rockets"),solar=require("../../solar-system/core");
++const file=path.join(__dirname,"analysis-port.js"),src=fs.readFileSync(file,"utf8"),needle="return Object.freeze({ openRoot, expand,";
++assert.equal(src.split(needle).length,2);
++const testModule=new Module(file,module);testModule.filename=file;testModule.paths=Module._nodeModulePaths(__dirname);
++testModule._compile(src.replace(needle,"return Object.freeze({ _testCargo:knownCargoFuture,_testRawCargo:uncachedKnownCargoFuture,_testKey:cargoGainReuseKey, openRoot, expand,"),file);
++const f=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,"fixtures/cargo-gain-reuse-20261118-v1.json.gz")))),seat="player-white",seed=JSON.parse(f.root.committedState).meta.seed,rows=[];
++const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v,c)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true,trustedFrozenWorking:c?.trustedFrozenWorking===true})});
++k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.root).ok);const save=()=>c.lifecycle.save().envelope,live=save();
++try{
++ for(const example of f.examples){
++  const port=testModule.exports.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.openRoot();
++  const known=new Set(example.known),state=structuredClone(example.state),owner=s=>s.players.players.find(p=>p.id===seat),forbid=example.forbiddenCoordinate;
++  const quote=(s=state,ids=known,coordinate=forbid)=>{const before=structuredClone(s),raw=port._testRawCargo(s,ids,coordinate),actual=port._testCargo(s,ids,coordinate);assert.deepEqual(actual,raw,"cached value/plan must equal the original complete Native suffix");assert.deepEqual(s,before,"quote must not mutate its actual source");assert.deepEqual(save(),live,"quote must preserve live Native root/RNG");return actual;};
++  try{
++   const key=port._testKey(state,known,forbid);assert(key);const first=quote();assert(first);assert.deepEqual(first,example.result,"retain recorded original Native delta");assert.equal(port.getDiagnostics().cargoGainReuse.stores,1);
++   const shifted=structuredClone(state);owner(shifted).resources.score+=17;owner(shifted).scoreSources={...owner(shifted).scoreSources,cardPlayScore:999};assert.equal(port._testKey(shifted,known,forbid),key);const shiftedQuote=quote(shifted);assert.equal(shiftedQuote.value,first.value+17);assert.equal(shiftedQuote.gain,first.gain);
++   const labelled=structuredClone(state);for(const token of owner(labelled).dataState.poolTokens){token.id="alpha:"+token.id;token.index+=100;}owner(labelled).dataState.poolTokens.reverse();assert.equal(port._testKey(labelled,known,forbid),key);quote(labelled);
++   const b2=structuredClone(state);b2.finalScoring.tileVariants.b=2;const beforeScan=quote(b2),b2key=port._testKey(b2,known,forbid);b2.data.sectorSettlements={sectors:{},winsByPlayerId:{}};assert.equal(port._testKey(b2,known,forbid),b2key);const afterScan=quote(b2);assert.equal(afterScan.gain,beforeScan.gain);assert.notEqual(afterScan.value,beforeScan.value,"gold b2 base must be recomputed from current scan progress");
++   const wallet=structuredClone(state);owner(wallet).resources.energy++;assert.notEqual(port._testKey(wallet,known,forbid),key);quote(wallet);
++   const hand=structuredClone(state);owner(hand).hand.pop();owner(hand).resources.handSize=owner(hand).hand.length;assert.notEqual(port._testKey(hand,known,forbid),key);quote(hand);
++   const geometry=structuredClone(state),ship=geometry.pieces.rockets.find(r=>r.kind==="chong-fossil"&&r.playerId===seat);assert(rockets.moveRocket(geometry.pieces,ship.id,0,-1).ok);assert.notEqual(port._testKey(geometry,known,forbid),key);quote(geometry);
++   const earth=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId==="earth"),blocked={x:earth.x,y:earth.y};assert.notEqual(port._testKey(state,known,blocked),key);quote(state,known,blocked);
++   const reduced=new Set(known);reduced.delete(owner(state).hand[0].id);assert.equal(port._testKey(state,reduced,forbid),null);quote(state,reduced);
++   const research=structuredClone(state),researchCard=owner(research).reservedCards.find(c=>c.cardId==="amiba_1.webp");assert(researchCard);researchCard.cardEffectState.consumedTriggerIds=[];assert(port._testKey(research,known,forbid),"research-only triggers do not observe cargo events");quote(research);
++   const trigger=structuredClone(state),triggerCard={id:"cargo-trigger-control",cardId:"b_2.webp",faceUp:true,cardEffectState:{modelCardId:"b_2.webp",completedTaskIds:[],consumedTriggerIds:[]}};owner(trigger).reservedCards.push(triggerCard);const triggerKnown=new Set([...known,triggerCard.id]);assert(port._testKey(trigger,triggerKnown,forbid)===null,"visit trigger must bypass the cache");quote(trigger,triggerKnown);
++   const rules=structuredClone(state),extra=Object.entries(score.CARD_END_GAME_RULES).find(([,r])=>!["planetLandingPairs","amibaTraceCount","chongTraceCount"].includes(r.kind));assert(extra);const card={id:"cargo-end-rule-control",cardId:extra[0],faceUp:true};owner(rules).reservedCards.push(card);const ruleKnown=new Set([...known,card.id]);assert.equal(port._testKey(rules,ruleKnown,forbid),null);quote(rules,ruleKnown);
++   const alien=structuredClone(state);Object.values(alien.aliens.aliens)[0].alienId="奥陌陌";assert.equal(port._testKey(alien,known,forbid),null);quote(alien);
++   const pool=structuredClone(state);owner(pool).dataState.poolTokens.pop();assert.equal(port._testKey(pool,known,forbid),null);quote(pool);
++   const gold=structuredClone(state);for(const tile of Object.values(gold.finalScoring.tiles))tile.marks=tile.marks.filter(m=>m.playerId!==seat||m.threshold!==25);assert.equal(port._testKey(gold,known,forbid),null);quote(gold);
++   const expected=quote();first.plans[0].funding[0].kind="corrupt";const hit=quote();hit.plans[0].path[0].deltaX=999;assert.deepEqual(quote(),expected,"callers cannot poison cached plan metadata");
++   const stats=port.getDiagnostics().cargoGainReuse;assert(stats.hits>=5&&stats.bypasses>=5&&stats.entries<=64);rows.push({value:first.value,gain:first.gain,controls:15,hits:stats.hits,bypasses:stats.bypasses});
++   port.close();port.openRoot();assert.equal(port.getDiagnostics().cargoGainReuse.entries,0);assert.equal(port.getDiagnostics().cargoGainReuse.hits,0);
++  }finally{port.close();}
++ }
++ console.log(JSON.stringify({cargoGainReuse:"passed",examples:rows,sourceAndRngExact:true,resultMutationSafe:true,rootReopenClearsCache:true}));
++}finally{c.dispose();}

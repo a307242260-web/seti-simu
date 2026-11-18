@@ -1,0 +1,16 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+fair landing cargo: ordinary235.5 versus card239.5 through a different known task; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+{"cargoGainReuse":"passed","examples":[{"value":233.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6},{"value":235.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6},{"value":233.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6}],"sourceAndRngExact":true,"resultMutationSafe":true,"rootReopenClearsCache":true}
+{"cargoTaskAssignment":"passed","value":239.5,"score":148,"credit":6,"native":6,"maxMs":47.475875,"actualInputs":7,"coldRecovery":true,"independentCargoUnchanged":true}
+{"unboundCargoSuffix":"passed","value":244,"native":6,"maxMs":45.64358300000001,"actualInputs":7,"sourceAndRngUnchanged":true,"coldRecovery":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_07","value":242,"native":11,"maxMs":48.416458000000006,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":10,"maxMs":24.30945799999995,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":239.5,"native":6,"maxMs":18.599749999999858,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":239.5,"native":6,"maxMs":18.335542000000032,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_07","value":242,"native":11,"maxMs":22.65150000000017,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_07","value":244,"native":11,"maxMs":18.44441599999982,"actualInputs":12}]}
+{"mainOwnedPreparation":"passed","rows":[{"kind":"income","goal":"rocket:7:land:neptune:satellite:triton","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":7},{"kind":"company","goal":"rocket:7:orbit:uranus:planet:","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":10}]}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+probe resource greedy tests passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=12 failed=0 total=12 time=9.06s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=11
+OWNER policy/heuristic-policy tests=1

@@ -1,0 +1,91 @@
+{
+  "date": "2026-11-18",
+  "sources": {
+    "cargo-gain-v514-source-20261118-v1.json": "69a4f4b4b0ef547360c2e8d6edcdea7874ee2552f8371dd853d2dc767ea2bd53",
+    "cargo-gain-v514-point289-20261118-v1.json.gz": "79ffded930a1e4e21f962efa74801f299103a409a32128d182e3b61fb8bdbe3a",
+    "r4-main-owned-point289-v513-20261118-v1.json.gz": "d41dd918e17b419d28decbcebf8a462c4a6fd965ee54ccff180a56043c244276",
+    "cargo-compact-reuse-diagnostic-20261118-v1.json.gz": "6c594a59d3f9a51ec3e38f68eac3fa69260a4050c979103f69c65400ed3bab8d",
+    "cargo-compact-reuse-diagnostic-20261118-v2.json.gz": "a153e8d788738374a59cc361e3a68a8aef21a281a2965cabb933b9c8daf1b272",
+    "cargo-main-phase-scope-20261118-v1.json": "d0a25bfd9df817bdd440eea53aad749f5ac26cc9ec957113cac479b2d1531e0c",
+    "cargo-gain-v514-controls-20261118-v1.log": "6db6a932e3a0fee93e894217aac05f55db4d513c0ae75be96a561e216b0833a7",
+    "cargo-gain-v514-controls-20261118-v2.log": "5b0de82ce2d7ef562b861f30f4978d4435b101bc41a396d5c65d4dd3843f49c2",
+    "cargo-gain-v514-controls-20261118-v3.log": "3cd2eac52189950025a4b6e761e907ada3ca51f119ecd1585f9c86d4653e95db",
+    "cargo-gain-v514-related-20261118-v1.log": "3409635aa9e993a1599adb8e748278af8fa1b63d7a030d4ea1380d1767751361",
+    "cargo-gain-v514-value-input-audit-20261118-v1.log": "7c818ea1cbd7dd963516b4aec7a37cc1f0bec6dbbf188a9c789a9b5d5cb54f26",
+    "cargo-gain-v514-browser-20261118-v1.log": "8033f58791ebc641d1a110b070ac28430c3f89c8995dd78c8c7e0534fc394b3e",
+    "cargo-gain-v514-browser-related-20261118-v1.log": "818adcc1c44b93ec2fad125e181693b1915d83f761a0397cc33e8164db33d694",
+    "cargo-gain-v514-browser-related-20261118-v2.log": "c37cad8dfa953347affa046dea3b88a5570155fbb9c14c45332f05f0ac5a0cf3",
+    "cargo-gain-v514-browser-dependencies-20261118-v1.json": "a1c5127218c13aa00e7a394598a93ade441b09d7c29c7fc7f67aa7611fe7558b"
+  },
+  "candidate": "v514",
+  "promoted": false,
+  "kind": "Exact cargo value-delta reuse, no Native-state merge or policy branch omission",
+  "admission": {
+    "sameRoot": true,
+    "rootAndRngExact": true,
+    "milliseconds": [
+      639.702459,
+      572.910541
+    ],
+    "native": 69,
+    "logicalNodes": 601,
+    "value": 239.5,
+    "completeGraphAndRootsExact": true,
+    "passed": true,
+    "millisecondsHeadroom": 27.089459000000033,
+    "limit": "One independent measurement per runtime; not a latency distribution or proof of whole-game speedup."
+  },
+  "cache": {
+    "hits": 141,
+    "misses": 37,
+    "bypasses": 93,
+    "stores": 36,
+    "evictions": 0,
+    "maxKeyCharacters": 7504,
+    "entries": 36,
+    "maxEntries": 64
+  },
+  "scope": "Round4 known fixed Worm/Amiba cargo; preserve wallet, exact cards, tech, jobs/fossils, collision/solar geometry, gold board and forbidden coordinate. Rebase the actual full current score. Unsupported rules, unknown cards, relevant triggers, invalid pool or incomplete gold marks execute the original function.64-entry eviction recomputes; source and Native successors are never cached.",
+  "controls": {
+    "examples": 3,
+    "controlsPerExample": 15,
+    "resultMutationSafe": true,
+    "rootReopenClearsCache": true,
+    "sixNativePayoffs": [
+      242,
+      249,
+      239.5,
+      239.5,
+      242,
+      244
+    ]
+  },
+  "validation": {
+    "relatedNodePassed": 12,
+    "relatedNodeFailed": 0,
+    "valueInputAuditPassed": 68,
+    "browserDistinctPassed": 11,
+    "browserCriticalPointWithin600ms": true,
+    "browserExactMillisecondsRecorded": false,
+    "independentlyRestoredSourceFiles": 52,
+    "fullNodeSuiteRun": false
+  },
+  "retainedFailures": [
+    "Compact diagnostic v1 incorrectly excluded pre-main/turn-boundary contexts; three pure Native controls justified dropping that redundant eligibility condition while retaining the actual phase in the key.",
+    "Prototype trigger control exposed that listPendingTriggerKeys is not a test for every unconsumed trigger; the first correction then rejected harmless researchTech triggers, including a still-active blue trigger. Final guard rejects unconsumed non-researchTech triggers; a real Native visitPlanet card is the negative control. Both failed logs retained.",
+    "Browser income-recovery initially failed on missing historical inputs; restored three exact files from fixed Git base, then ran only the affected/unexecuted three checks. Frozen source/timing manifest unchanged."
+  ],
+  "remaining": [
+    "Integrate/review the independently archived candidate against the shared working tree without overwriting unrelated changes.",
+    "Validate the fixed23-input opening, first-two-round assets and unique autonomous full game through the registered experiment path.",
+    "Compare round-end score, technology, income, wallet and preinvestment; register/sync only reproducible completed outcomes.",
+    "Broader integration and historical regression failures remain outside these12 related checks."
+  ],
+  "formal": {
+    "version": "v485/valuev71",
+    "completeGameScore": 272,
+    "newGamesThisUnit": 0,
+    "newWholeGameQualityClaim": false
+  },
+  "workUnitExit": "One isolated prototype, required scoped checks and one final-source admission measurement complete. No game/batch or further optimization in this unit."
+}

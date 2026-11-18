@@ -1,0 +1,2 @@
+PASS production-cargo-gain-cache http://127.0.0.1:57685/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

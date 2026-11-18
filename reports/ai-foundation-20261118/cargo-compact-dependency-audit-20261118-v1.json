@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-18",
+  "startedAt": "2026-11-18 13:12:28 UTC",
+  "scope": "Value-delta identity for the existing fixed known cargo continuation; not a Native-state equivalence or a new route/claim policy.",
+  "kept": {
+    "actor": "All owner fields except raw score, scoreSources and token records; retain wallet, exact hand/reserved card instances, task count, tech, income and company runtime flags. Retain validated pool count.",
+    "world": "Full turn, pieces, solar geometry and final-scoring board; all transport jobs and their exact fossil records, panel slots/unlocks; forbiddenCoordinate.",
+    "knowledge": "Eligibility requires every owner hand/reserved instance known; visibleRootCargo and printed reward/card definitions remain local to the unchanged analysis root. No future unknown fossil is priced."
+  },
+  "omitted": [
+    {"fields":"cards discard/draw/reserve/public history","proof":"The fixed corner/claim only append discard/remove IDs. No accepted continuation draws or acquires cards, and allowed endgame rules do not read card history. The current exact hand/reserved runtime instances remain in the key."},
+    {"fields":"meta sequences and data token identity/placement records","proof":"gainData uses pool count and valid unique slot occupancy for capacity; getNextDataIndex and dataToken sequence allocate labels only. No fixed cargo action places/analyzes data, and no Native successor is cached. Validate pool/resource count and legal slots before keying."},
+    {"fields":"scan boards, sector wins, planet/trace scoring context","proof":"moveProbe arrival rewards change publicity/visit events, never orbit/landing markers; accepted fixed claims have no spawned scan effects. Gold b2 and the three allowed endgame-rule terms remain unchanged across the continuation. Native blue unlock writes panel/unlocked positions and does not write trace markers; listTraceEntries counts trace entries without unlock filtering. Rebase the full current score on every cache hit."},
+    {"fields":"other players and match context beyond initialSetup","proof":"augmentEffectResult resolves the explicit owner and their triggers/bonuses. Pure gain/data task rewards and the fixed one-move corner do not consult another player's wallet/cards or the previous main-card context. All other players have passed; owner triggers and turn bonuses are excluded."},
+    {"fields":"raw score and scoreSources","proof":"Native final score is additive without Jiuzhe penalty; the key excludes that penalty, any pending owner trigger and unsupported endgame-rule kinds. Every gold mark is already recorded. Native end-game scoring does not read scoreSources."}
+  ],
+  "guards": "Round4 current owner, main completed, other seats passed, fixed DeepSpace company, no borrowed tech/turn bonus/trigger/ordinary probe, only revealed Worm and Amiba, valid known owner cards and data pool, all gold marks, allowed endgame rules only. Unsupported contexts retain the original function.",
+  "hypotheses": ["Compact dependency key yields enough additional reuse at lower cost", "Counterfactual differences in ignored fields preserve marginal result while relevant inputs split the key"],
+  "beforeImplementation": "Run one uncached identity diagnostic. Whole graph/roots, gain/plans and current-value rebasing must remain exact; net removable work must credibly cover39.7ms with margin. Reject before coding if not supported.",
+  "requiredControls": "Six prior Native payoffs, score/scan/token-label rebasing, wallet/hand/geometry/forbidden-coordinate changes, unknown card, trigger, unsupported endgame/alien and invalid pool fallback; source/RNG isolation and result mutation safety.",
+  "budgetsAndCoverage": "Runtime budgets remain null; no node/branch/depth/beam cap. Any cache eviction recomputes the same function and must not omit plans. No new game or batch.",
+  "stop": "At most60 minutes or the two hypotheses. One scoped prototype only if diagnosis and required controls support it; one final-source admission decision, no timing retries."
+}

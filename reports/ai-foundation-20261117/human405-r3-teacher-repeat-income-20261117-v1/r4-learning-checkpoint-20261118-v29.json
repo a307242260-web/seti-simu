@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v29",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v28.json",
+  "publishedParent": "52b2d60214c7e761f2750dda996154a4b7dc3662",
+  "goalStatus": "active",
+  "phase": "one scoped prototype passes Node/Browser600ms point admission; whole-game validation pending",
+  "userSteering": "先整理当前的方法论，先迭代方法论，能有效推进进展了再继续",
+  "AIImplementationResumeAllowed": false,
+  "newGameOrBatchAllowed": false,
+  "openEndedMicroOptimizationAllowed": false,
+  "productionRuntime": "v485/valuev71",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "lastUnpromotedCandidate": "v514/resourcev29/movementv8/valuev71",
+  "candidateLocalEvidence": {
+    "versions": [
+      "v512",
+      "v513"
+    ],
+    "sameRootAndRng": true,
+    "intentionalStrategyChange": true,
+    "interpretation": "Preparations retain the declared beneficiary/purpose. This changes policy coverage; it is not a proof that all removed off-purpose continuations are equivalent.",
+    "completeRuleSubmissions": [
+      209,
+      69
+    ],
+    "logicalNodes": [
+      1949,
+      601
+    ],
+    "milliseconds": [
+      1573.717125,
+      639.702459
+    ],
+    "wallReductionFraction": 0.593508611657257,
+    "value": 239.5,
+    "actionId": "play_card:975c7a35",
+    "nativePurposeControls": 24,
+    "sixPreservedPayoffs": [
+      242,
+      249,
+      239.5,
+      239.5,
+      242,
+      244
+    ],
+    "limit": "One measurement per distinct runtime, not a latency distribution or new game score. Changes to two validation tools after timing are explicitly recorded; measured runtime is unchanged."
+  },
+  "admission": {
+    "singlePointPassed": true,
+    "millisecondsOverLimit": 0,
+    "nodeDistinctPassed": 12,
+    "nodeKnownFailure": "Historical failures retained outside this12-check run",
+    "valueInputAuditPassed": 68,
+    "browserPlanned": 9,
+    "browserPassed": 11,
+    "browserFailed": 0,
+    "browserNotRun": 0,
+    "browserFailure": "production-known-post-main-cargo: first claim overwrote independent cargo",
+    "browserFailureClassification": "stale validation invariant; not evidence of a Native overwrite",
+    "fullRegressionPassed": false,
+    "candidatePromoted": false,
+    "browserFailureCorrectedInIsolatedOverlay": true,
+    "browserSavedNativeReplayPassed": 1,
+    "browserSavedNativeNegativeControlsPassed": 2,
+    "browserAIRecheckRun": true,
+    "browserOriginalBatchCountsHistorical": true
+  },
+  "methodAssessment": {
+    "diagnosisAndRejectionUseful": true,
+    "localChangeDemonstrated": true,
+    "wholeGameQualityImproved": false,
+    "openEndedImplementationAllowed": false,
+    "finding": "Previous process can produce local evidence but does not bound how long local work may postpone whole-goal acceptance. Add an explicit work-unit limit and stop at unresolved admission rather than automatically generating another patch.",
+    "localAdmissionPassed": true
+  },
+  "nextWorkUnit": {
+    "question": "Review/prepare isolated source integration without overwriting the shared working tree, then validate the registered fixed23-input opening/first-two-round assets and unique autonomous full game.",
+    "beforeGame": "Confirm exact source identity, reuse prior records and registered experiment path; retain original round-end asset and180s whole-game requirements. Do not infer whole-game quality from a passing teacher point.",
+    "limit": "One bounded integration/validation work unit; no further cache optimization or timing reruns.",
+    "remaining": "Formal v485 score272 remains; candidate is independently archived, not enabled. Broader integration/historical failures and whole-goal development differences remain."
+  },
+  "thisReviewNewSearches": {
+    "uncachedDiagnosticVersions": 2,
+    "finalSourceNodeAdmission": 1,
+    "finalSourceBrowserAdmission": 1,
+    "unitAndRelatedChecks": "recorded separately"
+  },
+  "thisReviewNativeSubmissions": {
+    "eachDiagnosticOrAdmissionCriticalPoint": 69,
+    "relatedChecks": "see Native receipts"
+  },
+  "thisReviewBrowserRuns": {
+    "criticalPoint": 1,
+    "relatedBatchWithMissingFixture": 1,
+    "remainingAfterDependencyRestore": 1
+  },
+  "thisReviewNewGames": 0,
+  "methodAudit": "reports/ai-foundation-20261118/methodology-review-20261118-v2.json",
+  "workflow": "docs/ai-research-workflow.md",
+  "experienceEntry": "docs/mocha_experience/exploratory_research.md",
+  "decisionContract": "docs/mocha_experience/promotion_log.md",
+  "scope": "Original teaching alignment goal stays active. This delivery only consolidates methodology and freezes unaccepted prior local work; it does not start a new strategy experiment or claim a new score.",
+  "previousGoalTurnClassification": "progress: established marginal invariance but rejected an expensive full-state cache key",
+  "thisGoalTurnClassification": "progress: compact dependency key and guarded delta memo preserve all601 nodes/roots,69 inputs and239.5; unique independent Node decision572.910541ms and Browser600ms pass;12 related Node,68 value-input and11 Browser checks pass",
+  "methodPilot": "reports/ai-foundation-20261118/cargo-gain-v514-findings-20261118-v1.json",
+  "verificationOnlyOverlay": "reports/ai-foundation-20261118/r4-browser-cargo-checks-source-20261118-v1.json",
+  "cargoGainReadWriteAuditComplete": false,
+  "cargoGainDiagnostic": {
+    "dependencyKey": "Retain the full Native state/knowledge/forbidden coordinate, except owner base score/scoreSources and nebulae/sectorSettlements; guard aliens, triggers and three supported endgame-rule kinds.",
+    "observedConsistent": true,
+    "exactCurrentValueRebasing": true,
+    "eligibleCalls": 271,
+    "uniqueKeys": 198,
+    "positiveCalls": 177,
+    "positiveKeys": 105,
+    "positiveRepeatedCalls": 72,
+    "keyMilliseconds": 26.73004699999916,
+    "repeatedUncachedMilliseconds": 24.49700000000007,
+    "rebasingMilliseconds": 0.9931260000000748,
+    "optimisticNetMilliseconds": -3.2261729999991644,
+    "decision": "Reject this cache key before implementation: key construction already costs more than the observed repeated work. Even a free key removes only the24.5ms repeated block in this diagnostic.",
+    "limits": "Diagnostic overhead/GC can perturb block timings. These are screening evidence, not admission or a stable speed comparison. Consistent sampled gains do not replace counterfactual Native proof for a smaller future key."
+  },
+  "candidateAdmission": {
+    "sameRoot": true,
+    "rootAndRngExact": true,
+    "milliseconds": [
+      639.702459,
+      572.910541
+    ],
+    "native": 69,
+    "logicalNodes": 601,
+    "value": 239.5,
+    "completeGraphAndRootsExact": true,
+    "passed": true,
+    "millisecondsHeadroom": 27.089459000000033,
+    "limit": "One independent measurement per runtime; not a latency distribution or proof of whole-game speedup."
+  },
+  "candidateValidation": {
+    "relatedNodePassed": 12,
+    "relatedNodeFailed": 0,
+    "valueInputAuditPassed": 68,
+    "browserDistinctPassed": 11,
+    "browserCriticalPointWithin600ms": true,
+    "browserExactMillisecondsRecorded": false,
+    "independentlyRestoredSourceFiles": 52,
+    "fullNodeSuiteRun": false
+  },
+  "candidateSource": "reports/ai-foundation-20261118/cargo-gain-v514-source-20261118-v1.json"
+}

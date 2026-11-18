@@ -1,0 +1,10 @@
+PASS production-known-post-main-cargo-native-replay http://127.0.0.1:58176/randomizer/index.html
+PASS production-main-owned-preparation http://127.0.0.1:58176/randomizer/index.html
+PASS production-cargo-fair-landing http://127.0.0.1:58176/randomizer/index.html
+PASS production-known-post-main-cargo http://127.0.0.1:58176/randomizer/index.html
+PASS production-goal-movement-plan http://127.0.0.1:58176/randomizer/index.html
+PASS production-fixed-card-pick-plan http://127.0.0.1:58176/randomizer/index.html
+PASS production-resource-goal-plan http://127.0.0.1:58176/randomizer/index.html
+Error: production-winning-income-recovery 操作异常：SyntaxError: Unexpected token 'N', "Not found" is not valid JSON
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-gain-v514-sealed-20261118-_4etkvb2/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-gain-v514-sealed-20261118-_4etkvb2/tools/run_browser_smokes.js:294:11)

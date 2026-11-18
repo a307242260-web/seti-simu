@@ -1,0 +1,1 @@
+{"cargoGainReuse":"passed","examples":[{"value":233.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6},{"value":235.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6},{"value":233.5,"gain":6.5,"controls":15,"hits":6,"bypasses":6}],"sourceAndRngExact":true,"resultMutationSafe":true,"rootReopenClearsCache":true}

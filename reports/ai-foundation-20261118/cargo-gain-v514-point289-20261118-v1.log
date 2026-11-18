@@ -1,0 +1,1 @@
+{"summary":{"actionId":"play_card:975c7a35","value":239.5,"native":69,"milliseconds":572.910541,"logicalNodes":601,"complete":true,"graphExact":true,"rootsExact":true,"cargoGainReuse":{"hits":141,"misses":37,"bypasses":93,"stores":36,"evictions":0,"maxKeyCharacters":7504,"entries":36,"maxEntries":64}},"gate":{"maxNative":256,"maxMilliseconds":600,"passed":true}}

@@ -1,0 +1,17 @@
+{
+  "baseGitCommit": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+  "paths": {
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json": "703e9579a424474c3eb03eeaeb7cec8f33195fd667976faef039de07a9b31789",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json": "26780d39cf689ccd1370197d14b6363a4fc9b0da65d6c6b3914b7454c85c206f",
+    "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-post-main-root-20261106-v1.json": "ee99f8f1f604a51e2d02fee0f4cce2e0d5fc2ee86e57d6c15d74222702a1fc93"
+  },
+  "restored": [
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-first-launch-timing-native-20261104-v1.json",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v256-energy-income-post-main-root-20261106-v1.json"
+  ],
+  "runtimeSourceChanged": false,
+  "timingSourceManifestUnchanged": true,
+  "reason": "Missing Browser-only historical validation input; restore exact existing Git bytes, no generated fixture or repeated passed check."
+}
