@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-18",
+  "scope": "Correct the Browser invariant proved wrong by the prior Native control; verify via saved Native actions. No AI strategy or performance patch.",
+  "change": "Retain the chosen goal's fossil/card; compare all other initial cargo tasks after its completion, rather than preserving hard-coded job5.",
+  "success": "Browser replays12 saved Native actions to the exact first-claim and final states, preserves RNG, attains244, and rejects overwrite/removal of the actual independent task.",
+  "sourceContract": "Only tools/browser-smoke-inventory.js and a compact Native replay fixture change in an isolated overlay. All48 other v513 parent paths stay byte-identical. Formal runtime remains unchanged.",
+  "noNewSearch": "Reuse the actual fixed-plan selection and Native receipts from the previous work unit. This does not re-execute the AI decision or claim the original full Browser AI smoke passes.",
+  "stop": "One correction and targeted Native replay; at most60 minutes active work/two hypotheses. Do not chain a strategy or performance optimization.",
+  "remainingAdmission": "639.7ms remains above600ms. Full Browser/Node regression and whole-game/asset acceptance remain incomplete."
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-18",
+  "scope": "Verification correction only; no AI search, strategy change or new game",
+  "sources": {
+    "reports/ai-foundation-20261118/r4-browser-cargo-checks-source-20261118-v1.json": "3818b2ffcf408b3235c93b3c7eb29f9731e39bb2ae097acaaa5334e08774497f",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-source-20261118-v1.json": "d9c8bd3097c57a748052d38673463e08e689584d7a4d709ade7cbedd0890939c",
+    "reports/ai-foundation-20261118/r4-browser-cargo-checks-20261118-v1.patch": "68d1bca4c4eb5df3677e39f8ec98845c26d384073219f4cf19c5ba3bb73d630d",
+    "reports/ai-foundation-20261118/r4-browser-cargo-native-replay-fixture-20261118-v1.json.gz": "da00b3e72db9f1a32033e0bc264a7f379d7ab564cdc7e8a84ac5eea79ed9dca0",
+    "reports/ai-foundation-20261118/r4-browser-cargo-checks-20261118-v1.log": "89a745756fca13a1bfb481b3ca75b4030c7acb54bbca7d090cd992d59a63f6bb"
+  },
+  "change": "The original Browser check now binds its selected goal and preserves every initial job for another fossil, instead of requiring the delivered job5 to survive.",
+  "browserNativeReplay": {
+    "passed": true,
+    "nativeInputs": 12,
+    "exactFirstClaimState": true,
+    "exactFinalState": true,
+    "rngUnchanged": true,
+    "value": 244,
+    "overwrittenOtherTaskRejected": true,
+    "missingOtherTaskRejected": true,
+    "assertionSourceSharedWithCorrectedAISmoke": true
+  },
+  "runtime": {
+    "unchangedParentFiles": 48,
+    "formalAIChanged": false,
+    "candidateAISourceChanged": false,
+    "promoted": false,
+    "newAISearches": 0,
+    "newGames": 0
+  },
+  "limits": [
+    "This is a new saved-input Native replay, not a rerun or PASS claim for the full AI Browser smoke.",
+    "Original nine-case batch remains2 PASS,1 stale-invariant failure,6 not run. The new Native-replay check passes separately.",
+    "Teacher289 remains69 complete submissions/601 logical nodes/639.7ms. The600ms admission is still unmet.",
+    "Formal complete-game score remains272. Whole-goal asset alignment and broader regression remain incomplete."
+  ],
+  "workUnitExit": "Correction and targeted Browser proof complete. No follow-up performance or strategy patch in this work unit.",
+  "restore": "Restore the parent49-file v513 candidate using its archived manifests; apply incrementalPatch with git apply --unidiff-zero; copy fixtureMapping; verify changedPaths and all unchangedParentPaths. Do not promote the AI runtime."
+}

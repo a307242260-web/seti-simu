@@ -1,0 +1,2 @@
+PASS production-known-post-main-cargo-native-replay http://127.0.0.1:56769/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1
