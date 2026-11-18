@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v17",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v16.json",
+  "publishedParent": "6e28cc610022f9ac8668e5005101107238215d46",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v506/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue original R3 teaching alignment into R4 same-root decisions and assets, preserving first two rounds, reproducibility, full necessary coverage and fixed admission budgets.",
+  "previousGoalTurnClassification": "progress: v504 Native write-domain copying and end-claim context evidence were committed and pushed; runtime not promoted.",
+  "thisGoalTurnClassification": "progress: Native trace-order forward equivalence removes36 graph nodes; trusted read-only Native stable-menu query preserves the full graph and reduces paired1662.0→1579.7ms.27 Node pass/1 reproduced preexisting failure,16 Browser,68 V-input audits,36 independently restored files and7 sealed tests. Replaced user-facing iteration diary with factual single-board performance, per-round assets and source-linked limits.",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "trace-history-native-menu-candidate-findings-20261118-v1.json",
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1579.7111249999998,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "next": [
+    "Prove early positive task claim plus immediate END equals delayed fixed END task with full Native state parity; retain all new goals opened by the earlier wallet rather than proving that none can open. Evaluate this canonical ordering against the current299 repeated timing proofs.",
+    "Finish legacy integration expectation maintenance through independent current Native outcomes; do not alter production behavior to reproduce an obsolete action family or replace a value constant without a Native witness.",
+    "Keep the single-decision600ms gate; after admission, revalidate fixed roots and first two rounds before R4 same-root development and a unique full game."
+  ]
+}

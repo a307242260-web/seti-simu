@@ -1,0 +1,28 @@
+trusted analysis fork isolation and exact reuse passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+0 !== 2
+
+    at Object.<anonymous> (/private/tmp/seti-stable-menu-query-20261118-jf8ooyg3/randomizer/game/ai/analysis-port.test.js:565:12)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/capture-legacy-cargo-test-receipt-20261118-v1.cjs:2:921)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

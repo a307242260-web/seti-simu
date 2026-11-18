@@ -1,0 +1,12 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+data token fungibility, real placement diamonds and every immediate successor passed
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+{"quietR4Ledger":"passed","value":235.5,"nativeFullFormalCompactExact":true,"unrealizedAndDebtZero":true,"pendingGoldDeclined":true,"rootAndRngPreserved":true}
+{"stableMenuQuery":"passed","nativeMenuComparisons":24,"frozenSourcePreserved":true,"activeForkSessionPreserved":true,"nextNativeInputExact":true,"hostQueryUnavailable":true}
+{"traceHistoryIdentity":"passed","nativeDiamonds":30,"allImmediateNativeSuccessors":690,"physicalPositionPreserved":true,"rootAndRngPreserved":true}
+{"yellowTraceQueue":"passed","cases":62,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":44,"nativeFallbackInputs":18}
+SUMMARY unit passed=7 failed=0 total=7 time=38.47s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=6
+OWNER architecture/policy-host tests=1

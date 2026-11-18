@@ -1,0 +1,612 @@
+{
+  "kind": "v505 instrumented search-only CPU sample; not timing admission or game; recursive frames counted once per sample, inclusive costs overlap",
+  "sourceSha256": "4de16f66e25ea9b359367ed224590c1f80f927b8b6feeab7195e5fce25b46802",
+  "native": 210,
+  "value": 235.5,
+  "logicalNodes": 1950,
+  "rootAndRngPreserved": true,
+  "inclusive": [
+    {
+      "function": "(root)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 1712.834
+    },
+    {
+      "function": "",
+      "file": "profile-trace-history-point289-20261118-v1.cjs",
+      "line": 3,
+      "milliseconds": 1589.795
+    },
+    {
+      "function": "automatic",
+      "file": "native-root-harness-20261118-v1.cjs",
+      "line": 59,
+      "milliseconds": 1566.295
+    },
+    {
+      "function": "decide",
+      "file": "search-agent.js",
+      "line": 34,
+      "milliseconds": 1556.253
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "milliseconds": 1538.586
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 2310,
+      "milliseconds": 669.884
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 269,
+      "milliseconds": 580.537
+    },
+    {
+      "function": "expandWithCardPick",
+      "file": "analysis-port.js",
+      "line": 2986,
+      "milliseconds": 405.214
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "line": 4716,
+      "milliseconds": 283.669
+    },
+    {
+      "function": "valueForNode",
+      "file": "decision-search.js",
+      "line": 57,
+      "milliseconds": 229.418
+    },
+    {
+      "function": "finishChild",
+      "file": "analysis-port.js",
+      "line": 6254,
+      "milliseconds": 208.959
+    },
+    {
+      "function": "runWithWorkingStateContext",
+      "file": "rule-composition.js",
+      "line": 407,
+      "milliseconds": 171.503
+    },
+    {
+      "function": "runWithWorkingState",
+      "file": "production-kernel.js",
+      "line": 1669,
+      "milliseconds": 170.253
+    },
+    {
+      "function": "internPhysicalIdentity",
+      "file": "analysis-port.js",
+      "line": 422,
+      "milliseconds": 168.374
+    },
+    {
+      "function": "get physicalId",
+      "file": "analysis-port.js",
+      "line": 665,
+      "milliseconds": 168.374
+    },
+    {
+      "function": "get identity",
+      "file": "analysis-port.js",
+      "line": 670,
+      "milliseconds": 168.374
+    },
+    {
+      "function": "identity",
+      "file": "analysis-port.js",
+      "line": 11122,
+      "milliseconds": 168.374
+    },
+    {
+      "function": "redundantQuietFinalClaim",
+      "file": "analysis-port.js",
+      "line": 8023,
+      "milliseconds": 165.334
+    },
+    {
+      "function": "quietLeaf",
+      "file": "decision-search.js",
+      "line": 40,
+      "milliseconds": 146.875
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 4221,
+      "milliseconds": 146.707
+    },
+    {
+      "function": "quietFinalValue",
+      "file": "analysis-port.js",
+      "line": 11031,
+      "milliseconds": 145.167
+    },
+    {
+      "function": "enumerateActions",
+      "file": "rule-composition.js",
+      "line": 808,
+      "milliseconds": 141.294
+    },
+    {
+      "function": "forwardIdentity",
+      "file": "analysis-port.js",
+      "line": 195,
+      "milliseconds": 139.293
+    },
+    {
+      "function": "",
+      "file": "rule-composition.js",
+      "line": 815,
+      "milliseconds": 137.586
+    },
+    {
+      "function": "legalActions",
+      "file": "analysis-port.js",
+      "line": 137,
+      "milliseconds": 137.586
+    },
+    {
+      "function": "readActions",
+      "file": "analysis-port.js",
+      "line": 6296,
+      "milliseconds": 136.294
+    },
+    {
+      "function": "get physicalKey",
+      "file": "analysis-port.js",
+      "line": 659,
+      "milliseconds": 135.167
+    },
+    {
+      "function": "enumerate",
+      "file": "production-composition.js",
+      "line": 825,
+      "milliseconds": 135.045
+    },
+    {
+      "function": "copyForkData",
+      "file": "state-store.js",
+      "line": 43,
+      "milliseconds": 133.711
+    },
+    {
+      "function": "copy",
+      "file": "state-store.js",
+      "line": 46,
+      "milliseconds": 132.461
+    },
+    {
+      "function": "enumerate",
+      "file": "standard-action.js",
+      "line": 143,
+      "milliseconds": 130.254
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "line": 5292,
+      "milliseconds": 127.081
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 123.039
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 72,
+      "milliseconds": 114.498
+    },
+    {
+      "function": "knownCargoFuture",
+      "file": "analysis-port.js",
+      "line": 4967,
+      "milliseconds": 113.957
+    },
+    {
+      "function": "serializeState",
+      "file": "analysis-port.js",
+      "line": 301,
+      "milliseconds": 111.833
+    },
+    {
+      "function": "knownFundedCargoQuote",
+      "file": "analysis-port.js",
+      "line": 4890,
+      "milliseconds": 110.29
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 103.167
+    },
+    {
+      "function": "enumerate",
+      "file": "standard-action.js",
+      "line": 226,
+      "milliseconds": 93.585
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 627,
+      "milliseconds": 88.249
+    },
+    {
+      "function": "getProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 1967,
+      "milliseconds": 86.957
+    },
+    {
+      "function": "endpoints",
+      "file": "analysis-port.js",
+      "line": 5317,
+      "milliseconds": 86.957
+    },
+    {
+      "function": "finishProvedCommittedState",
+      "file": "analysis-port.js",
+      "line": 2294,
+      "milliseconds": 86.418
+    },
+    {
+      "function": "executeCurrent",
+      "file": "analysis-port.js",
+      "line": 5417,
+      "milliseconds": 79.083
+    },
+    {
+      "function": "knownPickupTaskValue",
+      "file": "analysis-port.js",
+      "line": 10968,
+      "milliseconds": 72.376
+    },
+    {
+      "function": "resourceCatalog",
+      "file": "analysis-port.js",
+      "line": 3282,
+      "milliseconds": 70.248
+    },
+    {
+      "function": "describeCardPick",
+      "file": "analysis-port.js",
+      "line": 2888,
+      "milliseconds": 70.04
+    },
+    {
+      "function": "previewPlainPinkTrace",
+      "file": "residual-domain-session.js",
+      "line": 1851,
+      "milliseconds": 69.212
+    },
+    {
+      "function": "knownCargoBoundaryValue",
+      "file": "analysis-port.js",
+      "line": 4980,
+      "milliseconds": 67.791
+    },
+    {
+      "function": "resourceStep",
+      "file": "analysis-port.js",
+      "line": 3836,
+      "milliseconds": 67.541
+    }
+  ],
+  "self": [
+    {
+      "function": "copy",
+      "file": "state-store.js",
+      "line": 46,
+      "milliseconds": 132.461
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "milliseconds": 123.039
+    },
+    {
+      "function": "structuredClone",
+      "file": "js_transferable",
+      "line": 112,
+      "milliseconds": 94.375
+    },
+    {
+      "function": "serializeState",
+      "file": "analysis-port.js",
+      "line": 301,
+      "milliseconds": 57.667
+    },
+    {
+      "function": "freeze",
+      "file": "analysis-port.js",
+      "line": 131,
+      "milliseconds": 41.625
+    },
+    {
+      "function": "normalizeObject",
+      "file": "analysis-port.js",
+      "line": 271,
+      "milliseconds": 35.79
+    },
+    {
+      "function": "stableHash",
+      "file": "standard-action.js",
+      "line": 57,
+      "milliseconds": 22.626
+    },
+    {
+      "function": "post",
+      "file": "node:inspector",
+      "line": 118,
+      "milliseconds": 22.25
+    },
+    {
+      "function": "normalize",
+      "file": "analysis-port.js",
+      "line": 250,
+      "milliseconds": 20.668
+    },
+    {
+      "function": "buildProbeRouteRequirements",
+      "file": "production-kernel.js",
+      "line": 627,
+      "milliseconds": 18.918
+    },
+    {
+      "function": "stableSerialize",
+      "file": "standard-action.js",
+      "line": 44,
+      "milliseconds": 17.626
+    },
+    {
+      "function": "expand",
+      "file": "analysis-port.js",
+      "line": 2310,
+      "milliseconds": 17.375
+    },
+    {
+      "function": "evaluateMission",
+      "file": "probe-capital.js",
+      "line": 477,
+      "milliseconds": 16.668
+    },
+    {
+      "function": "searchDecision",
+      "file": "decision-search.js",
+      "line": 14,
+      "milliseconds": 13.832
+    },
+    {
+      "function": "resourceSpec",
+      "file": "analysis-port.js",
+      "line": 4221,
+      "milliseconds": 13.668
+    },
+    {
+      "function": "finalizeProbeRequirements",
+      "file": "production-kernel.js",
+      "line": 906,
+      "milliseconds": 12.541
+    },
+    {
+      "function": "deepFreeze",
+      "file": "rule-composition.js",
+      "line": 42,
+      "milliseconds": 12.458
+    },
+    {
+      "function": "createNode",
+      "file": "analysis-port.js",
+      "line": 635,
+      "milliseconds": 11.251
+    },
+    {
+      "function": "physicalCollisionKey",
+      "file": "analysis-port.js",
+      "line": 400,
+      "milliseconds": 11.207
+    },
+    {
+      "function": "immutableCapitalInput",
+      "file": "resource-demand.js",
+      "line": 175,
+      "milliseconds": 11.125
+    },
+    {
+      "function": "collectPlanetLocations",
+      "file": "core.js",
+      "line": 666,
+      "milliseconds": 10.042
+    },
+    {
+      "function": "probeStructureKey",
+      "file": "production-kernel.js",
+      "line": 736,
+      "milliseconds": 10
+    },
+    {
+      "function": "physicalBucket",
+      "file": "analysis-port.js",
+      "line": 382,
+      "milliseconds": 9.958
+    },
+    {
+      "function": "listTransportArrivalEvents",
+      "file": "chong.js",
+      "line": 932,
+      "milliseconds": 8.876
+    },
+    {
+      "function": "structuredClone",
+      "file": "",
+      "line": 0,
+      "milliseconds": 8.792
+    },
+    {
+      "function": "prepareFinalRoundSwapMission",
+      "file": "probe-capital.js",
+      "line": 360,
+      "milliseconds": 8.792
+    },
+    {
+      "function": "literal",
+      "file": "standard-action.js",
+      "line": 38,
+      "milliseconds": 8.75
+    },
+    {
+      "function": "compactObject",
+      "file": "simulation-contract.js",
+      "line": 45,
+      "milliseconds": 8.75
+    },
+    {
+      "function": "plan",
+      "file": "goal-movement.js",
+      "line": 72,
+      "milliseconds": 8.583
+    },
+    {
+      "function": "collectReadyTasks",
+      "file": "effects.js",
+      "line": 4652,
+      "milliseconds": 7.915
+    },
+    {
+      "function": "knownFundedCargoQuote",
+      "file": "analysis-port.js",
+      "line": 4890,
+      "milliseconds": 7.583
+    },
+    {
+      "function": "listNebulaChoices",
+      "file": "science-session.js",
+      "line": 256,
+      "milliseconds": 7.582
+    },
+    {
+      "function": "listCardSettlements",
+      "file": "residual-domain-session.js",
+      "line": 931,
+      "milliseconds": 7.501
+    },
+    {
+      "function": "add",
+      "file": "decision-search.js",
+      "line": 269,
+      "milliseconds": 7.415
+    },
+    {
+      "function": "goalMovementSpec",
+      "file": "analysis-port.js",
+      "line": 5292,
+      "milliseconds": 7.291
+    },
+    {
+      "function": "scanStepChoices",
+      "file": "science-session.js",
+      "line": 853,
+      "milliseconds": 6.333
+    },
+    {
+      "function": "",
+      "file": "analysis-port.js",
+      "line": 214,
+      "milliseconds": 6.333
+    },
+    {
+      "function": "enumerate",
+      "file": "standard-action.js",
+      "line": 226,
+      "milliseconds": 6.292
+    },
+    {
+      "function": "decide",
+      "file": "search-agent.js",
+      "line": 34,
+      "milliseconds": 6.292
+    },
+    {
+      "function": "finishChild",
+      "file": "analysis-port.js",
+      "line": 6254,
+      "milliseconds": 6.291
+    },
+    {
+      "function": "plan",
+      "file": "card-pick-planning.js",
+      "line": 336,
+      "milliseconds": 6.291
+    },
+    {
+      "function": "",
+      "file": "probe-turn-session.js",
+      "line": 175,
+      "milliseconds": 6.208
+    },
+    {
+      "function": "expandResourcePlan",
+      "file": "analysis-port.js",
+      "line": 4716,
+      "milliseconds": 6.208
+    },
+    {
+      "function": "countPlayerPlanetMarkers",
+      "file": "effects.js",
+      "line": 4394,
+      "milliseconds": 5.958
+    },
+    {
+      "function": "augmentEffectResult",
+      "file": "residual-domain-session.js",
+      "line": 1530,
+      "milliseconds": 5.917
+    },
+    {
+      "function": "",
+      "file": "decision-search.js",
+      "line": 441,
+      "milliseconds": 5.791
+    },
+    {
+      "function": "internalModuleStat",
+      "file": "",
+      "line": 0,
+      "milliseconds": 5.333
+    },
+    {
+      "function": "visit",
+      "file": "low-coupling-slices.js",
+      "line": 110,
+      "milliseconds": 5.25
+    },
+    {
+      "function": "countTraceMarkers",
+      "file": "end-game-scoring.js",
+      "line": 266,
+      "milliseconds": 5.166
+    },
+    {
+      "function": "traceHistoryIdentity",
+      "file": "analysis-port.js",
+      "line": 160,
+      "milliseconds": 5.125
+    }
+  ]
+}

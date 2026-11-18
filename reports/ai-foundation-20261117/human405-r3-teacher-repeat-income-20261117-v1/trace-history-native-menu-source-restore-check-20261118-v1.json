@@ -1,0 +1,9 @@
+{
+  "base": "6e28cc610022f9ac8668e5005101107238215d46",
+  "candidate": "v506/movementv8/valuev71",
+  "sourceFilesVerified": 36,
+  "unchangedBaseFiles": 523,
+  "sealedRoot": "/private/tmp/seti-trace-history-menu-sealed-20261118-h4vzfw76",
+  "allChangedJavaScriptSyntaxChecked": true,
+  "runtimePromoted": false
+}

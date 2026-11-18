@@ -1,0 +1,224 @@
+{
+  "date": "2026-11-18",
+  "scope": "One fixed board; White Deep Space autonomous, other three seats PASS/forced inputs; completed strategy and separate unpromoted research candidate",
+  "sources": {
+    "completedGame": {
+      "path": "reports/research/2170d824.5fabd621.full.json",
+      "sha256": "0bb84be034212f2ea92e2728c9c742ac024594713645a6999537c1f1e34d7f2f"
+    },
+    "teacherReference": {
+      "path": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json",
+      "sha256": "79174b6ff5e975a1b96c1fc9f29a2c2c52ec594b24a404ea234538709fcfd099"
+    },
+    "roundCheckpoints": [
+      {
+        "path": "reports/research/2170d824.5fabd621.full.json.round-end-1.checkpoint.json",
+        "sha256": "89ab892ba2ae9bb792d06c62a36f8a4a3d43106b06c7cacd98217b8c9c9c416d"
+      },
+      {
+        "path": "reports/research/2170d824.5fabd621.full.json.round-end-2.checkpoint.json",
+        "sha256": "2339c71c374e11d4622489440c8c0b98b205569fa1a9bde9b6324888436febbe"
+      },
+      {
+        "path": "reports/research/2170d824.5fabd621.full.json.round-end-3.checkpoint.json",
+        "sha256": "075ffb5d47334c9c6df77c480a66fb19cc01f2b0c6d45b174b0b30ea36d01a46"
+      },
+      {
+        "path": "reports/research/2170d824.5fabd621.full.json.round-end-4.checkpoint.json",
+        "sha256": "5edfdb944772fa0dbfa90db0d8cd6be41fbcd8a46f9b2fb91b1a5f1de79ba598"
+      }
+    ],
+    "candidateDecision": "stable-menu-query-point289-comparison-20261118-v1.json.gz"
+  },
+  "completedGame": {
+    "score": 272,
+    "wallMilliseconds": 16100,
+    "inputs": 354,
+    "searches": 300,
+    "maxNative": 256,
+    "maxMilliseconds": 391.4143750000003
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "score": 15,
+      "technology": [
+        "blue2",
+        "purple4"
+      ],
+      "income": [
+        6,
+        2,
+        0,
+        0,
+        1,
+        1
+      ],
+      "wallet": [
+        0,
+        1,
+        0,
+        3
+      ],
+      "hand": 0,
+      "slots": "4／1",
+      "fleet": "—",
+      "sectorWins": 0,
+      "scanInvestment": "2-a：2/6；4-b：1/5",
+      "traceInvestment": "—"
+    },
+    {
+      "round": 2,
+      "score": 48,
+      "technology": [
+        "blue2",
+        "blue3",
+        "purple4"
+      ],
+      "income": [
+        6,
+        3,
+        0,
+        0,
+        1,
+        1
+      ],
+      "wallet": [
+        0,
+        1,
+        0,
+        4
+      ],
+      "hand": 1,
+      "slots": "0／0",
+      "fleet": "—",
+      "sectorWins": 1,
+      "scanInvestment": "1-b：2/4；4-b：2/5",
+      "traceInvestment": "未揭示槽1 2；未揭示槽2 1"
+    },
+    {
+      "round": 3,
+      "score": 118,
+      "technology": [
+        "blue1",
+        "blue2",
+        "blue3",
+        "orange1",
+        "purple1",
+        "purple4"
+      ],
+      "income": [
+        7,
+        4,
+        0,
+        0,
+        2,
+        1
+      ],
+      "wallet": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "hand": 0,
+      "slots": "4／0",
+      "fleet": "标准探测器 #6（4,3）",
+      "sectorWins": 3,
+      "scanInvestment": "1-a：2/5；4-b：2/5",
+      "traceInvestment": "阿米巴 4；未揭示槽2 1"
+    },
+    {
+      "round": 4,
+      "score": 192,
+      "technology": [
+        "blue1",
+        "blue2",
+        "blue3",
+        "orange1",
+        "orange2",
+        "orange3",
+        "purple1",
+        "purple4"
+      ],
+      "income": [
+        7,
+        4,
+        0,
+        0,
+        3,
+        1
+      ],
+      "wallet": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "hand": 1,
+      "slots": "0／0",
+      "fleet": "—",
+      "sectorWins": 5,
+      "scanInvestment": "—",
+      "traceInvestment": "阿米巴 5；虫 3"
+    }
+  ],
+  "teacherRounds": {
+    "score": [
+      15,
+      34,
+      105,
+      239
+    ],
+    "techCount": [
+      2,
+      3,
+      6,
+      11
+    ],
+    "income4": [
+      [
+        6,
+        2,
+        1,
+        1
+      ],
+      [
+        6,
+        2,
+        1,
+        1
+      ],
+      [
+        7,
+        4,
+        1,
+        1
+      ],
+      [
+        8,
+        7,
+        1,
+        1
+      ]
+    ],
+    "source": "Committed previous report and verified current-rule teacher reference"
+  },
+  "candidate": {
+    "version": "v506",
+    "promoted": false,
+    "native": 210,
+    "milliseconds": 1579.7111249999998,
+    "complete": true,
+    "scoreUsedForActionComparison": 235.5,
+    "nativeLimit": 256,
+    "millisecondsLimit": 600
+  },
+  "validation": {
+    "nodePassed": 27,
+    "nodeFailed": 1,
+    "browserPassed": 16,
+    "valueInputAuditPassed": 68,
+    "legacyIntegrationReceiptSameAcrossV504V505V506": true
+  }
+}

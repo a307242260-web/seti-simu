@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v506/movementv8/valuev71",
+  "candidatePromoted": false,
+  "formalAIUnchanged": 272,
+  "teacherLegalReference": 384,
+  "noNewFullGameOrBatch": true,
+  "changes": [
+    {
+      "version": 505,
+      "contract": "Forward identity ignores only native Chong/Amiba trace-grid placement serials; all Native data stays intact, including uniqueness validation, grid positions/owners/reward flags, card IDs, next global alienEntity counter, Amiba symbol serials, other species and RNG. Collision screening follows the same equivalence. No resource/goal/budget truncation.",
+      "proof": "30 actual consecutive Native placement diamonds,690 all immediate Native successors,physical-position counterexample; the new test fails on v504 at the intended identity assertion.",
+      "result": "1986→1950 logical nodes; semantic outcomes for all root actions unchanged."
+    },
+    {
+      "version": 506,
+      "contract": "Trusted fork-only enumerateStableActions on deeply frozen Native stable state calls the same Production registry/context without installation. Loaded store, active session and RNG preserved; actual execution still uses Native restore and submit. Host does not expose the canonical state query.",
+      "proof": "24 complete/family Native menu comparisons,mutable-source rejection,active pending session preserved and the next actual Native input has an exact full envelope.",
+      "result": "All logical roots and full graph match v505; Native210 and complete235.5 comparison value unchanged."
+    }
+  ],
+  "pairedComparisons": [
+    {
+      "file": "trace-history-identity-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "3ccf777321e20125ae6e2c2c0423d815e8bac676ab79f705439222c9e91810d3",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "9b1bc58f351daf5842b232b3a18a93cc35329d5a6bb87a2b86c6e44d7bad0867"
+        },
+        "sourceSha256": "3ccf777321e20125ae6e2c2c0423d815e8bac676ab79f705439222c9e91810d3",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1683.707833,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "4de16f66e25ea9b359367ed224590c1f80f927b8b6feeab7195e5fce25b46802",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "29862910303b8efdf524e733972027998c757efed83eb4280431fbdff4de039f"
+        },
+        "sourceSha256": "4de16f66e25ea9b359367ed224590c1f80f927b8b6feeab7195e5fce25b46802",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1599.983,
+        "complete": true,
+        "unresolved": []
+      },
+      "semanticRootsExact": true,
+      "fullGraphsExact": null,
+      "beforeGraphNodes": 1986,
+      "afterGraphNodes": 1950
+    },
+    {
+      "file": "stable-menu-query-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "4de16f66e25ea9b359367ed224590c1f80f927b8b6feeab7195e5fce25b46802",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "29862910303b8efdf524e733972027998c757efed83eb4280431fbdff4de039f"
+        },
+        "sourceSha256": "4de16f66e25ea9b359367ed224590c1f80f927b8b6feeab7195e5fce25b46802",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1662.0190830000001,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "ed1d6a8b8c83424c0222fed16270aa7580af9f0944e48ba86e03b288806771c3",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "cbe269ba47b11ab18824b2d634690124a1919545f5d63ad17d6289ebc8a196db"
+        },
+        "sourceSha256": "ed1d6a8b8c83424c0222fed16270aa7580af9f0944e48ba86e03b288806771c3",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1579.7111249999998,
+        "complete": true,
+        "unresolved": []
+      },
+      "semanticRootsExact": null,
+      "fullGraphsExact": true,
+      "beforeGraphNodes": 1950,
+      "afterGraphNodes": 1950
+    }
+  ],
+  "timingCaveat": "Each pair is a single same-process before/after measurement; separate batches are not a cumulative speed series. Instrumented CPU samples are not timing admission.",
+  "gate": {
+    "native": 210,
+    "nativeLimit": 256,
+    "milliseconds": 1579.7111249999998,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "verification": {
+    "nodePassed": 27,
+    "nodeFailed": 1,
+    "browserPassed": 16,
+    "valueInputAuditPassed": 68,
+    "sealedTestsPassed": 7,
+    "sourceRestore": {
+      "base": "6e28cc610022f9ac8668e5005101107238215d46",
+      "candidate": "v506/movementv8/valuev71",
+      "sourceFilesVerified": 36,
+      "unchangedBaseFiles": 523,
+      "sealedRoot": "/private/tmp/seti-trace-history-menu-sealed-20261118-h4vzfw76",
+      "allChangedJavaScriptSyntaxChecked": true,
+      "runtimePromoted": false
+    }
+  },
+  "existingIntegrationFailure": {
+    "file": "randomizer/game/ai/analysis-port.test.js",
+    "firstAssertion": "Legacy scenario expects two energy-for-move trade entries; current legal execution uses two ordinary Native paid moves. Native21-input receipt and complete final envelope are identical across v504,v505,v506; final wallet3C/0E/3data and score155.",
+    "secondControlledAssertion": "Changing only that assertion in a disposable test reveals a later legacy216.5 expectation versus217.5; both v504 and v505 show the same difference. Original shared/source test left unchanged; partial diagnostic test edits are not included.",
+    "countedAsPassed": false,
+    "baselineReceipt": "legacy-cargo-test-v504-receipt-20261118-v1.json.gz",
+    "candidateReceipt": "legacy-cargo-test-v506-receipt-20261118-v1.json.gz",
+    "receiptNativeStateSha256": "0b2e0123d0b8b8d38c6f1df7c79c965b8434faa666a9b36bb0a3c2a9745d9a58"
+  },
+  "report": "reports/iteration/current-full-baseline-20261118-v1.html",
+  "reportData": "current-strategy-status-data-20261118-v1.json",
+  "next": [
+    "Prove early positive task claim plus immediate END equals delayed fixed END task with full Native state parity; retain all new goals opened by the earlier wallet rather than proving that none can open. Evaluate this canonical ordering against the current299 repeated timing proofs.",
+    "Finish legacy integration expectation maintenance through independent current Native outcomes; do not alter production behavior to reproduce an obsolete action family or replace a value constant without a Native witness.",
+    "Keep the single-decision600ms gate; after admission, revalidate fixed roots and first two rounds before R4 same-root development and a unique full game."
+  ],
+  "sourceBundle": "trace-history-native-menu-candidate-source-20261118-v1.json",
+  "sourceBenchmarkIntermediate": "trace-history-benchmark-version-20261118-v1.json",
+  "cpuEvidence": "trace-history-point289-cpu-summary-20261118-v1.json"
+}

@@ -1,0 +1,27 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: real Native commuting paths must deduplicate within one port
+
+{}
+
+    at Object.<anonymous> (/private/tmp/seti-quiet-science-copy-20261118-hqtj5b1v/randomizer/game/ai/trace-history-identity.test.js:13:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at [stdin]:1:266
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:446:12
+    at [stdin]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:444:60)
+    at evalFunction (node:internal/process/execution:279:30)
+    at evalTypeScript (node:internal/process/execution:291:3)
+    at node:internal/main/eval_stdin:53:5 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {},
+  expected: {},
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
