@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v9",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v8.json",
+  "publishedParent": "39c36b0ac3eb239055d32bae429f0190ad52c419",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v491/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Continue third-round teaching alignment through fourth-round same-root decisions and assets, with reproducibility and budget admission.",
+  "thisGoalTurnClassification": "progress: Native rule fix verified and archived; additionally implemented missing post-main funded cargo candidate, verified six actual Native turn suffixes with per-input cold recovery, corrected executed-plan root reporting, passed16 Node/8 Browser/67 value audits, sealed exact source restore.",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "findings": "known-cargo-candidate-findings-20261118-v1.json",
+  "localCandidateGate": {
+    "scope": "six actual post-pickup roots, not teacher289 before pickup",
+    "maxNative": 6,
+    "maxMilliseconds": 46.29512500000001,
+    "passed": true
+  },
+  "unpassedOlderGlobalGate": {
+    "source": "v490",
+    "label": "teacher-input-289",
+    "native": 481,
+    "milliseconds": 2177.75025
+  },
+  "next": [
+    "Factor the same known-cargo purpose so ordinary landing and card landing can both consider it after their main action, retaining greedy directions and independent bindings.",
+    "Then prove a conservative old-F07 cargo floor across the hidden pickup without using any newly revealed fossil. Compare both routes under the same available-wallet constraints.",
+    "Measure new affected single-root cost first; preserve failures and do not begin whole-game or20-board validation until256/600 admission.",
+    "After single-root success, run required first-three-round/fixed-root regression and source admission; only then promote and run one uniquely registered autonomous full game."
+  ]
+}

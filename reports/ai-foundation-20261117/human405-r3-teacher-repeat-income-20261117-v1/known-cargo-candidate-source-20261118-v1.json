@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-18",
+  "base": "39c36b0ac3eb239055d32bae429f0190ad52c419",
+  "candidate": "v491/movementv8/valuev71",
+  "promoted": false,
+  "paths": {
+    "randomizer/game/ai/analysis-port.js": "3662f0d3e03055717ccc6af555723039ffa3b59141e3a3f1eeeaa16961e98f42",
+    "randomizer/game/ai/decision-search.js": "98b69ae49d7773d3fa210595cb9a701e1c4587e499816634534c36c2455d98a0",
+    "randomizer/game/ai/goal-movement.js": "ddf1d7eec4f2ca1eb98595d7f829945943f557eaa06d43025acf2343a2343e55",
+    "randomizer/game/ai/free-scan-funded-prefix.test.js": "37a1b8e4a03b13833b9d9c9a6f3d517051b926f16a9603ddb290b15524b58acc",
+    "randomizer/game/effects/residual-domain-session.js": "68494058e18cf441b0ff9445cf394f239a8fe5705509d2c279d728429270f364",
+    "randomizer/game/ai/quiet-company-swap.test.js": "1ea6a932c8b74ab2c20782cdb086b953fa3c269f8d14419f171538ca73ff83a8",
+    "tools/node-test-inventory.js": "fb65bd09048453f6f73e7016e24ff7374aa9b299ad6ff8d0236dd1a309e3e324",
+    "tools/browser-smoke-inventory.js": "2e1ef6b41109424131646d77ec7aac4fc992aa5aec2fdf21a1c709458dcbcf01",
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "5b1534ff8dfeda22e3b46abd868a15a893624abc073319dacc49fd0ecd0eac03",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "f4b45035b04fd6d39f18d6538817b0a190e7ad9b7d0dfeb4869118716e0d0d64",
+    "randomizer/game/ai/earned-pickup-task.test.js": "8e84f6cc0d5f012f2c8ed378d990aa26e5421cd188e13ba4853d995535e8c851",
+    "randomizer/game/ai/fixtures/earned-pickup-task-20261118-v1.json.gz": "fa6a89dfa89a422747dda32634b1e1a297e986c0ee115f0b77d618986f069470",
+    "tools/audit_v_state_inputs.js": "e475bf585d5fabf84765385920d20b2c870fc85fb81cd4c9419ce05b64217038",
+    "randomizer/game/cards/play-domain.js": "638745713c22236ddd00b8b9b76c3d069417a7a6805277d84a0d95d6f912e1fb",
+    "randomizer/game/cards/chong-orbit-pickup.test.js": "1e5708671aed12ed15307d950b070873a79a536bbc8760491d14326f5229905d",
+    "randomizer/game/cards/fixtures/chong-orbit-pickup-20261118-v1.json.gz": "f0678181e056c45c20d9128e8fbfac1c9b9a42f886fc06d46dd88e51a7b369ca",
+    "docs/standard-action-contract.md": "b5333b918e76a2df4bc24fa130b58e27c04ab073141b57c99b4feee611b1755c",
+    "randomizer/game/ai/known-post-main-cargo.test.js": "1d638700076b4563896515888f0299d90932ec8ad30a21f3bdc83e3cf8a50ae4",
+    "docs/ai-design.md": "65d3482fe7db057716c7baabbaf410c0e0d14d30a0b965bceea0948b21bd57b1"
+  },
+  "fixtures": {
+    "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz": "candidate-free-scan-one-step-20261118-v1.json.gz",
+    "randomizer/game/ai/fixtures/quiet-company-swap-20261118-v1.json.gz": "candidate-quiet-company-swap-20261118-v1.json.gz",
+    "randomizer/game/ai/fixtures/earned-pickup-task-20261118-v1.json.gz": "candidate-earned-pickup-task-20261118-v1.json.gz",
+    "randomizer/game/cards/fixtures/chong-orbit-pickup-20261118-v1.json.gz": "candidate-chong-orbit-pickup-20261118-v1.json.gz"
+  },
+  "patch": "candidate-known-post-main-cargo-20261118-v1.patch",
+  "restore": "Restore base commit, git apply --unidiff-zero <patch>, then copy each fixture artifact to its mapped destination; verify every SHA256. No runtime is promoted by this archive.",
+  "patchSha256": "7dba997ebc2373bc1f523804cfe20cee6f9e5f281036911f33b8f44de95f39a1"
+}

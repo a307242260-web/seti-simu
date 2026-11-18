@@ -1,0 +1,10 @@
+{
+  "root": "/private/tmp/seti-known-cargo-sealed-20261118-p6t6b_er",
+  "base": "39c36b0ac3eb239055d32bae429f0190ad52c419",
+  "candidate": "v491/movementv8/valuev71",
+  "sourceHashesExact": true,
+  "patchApplied": true,
+  "javascriptSyntaxPassed": true,
+  "files": 19,
+  "runtimePromoted": false
+}

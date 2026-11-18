@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "seti-known-post-main-cargo-candidate-v1",
+  "date": "2026-11-18",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v491/movementv8/valuev71",
+  "promoted": false,
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReferenceUnchanged": 384,
+  "newAutonomousGames": 0,
+  "changes": [
+    "At an actual stable post-main root, visible funded fossil deliveries can enter one purpose-bound fixed plan even with an independent second transport.",
+    "Use bounded public-coordinate shortest paths, current energy as the funding bound, and same Native movement, arrival augmentation, settlement query and task-consumption rules. Reject unknown reward or an extra decision; choose the highest proven immediate net gain, keeping existing other actions in the search.",
+    "Execute the route as actual move/payment pairs followed by its exact selected task; existing checkpoint plan reuse governs cold recovery. No bare movement direction expansion.",
+    "Search root summaries report actual executed plan edges even when the bare direction policy excludes that action."
+  ],
+  "stateAndBudgetContract": {
+    "equivalence": "Existing full Native state/session/RNG/knowledge identities unchanged; no new state cache or approximate merge.",
+    "reachability": "Static shortest route visits at most32 public coordinates; accepted steps each cost exactly1 and must fit current energy. Unavailable/unsupported destinations do not get fabricated actions.",
+    "search": "Existing global search accounting unchanged; each decision must close and stay within256 Native inputs and600ms for admission. No autonomous game while the older teacher289 gate remains failed."
+  },
+  "tests": {
+    "mainNodePassed": 16,
+    "browserPassed": 8,
+    "valueInputAuditPassed": 67,
+    "sealedSourceRestore": "known-cargo-source-restore-check-20261118-v1.json",
+    "sealedSourceSixIdentityExecutionAndColdRecovery": [
+      {
+        "newFossil": "fossil_01",
+        "delivered": "fossil_01",
+        "value": 237,
+        "native": 6,
+        "maxMs": 46.29512500000001,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_02",
+        "delivered": "fossil_02",
+        "value": 243.5,
+        "native": 6,
+        "maxMs": 27.021209,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_03",
+        "delivered": "fossil_07",
+        "value": 234.5,
+        "native": 6,
+        "maxMs": 22.68683299999998,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_04",
+        "delivered": "fossil_07",
+        "value": 234.5,
+        "native": 6,
+        "maxMs": 19.366667000000007,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_05",
+        "delivered": "fossil_05",
+        "value": 236.5,
+        "native": 6,
+        "maxMs": 19.539084000000003,
+        "actualInputs": 7
+      },
+      {
+        "newFossil": "fossil_06",
+        "delivered": "fossil_06",
+        "value": 238.5,
+        "native": 6,
+        "maxMs": 21.96870799999988,
+        "actualInputs": 7
+      }
+    ],
+    "maxNativePerSearch": 6,
+    "maxMillisecondsInSixCases": 46.29512500000001,
+    "threeDeclineGuards": [
+      "no current energy",
+      "another player active",
+      "turn event bonus"
+    ],
+    "rootAndRngPreserved": true,
+    "independentOtherTransportPreserved": true,
+    "selectedRootReportMatchesExecutedPlan": true
+  },
+  "scopeLimits": [
+    "New plan currently activates on the actual opened root after pickup, not every internal post-main search node.",
+    "The pre-pickup B117 floor still230. Known old cargo value has not been propagated into both ordinary-landing and Chong-card alternatives.",
+    "The original actual F06 example improves its post-pickup attainable value230 to238.5; this is a local route value, not an AI game score.",
+    "Native v490 teacher289 was481 inputs/2177.75025ms. No v491 full teacher-root budget pass or new complete game is claimed.",
+    "Initial candidate single-root log predates the root-summary reporting fix; final standalone/sealed unit and Browser checks cover the corrected report."
+  ],
+  "next": [
+    "Factor the same known-cargo purpose so ordinary landing and card landing can both consider it after their main action, retaining greedy directions and independent bindings.",
+    "Then prove a conservative old-F07 cargo floor across the hidden pickup without using any newly revealed fossil. Compare both routes under the same available-wallet constraints.",
+    "Measure new affected single-root cost first; preserve failures and do not begin whole-game or20-board validation until256/600 admission.",
+    "After single-root success, run required first-three-round/fixed-root regression and source admission; only then promote and run one uniquely registered autonomous full game."
+  ]
+}

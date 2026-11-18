@@ -1,0 +1,24 @@
+{"analysisBeforeOrbit":true,"hiddenWorlds":3,"valueChecks":104,"futureValueChecks":5,"rows":[{"index":0,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":50.98679200000001},{"index":1,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":44.101583999999946},{"index":3,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":43.397790999999984}]}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+{"fundedFreePrefix":true,"nativePrintedLanding":13,"actualRemainingEnergy":1,"noInterveningRotation":true,"rootAndRngIsolated":true}
+{"fundedOneStep":true,"readySectorClosures":0,"printedLanding":13,"extraLandingEnergy":0,"hiddenDeckIndependent":true}
+{"knownDataScanCycle":true,"valueChecks":190,"futureChecks":8,"rows":[{"name":"beforePlay","index":0,"n":81,"extra":38,"ms":113.38962499999997,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":1,"n":81,"extra":38,"ms":106.81233399999996,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":3,"n":81,"extra":38,"ms":96.11541699999998,"value":143.25,"previous":141.58333333333334},{"name":"beforeDiscard","index":0,"n":42,"extra":37,"ms":44.38370899999995,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":1,"n":42,"extra":37,"ms":42.241624999999885,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":3,"n":42,"extra":37,"ms":40.09058300000015,"value":143.25,"previous":138.16666666666666}]}
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":237,"native":6,"maxMs":50.445291,"actualInputs":7},{"newFossil":"fossil_02","delivered":"fossil_02","value":243.5,"native":6,"maxMs":30.967207999999914,"actualInputs":7},{"newFossil":"fossil_03","delivered":"fossil_07","value":234.5,"native":6,"maxMs":25.594959000000017,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":234.5,"native":6,"maxMs":23.744290999999976,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":236.5,"native":6,"maxMs":20.91233299999999,"actualInputs":7},{"newFossil":"fossil_06","delivered":"fossil_06","value":238.5,"native":6,"maxMs":21.80237500000021,"actualInputs":7}]}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+generic card orbit: Production printed rewards, grantRewards=false and following effects pass
+card play domain production composition tests passed
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+planet stats tests passed
+SUMMARY unit passed=16 failed=0 total=16 time=14.75s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=1
+OWNER architecture/effect-session tests=2
+OWNER policy/decision-search tests=10
+OWNER rules/actions tests=1
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
