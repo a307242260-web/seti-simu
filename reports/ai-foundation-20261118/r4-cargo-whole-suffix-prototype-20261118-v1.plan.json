@@ -1,0 +1,17 @@
+{
+  "candidate": "v512",
+  "phase": "bounded strategy prototype after verified whole Native suffix",
+  "sourceBase": "v510 plus rejected v511 matching patch",
+  "root": "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-whole-suffix-20261118-vgppxj6g",
+  "cause": "After alternative claim removes originating card, knownFundedCargoQuote still calls visibleEarthCargo which requires that origin card to remain reserved; Native seven-input suffix proves delivery to another same-destination task remains legal.",
+  "change": "Inside knownFundedCargoQuote only, bind visible known fossil to its current owned public ship independent of originating card. Existing supported task eligibility, same shortest physical route/funding, Native claim and exact whole suffix valuation remain. Leave every other visibleEarthCargo consumer unchanged.",
+  "stateEquivalence": "No new state merge, identity or pruning. Each candidate Native settlement retains its private writes; visible job and each accepted claim strictly decline.",
+  "reachabilityAndResources": "Same Earth target, shortest route and current energy/known one-move corner bound. No hidden payoff, move-direction branching, task permutations or future-turn expansion.",
+  "budgets": "Runtime global budgets remain null; every local point <=256 full Native submissions/600ms. No cap masquerades as pruning. Independent teacher289 admission remains required before games.",
+  "success": [
+    "New after-Ch6-first F06 regression fails on v511; v512 Native execution reaches244, cold recovery/source/RNG hold",
+    "Six-case values >=[242,249,235.5,235.5,242,244]; original F03 assignment239.5 remains",
+    "Only if all pass: one teacher289 run, measure actual changed strategy/value and full work; retain600ms failure if not met"
+  ],
+  "stop": "Any Native mismatch, per-case regression, missing whole suffix or local budget failure: reject before larger experiment. No whole game or20-board batch."
+}

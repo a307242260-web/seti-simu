@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "seti-r4-whole-cargo-finding-v1",
+  "sources": {
+    "reports/ai-foundation-20261118/r4-cargo-whole-suffix-20261118-v1.receipt.json.gz": "bee0a148a447dc80238c4737bdbd934aa2961f5d93023015598a828773978ae6",
+    "reports/ai-foundation-20261118/cargo-suffix-v512-source-20261118-v1.json": "932c7f2c489f46dabf4f539a199b9df84c1893797b0fe1594e0dd0ff5f9af49f",
+    "reports/ai-foundation-20261118/r4-cargo-suffix-final-point289-v512-20261118-v1.json.gz": "0b91975ddaefa851da0579e978d1082c06c0a179e245e73617c038e6061a2b5e",
+    "reports/ai-foundation-20261118/r4-cargo-v512-sealed-node-check-20261118-v2.log": "df1fd7acded6c8a77df75963ba7c1f7ff1bd09b7ddf277ce9adbe9f7947dfdc9",
+    "reports/ai-foundation-20261118/r4-cargo-v512-plan-prefix-20261118-v1.log": "05e253f6f871dbd0daf2c35fad764abf5f578cfa5fab0bbf71ed50a3fc52f9bd",
+    "reports/ai-foundation-20261118/r4-cargo-v512-search-agent-20261118-v1.log": "b74fed4ed234e0aff1cdc190d590f8106d48afeb0adcca57af7ae6506ba88d17",
+    "reports/ai-foundation-20261118/r4-cargo-v510-search-agent-control-20261118-v1.json": "a45e6306291a30795ff2e6fa19e3daf15581b34f2078a805a18ff789caf75278",
+    "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-route-facts-related-node-check-20261118-v1.log": "57b5c2ceb353334eb6caeaf39f4d0dcaf0cb4b1d0187a3c4e857f62d5b3c7a13",
+    "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/native-route-facts-candidate-findings-20261118-v1.json": "4d04d0003e3b6f042e019c91a88294dccecf04d1b38b48fc4fc7b6fb5422fed3"
+  },
+  "candidate": "v512/movementv8/valuev71",
+  "promoted": false,
+  "formalSingleGameScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "previousGoalTurn": "progress: Native task matching omission isolated, v511 rejected by three regression cases, diagnostic/comparison/stop-loss method promoted",
+  "causalConclusion": "Fossils match beneficiary tasks by destination. Consuming the origin card does not invalidate another public cargo job; plan visibility and claim beneficiary must remain independent. Native whole suffix proves this without changing rules.",
+  "changeScope": "Only knownFundedCargoQuote changes origin dependency and compares supported beneficiary tasks. Existing explicit Earth guard, Native claim validation, shortest funded routes, source/RNG isolation, private claim copies and greedy finite known suffix remain. Other visibleEarthCargo consumers and all Native rules/value weights stay unchanged.",
+  "nativeControl": {
+    "actualSubmissions": 7,
+    "from": "Existing Ch6-after-claim state, publicly known F06",
+    "attainedValue": 244,
+    "noAISearch": true,
+    "newGame": false
+  },
+  "sixKnownPayoffs": [
+    {
+      "fossil": "fossil_01",
+      "beforeValue": 242,
+      "afterValue": 242,
+      "delta": 0
+    },
+    {
+      "fossil": "fossil_02",
+      "beforeValue": 249,
+      "afterValue": 249,
+      "delta": 0
+    },
+    {
+      "fossil": "fossil_03",
+      "beforeValue": 235.5,
+      "afterValue": 239.5,
+      "delta": 4.0
+    },
+    {
+      "fossil": "fossil_04",
+      "beforeValue": 235.5,
+      "afterValue": 239.5,
+      "delta": 4.0
+    },
+    {
+      "fossil": "fossil_05",
+      "beforeValue": 242,
+      "afterValue": 242,
+      "delta": 0
+    },
+    {
+      "fossil": "fossil_06",
+      "beforeValue": 244,
+      "afterValue": 244,
+      "delta": 0
+    }
+  ],
+  "teacher289": {
+    "beforeAction": "land:d5ee03a2",
+    "afterAction": "play_card:975c7a35",
+    "beforeValue": 235.5,
+    "afterValue": 239.5,
+    "native": 209,
+    "milliseconds": 1573.717125,
+    "logicalNodes": 1949,
+    "complete": true,
+    "rootAndRngPreserved": true,
+    "gate": {
+      "maxNative": 256,
+      "maxMilliseconds": 600,
+      "passed": false
+    },
+    "timingComparison": "Unpaired different runs; no speedup claimed. Final source measured after restoring the explicit Earth filter; prior interim measurement retained."
+  },
+  "verification": {
+    "sevenPassed": [
+      "cargo-task-assignment",
+      "cargo-unbound-suffix",
+      "known-post-main-cargo",
+      "cargo-fair-landing",
+      "earned-pickup-task",
+      "decision-search",
+      "plan-prefix-reuse"
+    ],
+    "oneHistoricalFailure": "search-agent line74 action-family assertion; same failure reproduced with v510 runtime",
+    "allSourceFilesRestored": 47,
+    "nativeCatalogFromGitVerified": true,
+    "fullNodeSuiteRun": false,
+    "browserSmokesRun": false,
+    "firstTwoRoundsFullRerun": false,
+    "syntaxChecks": "8 changed JavaScript files passed",
+    "expectationChanges": "Two task-floor tests originally asserted235.5; Native controls prove239.5. Retained failed logs, changed expected payoff and actual selected beneficiary, preserving hidden-deck/identity invariance and Native endpoint checks.",
+    "restoreFailures": "Initial missing catalog caused8 failures; exact unchanged Git catalog restored. Two additional tests needed9 named historical fixtures; restored from base. Neither issue changes runtime."
+  },
+  "limitations": [
+    "Current-window value gain is not a measured whole-game score gain.",
+    "Six identity cases do not prove globally optimal task assignment; existing finite greedy policy remains.",
+    "209 full submissions exclude proven previews/graph/value work, all included in1573.7ms wall time.",
+    "600ms admission and full regression remain unmet; no new game or20-board batch permitted."
+  ],
+  "methodOutcome": "Revised causal diagnosis found and corrected a real plan omission without the three prior regressions; next work must address a quantified full-decision performance path, not resume the prior low-ceiling hotspot loop.",
+  "newWholeGames": 0,
+  "newBatches": 0,
+  "sharedRuntimeChanged": false
+}

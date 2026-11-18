@@ -1,0 +1,162 @@
+
+TEST cargo-task-assignment EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/search-agent.js:62
+        throw error;
+        ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26:57)
+    at Object.sum [as sumValueParts] (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:28:133)
+    at knownFundedCargoQuote (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:4986:33)
+    at fundedKnownPostMainCargo (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:5025:18)
+    at Object.resourceSpec (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:4257:12)
+    at add (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:330:59)
+    at Object.searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:548:32)
+    at Object.decide (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/search-agent.js:42:31)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/cargo-task-assignment.test.js:17:147)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+
+Node.js v22.22.0
+
+TEST cargo-unbound-suffix EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/search-agent.js:62
+        throw error;
+        ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26:57)
+    at Object.sum [as sumValueParts] (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:28:133)
+    at knownFundedCargoQuote (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:4986:33)
+    at fundedKnownPostMainCargo (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:5025:18)
+    at Object.resourceSpec (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:4257:12)
+    at add (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:330:59)
+    at Object.searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:548:32)
+    at Object.decide (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/search-agent.js:42:31)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/cargo-unbound-suffix.test.js:13:147)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+
+Node.js v22.22.0
+
+TEST known-post-main-cargo EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:32
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
+                                                              ^
+
+TypeError: VALUE_NUMBER_INVALID: total
+    at number (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:32:69)
+    at evaluateStateValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:831:5)
+    at details (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:841:22)
+    at evaluate (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:845:37)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/known-post-main-cargo.test.js:15:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+
+Node.js v22.22.0
+
+TEST cargo-fair-landing EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26
+ function units(value){if(!Number.isFinite(value))throw TypeError('VALUE_ARITHMETIC_NONFINITE');const result=Math.round(value*scale);return Number.isSafeInteger(result)?result:null;}
+                                                  ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26:57)
+    at Object.sum [as sumValueParts] (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:28:133)
+    at knownFundedCargoQuote (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:4986:33)
+    at knownCargoFuture (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:5002:20)
+    at knownCargoBoundaryValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:5015:60)
+    at Object.quietFinalValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:11098:19)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/cargo-fair-landing.test.js:16:20)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+
+Node.js v22.22.0
+
+TEST earned-pickup-task EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26
+ function units(value){if(!Number.isFinite(value))throw TypeError('VALUE_ARITHMETIC_NONFINITE');const result=Math.round(value*scale);return Number.isSafeInteger(result)?result:null;}
+                                                  ^
+
+TypeError: VALUE_ARITHMETIC_NONFINITE
+    at units (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:26:57)
+    at Object.sum [as sumValueParts] (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/value-arithmetic.js:28:133)
+    at knownPickupTaskValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:11082:77)
+    at Object.quietFinalValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/analysis-port.js:11097:20)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/earned-pickup-task.test.js:31:76)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+
+Node.js v22.22.0
+
+TEST decision-search EXIT 1
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:32
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
+                                                              ^
+
+TypeError: VALUE_NUMBER_INVALID: total
+    at number (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:32:69)
+    at evaluateStateValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:831:5)
+    at Function.details (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/state-value.js:841:22)
+    at valueOf (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:34:50)
+    at valueForNode (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:58:104)
+    at add (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:292:55)
+    at searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.js:843:23)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/decision-search.test.js:143:25)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+
+Node.js v22.22.0
+
+TEST search-agent EXIT 1
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/reports/fixed-boards/free-analyze-random20-20261104-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/tools/research-free-analyze-random20.js:5:14)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.require (node:internal/modules/cjs/loader:1463:12) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/reports/fixed-boards/free-analyze-random20-20261104-v1.json'
+}
+
+Node.js v22.22.0
+
+TEST plan-prefix-reuse EXIT 1
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/randomizer/game/ai/plan-prefix-reuse.test.js:9:25)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-cargo-v512-sealed-20261118-35tnctbp/adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json'
+}
+
+Node.js v22.22.0

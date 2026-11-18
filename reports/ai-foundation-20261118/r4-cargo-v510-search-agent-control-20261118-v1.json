@@ -1,0 +1,11 @@
+{
+  "base": "v510",
+  "runtimeSource": {
+    "randomizer/game/ai/analysis-port.js": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+    "randomizer/game/ai/decision-search.js": "2ad71a8b445592dd903a6a30f91cd5d66924a591ce88cf3d0f8d233799c66c4f"
+  },
+  "sameTestAndFixtureAsV512": true,
+  "sameFailure": "search-agent.test.js:74:5 action family assertion",
+  "exitCode": 1,
+  "notFixedOrSuppressed": true
+}

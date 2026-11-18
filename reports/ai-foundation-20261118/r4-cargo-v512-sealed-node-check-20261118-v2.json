@@ -1,0 +1,39 @@
+{
+  "sourceManifest": "cargo-suffix-v512-source-20261118-v1.json",
+  "results": [
+    {
+      "test": "cargo-task-assignment",
+      "exitCode": 0
+    },
+    {
+      "test": "cargo-unbound-suffix",
+      "exitCode": 0
+    },
+    {
+      "test": "known-post-main-cargo",
+      "exitCode": 0
+    },
+    {
+      "test": "cargo-fair-landing",
+      "exitCode": 0
+    },
+    {
+      "test": "earned-pickup-task",
+      "exitCode": 0
+    },
+    {
+      "test": "decision-search",
+      "exitCode": 0
+    },
+    {
+      "test": "search-agent",
+      "exitCode": 1
+    },
+    {
+      "test": "plan-prefix-reuse",
+      "exitCode": 1
+    }
+  ],
+  "passed": 6,
+  "failed": 2
+}

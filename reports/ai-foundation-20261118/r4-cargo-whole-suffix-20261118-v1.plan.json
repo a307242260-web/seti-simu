@@ -1,0 +1,11 @@
+{
+  "kind": "Native-only causal diagnosis after rejected v511; no AI implementation or game",
+  "source": "r4-task-assignment-pilot-20261118-v1.receipt.json.gz: fossil06, branch Ch6, afterClaim",
+  "question": "After old F07 consumes Ch6, does the remaining public F06 still have a legal two-step Earth delivery and Ch3 settlement?",
+  "stateOwnership": "Fossil identity, current piece identity, transport job identity, originating card and beneficiary card are distinct. Native menus and delivered status decide legality; no alias repair or state mutation is permitted.",
+  "control": "Restore the exact existing afterClaim envelope. Follow the public inward two-step route of the remaining current ship, pay actual energy, inspect available transport tasks; if Ch3 is legal, claim it, then B117 and END. Reuse prior stop-after-one-claim branch as baseline, do not rerun it.",
+  "falsifier": "If Native does not expose Ch3 after arrival, report the actual job/piece/fossil references rather than assuming the planner alone blocks continuation. If Native endpoints differ, retain all evidence and do not change production.",
+  "computation": "One fixed route, no direction search or task permutations. At most10 actual Native input submissions, no AI, no new merge/pruning or budget changes; all existing single-point/game gates still apply.",
+  "knownInformation": "F06 has already been revealed. F03 pick-card reward remains outside this no-hidden-outcome control; do not select or price its hidden result.",
+  "decision": "Only a verified whole known suffix and resolved ownership justify considering another bounded AI prototype."
+}

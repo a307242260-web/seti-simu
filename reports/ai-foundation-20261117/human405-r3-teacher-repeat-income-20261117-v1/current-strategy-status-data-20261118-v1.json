@@ -28,7 +28,14 @@
         "sha256": "5edfdb944772fa0dbfa90db0d8cd6be41fbcd8a46f9b2fb91b1a5f1de79ba598"
       }
     ],
-    "candidateDecision": "native-route-facts-point289-comparison-20261118-v1.json.gz"
+    "candidateDecision": {
+      "path": "reports/ai-foundation-20261118/r4-cargo-suffix-final-point289-v512-20261118-v1.json.gz",
+      "sha256": "0b91975ddaefa851da0579e978d1082c06c0a179e245e73617c038e6061a2b5e"
+    },
+    "candidateFindings": {
+      "path": "reports/ai-foundation-20261118/r4-cargo-suffix-findings-20261118-v1.json",
+      "sha256": "abd4ffcd4aae4eb81e45f423d53fa9fb3a5ef969a7759b43a75e4d7dd9225d9f"
+    }
   },
   "completedGame": {
     "score": 272,
@@ -205,16 +212,31 @@
     "source": "Committed previous report and verified current-rule teacher reference"
   },
   "candidate": {
-    "version": "v510",
+    "version": "v512",
     "promoted": false,
     "native": 209,
-    "milliseconds": 1528.445541,
+    "milliseconds": 1573.717125,
     "complete": true,
-    "scoreUsedForActionComparison": 235.5,
+    "scoreUsedForActionComparison": 239.5,
     "nativeLimit": 256,
-    "millisecondsLimit": 600
+    "millisecondsLimit": 600,
+    "action": "play_card:975c7a35"
   },
   "validation": {
+    "nodePassed": 7,
+    "nodeFailed": 1,
+    "historicalFailureReproducedOnV510": true,
+    "browserPassed": null,
+    "valueInputAuditPassed": null,
+    "fullSuiteRun": false,
+    "independentlyRestoredFiles": 47
+  },
+  "metricDefinitions": {
+    "nativeExecutions": "Successful complete input-port submissions (submissionCount); excludes proven previews, graph construction and valuation work. Not total computation or all simulated transitions.",
+    "milliseconds": "Root plus entire decision wall time; includes all previews, graph/valuation work and Native submissions.",
+    "nativeAdmissionLimit": "Existing256-counter criterion retained; not a newly defined total-work budget."
+  },
+  "priorV510Validation": {
     "nodePassed": 36,
     "nodeFailed": 1,
     "browserPassed": 19,
@@ -223,10 +245,5 @@
     "sealedNodePassed": 12,
     "exactNativeDirectoryQueries": 802,
     "warmColdDirectoryComparisons": 128
-  },
-  "metricDefinitions": {
-    "nativeExecutions": "Successful complete input-port submissions (submissionCount); excludes proven previews, graph construction and valuation work. Not total computation or all simulated transitions.",
-    "milliseconds": "Root plus entire decision wall time; includes all previews, graph/valuation work and Native submissions.",
-    "nativeAdmissionLimit": "Existing256-counter criterion retained; not a newly defined total-work budget."
   }
 }

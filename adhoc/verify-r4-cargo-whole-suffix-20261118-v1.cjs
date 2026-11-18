@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),z=require('node:zlib'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const repo=path.resolve(__dirname,'..'),runtime=path.resolve(process.argv[2]),D=path.join(repo,'reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1'),M=path.join(repo,'reports/ai-foundation-20261118'),out=path.join(M,'r4-cargo-whole-suffix-20261118-v1.receipt.json.gz'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const source=path.join(M,'r4-task-assignment-pilot-20261118-v1.receipt.json.gz'),manifest=JSON.parse(fs.readFileSync(path.join(D,'native-route-facts-candidate-source-20261118-v1.json'))),provenance={sourceSha256:sha(fs.readFileSync(source)),runtime:manifest.paths,planSha256:sha(fs.readFileSync(path.join(M,'r4-cargo-whole-suffix-20261118-v1.plan.json')))};
+if(fs.existsSync(out)){const old=JSON.parse(z.gunzipSync(fs.readFileSync(out)));assert.deepEqual(old.provenance,provenance);console.log(JSON.stringify({checkpointReused:true,result:old.result,submissions:old.inputs.length}));process.exit(0)}
+for(const [rel,hash]of Object.entries(manifest.paths))assert.equal(sha(fs.readFileSync(path.join(runtime,rel))),hash,rel);
+process.chdir(runtime);const {open}=require(path.join(D,'native-root-harness-20261118-v1.cjs')),{createStateValueEvaluator}=require(path.join(runtime,'randomizer/game/ai/state-value')),solar=require(path.join(runtime,'randomizer/solar-system/core')),rockets=require(path.join(runtime,'randomizer/game/rockets')),evaluate=createStateValueEvaluator('player-white');
+const original=JSON.parse(z.gunzipSync(fs.readFileSync(source))).cases.find(c=>c.newFossil==='fossil_06'),before=original.branches[1].afterClaim.envelope,m=open(before),record={provenance,root:before,inputs:[],checkpoints:[],reusedSingleClaimEnd:original.branches[1].end};
+const snapshot=label=>{const s=m.state(),data={label,envelope:m.save(),facts:m.facts(),value:evaluate(m.owner('player-white')),jobs:structuredClone(s.aliens.chong.transportTasksByRocketId),fossil:structuredClone(s.aliens.chong.fossilsById.fossil_06),legalTasks:m.menu().filter(a=>a.family==='complete_task')};record.checkpoints.push(data);return data};
+const act=(family,p=()=>true)=>{assert(record.inputs.length<10);const a=m.menu().find(a=>a.family===family&&p(a));assert(a,JSON.stringify({family,menu:m.menu()}));record.inputs.push(m.apply(a));snapshot('after-'+family);return a};
+const persist=()=>fs.writeFileSync(out,z.gzipSync(JSON.stringify(record)));
+try{
+ snapshot('initial');const ship=m.facts().probes.find(p=>p.fossilId==='fossil_06'),at=rockets.getRocketSectorCoordinate(ship),earth=solar.collectPlanetLocations(m.state().solarSystem).find(p=>p.planetId==='earth');assert.equal(at.x,earth.x);assert.equal(at.y-earth.y,2);assert.equal(m.player().resources.energy,2);
+ for(let i=0;i<2;i++){act('move',a=>a.target.rocketId===ship.id&&a.target.deltaX===0&&a.target.deltaY===-1);act('choose_payment',a=>a.target.choiceId==='energy')}
+ const ready=m.menu().find(a=>a.family==='complete_task'&&a.target.cardInstanceId==='alien-chong-3-10'&&a.target.ruleId==='transport');
+ if(ready){act('complete_task',a=>a.actionId===ready.actionId);act('complete_task',a=>a.target.ruleId==='b117-orbit-land-count-task');act('end_turn');record.result={nativeSuffixAvailable:true,value:record.checkpoints.at(-1).value,valueComparedWithOld244:record.checkpoints.at(-1).value-244};}
+ else record.result={nativeSuffixAvailable:false,reason:'No Ch3 transport task after two legal paid moves to Earth',last:record.checkpoints.at(-1).label};
+ record.complete=true;persist();console.log(JSON.stringify({result:record.result,inputs:record.inputs.length,lastFacts:record.checkpoints.at(-1).facts,jobs:record.checkpoints.at(-1).jobs}));
+}catch(error){record.failure={message:error.message,stack:error.stack};persist();throw error}finally{m.dispose()}
