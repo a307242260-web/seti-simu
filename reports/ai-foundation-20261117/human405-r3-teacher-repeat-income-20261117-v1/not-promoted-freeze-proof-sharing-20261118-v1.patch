@@ -1,0 +1,47 @@
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -129,9 +129,7 @@
+   }
+
+   function freeze(value) {
+-    if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
+-    for (const item of Object.values(value)) freeze(item);
+-    return Object.freeze(value);
++    return resourceDemand.freezePlanningInput(value);
+   }
+
+   function legalActions(composition, inspection = composition.inspect()) {
+diff --git a/randomizer/game/ai/resource-demand.js b/randomizer/game/ai/resource-demand.js
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -180,6 +180,22 @@
+     if(!Array.isArray(value)&&prototype!==Object.prototype&&prototype!==null)return false;
+     if(!Object.values(value).every(immutableCapitalInput))return false;
+     immutableCapitalInputs.add(value);return true;
++  }
++  // Share the proof obtained while freezing an owned analysis graph. A
++  // shallow-frozen input retains the old freeze semantics: inspect it, but
++  // never freeze its mutable descendants or certify it as deeply immutable.
++  function freezePlanningInput(value){
++    if(!value||typeof value!=='object'||immutableCapitalInputs.has(value))return value;
++    if(Object.isFrozen(value)){immutableCapitalInput(value);return value;}
++    const prototype=Object.getPrototypeOf(value);
++    let immutable=Array.isArray(value)||prototype===Object.prototype||prototype===null;
++    for(const child of Object.values(value)){
++      freezePlanningInput(child);
++      if(child&&typeof child==='object'&&!immutableCapitalInputs.has(child))immutable=false;
++    }
++    Object.freeze(value);
++    if(immutable)immutableCapitalInputs.add(value);
++    return value;
+   }
+   const immutableValueFacts=new WeakMap();
+   function valueFacts(state,p){
+@@ -1425,5 +1441,5 @@
+     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
+     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
+   }
+-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,publicLandingSupplier,blueLandingSupplyGoal,blueLandingWait,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,dataIncomeFunding,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,planningAnalysisCapital,immutableCapitalInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
++  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,incomeTailCapital,incomeTailWithPreview,blindIncomeBoundaryCapital,publicLandingSupplier,blueLandingSupplyGoal,blueLandingWait,heldLandingGoal,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,dataIncomeFunding,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,planningAnalysisCapital,immutableCapitalInput,freezePlanningInput,knownSwapPortfolioQuotes,incomeSwapPlan,forecastDataPlan,movementToolPlan,dataCornerCards});
+ });

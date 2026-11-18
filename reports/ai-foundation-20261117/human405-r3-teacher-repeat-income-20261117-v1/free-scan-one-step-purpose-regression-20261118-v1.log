@@ -1,0 +1,29 @@
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/tmp/seti-current-full-z97c_km1/adhoc/ai-decision-corpus-20261023-v1/audit-case-062-shared-prefix-final-20261028-v1.raw.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at read (/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.test.js:5:18)
+    at Object.<anonymous> (/private/tmp/seti-current-full-z97c_km1/randomizer/game/ai/local-decision-plans.test.js:6:38)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/tmp/seti-current-full-z97c_km1/adhoc/ai-decision-corpus-20261023-v1/audit-case-062-shared-prefix-final-20261028-v1.raw.json.gz'
+}
+
+Node.js v22.22.0
+{"controlledComputerPrefixBeatsIncome":true,"prefixInputs":4,"incomeInputs":9,"prefixValue":66.16666666666667,"incomeValue":64.66666666666667}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=1 total=2 time=0.83s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/local-decision-plans.test.js status=1 signal=none

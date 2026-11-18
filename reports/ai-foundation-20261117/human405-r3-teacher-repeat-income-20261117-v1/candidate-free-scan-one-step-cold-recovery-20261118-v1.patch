@@ -1,0 +1,161 @@
+diff --git a/randomizer/game/ai/goal-movement.js b/randomizer/game/ai/goal-movement.js
+--- a/randomizer/game/ai/goal-movement.js
++++ b/randomizer/game/ai/goal-movement.js
+@@ -8,7 +8,7 @@
+   if(common)module.exports=api;else root.SetiGoalMovement=api;
+ })(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players,data){
+   "use strict";
+-  const VERSION='seti-goal-movement-policy-v7';
++  const VERSION='seti-goal-movement-policy-v8';
+   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
+     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
+   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
+@@ -188,9 +188,11 @@
+       }
+       if(pickup&&route?.path.length===1&&route.cost===allowance
+         &&(objectiveOnly||moving.some(a=>matches(a,ship.id,route.path[0])))){
++        // Printed landing rewards are already guaranteed; closing scans
++        // and the later unknown fossil are not prerequisites for this fee.
+         const eligible=candidate.endpointFamily==='land'&&candidate.endpointTarget?.type==='satellite'
+           &&['jupiter','saturn'].includes(candidate.planetId)&&!ship.fossilId
+-          &&knownSatelliteSectorCount(state,owner,candidate.endpointFacts.rewards)>=2;
++          &&candidate.endpointFacts.rewards.every(e=>['gain_resources','choose_colored_nebula_scan'].includes(e.type));
+         const ordinary=players.canAfford(owner,cost);
+         const standardCost=ordinary?(cost.credits||0)+(cost.energy||0):Infinity;
+         const cardCost=eligible?pickup.cost.credits+1:Infinity;
+diff --git a/randomizer/game/ai/decision-search.js b/randomizer/game/ai/decision-search.js
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -6,7 +6,7 @@
+ })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
+   "use strict";
+
+-  const VERSION = "seti-complete-decision-search-v485";
++  const VERSION = "seti-complete-decision-search-v486";
+   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
+   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
+   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
+diff --git a/randomizer/game/ai/analysis-port.js b/randomizer/game/ai/analysis-port.js
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -4259,7 +4259,18 @@
+       const satelliteBase=node===openedRoot&&state.turn.roundNumber===4&&!stored.resourceControl&&!stored.intent
+         ?node.status==="stable"?state:["place_data","scan"].includes(source?.family)&&session?.baseState
+           ?planningState(session.baseState,stored.informationBarrier,knownCards(envelope)):null:null;
+-      const satellite=satelliteBase&&satelliteScanSetup(satelliteBase,stored);
++      let satellite=satelliteBase&&satelliteScanSetup(satelliteBase,stored);
++      if(satellite&&node.status==="decision"&&source?.family==="scan"){
++        // A cold scan menu may already have followed another public route.
++        // Recover only a plan whose pre-scan funding and executed scan prefix
++        // actually match; a new purpose cannot rewrite those Native inputs.
++        const p=satelliteBase.players.players.find(p=>p.id===seatId);
++        const scanned=session.journal.decisions.map(row=>row.choice).filter(a=>a.target?.nebulaId);
++        if(data.listComputerPlacedTokens(p).map(t=>t.placementSlot).join(",")!=="1,2"
++          ||p.resources.availableData!==satellite.scanData||scanned.length>satellite.scans.length
++          ||scanned.some((a,i)=>a.target.nebulaId!==satellite.scans[i]
++            ||a.family==="choose_card"&&a.target.cardInstanceId!==satellite.publicCardId))satellite=null;
++      }
+       if(satellite)goals=[...goals,satellite];
+       for(const goal of goals){
+         const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
+diff --git a/randomizer/game/ai/free-scan-funded-prefix.test.js b/randomizer/game/ai/free-scan-funded-prefix.test.js
+--- a/randomizer/game/ai/free-scan-funded-prefix.test.js
++++ b/randomizer/game/ai/free-scan-funded-prefix.test.js
+@@ -52,3 +52,57 @@
+  }finally{currentPort.close()}
+  console.log(JSON.stringify({fundedFreePrefix:true,nativePrintedLanding:13,actualRemainingEnergy:1,noInterveningRotation:true,rootAndRngIsolated:true}));
+ }finally{p.close();c.dispose()}
++
++// A funded one-step landing remains a purpose even when neither satellite
++// scan can close a sector. The printed score does not depend on a fossil.
++{
++ const one=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,'fixtures/free-scan-one-step-20261118-v1.json.gz'))));
++ const k2=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
++  projectCounterfactualState:(s,v,x)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:x?.trustedCommitted===true})});
++ k2.newGame({seed});const comp=k2.composition;assert(comp.lifecycle.restore(one.root).ok);
++ const original=comp.lifecycle.save().envelope,port=createAnalysisPort({composition:comp,seatId:seat,maxCacheEntries:0});
++ const legal=()=>comp.inspect().session?.decision?.choices||comp.inputPort.enumerateActions({});
++ const current=()=>{const e=comp.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState)};
++ const resources=()=>current().players.players.find(p=>p.id===seat).resources;
++ function apply(a){assert(a);const d=comp.inspect().session?.decision,r=d?comp.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?comp.inputPort.submitQuickAction(a):comp.inputPort.submitAction(a);assert(r.ok);}
++ try{
++  port.setMovementPlanning(true);const root=port.openRoot(),q=port.goalMovementSpec(root),a=legal().find(a=>a.actionId===q.selectedActionId);
++  assert.equal(a?.target.deltaX,0,'one free step must reach the held-card landing rather than assume a rotation');assert.equal(a.target.deltaY,1);
++  assert.equal(q.chosenGoal.planetId,'saturn');assert.equal(q.chosenGoal.cardId,one.knownSupplierCardId);assert.equal(q.intent.path.length,1);
++  assert.equal(q.chosenGoal.movementTiming,undefined,'funded same-seat endpoint must not borrow a future rotation');
++  const source=one.root.session.session.workingState,session=one.root.session.session;
++  const endpoint=native.getProbeRouteRequirements(source,seat,session.queue[0]).candidates.find(c=>c.rocketId===7&&c.endpointTarget?.satelliteId==='enceladus');
++  assert.equal(movement.knownSatelliteSectorCount(source,source.players.players.find(p=>p.id===seat),endpoint.endpointFacts.rewards),0);
++  for(const kind of ['draw-pile','alien-decks','zero-energy','no-fee','opponent-active','unknown-card','temporary-move']){
++   const s=structuredClone(source),owner=s.players.players.find(p=>p.id===seat);
++   if(kind==='draw-pile')s.cards.drawPileCardIds.reverse();
++   if(kind==='alien-decks'){s.aliens.chong.cardDeck.reverse();s.aliens.amiba.cardDeck.reverse()}
++   if(kind==='zero-energy')owner.resources.energy=0;
++   if(kind==='no-fee')owner.resources.credits=0;
++   if(kind==='opponent-active')s.turn.passedPlayerIds=s.turn.passedPlayerIds.filter(id=>id!=='player-green');
++   if(kind==='unknown-card')owner.hand.find(c=>c.id===one.knownSupplierCardId).hidden=true;
++   if(kind==='temporary-move')s.turn.cardTurnEventBonuses.push({playerId:seat,movementModifiers:{ignoreAsteroidRestriction:true}});
++   const frozen=structuredClone(s),result=movement.plan({state:s,seatId:seat,actions:root.legalActions,status:'decision',session,
++    endpoints:()=>native.getProbeRouteRequirements(s,seat,session.queue[0]).candidates,
++    compareTiming:(id,path,free)=>native.comparePlannedMovementTiming(s,seat,id,path,free)});
++   assert.deepEqual(s,frozen);
++   if(['draw-pile','alien-decks','zero-energy'].includes(kind))assert.equal(result.selectedActionId,q.selectedActionId,kind);
++   else assert.notEqual(result.chosenGoal?.cardId,one.knownSupplierCardId,kind+' cannot claim a funded held-card landing');
++  }
++  assert.deepEqual(comp.lifecycle.save().envelope,original);port.close();
++  const agentPort=createAnalysisPort({composition:comp,seatId:seat,maxCacheEntries:0});
++  try{
++   const result=require('./search-agent').createSearchAgent({seatId:seat,analysisPort:agentPort}).decide({seatId:seat,legalActions:legal()});
++   assert(result.search.complete);assert.equal(result.actionId,a.actionId,'a cold scan root must not recover a different already-executed public scan plan');
++   assert(result.search.diagnostics.nativeExecutions<=256);assert.deepEqual(comp.lifecycle.save().envelope,original);
++  }finally{agentPort.close()}
++  apply(a);let beforeLanding;
++  for(const old of one.tailAfterFreeMove){
++   if(old.family==='play_card'){beforeLanding=structuredClone(resources());assert.deepEqual(current().solarSystem.rotation,source.solarSystem.rotation)}
++   apply(legal().find(a=>a.actionId===old.actionId&&a.actorId===old.actorId));
++  }
++  assert.equal(resources().score,beforeLanding.score+13);assert.equal(resources().credits,beforeLanding.credits-1);assert.equal(resources().energy,beforeLanding.energy);
++  assert(legal().every(a=>a.target?.nebulaId),'stop with the printed scans pending, before the unknown fossil');
++  console.log(JSON.stringify({fundedOneStep:true,readySectorClosures:0,printedLanding:13,extraLandingEnergy:0,hiddenDeckIndependent:true}));
++ }finally{port.close();comp.dispose()}
++}
+diff --git a/tools/browser-smoke-inventory.js b/tools/browser-smoke-inventory.js
+--- a/tools/browser-smoke-inventory.js
++++ b/tools/browser-smoke-inventory.js
+@@ -1,6 +1,36 @@
+ "use strict";
+
+ const smokes = [
++  Object.freeze({
++    id: "production-free-scan-one-step",
++    file: "randomizer/index.html",
++    readyExpression: "Boolean(window.SetiRandomizer && window.SetiAnalysisPort && window.SetiSearchAgent)",
++    actionExpression: `(async () => {
++      const response=await fetch('/randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz');
++      if(!response.ok)throw Error('one-step fixture missing');
++      const f=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text()),seed=JSON.parse(f.root.committedState).meta.seed,seat='player-white';
++      const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
++        projectCounterfactualState:(s,v,c)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true})});
++      k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.root).ok)throw Error('one-step restore failed');
++      const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
++      const menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
++      const state=()=>{const e=c.lifecycle.save().envelope;return e.session?.session?.workingState||JSON.parse(e.committedState)};
++      const wallet=()=>state().players.players.find(p=>p.id===seat).resources;
++      const apply=a=>{if(!a)throw Error('one-step Native input missing');const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('one-step Native input rejected')};
++      try{
++        const q=window.SetiSearchAgent.createSearchAgent({seatId:seat,analysisPort:p}).decide({seatId:seat,legalActions:menu()}).search,a=menu().find(a=>a.actionId===q.actionId);
++        if(!q.complete||a?.target.deltaX!==0||a.target.deltaY!==1||q.diagnostics.nativeExecutions>256||q.rootAndSearchMilliseconds>600)throw Error('one-step Browser direction or budget differs');
++        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('one-step search changed root/RNG');
++        apply(a);let prior;
++        for(const old of f.tailAfterFreeMove){if(old.family==='play_card'){prior={...wallet()};if(JSON.stringify(state().solarSystem.rotation)!==JSON.stringify(f.root.session.session.workingState.solarSystem.rotation))throw Error('unexpected rotation')};apply(menu().find(a=>a.actionId===old.actionId&&a.actorId===old.actorId))}
++        const after=wallet();if(after.score!==prior.score+13||after.credits!==prior.credits-1||after.energy!==prior.energy)throw Error('one-step printed landing does not match Native');
++        window.__freeScanOneStep={ok:true,native:q.diagnostics.nativeExecutions};
++      }finally{p.close();c.dispose()}
++    })()`,
++    successExpression: "window.__freeScanOneStep?.ok === true",
++    obligation: "Browser保留不封闭扫描区域也可兑现13分的已筹资一步登陆，额外只付1钱、不借旋转或未知化石",
++    counterexample: "仍因扫描封闭数拒绝已持有牌的合法一步用途、错误绕行、超预算或污染原根",
++  }),
+   Object.freeze({
+     id: "production-free-scan-funded-prefix",
+     file: "randomizer/index.html",

@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "seti-one-step-candidate-findings-v1",
+  "date": "2026-11-18",
+  "publishedRuntimeBase": "f6d6eab979cfc08a5c09ffd91762d839941d8123",
+  "publishedPolicy": "v485/movementv7/valuev71",
+  "candidatePolicy": "v486/movementv8/valuev71",
+  "promoted": false,
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReferenceUnchanged": 384,
+  "candidateFixes": [
+    "A funded held-card one-step satellite landing depends on printed rewards/current fee, not on closing2 sectors.",
+    "A cold scan menu recovers satellite setup only when pre-scan computer funding and already executed scan prefix match; it cannot replace prior Native choices."
+  ],
+  "source": {
+    "patch": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/candidate-free-scan-one-step-cold-recovery-20261118-v1.patch",
+    "runtimeFileSha256": {
+      "randomizer/game/ai/goal-movement.js": "ddf1d7eec4f2ca1eb98595d7f829945943f557eaa06d43025acf2343a2343e55",
+      "randomizer/game/ai/decision-search.js": "f84324acb3a6eebb34e497495a284bb2c6b60e2f562ba011c7b1ff38637d60cc",
+      "randomizer/game/ai/analysis-port.js": "78b285d7e632f2b034b1d2f4e3c2771aad79de7a45908f98ab2e891e147d209f",
+      "randomizer/game/ai/free-scan-funded-prefix.test.js": "37a1b8e4a03b13833b9d9c9a6f3d517051b926f16a9603ddb290b15524b58acc",
+      "tools/browser-smoke-inventory.js": "cd15aa323cb0b682379a9beea334d1f5c995d3beb0dde919ad1b1556077d4d24"
+    },
+    "fixture": {
+      "archive": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/candidate-free-scan-one-step-20261118-v1.fixture.json.gz",
+      "destination": "randomizer/game/ai/fixtures/free-scan-one-step-20261118-v1.json.gz",
+      "sha256": "5b1534ff8dfeda22e3b46abd868a15a893624abc073319dacc49fd0ecd0eac03"
+    },
+    "reproduce": "Use an isolated source snapshot at publishedRuntimeBase; apply the patch and copy the fixture to destination. All other runtime files remain unchanged."
+  },
+  "validation": {
+    "nodePassed": 8,
+    "nodeEvidence": [
+      "free-scan-one-step-node-regression-20261118-v2.log:6 passed",
+      "free-scan-one-step-purpose-regression-20261118-v1.log: probe-capital passed; local plans lacked2 historical fixtures",
+      "free-scan-one-step-purpose-regression-20261118-v2.log: local plans passed after exact HEAD fixtures restored only in private snapshot"
+    ],
+    "browserPassed": 4,
+    "valueInputAuditPassed": 66,
+    "nativeStateSessionRngCases": 28,
+    "freeDecisionColdSearch": {
+      "before": "no reachable boundary, no action",
+      "afterNativeInputs": 16,
+      "afterMs": 143.385667,
+      "afterComplete": true
+    },
+    "existingRootComparison": {
+      "roots": 316,
+      "firstThreeRoundsExact": true,
+      "historicalAI300RootsUnchanged": true,
+      "gatePassed": false,
+      "failedTeacherRoot": {
+        "label": "teacher-input-272",
+        "native": 151,
+        "ms": 695.583458000001,
+        "complete": true
+      },
+      "timingScope": "Recorded before the later cold-prefix recovery correction; no all-root admission of the final candidate is claimed."
+    }
+  },
+  "laterTeacherRoot289": {
+    "isNewAutonomousGame": false,
+    "candidateNative": 825,
+    "candidateMs": 2434.612541,
+    "publishedV485Native": 825,
+    "publishedV485InstrumentedMsNotAdmission": 2536.74325,
+    "allNativeActionFamilyCounts": {
+      "play_card": 22,
+      "pass": 5,
+      "choose_card": 358,
+      "quick_trade": 3,
+      "industry": 121,
+      "place_data": 1,
+      "choose_target": 266,
+      "analyze": 3,
+      "choose_payment": 13,
+      "move": 1,
+      "land": 10,
+      "research_tech": 5,
+      "scan": 5,
+      "end_turn": 11,
+      "complete_task": 1
+    },
+    "targetKindCounts": {
+      "play_card:other": 22,
+      "pass:pass": 5,
+      "choose_card:alien-chong-6-16": 1,
+      "quick_trade:other": 3,
+      "choose_card:public": 123,
+      "industry:deepspace_swap_cards": 121,
+      "choose_card:hand": 121,
+      "place_data:place-data": 1,
+      "choose_target:data": 21,
+      "analyze:computer": 3,
+      "choose_payment:discard-hand-card": 2,
+      "choose_payment:confirm": 1,
+      "move:other": 1,
+      "choose_payment:energy": 5,
+      "choose_payment:alien-chong-4-14": 5,
+      "land:other": 10,
+      "choose_target:land": 23,
+      "research_tech:research-tech": 5,
+      "scan:standard-scan": 5,
+      "choose_target:nebula": 5,
+      "choose_target:scan4": 21,
+      "choose_target:trace": 195,
+      "choose_card:amiba": 82,
+      "choose_card:chong": 9,
+      "end_turn:end-turn": 11,
+      "complete_task:other": 1,
+      "choose_card:pick": 21,
+      "choose_card:alien-chong-8-12": 1,
+      "choose_target:orbit": 1
+    },
+    "companySwap": {
+      "completeNativeTriples": 121,
+      "inputs": 363,
+      "pairs": [
+        {
+          "outgoing": "alien-chong-6-16",
+          "incoming": "card-66-0",
+          "executions": 60
+        },
+        {
+          "outgoing": "alien-chong-8-12",
+          "incoming": "card-66-0",
+          "executions": 36
+        },
+        {
+          "outgoing": "alien-amiba-9-18",
+          "incoming": "card-66-0",
+          "executions": 17
+        },
+        {
+          "outgoing": "alien-amiba-9-19",
+          "incoming": "card-66-0",
+          "executions": 8
+        }
+      ]
+    },
+    "interpretation": "121 fixed3-input company swaps consume363/825 Native inputs(44%). Four outgoing variants target the same public incoming card. These are distinct source states; reuse a proved transaction, never a settled wallet or value across states."
+  },
+  "incomeDiagnosis": {
+    "missingPrinted13PointFloorNotProved": true,
+    "cardLandingCost": {
+      "credits": 1,
+      "energy": 0,
+      "handCards": 1
+    },
+    "ordinaryLandingAfterChong6IncomeCost": {
+      "credits": 0,
+      "energy": 2,
+      "handCards": 0
+    },
+    "bothNativePrintedScore": 13,
+    "currentWeightedPaymentTie": true,
+    "noCardRetentionBonusAdded": true
+  },
+  "knownEndTaskBoundary": {
+    "ordinaryLandingValue": 230,
+    "teacherCardValueBeforeUnknownFossil": 222,
+    "difference": 8,
+    "bothActualFossilOffers": [
+      {
+        "offer": "fossil_06",
+        "beforeTaskValue": 222,
+        "afterTaskValue": 230,
+        "scoreGain": 3,
+        "creditsGain": 1,
+        "nativeFinalProjectionGain": 7,
+        "completionCountGain": 1
+      },
+      {
+        "offer": "fossil_01",
+        "beforeTaskValue": 222,
+        "afterTaskValue": 230,
+        "scoreGain": 3,
+        "creditsGain": 1,
+        "nativeFinalProjectionGain": 7,
+        "completionCountGain": 1
+      }
+    ],
+    "status": "Diagnostic Native branches explain the8-point difference; a general rule proof is still required before forecasting a claim across every unknown prelude. No new valuation bonus is implemented."
+  },
+  "rejected": {
+    "freezeProofSharing": {
+      "exactComparedRoots": 16,
+      "nativeUnchanged": 151,
+      "beforeMs": 652.5040830000003,
+      "afterMs": 710.8985000000002,
+      "promoted": false
+    },
+    "physicalTransitionCache": {
+      "exactEnvelopeAndActionMisses": 1886,
+      "duplicates": 0,
+      "promoted": false
+    }
+  },
+  "next": [
+    "Audit Native DeepSpace swap writes/events and prove its fixed3-input transaction across the121 source states, without merging wallets, knowledge, queues or RNG.",
+    "Explain Native trace195 and free alien-card91 calls before the next reduction; preserve necessary scoring branches.",
+    "Prove that the currently ready B117 claim survives every supported unknown fossil prelude, then account for its current completion value without peeking at future identities.",
+    "Re-run affected budget gates before any new autonomous full game or20-board batch."
+  ]
+}

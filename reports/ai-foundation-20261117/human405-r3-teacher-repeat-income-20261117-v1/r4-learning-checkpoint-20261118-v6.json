@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v6",
+  "date": "2026-11-18",
+  "publishedRuntimeBase": "f6d6eab979cfc08a5c09ffd91762d839941d8123",
+  "publishedPolicy": "v485/valuev71",
+  "candidatePolicy": "v486/movementv8/valuev71",
+  "candidatePromoted": false,
+  "snapshot": "/private/tmp/seti-current-full-z97c_km1",
+  "previous": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-learning-checkpoint-20261118-v5.json",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReferenceScore": 384,
+  "lastTurnClassification": "progress: candidate fixes funded one-step movement and invalid cold scan recovery;8Node/4Browser/66V audits and28 Native controls pass; complex teacher gates fail; exact825-input distribution exposes363 fixed company-swap inputs and Native known-B117 controls explain8V boundary difference",
+  "findings": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/one-step-candidate-findings-20261118-v1.json",
+  "candidatePatch": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/candidate-free-scan-one-step-cold-recovery-20261118-v1.patch",
+  "openGates": [
+    {
+      "label": "teacher-input-272",
+      "native": 151,
+      "ms": 695.583458000001,
+      "complete": true
+    },
+    {
+      "label": "teacher-input-289",
+      "native": 825,
+      "ms": 2434.612541,
+      "also825OnPublishedV485": true
+    }
+  ],
+  "knownEndTaskBoundary": {
+    "ordinaryLandingValue": 230,
+    "teacherCardValueBeforeUnknownFossil": 222,
+    "difference": 8,
+    "bothActualFossilOffers": [
+      {
+        "offer": "fossil_06",
+        "beforeTaskValue": 222,
+        "afterTaskValue": 230,
+        "scoreGain": 3,
+        "creditsGain": 1,
+        "nativeFinalProjectionGain": 7,
+        "completionCountGain": 1
+      },
+      {
+        "offer": "fossil_01",
+        "beforeTaskValue": 222,
+        "afterTaskValue": 230,
+        "scoreGain": 3,
+        "creditsGain": 1,
+        "nativeFinalProjectionGain": 7,
+        "completionCountGain": 1
+      }
+    ],
+    "status": "Diagnostic Native branches explain the8-point difference; a general rule proof is still required before forecasting a claim across every unknown prelude. No new valuation bonus is implemented."
+  },
+  "next": [
+    "Audit Native DeepSpace swap writes/events and prove its fixed3-input transaction across the121 source states, without merging wallets, knowledge, queues or RNG.",
+    "Explain Native trace195 and free alien-card91 calls before the next reduction; preserve necessary scoring branches.",
+    "Prove that the currently ready B117 claim survives every supported unknown fossil prelude, then account for its current completion value without peeking at future identities.",
+    "Re-run affected budget gates before any new autonomous full game or20-board batch."
+  ],
+  "goalStatus": "active"
+}

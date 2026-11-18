@@ -1,0 +1,2 @@
+{"purpose":"CPU attribution only; original failed gate retained","step":272,"native":151,"milliseconds":799.7579999999999,"complete":true,"value":216.5,"selected":"place_data:8fd12fd3"}
+physicalTransitionProfile {"calls":1886,"duplicates":0,"totalMs":306.4178180000014,"duplicateMs":0,"byFamily":{}}

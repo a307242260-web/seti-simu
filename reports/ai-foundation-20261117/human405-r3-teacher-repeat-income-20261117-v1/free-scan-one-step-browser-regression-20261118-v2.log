@@ -1,0 +1,5 @@
+PASS production-free-scan-one-step http://127.0.0.1:50974/randomizer/index.html
+PASS production-free-scan-funded-prefix http://127.0.0.1:50974/randomizer/index.html
+PASS production-known-data-scan-cycle http://127.0.0.1:50974/randomizer/index.html
+PASS production-analysis-before-orbit http://127.0.0.1:50974/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4
