@@ -1,0 +1,104 @@
+--- a/randomizer/game/ai/analysis-port.js
++++ b/randomizer/game/ai/analysis-port.js
+@@ -3002,0 +3003,6 @@
++      const start=nodes.get(node),action=node.legalActions.find(a=>a.actionId===actionId);
++      const picked=resourcePlanning&&node.status==="stable"&&!start.resourceControl
++        &&action?.family==="industry"&&action.target?.abilityId==="deepspace_swap_cards"?cardPickSpec(node)?.companySwap:null;
++      const anchor=picked?.goal.kind==="move"?readPlanningState(start):null,owner=anchor?.players.players.find(p=>p.id===seatId);
++      const purpose=anchor?.turn.roundNumber===4&&!owner.mainActionCompleted
++        &&anchor.turn.activePlayerIds.every(id=>id===seatId||anchor.turn.passedPlayerIds.includes(id))?picked:null;
+@@ -3012,0 +3019,11 @@
++      }
++      // Taking the known tool commits its named route. Its native costs and
++      // choices remain in the existing bound resource-plan executor.
++      if(purpose&&current.status==="stable"&&!nodes.get(current).resourceControl){
++        const state=readPlanningState(nodes.get(current)),p=state.players.players.find(p=>p.id===seatId);
++        if(!p.mainActionCompleted&&p.hand.some(c=>c.id===purpose.selection.cardId)){
++          const requirements=resourceQuery(state),candidates=requirements.probeCandidates.filter(c=>c.requirementId===purpose.goal.id);
++          const goal=candidates.length&&resourceDemand.catalog({state,seatId,
++            requirements:{...requirements,probeCandidates:candidates},actions:current.legalActions}).find(g=>g.id===purpose.goal.id&&g.kind==="route");
++          if(goal)current=resourceView(current,{goal,operation:{}});
++        }
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v512";
++  const VERSION = "seti-complete-decision-search-v513";
+--- a/tools/node-test-inventory.js
++++ b/tools/node-test-inventory.js
+@@ -22,0 +23 @@
++    entry("randomizer/game/ai/main-owned-preparation.test.js", "policy/decision-search", "收入筹资和公司取移动牌保留受益主目标，并逐输入原生兑现对应星球行动", "准备结束后重开无关主行动、丢失真实筹资用途或声明目标没有实际完成"),
+--- a/tools/browser-smoke-inventory.js
++++ b/tools/browser-smoke-inventory.js
+@@ -3,0 +4 @@
++  Object.freeze({"id": "production-main-owned-preparation", "file": "randomizer/index.html", "readyExpression": "Boolean(window.SetiProductionKernel && window.SetiDecisionSearch && window.SetiSearchAgent && window.SetiAnalysisPort)", "actionExpression": "(async()=>{const ordered=x=>Array.isArray(x)?x.map(ordered):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,ordered(x[k])])):x;\nconst assert=(v,m)=>{if(!v)throw Error(m||'main purpose assertion')};assert.equal=(a,b,m)=>assert(a===b,m||'values differ');assert.notEqual=(a,b,m)=>assert(a!==b,m);assert.deepEqual=(a,b,m)=>assert(JSON.stringify(ordered(a))===JSON.stringify(ordered(b)),m||'Native values differ');\nconst {createSimulationRuleComposition}=window.SetiProductionKernel,{createSeededRandom}=window.SetiRandom,{buildRuleObservation}=window.SetiRuleObservation,{createAnalysisPort}=window.SetiAnalysisPort,score=window.SetiEndGameScoring,{searchDecision}=window.SetiDecisionSearch,{OPTIONS,BUDGET}=window.SetiSearchAgent,{createStateValueEvaluator}=window.SetiStateValue;\nconst response=await fetch('/randomizer/game/ai/fixtures/earned-pickup-task-20261118-v1.json.gz');assert(response.ok,'fixture missing');const f=JSON.parse(await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).text());\nconst seat=\"player-white\",seed=JSON.parse(f.root.committedState).meta.seed,rows=[];\nfor(const kind of [\"income\",\"company\"]){\n const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v,c)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true,trustedFrozenWorking:c?.trustedFrozenWorking===true})});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.root).ok);\n const save=()=>c.lifecycle.save().envelope,state=()=>{const e=save();return e.session?.session?.workingState||JSON.parse(e.committedState)},owner=()=>state().players.players.find(p=>p.id===seat),menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});\n const apply=a=>{const current=menu().find(x=>x.actionId===a.actionId);assert(current);assert.deepEqual(current.target,a.target);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:current}):current.phase===\"quick\"?c.inputPort.submitQuickAction(current):c.inputPort.submitAction(current);assert(r.ok,JSON.stringify(r));};\n const before=save(),port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0}),planet=kind===\"income\"?\"neptune\":\"uranus\",family=kind===\"income\"?\"land\":\"orbit\",count=()=>score.countPlanetMarkers(owner(),state().planets,planet,family,{aliens:state().aliens}),initialCount=count();\n try{\n  let node=port.openRoot();port.setResourcePlanning(true);port.setCardPickPlanning(true);port.setMovementPlanning(true);port.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const prefixes=[];let plan,replayed=0,expectedBeforeReplay=before;\n  if(kind===\"income\"){const spec=port.resourceSpec(node);assert(!spec.plans.some(p=>p.goal.kind===\"income\"),\"funding must retain its beneficiary instead of reopening all mains\");plan=spec.plans.find(p=>p.goal.planetId===planet&&p.goal.incomeFunding);assert(plan);assert.equal(plan.goal.incomeCardId,\"alien-chong-6-16\");assert.equal(plan.firstActionId,node.legalActions.find(a=>a.family===\"place_data\").actionId);}\n  else{const a=node.legalActions.find(a=>a.family===\"industry\"&&a.target.abilityId===\"deepspace_swap_cards\"),pick=port.cardPickSpec(node);assert.equal(pick.companySwap.goal.id,\"rocket:7:orbit:uranus:planet:\");const acquired=port.expandWithCardPick(node,a.actionId,()=>null);assert(acquired.complete);prefixes.push(...acquired.prefixes);node=acquired.node;const spec=port.resourceSpec(node);assert(spec?.bound,\"acquisition must keep its declared movement purpose\");assert.equal(spec.goal.id,pick.companySwap.goal.id);assert.equal(spec.plans.length,1);plan=spec.plans[0];\n   const evaluate=createStateValueEvaluator(seat),q=searchDecision({...OPTIONS,budget:BUDGET,port,root:node,evaluate,modelKey:evaluate.modelKey});assert(q.complete&&q.planContinuation);const saved=port.exportPlan(q.planContinuation);assert(saved);assert.deepEqual(save(),before);for(const p of prefixes)apply(p.action);replayed=prefixes.length;expectedBeforeReplay=save();\n   const cold=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const root=cold.openRoot(),token=cold.importPlan(saved),resumed=searchDecision({...OPTIONS,budget:BUDGET,port:cold,root,evaluate,modelKey:evaluate.modelKey,planContinuation:token});assert(resumed.complete);assert.equal(resumed.actionId,q.actionId);assert.equal(resumed.value,q.value);assert.equal(resumed.diagnostics.planContinuation,\"hit\",\"cold acquisition must retain the committed goal proof\");assert.equal(resumed.diagnostics.nativeExecutions,0);assert.deepEqual(save(),expectedBeforeReplay);}finally{cold.close()}\n  }\n  const fixed=port.expandResourcePlan(node,plan,()=>null);assert(fixed.complete);assert.notEqual(fixed.goalStatus,\"infeasible\");prefixes.push(...fixed.prefixes);assert(prefixes.length<32);assert.deepEqual(save(),expectedBeforeReplay,\"counterfactual source and RNG remain exact\");for(const p of prefixes.slice(replayed))apply(p.action);assert(owner().mainActionCompleted);assert.equal(count(),initialCount+1,\"the declared Native endpoint must actually be attained\");assert.deepEqual(state().meta.rngState,JSON.parse(before.committedState).meta.rngState);rows.push({kind,goal:plan.goal.id,actualInputs:prefixes.length,endpointAttained:true,mainCompleted:true,completeRuleSubmissions:port.getDiagnostics().submissionCount});\n }finally{port.close();c.dispose()}\n}\nconsole.log(JSON.stringify({mainOwnedPreparation:\"passed\",rows}));\nwindow.__mainOwnedPreparation={ok:true,rows};})()", "successExpression": "window.__mainOwnedPreparation?.ok === true", "obligation": "Browser income funding and movement-card acquisition keep their named main, attain exact Native endpoints and recover the company route cold", "counterexample": "Reopen unrelated mains after preparation, lose true funding, stop before the declared endpoint or change source/RNG/cold continuation"}),
+@@ -26 +27 @@
+-          const q=p.quietFinalValue(node),value=window.SetiStateValue.createStateValueEvaluator(seat);if(q?.value!==235.5||q.cargoFuture?.gain!==5.5||q.cargoFuture.unknownPickupChoicePriced!==false||value(p.valueObservation(node))!==(ordinary?230:222)||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('fair floor/current ledger/root mismatch');
++          const q=p.quietFinalValue(node),value=window.SetiStateValue.createStateValueEvaluator(seat);if(q?.value!==(ordinary?235.5:239.5)||q.cargoFuture?.gain!==(ordinary?5.5:9.5)||q.cargoFuture.unknownPickupChoicePriced!==false||value(p.valueObservation(node))!==(ordinary?230:222)||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('fair floor/current ledger/root mismatch');
+@@ -28 +29 @@
+-          apply(menu().find(a=>a.family==='card_corner'&&a.target.cardInstanceId==='alien-chong-4-14'&&a.payload.kind==='move'));apply(menu().find(a=>a.target.rocketId===6&&a.target.deltaX===0&&a.target.deltaY===-1));apply(menu().find(a=>a.family==='move'&&a.target.rocketId===6&&a.target.deltaX===0&&a.target.deltaY===-1));apply(menu().find(a=>a.family==='choose_payment'&&a.target.choiceId==='energy'));apply(menu().find(a=>a.family==='complete_task'&&a.target.cardInstanceId==='alien-chong-3-10'));apply(menu().find(a=>a.family==='complete_task'&&a.target.ruleId==='b117-orbit-land-count-task'));if(value(c.projection({role:'player',playerId:seat}).state)!==q.value)throw Error('fair Native payoff differs');
++          apply(menu().find(a=>a.family==='card_corner'&&a.target.cardInstanceId==='alien-chong-4-14'&&a.payload.kind==='move'));apply(menu().find(a=>a.target.rocketId===6&&a.target.deltaX===0&&a.target.deltaY===-1));apply(menu().find(a=>a.family==='move'&&a.target.rocketId===6&&a.target.deltaX===0&&a.target.deltaY===-1));apply(menu().find(a=>a.family==='choose_payment'&&a.target.choiceId==='energy'));apply(menu().find(a=>a.family==='complete_task'&&a.target.cardInstanceId===q.cargoFuture.plans[0].cardId));apply(menu().find(a=>a.family==='complete_task'&&a.target.ruleId==='b117-orbit-land-count-task'));if(value(c.projection({role:'player',playerId:seat}).state)!==q.value)throw Error('fair Native payoff differs');
+@@ -54 +55 @@
+-          if(!initial){initial=q;const selected=q.roots.find(r=>r.actionId===a.actionId);if(a.family!=='card_corner'||selected?.kind!=='resource-goal-plan'||selected.completion!=='complete'||selected.goal.fossilId!=='fossil_06'||q.value!==244||JSON.stringify(save())!==before)throw Error('cargo fixed plan or executed root report missing');}
++          if(!initial){initial=q;const selected=q.roots.find(r=>r.actionId===a.actionId);if(a.family!=='card_corner'||selected?.kind!=='resource-goal-plan'||selected.completion!=='complete'||selected.goal.fossilId!=='fossil_07'||q.value!==244||JSON.stringify(save())!==before)throw Error('cargo fixed plan or executed root report missing');}
+--- a/tools/audit_v_state_inputs.js
++++ b/tools/audit_v_state_inputs.js
+@@ -1079 +1079 @@
+-  assert.equal(quote.pickupTask.value,f.expected.claimedValue);assert.equal(quote.value,235.5);assert.equal(quote.unrealizedPurposeValue,13.5);assert.equal(quote.cargoFuture.gain,5.5);assert.deepEqual(c.lifecycle.save().envelope,before);port.close();port=null;
++  assert.equal(quote.pickupTask.value,f.expected.claimedValue);assert.equal(quote.value,239.5);assert.equal(quote.unrealizedPurposeValue,17.5);assert.equal(quote.cargoFuture.gain,9.5);assert.deepEqual(c.lifecycle.save().envelope,before);port.close();port=null;
+@@ -1083 +1083 @@
+-  assert.deepEqual(c.lifecycle.save().envelope,after);console.log('[PASS] independent-earned-pickup-task: current Native/full/formal/compact222 remains unchanged; known task independently reaches230, while known corner-funded old cargo separately supplies235.5 floor; unknown fossil reward not priced, source/RNG unchanged');
++  assert.deepEqual(c.lifecycle.save().envelope,after);console.log('[PASS] independent-earned-pickup-task: current Native/full/formal/compact222 remains unchanged; known task independently reaches230, while known corner-funded old cargo assigned to the other matching task supplies239.5 floor; unknown fossil reward not priced, source/RNG unchanged');
+--- a/randomizer/game/ai/resource-demand.js
++++ b/randomizer/game/ai/resource-demand.js
+@@ -9 +9 @@
+-  const VERSION='seti-goal-resource-preparation-v28';
++  const VERSION='seti-goal-resource-preparation-v29';
+@@ -660 +660,23 @@
+-    return goals.filter(g=>(g.kind!=='route'||g.movementPoints===0||g===chosen)&&!(g.kind==='play_card'&&!g.paidRewardPolicy&&goals.some(p=>p.kind==='effect-purpose'&&p.cardId===g.cardId))).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
++    const retained=goals.filter(g=>(g.kind!=='route'||g.movementPoints===0||g===chosen)&&!(g.kind==='play_card'&&!g.paidRewardPolicy&&goals.some(p=>p.kind==='effect-purpose'&&p.cardId===g.cardId))).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
++    // A known currency source funds its retained route, rather than opening
++    // every main again after the fixed income choice. Other income uses keep
++    // their existing path, including a cold mandatory income menu.
++    if(state.turn.roundNumber===4&&!p.mainActionCompleted&&!committedData
++      &&state.turn.activePlayerIds?.includes(seatId)
++      &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))){
++      const income=retained.find(g=>g.kind==='income'),card=income&&p.hand.find(c=>c.id===income.incomeCardId),gain=card&&cards.getIncomeGainForCard(card);
++      if(card&&movePoints(card)===0&&gain&&Object.keys(gain).length
++        &&Object.entries(gain).every(([k,v])=>['credits','energy'].includes(k)&&Number.isSafeInteger(v)&&v>0)
++        &&p.resources.availableData>=4-placed(p)){
++        const beneficiaries=retained.filter(g=>g!==income&&Object.entries(gain).some(([k,v])=>v>0&&needs(state,seatId,g)[k]>0));
++        const funded=new Map();
++        if(beneficiaries.length&&beneficiaries.every(g=>g.kind==='route'&&!g.incomeFunding&&g.cardId!==card.id)){
++          for(const goal of beneficiaries){
++            const assisted={...goal,targetComputerSlot:goal.targetComputerSlot??4,incomeCardId:card.id,incomeFunding:true};
++            if(capacity(state,seatId,assisted))funded.set(goal.id,assisted);
++          }
++          if(funded.size===beneficiaries.length)return retained.filter(g=>g!==income).map(g=>funded.get(g.id)||g);
++        }
++      }
++    }
++    return retained;
+--- /dev/null
++++ b/randomizer/game/ai/main-owned-preparation.test.js
+@@ -0,0 +1,20 @@
++"use strict";
++const assert=require("node:assert/strict"),fs=require("node:fs"),path=require("node:path"),z=require("node:zlib");
++const {createSimulationRuleComposition}=require("../../training/simulation-rule-composition"),{createSeededRandom}=require("../random"),{buildRuleObservation}=require("../../app/rule-observation"),{createAnalysisPort}=require("./analysis-port"),score=require("../end-game-scoring"),{searchDecision}=require("./decision-search"),{OPTIONS,BUDGET}=require("./search-agent"),{createStateValueEvaluator}=require("./state-value");
++const f=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(__dirname,"fixtures/earned-pickup-task-20261118-v1.json.gz")))),seat="player-white",seed=JSON.parse(f.root.committedState).meta.seed,rows=[];
++for(const kind of ["income","company"]){
++ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v,c)=>buildRuleObservation(s,seed,v?.playerId,[],{cheap:v?.cheap===true,valueOnly:v?.valueOnly===true,trustedCommitted:c?.trustedCommitted===true,trustedFrozenWorking:c?.trustedFrozenWorking===true})});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.root).ok);
++ const save=()=>c.lifecycle.save().envelope,state=()=>{const e=save();return e.session?.session?.workingState||JSON.parse(e.committedState)},owner=()=>state().players.players.find(p=>p.id===seat),menu=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
++ const apply=a=>{const current=menu().find(x=>x.actionId===a.actionId);assert(current);assert.deepEqual(current.target,a.target);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:current}):current.phase==="quick"?c.inputPort.submitQuickAction(current):c.inputPort.submitAction(current);assert(r.ok,JSON.stringify(r));};
++ const before=save(),port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0}),planet=kind==="income"?"neptune":"uranus",family=kind==="income"?"land":"orbit",count=()=>score.countPlanetMarkers(owner(),state().planets,planet,family,{aliens:state().aliens}),initialCount=count();
++ try{
++  let node=port.openRoot();port.setResourcePlanning(true);port.setCardPickPlanning(true);port.setMovementPlanning(true);port.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const prefixes=[];let plan,replayed=0,expectedBeforeReplay=before;
++  if(kind==="income"){const spec=port.resourceSpec(node);assert(!spec.plans.some(p=>p.goal.kind==="income"),"funding must retain its beneficiary instead of reopening all mains");plan=spec.plans.find(p=>p.goal.planetId===planet&&p.goal.incomeFunding);assert(plan);assert.equal(plan.goal.incomeCardId,"alien-chong-6-16");assert.equal(plan.firstActionId,node.legalActions.find(a=>a.family==="place_data").actionId);}
++  else{const a=node.legalActions.find(a=>a.family==="industry"&&a.target.abilityId==="deepspace_swap_cards"),pick=port.cardPickSpec(node);assert.equal(pick.companySwap.goal.id,"rocket:7:orbit:uranus:planet:");const acquired=port.expandWithCardPick(node,a.actionId,()=>null);assert(acquired.complete);prefixes.push(...acquired.prefixes);node=acquired.node;const spec=port.resourceSpec(node);assert(spec?.bound,"acquisition must keep its declared movement purpose");assert.equal(spec.goal.id,pick.companySwap.goal.id);assert.equal(spec.plans.length,1);plan=spec.plans[0];
++   const evaluate=createStateValueEvaluator(seat),q=searchDecision({...OPTIONS,budget:BUDGET,port,root:node,evaluate,modelKey:evaluate.modelKey});assert(q.complete&&q.planContinuation);const saved=port.exportPlan(q.planContinuation);assert(saved);assert.deepEqual(save(),before);for(const p of prefixes)apply(p.action);replayed=prefixes.length;expectedBeforeReplay=save();
++   const cold=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});try{const root=cold.openRoot(),token=cold.importPlan(saved),resumed=searchDecision({...OPTIONS,budget:BUDGET,port:cold,root,evaluate,modelKey:evaluate.modelKey,planContinuation:token});assert(resumed.complete);assert.equal(resumed.actionId,q.actionId);assert.equal(resumed.value,q.value);assert.equal(resumed.diagnostics.planContinuation,"hit","cold acquisition must retain the committed goal proof");assert.equal(resumed.diagnostics.nativeExecutions,0);assert.deepEqual(save(),expectedBeforeReplay);}finally{cold.close()}
++  }
++  const fixed=port.expandResourcePlan(node,plan,()=>null);assert(fixed.complete);assert.notEqual(fixed.goalStatus,"infeasible");prefixes.push(...fixed.prefixes);assert(prefixes.length<32);assert.deepEqual(save(),expectedBeforeReplay,"counterfactual source and RNG remain exact");for(const p of prefixes.slice(replayed))apply(p.action);assert(owner().mainActionCompleted);assert.equal(count(),initialCount+1,"the declared Native endpoint must actually be attained");assert.deepEqual(state().meta.rngState,JSON.parse(before.committedState).meta.rngState);rows.push({kind,goal:plan.goal.id,actualInputs:prefixes.length,endpointAttained:true,mainCompleted:true,completeRuleSubmissions:port.getDiagnostics().submissionCount});
++ }finally{port.close();c.dispose()}
++}
++console.log(JSON.stringify({mainOwnedPreparation:"passed",rows}));

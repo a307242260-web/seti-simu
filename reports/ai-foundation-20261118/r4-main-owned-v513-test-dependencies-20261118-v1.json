@@ -1,0 +1,16 @@
+{
+  "base": "3ee67597aca127d6615765cb7adb7f736dabc1f8",
+  "paths": {
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-resource-demand-final-20261027-v1.raw.json.gz": "c2fb17f5b6d7ae8180fcec4bbaf82f3d4a7731e0f904936e54832bfec36ed3f5",
+    "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json": "6c76c7cfc6963c713ceaf6753cbd1e2c9187bab236a2f22186a37ceb494a6650",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-039-20261030-v1.json": "c0592c8a993f8f63fbf291ff5002533bc27ac8041b761cb09e27e24d8e1834da",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-040-20261030-v1.json": "fe252c31b73bb7230b77f16db3d883758d73625bca0247047bdb65a2f68b5e16",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-046-20261030-v1.json": "7bf461b8d1a8339aa9cb9a1a04d0fdd9c46685d25d15e6cdd61b30a82d380d78",
+    "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-047-20261030-v1.json": "52fde085e2c88bb92bba73fc61fafed9600076a8a90ab06a1f03ef1e0d040509",
+    "adhoc/unbounded-payment-failure-20261029-v1.json": "b1820665136a04d5692f534dc26665fece4786a20eaf041489a8df828e741a88",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json": "a683dcb02c825263c2e792af1be1315630485c0341f3f687771b311d38b9ba81",
+    "reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json": "5b79644ca497f8b339c6d92f4cb21ffbf7d1fc00f62bfd179d054d2fa2d1e47d"
+  },
+  "missing": []
+}

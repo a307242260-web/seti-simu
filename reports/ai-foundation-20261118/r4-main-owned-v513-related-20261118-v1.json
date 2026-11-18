@@ -1,0 +1,54 @@
+{
+  "results": [
+    {
+      "test": "main-owned-preparation",
+      "exitCode": 0
+    },
+    {
+      "test": "cargo-task-assignment",
+      "exitCode": 0
+    },
+    {
+      "test": "cargo-unbound-suffix",
+      "exitCode": 0
+    },
+    {
+      "test": "known-post-main-cargo",
+      "exitCode": 0
+    },
+    {
+      "test": "cargo-fair-landing",
+      "exitCode": 0
+    },
+    {
+      "test": "earned-pickup-task",
+      "exitCode": 0
+    },
+    {
+      "test": "resource-demand",
+      "exitCode": 1
+    },
+    {
+      "test": "card-pick-planning",
+      "exitCode": 1
+    },
+    {
+      "test": "probe-resource-greedy",
+      "exitCode": 0
+    },
+    {
+      "test": "shared-resource-prefix",
+      "exitCode": 1
+    },
+    {
+      "test": "decision-search",
+      "exitCode": 0
+    },
+    {
+      "test": "plan-prefix-reuse",
+      "exitCode": 0
+    }
+  ],
+  "passed": 9,
+  "failed": 3
+}

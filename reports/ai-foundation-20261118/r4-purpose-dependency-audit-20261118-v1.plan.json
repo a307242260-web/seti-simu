@@ -1,0 +1,9 @@
+{
+  "kind": "Read-only Native-backed purpose dependency audit, no AI search or inputs",
+  "question": "Do generic income/card-acquisition starts follow the same retained main-goal catalog, or are they justified by raw targets later discarded by movement policy?",
+  "evidence": "resource-demand.catalog records requested goals before its final route selection; card-pick-planning.goals separately receives all Native endpoints. Root graph shows company purpose Uranus while resource routes retain Neptune plus current Saturn endpoints.",
+  "measurement": "Clone sealed v512; add a diagnostic-only catalog record of requested vs retained goals and deficits. Open the existing root, read resourceSpec/cardPickSpec/goalMovementSpec and current card income/move facts. Assert no complete Native submission and exact original root/RNG. No strategy logic changes.",
+  "falsifier": "If preparation is explained by a retained current goal or necessary indirect currency conversion, it must remain as goal-bound funding. Never remove it based solely on a direct deficit test or observed low final value.",
+  "next": "Use one shared retained-purpose contract; keep exceptional-card/acquisition goals when valid, but do not preserve a generic acquisition solely because it incidentally exposes another legal weak main action. Before coding prove indirect funding and pending-choice recovery are retained.",
+  "budgetsAndIdentity": "Existing null runtime budgets and256/600ms/180s gates unchanged; no new equivalence, pruning, branch cap or hidden-outcome enumeration."
+}

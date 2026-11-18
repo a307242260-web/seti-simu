@@ -1,0 +1,18 @@
+{
+  "results": [
+    {
+      "test": "resource-demand",
+      "exitCode": 0
+    },
+    {
+      "test": "card-pick-planning",
+      "exitCode": 0
+    },
+    {
+      "test": "shared-resource-prefix",
+      "exitCode": 1
+    }
+  ],
+  "passed": 2,
+  "failed": 1
+}

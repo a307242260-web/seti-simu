@@ -1,0 +1,1 @@
+{"mainOwnedPreparation":"passed","rows":[{"kind":"income","goal":"rocket:7:land:neptune:satellite:triton","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":7},{"kind":"company","goal":"rocket:7:orbit:uranus:planet:","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":10}]}

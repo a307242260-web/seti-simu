@@ -1,0 +1,99 @@
+
+TEST main-owned-preparation EXIT 0
+{"mainOwnedPreparation":"passed","rows":[{"kind":"income","goal":"rocket:7:land:neptune:satellite:triton","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":7},{"kind":"company","goal":"rocket:7:orbit:uranus:planet:","actualInputs":12,"endpointAttained":true,"mainCompleted":true,"completeRuleSubmissions":10}]}
+
+TEST cargo-task-assignment EXIT 0
+{"cargoTaskAssignment":"passed","value":239.5,"score":148,"credit":6,"native":6,"maxMs":47.234834000000006,"actualInputs":7,"coldRecovery":true,"independentCargoUnchanged":true}
+
+TEST cargo-unbound-suffix EXIT 0
+{"unboundCargoSuffix":"passed","value":244,"native":6,"maxMs":46.428500000000014,"actualInputs":7,"sourceAndRngUnchanged":true,"coldRecovery":true}
+
+TEST known-post-main-cargo EXIT 0
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_07","value":242,"native":11,"maxMs":46.99591699999999,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":10,"maxMs":24.269665999999916,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":239.5,"native":6,"maxMs":18.698875000000044,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":239.5,"native":6,"maxMs":17.80562500000019,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_07","value":242,"native":11,"maxMs":18.618167000000085,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_07","value":244,"native":11,"maxMs":18.242583000000195,"actualInputs":12}]}
+
+TEST cargo-fair-landing EXIT 0
+fair landing cargo: ordinary235.5 versus card239.5 through a different known task; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+
+TEST earned-pickup-task EXIT 0
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+
+TEST resource-demand EXIT 1
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/randomizer/game/ai/resource-demand.test.js:17:24)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-post-orbit-computer-funding-root-20261105-v1.json'
+}
+
+Node.js v22.22.0
+
+TEST card-pick-planning EXIT 1
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/randomizer/game/ai/card-pick-planning.test.js:55:27)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/reports/ai-foundation-20261105/third-round-teacher-v1/v239-actual-before-132-root-20261106-v1.json'
+}
+
+Node.js v22.22.0
+
+TEST probe-resource-greedy EXIT 0
+probe resource greedy tests passed
+
+TEST shared-resource-prefix EXIT 1
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at read (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/randomizer/game/ai/shared-resource-prefix.test.js:5:18)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/randomizer/game/ai/shared-resource-prefix.test.js:5:88)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-20261118-c34l4p77/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json'
+}
+
+Node.js v22.22.0
+
+TEST decision-search EXIT 0
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+
+TEST plan-prefix-reuse EXIT 0
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}

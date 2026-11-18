@@ -1,0 +1,6 @@
+PASS production-main-owned-preparation http://127.0.0.1:52026/randomizer/index.html
+PASS production-cargo-fair-landing http://127.0.0.1:52026/randomizer/index.html
+Error: production-known-post-main-cargo 操作异常：Error: first claim overwrote independent cargo
+    at <anonymous>:15:182
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-sealed-20261118-zaxmlesg/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-main-owned-v513-sealed-20261118-zaxmlesg/tools/run_browser_smokes.js:294:11)

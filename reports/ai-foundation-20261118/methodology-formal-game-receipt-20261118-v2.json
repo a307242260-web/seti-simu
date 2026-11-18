@@ -1,0 +1,23 @@
+{
+  "source": {
+    "gitCommit": "aad43e42ab5be10e8c645a8001eb2c9ede0579d0",
+    "path": "reports/research/2170d824.5fabd621.full.json",
+    "sha256": "81b86fed3857ccdd22e968ce00e59cfa4b9781ade5b71b69d65b79038d72d428",
+    "bytes": 237139
+  },
+  "seed": "seti-free-analyze-v1",
+  "terminal": true,
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 7,
+      "player-green": 7,
+      "player-brown": 8,
+      "player-white": 272
+    },
+    "avgScore": 73.5
+  },
+  "wallMs": 16100,
+  "note": "Facts extracted from the committed compact record. No expanded traces copied; original remains reproducible from the referenced Git object."
+}

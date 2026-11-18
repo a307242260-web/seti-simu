@@ -1,0 +1,11 @@
+{
+  "base": "v512",
+  "source": {
+    "randomizer/game/ai/resource-demand.js": "7485d449b2c27d75358f23972ed350451631b78531bdcbb2ddf02d2902503b75",
+    "randomizer/game/ai/analysis-port.js": "8dbad8962effaa799a57b86558e1a3e6742696acbaf25e5a9a1ca50c4a71473f",
+    "randomizer/game/ai/decision-search.js": "f7504cda8c08015109e1fce0fb855f432bb099e51c7f50f0785a020b02991b30"
+  },
+  "sameFixtureAndTest": true,
+  "sameFailure": "line39 root-edge count9 vs8",
+  "exitCode": 1
+}

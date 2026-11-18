@@ -1,0 +1,100 @@
+{
+  "date": "2026-11-18",
+  "kind": "Read-only methodology follow-up; no search, Native input, browser or game executed",
+  "sources": {
+    "reports/ai-foundation-20261118/methodology-review-20261118-v1.json": "836e86bec63e4ee3c419bfc7c99be1d5700c199e4c04970a4b256b1f5f7f043b",
+    "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/current-strategy-status-data-20261118-v1.json": "ea3cc5859ad157f0489518605585d753c46245725a46667086b42947e3908c2c",
+    "reports/ai-foundation-20261118/r4-cargo-suffix-final-point289-v512-20261118-v1.json.gz": "0b91975ddaefa851da0579e978d1082c06c0a179e245e73617c038e6061a2b5e",
+    "reports/ai-foundation-20261118/r4-main-owned-point289-v513-20261118-v1.json.gz": "d41dd918e17b419d28decbcebf8a462c4a6fd965ee54ccff180a56043c244276",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-source-20261118-v1.json": "d9c8bd3097c57a748052d38673463e08e689584d7a4d709ade7cbedd0890939c",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-source-20261118-v1.patch": "8ca7e74fae9811f7957e25adcabb4757d1bc4602af13ead8a10723a6fa457926",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-20261118-v1.plan.json": "5c93b04f0432466e0d9879118ab96034ddce24817a0afa8de9087cc1b23e8199",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-related-20261118-v1.json": "f28f2ceb4676a84ad679122f6c2da386f1ceeef526d412c147837bdf0d8371e5",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-related-20261118-v2.json": "813d10e55c7d822158f145e45b74687f225706fc8afc3e1d3b4d7d83dada58e7",
+    "reports/ai-foundation-20261118/r4-main-owned-v512-prefix-control-20261118-v1.json": "b99f56a59f818578c9875b5a00fdab8cf1bc9ade80e1cc8b3f5854e6040fe14c",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-sealed-20261118-v1.log": "3f252e3f0de283141f4de61dfbdfa74693d62ccbaac915beb5a4cd3c854f2787",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-sealed-cargo-20261118-v1.log": "698f9bfa9239861d575e947e0a3fd0b0f5f089df3e1a3ccf41c0602550109ab0",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-value-input-audit-20261118-v2.log": "7c818ea1cbd7dd963516b4aec7a37cc1f0bec6dbbf188a9c789a9b5d5cb54f26",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-browser-20261118-v2.log": "af67719da1bf456b82ad21b9af298bf798a095888be450be51b6fb28b9a6c67f",
+    "reports/ai-foundation-20261118/r4-main-owned-v513-cpu-summary-20261118-v1.json": "a6c66c49dc00042a4c371b63f3b3de61da5d6252b883ee0b31537d5c81ac4830",
+    "reports/ai-foundation-20261118/methodology-formal-game-receipt-20261118-v2.json": "b2b72a474f3b7154488b790dc11ad1d7e77c077321b9a8e90bae34e51567a630"
+  },
+  "formalOutcome": {
+    "version": "v485/valuev71",
+    "score": 272,
+    "newCompleteGamesInThisReview": 0,
+    "twentyBoardMeanProven": false
+  },
+  "localPilot": {
+    "versions": [
+      "v512",
+      "v513"
+    ],
+    "sameRootAndRng": true,
+    "intentionalStrategyChange": true,
+    "interpretation": "Preparations retain the declared beneficiary/purpose. This changes policy coverage; it is not a proof that all removed off-purpose continuations are equivalent.",
+    "completeRuleSubmissions": [
+      209,
+      69
+    ],
+    "logicalNodes": [
+      1949,
+      601
+    ],
+    "milliseconds": [
+      1573.717125,
+      639.702459
+    ],
+    "wallReductionFraction": 0.593508611657257,
+    "value": 239.5,
+    "actionId": "play_card:975c7a35",
+    "nativePurposeControls": 24,
+    "sixPreservedPayoffs": [
+      242,
+      249,
+      239.5,
+      239.5,
+      242,
+      244
+    ],
+    "limit": "One measurement per distinct runtime, not a latency distribution or new game score. Changes to two validation tools after timing are explicitly recorded; measured runtime is unchanged."
+  },
+  "admission": {
+    "singlePointPassed": false,
+    "millisecondsOverLimit": 39.702458999999976,
+    "nodeDistinctPassed": 11,
+    "nodeKnownFailure": "line39 root-edge count9 vs8",
+    "valueInputAuditPassed": 68,
+    "browserPlanned": 9,
+    "browserPassed": 2,
+    "browserFailed": 1,
+    "browserNotRun": 6,
+    "browserFailure": "production-known-post-main-cargo: first claim overwrote independent cargo",
+    "browserFailureClassification": "Unresolved. Browser has a fixed Ch6/rocket5 assertion, whereas Node checks the actual selected fossil and other remaining job; static discrepancy alone is not proof of a stale test.",
+    "fullRegressionPassed": false,
+    "candidatePromoted": false
+  },
+  "methodAssessment": {
+    "diagnosisAndRejectionUseful": true,
+    "localChangeDemonstrated": true,
+    "wholeGameQualityImproved": false,
+    "openEndedImplementationAllowed": false,
+    "finding": "Previous process can produce local evidence but does not bound how long local work may postpone whole-goal acceptance. Add an explicit work-unit limit and stop at unresolved admission rather than automatically generating another patch."
+  },
+  "nextWorkUnit": {
+    "type": "Validation discrepancy diagnosis only; not a strategy patch",
+    "question": "Do Browser and Node describe the same cargo state, selected plan and independent task at the same Native boundary?",
+    "evidenceFirst": "Reuse the saved six Native endpoints and current source. Identify first state/action mismatch before executing any missing control.",
+    "limit": "At most 60 minutes active work or two falsifiable hypotheses, whichever ends first. No chained follow-up patches; retain unresolved classification if not proved.",
+    "success": "Classify stale expectation versus runtime regression using a concrete matched boundary and state/action evidence.",
+    "afterward": "Return to admission backlog. A classified test does not waive the remaining39.7ms, required coverage, full regression or later whole-game checks."
+  },
+  "untouched": [
+    "Native rules",
+    "runtime budgets",
+    "256-submission/600ms admission",
+    "180s full-game requirement",
+    "shared AI runtime",
+    "shared Git index"
+  ]
+}

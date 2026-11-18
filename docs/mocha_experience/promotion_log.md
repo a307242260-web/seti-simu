@@ -51,3 +51,26 @@
 
 - followup_evaluation_structural_20261118: 按既定收益空间筛选，定位两个准备前缀下重复主行动的68.4%实际成本，并用48次原生输入确认两个具体可交换端点；同时保留取牌解锁新主行动的反例。未推广通用重排或修改运行时。下一设计需证明足够适用范围，不能把理论上限当作达标。
 - followup_structural_evidence: reports/ai-foundation-20261118/r4-preparation-structure-findings-20261118-v1.json；reports/ai-foundation-20261118/r4-main-owned-preparation-design-20261118-v1.json。
+
+## SETI-METHOD-20261118-02：限制连续局部研究投入
+
+- source: 用户要求方法论有效推进后再继续；SETI-METHOD-20261118-01的后续复核；reports/ai-foundation-20261118/methodology-review-20261118-v2.json。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 单项研究投入、出口与业务进展汇报
+- target_file: docs/ai-research-workflow.md §1.2
+- remote_skill_id: none
+- change: 为下一工作单元设置60分钟主动研究／两个假设上限，先到即收口，停止自动串接补丁；分开诊断、局部修复、准入、整局与泛化证据。
+- applied_change: 已新增§1.2；仅改变研究工作方式，不改变搜索覆盖、规则、正式运行时、运行时预算、全局规则或长期记忆。
+- expected_effect: 局部有效但未达准入时及时交付明确结论，避免将持续验证包装为整体进展。
+- evaluation_window: 下一次单一浏览器／Node运输差异归因，最多60分钟或两个可证伪假设，结束后复核出口。
+- success_signal: 依据同一行动、任务与结算边界归类失败；证据不足则按时冻结，明确未解决项，不自动开始补丁或第二研究单元。
+- rollback_condition: 仍超时串接研究，或只增加材料而未作出口判断；停止该循环并重审选题。不得通过截断必要搜索、放宽验收来满足工作时限。
+- risk: 研究时限可能留下复杂问题未解决；应诚实冻结而非仓促下结论。两次不同运行时的单点计时不证明稳定性能，保留全部失败。
+- evidence_before: 正式整局272不变；局部v513为69次提交／601节点／639.7ms、239.5。11项Node通过、1项历史失败；估值输入68通过；浏览器2通过、1未归类失败、6未运行。候选未准入。
+- owner_or_agent_decision: 执行用户的方法论优先指令，冻结继续实现和新整局；保存已有候选证据。
+- applied_at: 2026-11-18
+- verification: python3 adhoc/audit-ai-methodology-20261118-v2.py；只读校验16来源、同根、运行时版本差异、数值和失败日志；本次没有AI／原生／浏览器执行。
+- observed_outcome: 方法已增加投入上限和强制出口；已有诊断与局部修复有效，完整业务效果仍未验收；新的投入约束尚待下一工作单元检验。
+- keep_or_revise: keep（有限研究流程）；不宣称时限机制或AI整体质量已经通过前瞻性验收。
