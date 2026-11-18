@@ -1,0 +1,713 @@
+{
+  "phase": "failed",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "nativeInputs": 21,
+  "sharedPrefixInputs": 0,
+  "aiSearches": 0,
+  "newAutonomousGames": 0,
+  "branches": [
+    {
+      "name": "two-scan-purple3-corrected",
+      "nativeInputs": 21,
+      "stage": "scan2-drain",
+      "initial": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 7,
+          "score": 155
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-64-0",
+            "cardId": "b_16.webp",
+            "price": 1,
+            "scanCode": 0,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "alien-chong-9-19",
+            "cardId": "chong_9.webp",
+            "price": 2,
+            "scanCode": 1,
+            "corner": null
+          },
+          {
+            "id": "card-80-0",
+            "cardId": "dlc_1.png",
+            "price": 1,
+            "scanCode": 1,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-77-0",
+            "cardId": "dlc_6.png",
+            "price": 2,
+            "scanCode": 2,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-78-0",
+            "cardId": "dlc_3.png",
+            "price": 2,
+            "scanCode": 3,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-81-0",
+            "cardId": "b_140.webp",
+            "price": 1,
+            "scanCode": 2,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          },
+          {
+            "id": "card-79-0",
+            "cardId": "dlc_2.png",
+            "price": 1,
+            "scanCode": 1,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-51",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-52",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-53",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-54",
+              "index": 13,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": []
+        },
+        "reserved": [
+          {
+            "blueBonusOwnerId": "player-white",
+            "cardId": "dlc_31.png",
+            "cardTypeCode": 3,
+            "discardActionCode": 0,
+            "faceUp": true,
+            "id": "card-51-0",
+            "incomeCode": 0,
+            "price": 1,
+            "scanActionCode": 0,
+            "set": "space-agency"
+          },
+          {
+            "alienCardId": 5,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardId": "amiba_5.webp",
+            "cardTypeCode": 3,
+            "discardActionCode": 4,
+            "faceUp": true,
+            "id": "alien-amiba-5-12",
+            "incomeCode": 1,
+            "price": 1,
+            "scanActionCode": 1,
+            "set": "alien:阿米巴"
+          },
+          {
+            "alienCardId": 7,
+            "cardId": "chong_7.webp",
+            "cardTypeCode": 1,
+            "chongCard": true,
+            "chongTask": {
+              "chooseFossilRewardOnly": true,
+              "count": 2,
+              "gain": {},
+              "kind": "trace",
+              "traceType": "pink"
+            },
+            "discardActionCode": 5,
+            "faceUp": true,
+            "id": "alien-chong-7-16",
+            "incomeCode": 0,
+            "price": 3,
+            "scanActionCode": 0,
+            "set": "alien:虫"
+          }
+        ],
+        "turn": 9,
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "firstScanSource": {
+          "nebulaIds": [
+            "sector-2-a",
+            "sector-2-b",
+            "sector-4-a"
+          ]
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 229.5,
+          "components": {
+            "realizedScore": 155,
+            "currentEndGameBonus": 65,
+            "resources": 5.5,
+            "hand": 4,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "36bdc12ae1092a74a13bd2e3901cb2da2f04b5fe7319208014041190865dd957"
+      },
+      "lastStage": "scan2-start",
+      "scan1": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 157
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-9-19",
+            "cardId": "chong_9.webp",
+            "price": 2,
+            "scanCode": 1,
+            "corner": null
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-78-0",
+            "cardId": "dlc_3.png",
+            "price": 2,
+            "scanCode": 3,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-81-0",
+            "cardId": "b_140.webp",
+            "price": 1,
+            "scanCode": 2,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          },
+          {
+            "id": "card-82-0",
+            "cardId": "b_137.webp",
+            "price": 3,
+            "scanCode": 2,
+            "corner": null
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-51",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-52",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-53",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-54",
+              "index": 13,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-55",
+              "index": 14,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-56",
+              "index": 15,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-57",
+              "index": 16,
+              "slotIndex": 3
+            }
+          ]
+        },
+        "reserved": [
+          {
+            "blueBonusOwnerId": "player-white",
+            "cardId": "dlc_31.png",
+            "cardTypeCode": 3,
+            "discardActionCode": 0,
+            "faceUp": true,
+            "id": "card-51-0",
+            "incomeCode": 0,
+            "price": 1,
+            "scanActionCode": 0,
+            "set": "space-agency"
+          },
+          {
+            "alienCardId": 5,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardId": "amiba_5.webp",
+            "cardTypeCode": 3,
+            "discardActionCode": 4,
+            "faceUp": true,
+            "id": "alien-amiba-5-12",
+            "incomeCode": 1,
+            "price": 1,
+            "scanActionCode": 1,
+            "set": "alien:阿米巴"
+          },
+          {
+            "alienCardId": 7,
+            "cardId": "chong_7.webp",
+            "cardTypeCode": 1,
+            "chongCard": true,
+            "chongTask": {
+              "chooseFossilRewardOnly": true,
+              "count": 2,
+              "gain": {},
+              "kind": "trace",
+              "traceType": "pink"
+            },
+            "discardActionCode": 5,
+            "faceUp": true,
+            "id": "alien-chong-7-16",
+            "incomeCode": 0,
+            "price": 3,
+            "scanActionCode": 0,
+            "set": "alien:虫"
+          }
+        ],
+        "turn": 9,
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "firstScanSource": {
+          "nebulaIds": [
+            "sector-2-a",
+            "sector-2-b",
+            "sector-4-a"
+          ]
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 228,
+          "components": {
+            "realizedScore": 157,
+            "currentEndGameBonus": 65,
+            "resources": 5,
+            "hand": 1,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "694ae4dad26c642a3870ced15b5c5ff6ce7ccd069cb0bb2e9a136af43ee36b41"
+      },
+      "afterFirstScanAndFunding": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 7,
+          "score": 159
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-9-19",
+            "cardId": "chong_9.webp",
+            "price": 2,
+            "scanCode": 1,
+            "corner": null
+          }
+        ],
+        "publicCards": [
+          {
+            "id": "card-78-0",
+            "cardId": "dlc_3.png",
+            "price": 2,
+            "scanCode": 3,
+            "corner": {
+              "code": 0,
+              "label": "弃牌换1宣传",
+              "gain": {
+                "publicity": 1
+              },
+              "dataCount": 0
+            }
+          },
+          {
+            "id": "card-81-0",
+            "cardId": "b_140.webp",
+            "price": 1,
+            "scanCode": 2,
+            "corner": {
+              "code": 1,
+              "label": "弃牌换1数据",
+              "gain": {},
+              "dataCount": 1
+            }
+          },
+          {
+            "id": "card-82-0",
+            "cardId": "b_137.webp",
+            "price": 3,
+            "scanCode": 2,
+            "corner": null
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue3": true,
+            "orange1": true,
+            "purple1": true,
+            "purple3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-51",
+              "index": 10,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-52",
+              "index": 11,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-53",
+              "index": 12,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-54",
+              "index": 13,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-55",
+              "index": 14,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-56",
+              "index": 15,
+              "placementKind": "blueBonus"
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-57",
+              "index": 16,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "reserved": [
+          {
+            "blueBonusOwnerId": "player-white",
+            "cardId": "dlc_31.png",
+            "cardTypeCode": 3,
+            "discardActionCode": 0,
+            "faceUp": true,
+            "id": "card-51-0",
+            "incomeCode": 0,
+            "price": 1,
+            "scanActionCode": 0,
+            "set": "space-agency"
+          },
+          {
+            "alienCardId": 5,
+            "amibaCard": true,
+            "amibaTask": null,
+            "cardId": "amiba_5.webp",
+            "cardTypeCode": 3,
+            "discardActionCode": 4,
+            "faceUp": true,
+            "id": "alien-amiba-5-12",
+            "incomeCode": 1,
+            "price": 1,
+            "scanActionCode": 1,
+            "set": "alien:阿米巴"
+          },
+          {
+            "alienCardId": 7,
+            "cardId": "chong_7.webp",
+            "cardTypeCode": 1,
+            "chongCard": true,
+            "chongTask": {
+              "chooseFossilRewardOnly": true,
+              "count": 2,
+              "gain": {},
+              "kind": "trace",
+              "traceType": "pink"
+            },
+            "discardActionCode": 5,
+            "faceUp": true,
+            "id": "alien-chong-7-16",
+            "incomeCode": 0,
+            "price": 3,
+            "scanActionCode": 0,
+            "set": "alien:虫"
+          }
+        ],
+        "turn": 9,
+        "earth": {
+          "planetId": "earth",
+          "label": "地球",
+          "name": "地球",
+          "wheelId": 1,
+          "baseX": 5,
+          "x": 2,
+          "y": 1,
+          "fixedAfterSetup": false
+        },
+        "firstScanSource": {
+          "nebulaIds": [
+            "sector-2-a",
+            "sector-2-b",
+            "sector-4-a"
+          ]
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 230.5,
+          "components": {
+            "realizedScore": 159,
+            "currentEndGameBonus": 65,
+            "resources": 5.5,
+            "hand": 1,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        },
+        "nativeStateSha256": "0895862989f51997d7a8dcc937508bd6f76b66c412d5633a87ee27e3ddcfe7b4"
+      }
+    }
+  ],
+  "scope": "Purpose-preserving payment keeps two red hand scans; corrected from the retained invalid color-mapping experiment. Card purple3 -> funded scan -> blue cash+energy -> orange2 -> second scan -> optional funded orange3 -> analyze -> recorded-root counterfactual terminal.",
+  "failure": {
+    "message": "unhandled declared scan2 stage choices [{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:f4c617ab\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:out\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":0,\"deltaY\":1},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 向外\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:51fdbd6d\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:cw\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":1,\"deltaY\":0},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 顺时针\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:dc7b078f\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:ccw\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":-1,\"deltaY\":0},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 逆时针\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:f042ebe0\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:skip\",\"mode\":\"skip\"},\"payload\":{},\"decision\":null,\"summary\":\"跳过\"}]",
+    "stage": "scan2-drain",
+    "lastStage": "scan2-start",
+    "stack": "AssertionError [ERR_ASSERTION]: unhandled declared scan2 stage choices [{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:f4c617ab\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:out\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":0,\"deltaY\":1},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 向外\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:51fdbd6d\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:cw\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":1,\"deltaY\":0},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 顺时针\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:dc7b078f\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:move:7:ccw\",\"mode\":\"move\",\"rocketId\":7,\"deltaX\":-1,\"deltaY\":0},\"payload\":{\"requiredMovePoints\":1},\"decision\":null,\"summary\":\"移动 7 逆时针\"},{\"schemaVersion\":\"seti-standard-action-v1\",\"family\":\"choose_target\",\"phase\":\"conditional\",\"actionId\":\"choose_target:f042ebe0\",\"actorId\":\"player-white\",\"stateVersion\":150,\"decisionVersion\":3,\"target\":{\"choiceId\":\"scan4:skip\",\"mode\":\"skip\"},\"payload\":{},\"decision\":null,\"summary\":\"跳过\"}]\n    at drainScan (/Users/bilibili/code/seti-simu/adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs:18:330)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs:40:22)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

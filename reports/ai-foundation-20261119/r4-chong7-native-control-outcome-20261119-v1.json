@@ -1,0 +1,347 @@
+{
+  "schemaVersion": "seti-chong7-native-development-outcome-v1",
+  "date": "2026-11-19",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "root": "Same exact formal272 actual311 full Native envelope and RNG; no original-game prefix replay.",
+  "question": "Can the held3-credit Chong7 card create more development through purple technology and later scans than discarding it as movement payment?",
+  "baseline": {
+    "terminalScore": 272,
+    "boardScore": 192,
+    "currentEndgameBonus": 80,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 1,
+      "energy": 0,
+      "handSize": 1,
+      "publicity": 0,
+      "score": 192
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 3,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 3,
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue3": true,
+        "orange1": true,
+        "orange2": true,
+        "orange3": true,
+        "purple1": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "hand": [
+      {
+        "id": "card-77-0",
+        "cardId": "dlc_6.png"
+      }
+    ],
+    "reserved": [
+      {
+        "blueBonusOwnerId": "player-white",
+        "cardId": "dlc_31.png",
+        "cardTypeCode": 3,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-51-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      },
+      {
+        "alienCardId": 5,
+        "amibaCard": true,
+        "amibaTask": null,
+        "cardId": "amiba_5.webp",
+        "cardTypeCode": 3,
+        "discardActionCode": 4,
+        "faceUp": true,
+        "id": "alien-amiba-5-12",
+        "incomeCode": 1,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "alien:阿米巴"
+      }
+    ],
+    "turn": {
+      "actionCycleNumber": 10,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [
+        "player-white"
+      ],
+      "currentPlayerId": "player-white",
+      "gameEndReason": "final_round_all_passed",
+      "gameEnded": true,
+      "passedPlayerIds": [
+        "player-brown",
+        "player-green",
+        "player-blue",
+        "player-white"
+      ],
+      "roundNumber": 4,
+      "startPlayerId": "player-brown",
+      "turnNumber": 13,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    }
+  },
+  "counterfactual": {
+    "terminalScore": 250,
+    "boardScore": 178,
+    "currentEndgameBonus": 72,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 1,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 2,
+      "publicity": 2,
+      "score": 178
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 3,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 3,
+        "blue2": 1,
+        "blue3": 2
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue3": true,
+        "orange1": true,
+        "orange2": true,
+        "purple1": true,
+        "purple3": true,
+        "purple4": true
+      }
+    },
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": [
+        {
+          "id": "data-token-60",
+          "index": 19,
+          "slotIndex": 3
+        }
+      ]
+    },
+    "hand": [
+      {
+        "id": "alien-chong-3-21",
+        "cardId": "chong_3.webp",
+        "price": 1,
+        "scanCode": 2,
+        "corner": {
+          "code": 3,
+          "label": "弃牌换2宣传",
+          "gain": {
+            "publicity": 2
+          },
+          "dataCount": 0
+        }
+      },
+      {
+        "id": "card-83-0",
+        "cardId": "b_136.webp",
+        "price": 2,
+        "scanCode": 2,
+        "corner": null
+      }
+    ],
+    "reserved": [
+      {
+        "blueBonusOwnerId": "player-white",
+        "cardId": "dlc_31.png",
+        "cardTypeCode": 3,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-51-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      },
+      {
+        "alienCardId": 5,
+        "amibaCard": true,
+        "amibaTask": null,
+        "cardId": "amiba_5.webp",
+        "cardTypeCode": 3,
+        "discardActionCode": 4,
+        "faceUp": true,
+        "id": "alien-amiba-5-12",
+        "incomeCode": 1,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "alien:阿米巴"
+      }
+    ],
+    "turn": 13
+  },
+  "difference": {
+    "terminalScore": -22,
+    "boardScore": -14,
+    "endgameBonus": -8,
+    "technologyCount": 0,
+    "incomeChanged": false,
+    "technologyInsteadOfBaseline": {
+      "added": [
+        "purple3"
+      ],
+      "missing": [
+        "orange3"
+      ]
+    },
+    "credits": -1,
+    "energy": 0,
+    "publicity": 2,
+    "availableData": 1,
+    "handCount": 1
+  },
+  "executedWitness": {
+    "knownCardPlan": "Play Chong7, gain1publicity and no-publicity-cost purple3; use saved existing bonus pickDLC6. Not a cost of1publicity.",
+    "funding": "Sacrifice B16(yellow) and DLC6(blue) for1credit, protecting red DLC1 and Chong9 for the two hand scans.",
+    "firstScan": "Earth red2b, publicDLC2 red2b, handDLC1 red2b; three data fund computer5, blue1cash and blue2energy.",
+    "middleResearch": "Paid orange2 adds energy for another scan.",
+    "secondScan": "Earth red2b, publicDLC3 black4b, handChong9 red2b; red2b completes.",
+    "tail": "Fill computer6, blue3 current-public pick; orange3 remains unaffordable at2publicity. Complete Chong7 task with fixed unseen-planet choiceJupiter, then highest revealed immediate7-point fossil. Analysis and PASS reach true250 terminal.",
+    "informationBoundary": "Public card choices use only currently revealed cards; fixed Jupiter selection occurs before viewing fossils. No unseen fossil identity chooses the branch.",
+    "taskReward": 7,
+    "nativeInputsInCorrectedWitness": 38,
+    "notNewAutonomousAIResult": true
+  },
+  "diagnosis": {
+    "candidateOmission": false,
+    "earlierAffordableWindows": [
+      {
+        "input": 295,
+        "selected": "analysis preparation",
+        "cardModelValue": 211,
+        "selectedModelValue": 224
+      },
+      {
+        "input": 311,
+        "selected": "scan",
+        "cardModelValue": 229.5,
+        "selectedModelValue": 239.5
+      }
+    ],
+    "liquidityControl": "Both existing purple2 and purple3 plans leave0credits; legal two-card funding makes a scan possible, but lowers current value exactly1. A funding-induced value jump was not observed.",
+    "supported": [
+      "The card is a genuine competing use of3credits and a later movement payment, not a free extra technology.",
+      "The tested purple3 sequence converts a later orange3 into purple3: it ends with8 technologies, same as baseline, and unchanged permanent income.",
+      "Two scans plus the7-point task reward and analysis do not compensate this specific resource/landing trade-off; terminal is22points lower."
+    ],
+    "notProven": [
+      "Every purple2/3 continuation or earlier295 timing is inferior.",
+      "Global optimality of scan311 or discarding Chong7.",
+      "The model already values all deferred task rewards correctly."
+    ],
+    "decision": "reject-this-two-scan-proposal; no policy change justified; close this card-first route within the original budget"
+  },
+  "invalidTrial": {
+    "status": "excluded-from-quality-conclusions",
+    "reason": "Diagnostic plan guessed scan codes incorrectly: production code0/1/2/3 is yellow/red/blue/black. It skipped a requested hand scan and then ran out of the assumed third data.",
+    "successfulInputsRetained": 12,
+    "sourceAndFullCheckpointRetained": true,
+    "repeatDueToCorrection": 4
+  },
+  "executionAccounting": {
+    "savedCardPlanInputsIncludingSharedPrefix": 6,
+    "simpleFundingControls": 8,
+    "invalidColorTrial": 12,
+    "correctedTwoScanTerminal": 38,
+    "totalSuccessfulRecordedNativeInputs": 64,
+    "repeatedFundingInputsDueToColorFault": 4,
+    "additionalCommonQuickTradeStartInputRepeatedAcrossFundingPurposes": 1,
+    "originalGameOrCardPlayPrefixRepeated": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0
+  },
+  "methodTrial": {
+    "wallMinutesToClose": 27.30978416601817,
+    "closedBeforeOriginalDeadline": true,
+    "deadlineNeverExtended": true,
+    "failuresRetained": [
+      "Wrong diagnostic scan-code mapping;12-input invalid trial excluded.",
+      "Optional purple4 skip uses mode:skip; resumed existing checkpoint.",
+      "Real Chong7 task obligations require confirmation, unseen-planet selection and revealed reward selection; resumed each pending Native session without repeating the successful corrected prefix."
+    ],
+    "candidateRejectedWithCompleteTerminalEvidence": true,
+    "AIQualityImprovementProven": false,
+    "previousGoalTurnClassification": "progress: research-first invalidates the first Earth scan window, baseline272 reproduced",
+    "thisGoalTurnClassification": "progress: actual card-tech development continuation completed at250, same tech count/income and22-point loss refute this concrete proposal; no runtime patch"
+  },
+  "formalScoreUnchanged": 272,
+  "formalWallSecondsPreviouslyMeasured": 16.1,
+  "newTimingMeasurement": null,
+  "runtimeChanged": false,
+  "v514Reopened": false,
+  "wholeGoalComplete": false,
+  "nextQuestion": {
+    "requiredBeforeAnotherExperiment": "Review the completed earlier timing295 and why a same-round benefit horizon chose analysis before card technology; do not automatically extend this two-scan route or force additional arbitrary payments.",
+    "existingCheckpoint": "Current311 root and settled branch checkpoints remain reusable; no old game replay needed for those states.",
+    "executed": false
+  },
+  "sources": {
+    "reports/ai-foundation-20261119/r4-chong7-existing-plans-20261119-v1.json": "1d513bd5a9056d8ba6df966164467f4241cdcf4657f125fc3017e90fc6f0583d",
+    "reports/ai-foundation-20261119/r4-chong7-tech-plans-native-20261119-v1.json": "f83ae64d1a2a713aceea6a417198f84b68b104e231dcddfc2fd4a81b802959ba",
+    "reports/ai-foundation-20261119/r4-chong7-funding-native-20261119-v1.json": "a6adbe687d5ca59246e9c655bee8f83cee4256e3fbd4a67d8c3462376dba41df",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-native-20261119-v1.json": "a828d023ad9371f8c1a32116e681b3c918832c24a41125f1fa71ef0636422e0d",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-native-corrected-20261119-v1.json": "8dc08ecd6fdec65d7bc8fa3b345fb980876598f35b9882e871fe3a6b13477a5e",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-native-corrected-20261119-v1-failed.json": "5a037b9cbaab29f644da9430998650acb58736e40662eacd20a4f447c06003fc",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-native-corrected-20261119-v2-failed.json": "3150846b8333014cde34986e653a64f0a2cfd02ad96229cfd7cda20fe298a8f7",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-native-corrected-20261119-v3-failed.json": "e40e2077ba109901bdce484b6273fddb6d13b251ace9266b65f19b93f2eded21",
+    "reports/ai-foundation-20261119/r4-chong7-shared-prefix-checkpoint-20261119-v1.json.gz": "7b45966b969a30cc6a0f47f8f78bb3b90165b008681b4b9d6662630576d28c5c",
+    "reports/ai-foundation-20261119/r4-chong7-purple2-checkpoint-20261119-v1.json.gz": "ca024b6620f15a21eaecc7ff8faf38d57b054ced323596a4ffcbdb4f2b45f288",
+    "reports/ai-foundation-20261119/r4-chong7-purple3-checkpoint-20261119-v1.json.gz": "49cc2ca8fde99ded72cdce132a83f5eab850bad923cf20d708e684de1d575175",
+    "reports/ai-foundation-20261119/r4-chong7-purple2-funded-checkpoint-20261119-v1.json.gz": "3a112a165d1b106ff237c2e9f9acb72702fce1bce8534b5f42b57e2b4c5f0d97",
+    "reports/ai-foundation-20261119/r4-chong7-purple3-funded-checkpoint-20261119-v1.json.gz": "7014aa7bb240b867fa4541066a78ea2a618153fde53f4a33e17ff01342961335",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-purple3-checkpoint-20261119-v1.json.gz": "1d9cc03fd22441a7ef08f60f50daff5f89bbaf7f462ead23424ea422dfebd5ee",
+    "reports/ai-foundation-20261119/r4-chong7-two-scan-purple3-corrected-checkpoint-20261119-v1.json.gz": "1a93fac5473c054def1e96c6b4098420996d3194bcaff9a462668d8449337499",
+    "reports/ai-foundation-20261119/r4-step311-native-order-20261119-v1.json": "0db52c8d04193637baaab4b5691f294cfdd913709da7576f8305aeafa222972e"
+  }
+}

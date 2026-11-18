@@ -1,0 +1,317 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795032097.0,
+  "deadlineEpochSeconds": 1795033897.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-c",
+        "import json,pathlib;d=pathlib.Path(\"reports/ai-foundation-20261119\");m=json.loads((d/\"r3-b101-native-control-preflight-20261119-v1.json\").read_text());r=json.loads((pathlib.Path(m[\"runtime\"])/m[\"recordPath\"]).read_text());ts=[json.loads(l) for l in pathlib.Path(r[\"agentTracePath\"]).read_text().splitlines() if l.strip()];ts=[t for t in ts if t[\"context\"][\"seatId\"]==\"player-white\"];rows=[]\nfor t,s in zip(ts,r[\"metrics\"][\"searches\"]):\n ob=t[\"context\"][\"observation\"];hand=ob[\"selfState\"][\"hand\"];held=next((c for c in hand if c[\"id\"]==\"alien-chong-7-16\"),None)\n if held:\n  p=next(p for p in ob[\"publicState\"][\"players\"] if p[\"playerId\"]==\"player-white\");a=next(a for a in t[\"context\"][\"legalActions\"] if a[\"actionId\"]==t[\"actionId\"]);card=next((a for a in t[\"context\"][\"legalActions\"] if a[\"family\"]==\"play_card\" and (a.get(\"target\")or{}).get(\"cardInstanceId\")==held[\"id\"]),None);roots=[x for x in t[\"search\"].get(\"roots\",[]) if card and x[\"actionId\"]==card[\"actionId\"]];\n  if card or (a[\"family\"] in [\"choose_payment\",\"scan\",\"research_tech\"]):rows.append({\"step\":s[\"step\"],\"round\":ob[\"publicState\"][\"roundNumber\"],\"turn\":ob[\"publicState\"][\"turnNumber\"],\"wallet\":{k:p[k] for k in [\"credits\",\"energy\",\"publicity\"]},\"selected\":a[\"summary\"],\"selectedValue\":t[\"search\"].get(\"value\"),\"card\":roots})\nprint(json.dumps(rows,ensure_ascii=False))"
+      ],
+      "startedEpochSeconds": 1795032204.270026,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 56243,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032204.660447,
+      "stdoutSha256": "c7ec80f89d47e71a306a2b4db3afa4bdd0f217d991a0ac2c41f724f738bad143",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "-e",
+        "const fs=require(\"fs\"),p=require(\"path\"),z=require(\"zlib\"),d=\"reports/ai-foundation-20261119\",m=JSON.parse(fs.readFileSync(d+\"/r3-b101-native-control-preflight-20261119-v1.json\")),r=m.runtime,s=JSON.parse(JSON.parse(z.gunzipSync(fs.readFileSync(d+\"/r4-step311-before-native-20261119-v1.json.gz\"))).envelope.committedState),cards=require(p.join(r,\"randomizer/game/cards/deck\")),effects=require(p.join(r,\"randomizer/game/cards/effects\"));const w=s.players.players.find(p=>p.id===\"player-white\"),fmt=c=>({id:c.id,card:c.cardId,price:c.price,scan:c.scanActionCode,corner:cards.getDiscardActionRewardForCard(c),income:cards.getIncomeGainForCard(c)});console.log(JSON.stringify({hand:w.hand.map(fmt),public:s.cards.publicCards.map(c=>c&&fmt(c)),scanCodes:effects.NEBULA_IDS_BY_SCAN_CODE,colors:effects.NEBULA_IDS_BY_COLOR}));"
+      ],
+      "startedEpochSeconds": 1795032243.105184,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 56617,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032243.153354,
+      "stdoutSha256": "f2757216464a39211570c890d67cf831265c96fdc514f1be2a7dd42b59210d81",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/extract-chong7-controls-20261119.py"
+      ],
+      "startedEpochSeconds": 1795032346.581279,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 57430,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032346.629607,
+      "stdoutSha256": "de0cdc19d6e60726f3c72bb6f0ec0e503f2db0040228d4491ecdb53ecc5ac76d",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "-e",
+        "const fs=require(\"fs\"),p=require(\"path\"),z=require(\"zlib\"),d=\"reports/ai-foundation-20261119\",m=JSON.parse(fs.readFileSync(d+\"/r3-b101-native-control-preflight-20261119-v1.json\")),r=m.runtime,s=JSON.parse(JSON.parse(z.gunzipSync(fs.readFileSync(d+\"/r4-step311-before-native-20261119-v1.json.gz\"))).envelope.committedState),data=require(p.join(r,\"randomizer/game/data\"));console.log(JSON.stringify([\"sector-2-a\",\"sector-2-b\",\"sector-3-a\",\"sector-4-a\",\"sector-4-b\"].map(id=>({id,label:data.getNebulaLabel(id),tokens:data.listNebulaTokens(s.data,id)}))));"
+      ],
+      "startedEpochSeconds": 1795032371.731631,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 57681,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032371.779841,
+      "stdoutSha256": "6a3a2cfde53c803457f2c3a1619fb69a467c79c659d8e77e655362d2beae9ad2",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-chong7-tech-plans-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795032440.653656,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 58266,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032441.0439281,
+      "stdoutSha256": "2e433f40e3f379722c5e4a5f1958a37d6a38077a8c6278fd118e155594d95165",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-chong7-funding-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795032653.449392,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 59954,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032653.773838,
+      "stdoutSha256": "846e8d7e253f980ea432697074f6bccbe66d244b522ee71a11faea405ae4ddfb",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/data/placement.js\").read_text();ls=s.splitlines();indices=[i for i,l in enumerate(ls) if \"unlocked\" in l.lower() or \"unlock\" in l.lower()];print(\"\\n\".join(\"\\n\".join(ls[max(0,i-3):i+7]) for i in indices)[:6000])"
+      ],
+      "startedEpochSeconds": 1795032947.759252,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 62150,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032947.783756,
+      "stdoutSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "python3",
+        "-c",
+        "from pathlib import Path;import json;m=json.loads(Path(\"reports/ai-foundation-20261119/r3-b101-native-control-preflight-20261119-v1.json\").read_text());s=(Path(m[\"runtime\"])/\"randomizer/game/data/placement.js\").read_text();print(s[:6500])"
+      ],
+      "startedEpochSeconds": 1795032954.4319072,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 62301,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795032954.4564621,
+      "stdoutSha256": "fc29596677d66acf071a1809adb499a5235643e608da82ca2d06e6a49dbe389f",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "--check",
+        "adhoc/run-chong7-two-scan-witness-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033204.448985,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 64105,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795033204.49755,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/run-chong7-two-scan-witness-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033209.9554172,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 64252,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795033210.337676,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "dbb5e0fe919a6730eb98ad8f39d43b2a054bb66d300d2dd1429168d83a6a8c44"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033399.8534908,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 65935,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795033400.3440828,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "fdcca4eee77fcf4c2ca7de9b872f13660e4c54d0d6efbc661c1519a57bb5b26b"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033416.293157,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 66165,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795033416.7394419,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "34f5129e5b2eb904fb8891eea7ce907f675eb2c55c4a0c96d408373e5b0651c2"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033510.7365959,
+      "status": "failed",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 67000,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795033510.9903018,
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "262f38425e23f8f41f6579a004a4f17243047bb2dca53ded4397782f2d360711"
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/run-chong7-two-scan-witness-corrected-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795033613.5252962,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.window.attempt-14.stderr.log",
+      "pid": 68011,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795033613.8555362,
+      "stdoutSha256": "645f10f20ded76241b97c79f4b96551481bd500200177d0450c2be226ded7727",
+      "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "scope": "Held Chong7 purple-technology purpose, earlier availability and one bounded Native development control; no policy/search/autonomous game",
+  "hypotheses": [
+    "The paid card technology may create value through subsequent scans that the one-turn comparison misses.",
+    "At the final affordable311 window, playing it may consume the funding and movement assets needed by the selected scan/landing chain."
+  ],
+  "nativeBranchInputCap": 96,
+  "nativePrefixInputCap": 80,
+  "stop": "One declared card-tech business comparison or original deadline; do not add a strategy patch without demonstrated gain.",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "initialDeclaredNativeControl": {
+    "root": "exact existing actual311 root, same hand/economy/RNG; no prefix replay",
+    "branches": "both saved actual card-technology choices to own-turn end, shared identical play prefix once",
+    "knowledge": "fixed saved card picks from existing completed graph, no future card identity chooses branch",
+    "stateDedup": "reuse identical1-input full pending technology prefix; restore exact full prefix before each different choice, root restored at exit",
+    "pruning": "No new search or candidate enumeration, two existing complete witnesses only",
+    "budgets": "24 Native inputs for this initial comparison,96 per subsequent declared continuation; original fixed deadline includes all analysis and archive",
+    "success": "exact saved model value229/229.5 and closed mandatory choices; record wallet, exact technology, income, data, hand, public refill, Earth scan source",
+    "stop": "Do not infer a round/final-game improvement from the one-turn model result"
+  },
+  "declaredFundingControl": {
+    "recordedEpochSeconds": 1795032653.421393,
+    "root": "reuse both settled card-technology checkpoints, zero prefix replay",
+    "purpose": "fund exactly one standard scan requiring1credit+2energy; retain2energy, trade exactly2cards for1credit",
+    "discardPurple2": [
+      "B16",
+      "DLC1"
+    ],
+    "discardPurple3": [
+      "DLC1",
+      "DLC6; retain B16 and Chong9 for potential scan/movement"
+    ],
+    "why": "after the card has0credits, all future purpose-capital components are zero. Check whether legal funding reveals a discontinuity rather than assuming no development is possible.",
+    "nativeCap": 8,
+    "expected": "Scan becomes legal, compare full assets and every value component; no new points/tech/income earned by payment alone",
+    "stop": "a funded-state value jump is a diagnostic, not a full-round or final score gain; do not patch the evaluator without completed payoff evidence"
+  },
+  "declaredPayoffWitness": {
+    "recordedEpochSeconds": 1795033204.420904,
+    "prefix": "reuse saved settled purple3 checkpoint; alternative purpose-bound payment discards blueB16/redDLC6 and preserves two known yellow hand scans (DLC1,Chong9)",
+    "reason": "Two scans can advance yellow4a twice per action using held yellow cards despite Earth rotation; early three data fund blue cash+energy, paid orange2 supplies the last energy for the second scan. Prior unbound payment discarded the second yellow card.",
+    "sequence": "scan1 Earth4a/public4b/handDLC1->4a; data computer5/cash/energy; orange2; scan2 Earth2b/publicDLC2->4a/handChong9->4a; fill computer6 and blue3 pick a current-public publicity corner for an actual orange3 deficit; funded orange3 if possible; analyze; pass",
+    "counterfactualNotAutonomous": true,
+    "knownInformation": "both yellow hand cards, first public DLC3 and second public DLC2 known before this order. New public card funding uses only currently revealed choices, not original future identity.",
+    "budget": "96 Native inputs and original fixed deadline; each input full checkpoint+state-machine cursor; no new AI search",
+    "comparison": "terminal vs existing same-root272; report exact tech/income/cash/data/cards and no formal adoption",
+    "repeatAccounting": "4-input alternate card payment is a different purpose-bound proposal; one common quick-trade-start input repeats because prior latest-checkpoint retention did not preserve its intermediate payment state, explicitly count it. No card-play/research prefix repeated."
+  },
+  "recoveries": [
+    {
+      "observedEpochSeconds": 1795033399.8265102,
+      "reason": "Invalid experimental color assumption, not an AI defect: codes0/1/2/3 map yellow/red/blue/black. Previous script skipped the intended hand scan, then its3-data continuation failed after12 inputs. Preserve full failed checkpoint and mark that trial invalid. Corrected red2b plan is a different declared target chain from the saved purple3 root. Its4 funding inputs repeat due diagnostic error; count them explicitly, do not repeat the card/technology prefix. Original deadline unchanged."
+    },
+    {
+      "observedEpochSeconds": 1795033416.2658439,
+      "reason": "Corrected scan2 reaches optional purple4 menu. Its declared skip uses target.mode=skip, not skip:true. Resume the exact scan2 pending checkpoint with the same planned skip; zero successful inputs repeated, original deadline retained."
+    },
+    {
+      "observedEpochSeconds": 1795033510.709057,
+      "reason": "End of second scan raised a real Chong7 trace-task obligation; settle its explicit positive optional confirmation before attempting the next main action. Preserve exact31-input checkpoint and continue without Native replay; original deadline unchanged."
+    },
+    {
+      "observedEpochSeconds": 1795033613.497482,
+      "reason": "Chong7 task requires selecting a planet then a revealed fossil reward. Use fixed Jupiter without peeking at hidden fossils, then highest currently revealed immediate score. Resume32-input checkpoint; no input replay or deadline extension. If the declared analysis is not actually legal after settlement, record it as unfulfilled rather than inventing resources."
+    }
+  ],
+  "correctedPayoffWitness": {
+    "purpose": "complete red sector2b in two full scans using protected red DLC1 and Chong9; code1 is red",
+    "scan1": "Earth2b + publicDLC2->2b + handDLC1->2b",
+    "scan2": "Earth2b + publicDLC3->4b + handChong9->2b",
+    "dataAndEnergy": "same computer5/blue1cash/blue2energy -> orange2 energy -> scan2; no resource injection",
+    "blue3Pick": "current-public publicity card if an actual research deficit exists; absent that, fixed first public card and skip unfunded orange3, still finish analyze/pass",
+    "repeatFromInvalidTrial": 4,
+    "nativeCap": 96,
+    "deadlineUnchanged": true
+  },
+  "closedEpochSeconds": 1795033735.58705,
+  "closeReason": "Purpose-bound corrected two-scan card-technology witness reaches250 versus same-root baseline272; reject this proposal, retain invalid color trial and all diagnostic failures. No AI policy change.",
+  "evidenceArchive": "reports/ai-foundation-20261119/r4-chong7-native-control-20261119-v1.logs.json.gz",
+  "evidenceArchiveSha256": "fa42d10fb2469cfd77b35500aa337a972092c556d92e64191d031b6048b104bb"
+}

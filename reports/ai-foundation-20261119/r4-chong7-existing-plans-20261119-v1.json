@@ -1,0 +1,47 @@
+{
+  "root": {
+    "actionId": "play_card:6b72c0d5",
+    "target": 7,
+    "value": 229.5,
+    "realization": 0,
+    "preparationDebt": 0,
+    "kind": "resource-goal-plan",
+    "goal": {
+      "id": "effect:tech:card:alien-chong-7-16",
+      "kind": "effect-purpose",
+      "purpose": "tech",
+      "cardId": "alien-chong-7-16",
+      "sourceFamily": "play_card",
+      "required": {
+        "credits": 3
+      }
+    },
+    "resourceGoalCount": 1,
+    "completion": "complete"
+  },
+  "plans": [
+    {
+      "targetActionId": "choose_target:8dd1ded6",
+      "actions": [
+        "play_card:6b72c0d5",
+        "choose_target:8dd1ded6",
+        "end_turn:b2f9b29d"
+      ],
+      "value": 229,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "targetActionId": "choose_target:8821e7b0",
+      "actions": [
+        "play_card:6b72c0d5",
+        "choose_target:8821e7b0",
+        "choose_card:34227cca",
+        "end_turn:b2f9b29d"
+      ],
+      "value": 229.5,
+      "boundary": "hidden_card_reveal"
+    }
+  ],
+  "newAISearches": 0,
+  "newNativeInputs": 0
+}
