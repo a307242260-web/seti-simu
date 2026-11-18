@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v5",
+  "date": "2026-11-18",
+  "source": "27646b5b9e562c5e05b765c16989f7d60ae98336",
+  "policy": "v485",
+  "value": "v71",
+  "snapshot": "/private/tmp/seti-current-full-z97c_km1",
+  "previous": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-learning-checkpoint-20261118-v4.json",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReferenceScore": 384,
+  "lastTurnClassification": "progress: published exact resource-identity performance fix and316-root gate;15 Native controls verify point272 whole-turn tradeoffs and expose a funded one-step movement omission",
+  "publishedAdmission": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/resource-prefix-cost-admission-20261118-v1.json",
+  "gate": {
+    "scope": "300 historical AI roots plus16 teacherR4 roots through272",
+    "passed": true,
+    "maxNative": 256,
+    "maxMilliseconds": 571.6790409999994
+  },
+  "newIssue": {
+    "knownClosingSectors": 0,
+    "freeMoveChosenByCurrentPolicy": {
+      "deltaX": -1,
+      "deltaY": 0,
+      "target": "Neptune using one assumed future rotation"
+    },
+    "legalKnownAlternative": {
+      "deltaX": 0,
+      "deltaY": 1,
+      "target": "Saturn/Enceladus",
+      "heldCard": "chong_6.webp",
+      "printedScore": 13,
+      "creditsCost": 1,
+      "energyCost": 0,
+      "beforeNextOwnTurnRotation": false
+    },
+    "cause": "1-step held-card endpoint requires>=2 immediately closable satellite sectors, while2+-step funded prefixes have no such condition. Fewer sectors do not make the printed landing unavailable; rejecting it falls through to an inapplicable rotation quote.",
+    "classification": "fixed movement planning omits a funded known purpose; distinct from the valid paid-Neptune immediate-point tradeoff",
+    "nativeCounterfactualInputs": 10,
+    "stopBeforeUnknownFossil": true,
+    "fixApplied": false
+  },
+  "findings": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/r4-point272-findings-20261118-v1.json",
+  "next": [
+    "Use printed positive endpoint rewards and held-card/current-wallet legality for1-step free completion; do not require2 closed scan sectors or rely on a rotation when all opponents passed.",
+    "Verify Native landing, hidden ordinary/alien decks, zero-fee-resource guards, fixed-menu selection and source-root/RNG isolation; preserve paid-Neptune option and distinct resource controls.",
+    "Gate affected existing roots and newly reached teacherR4 roots before running a unique autonomous full game. No new full/20-board scores yet.",
+    "Continue long-term asset comparison after265/272 without forcing specific card retention or leaking blind-draw identities."
+  ],
+  "goalStatus": "active"
+}
