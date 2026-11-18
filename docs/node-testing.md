@@ -19,6 +19,8 @@
 正式 owner、proof obligation 和反例以 `tools/node-test-inventory.js` 的逐文件登记及对应
 公共契约文档为准。新增测试先找到唯一 owner 和可观察失败语义，再进入 inventory。
 
+搜索预算测试使用与预算字段一致的计数：`budget.transitions` 的边界取自 `diagnostics.transitions`，其中包括已证明而不再原生执行的步骤。`diagnostics.nativeExecutions` 单独核对完整规则提交额度，不能代替计费转移步数。精确预算应完整闭合，少一个计费步时必须拒绝返回动作和可复用计划；这些检查不能替代节点、前沿和耗时门槛。
+
 ## 运行
 
 ```sh

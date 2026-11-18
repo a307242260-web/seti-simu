@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-19",
+  "parent": "3bd1341334850748401cab028ac591e34be36bda",
+  "change": "Correct transition-budget units and restrict movement-mode invalidation to proof sources with a live ordinary probe; preserve independent stationary proof reuse. Test-only; solver unchanged.",
+  "regression": {
+    "beforeFailed": true,
+    "headPassed": true,
+    "v72Passed": true,
+    "registeredRunnerPassed": true,
+    "registeredRunnerStdout": "{\"fundedTravelTail\":true,\"nativeProofControls\":9,\"movementModeGuard\":true,\"movementProofs\":7,\"stationaryProofs\":2,\"optimizedInputs\":126,\"optimizedTransitions\":229,\"budgetUnit\":\"charged-transitions\",\"budgetBoundaries\":[{\"limit\":229,\"complete\":true,\"stopReason\":null,\"nativeExecutions\":126,\"chargedTransitions\":229},{\"limit\":228,\"complete\":false,\"stopReason\":\"transition-budget\",\"nativeExecutions\":126,\"chargedTransitions\":228}],\"fullNativeInputs\":128,\"completeRootValueParity\":true,\"rootAndRngUnchanged\":true}\nSUMMARY unit passed=1 failed=0 total=1 time=0.99s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER policy/state-value tests=1\n",
+    "registeredRunnerStderr": "",
+    "nativeExecutions": 126,
+    "chargedTransitions": 229,
+    "exact229Complete": true,
+    "oneLess228FailsClosed": true,
+    "movementDependentProofs": 7,
+    "stationaryIndependentProofs": 2,
+    "nativeRootAndRngPreserved": true,
+    "fullNativeReferenceInputs": 128,
+    "sameCompleteRootValuesAsFullNative": true
+  },
+  "strategyChanged": false,
+  "newAutonomousGames": 0,
+  "formalScoreUnchanged": 272,
+  "previouslyMeasuredFormalGameSeconds": 16.1,
+  "publicIncomeCandidateStillFrozen": true,
+  "remaining": "Other validation contracts and the public-income ceiling are unresolved; this is not full admission or a score improvement.",
+  "method": {
+    "previousGoalTurnClassification": "progress: frozen continuation validation fixed",
+    "thisGoalTurnClassification": "progress: Native-vs-transition budget and conditional proof eligibility regression corrected and validated in HEAD and v72",
+    "wallMinutes": 6.896723902225494,
+    "originalDeadlineEpochSeconds": 1795043088.669179
+  },
+  "wholeGoalComplete": false
+}

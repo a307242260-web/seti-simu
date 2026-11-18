@@ -1,0 +1,34 @@
+{
+  "parent": "3bd1341334850748401cab028ac591e34be36bda",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "ownedPaths": [
+    "randomizer/game/ai/probe-travel-tail.test.js",
+    "docs/node-testing.md"
+  ],
+  "checks": {
+    "head": {
+      "exitCode": 0,
+      "stdout": "{\"fundedTravelTail\":true,\"nativeProofControls\":9,\"movementModeGuard\":true,\"movementProofs\":7,\"stationaryProofs\":2,\"optimizedInputs\":126,\"optimizedTransitions\":229,\"budgetUnit\":\"charged-transitions\",\"budgetBoundaries\":[{\"limit\":229,\"complete\":true,\"stopReason\":null,\"nativeExecutions\":126,\"chargedTransitions\":229},{\"limit\":228,\"complete\":false,\"stopReason\":\"transition-budget\",\"nativeExecutions\":126,\"chargedTransitions\":228}],\"fullNativeInputs\":128,\"completeRootValueParity\":true,\"rootAndRngUnchanged\":true}\n",
+      "stderr": ""
+    },
+    "v72": {
+      "exitCode": 0,
+      "stdout": "{\"fundedTravelTail\":true,\"nativeProofControls\":9,\"movementModeGuard\":true,\"movementProofs\":7,\"stationaryProofs\":2,\"optimizedInputs\":126,\"optimizedTransitions\":229,\"budgetUnit\":\"charged-transitions\",\"budgetBoundaries\":[{\"limit\":229,\"complete\":true,\"stopReason\":null,\"nativeExecutions\":126,\"chargedTransitions\":229},{\"limit\":228,\"complete\":false,\"stopReason\":\"transition-budget\",\"nativeExecutions\":126,\"chargedTransitions\":228}],\"fullNativeInputs\":128,\"completeRootValueParity\":true,\"rootAndRngUnchanged\":true}\n",
+      "stderr": ""
+    }
+  },
+  "productionStrategyChanged": false,
+  "newAutonomousGames": 0,
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "ownedHashes": {
+    "randomizer/game/ai/probe-travel-tail.test.js": "1d33e3347598346ab17cb66f93f611cb2019043cdd599c2bc566eef1b7903d65",
+    "docs/node-testing.md": "c0d55a5f0d364eddf7bb0d8a156d114c7df3c9e374855fb5b1cf09767d210516"
+  },
+  "passed": true,
+  "additionalCorrection": "Classify cached proof eligibility by its actual live-probe dependency; retain both rejection and stationary reuse controls."
+}

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "seti-research-wall-window-v1",
+  "startedEpochSeconds": 1795042488.669179,
+  "deadlineEpochSeconds": 1795043088.669179,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042488.997775,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 50512,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042489.628652
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "HEAD:docs/node-testing.md"
+      ],
+      "startedEpochSeconds": 1795042494.568834,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 50630,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042494.582322
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/fix-transition-budget-validation-20261119.py"
+      ],
+      "startedEpochSeconds": 1795042593.233566,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 51521,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042595.151105
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042666.4012449,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 52132,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042666.450173
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795042760.2371461,
+      "status": "finished",
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/transition-budget-validation-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 52957,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795042762.4009159
+    }
+  ],
+  "scope": "Test-only maintenance: use charged search transitions for the exact transition-budget boundary, retain independent Native256 cap and one-less fail-closed control. No AI strategy or game.",
+  "closedEpochSeconds": 1795042902.472613,
+  "closeReason": "Test contracts corrected; both versions passed; no strategy/game.",
+  "evidenceArchive": "reports/ai-foundation-20261119/transition-budget-validation-evidence-20261119-v1.json.gz"
+}

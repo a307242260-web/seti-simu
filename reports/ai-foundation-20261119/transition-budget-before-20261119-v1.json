@@ -1,0 +1,8 @@
+{
+  "parent": "3bd1341334850748401cab028ac591e34be36bda",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: actual complete closure must not be rejected by a larger movement estimate\n    at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/randomizer/game/ai/probe-travel-tail.test.js:16:35)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+}

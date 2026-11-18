@@ -1,0 +1,34 @@
+{
+  "parent": "3bd1341334850748401cab028ac591e34be36bda",
+  "snapshot": "/private/tmp/seti-frozen-validation-head-20261119-j59jljhk",
+  "ownedPaths": [
+    "randomizer/game/ai/probe-travel-tail.test.js",
+    "docs/node-testing.md"
+  ],
+  "checks": {
+    "head": {
+      "exitCode": 1,
+      "stdout": "SUMMARY unit passed=0 failed=1 total=1 time=0.83s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER policy/state-value tests=1\n",
+      "stderr": "node:assert:150\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: a cached movement-policy proof must not survive disabling that policy\n+ actual - expected\n\n+ {\n+   dataPlans: [\n+     {\n+       goal: {\n+         id: 'data:income:4',\n+         incomeBefore: 8,\n+         incomeCardId: 'card-68-0',\n+         kind: 'income',\n+         required: {},\n+         targetComputerSlot: 4\n+       },\n+       incomeCardId: 'card-68-0',\n+       netGain: 10.5,\n+       requiredNativeInputs: 9\n+     }\n+   ],\n+   firstActionId: 'place_data:01c038e2',\n+   kind: 'data-end-turn',\n+   markedTiles: [\n+     'a'\n+   ],\n+   netGain: 10.5,\n+   observationAvailable: false,\n+   proof: 'seti-audited-company-quiet-turn-tail-value-v2',\n+   requiredNativeInputs: 11,\n+   scope: 'exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value',\n+   successorEnvelopeAvailable: false\n+ }\n- null\n\n    at Object.<anonymous> (/private/tmp/seti-frozen-validation-head-20261119-j59jljhk/randomizer/game/ai/probe-travel-tail.test.js:27:10)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: {\n    proof: 'seti-audited-company-quiet-turn-tail-value-v2',\n    kind: 'data-end-turn',\n    firstActionId: 'place_data:01c038e2',\n    netGain: 10.5,\n    requiredNativeInputs: 11,\n    dataPlans: [\n      {\n        goal: {\n          id: 'data:income:4',\n          kind: 'income',\n          targetComputerSlot: 4,\n          incomeCardId: 'card-68-0',\n          incomeBefore: 8,\n          required: {}\n        },\n        netGain: 10.5,\n        requiredNativeInputs: 9,\n        incomeCardId: 'card-68-0'\n      }\n    ],\n    markedTiles: [ 'a' ],\n    scope: 'exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value',\n    observationAvailable: false,\n    successorEnvelopeAvailable: false\n  },\n  expected: null,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\nFAIL randomizer/game/ai/probe-travel-tail.test.js status=1 signal=none\n"
+    },
+    "v72": {
+      "runtime": "/private/tmp/seti-v72-budget-validation-20261119-2a6i5_vb",
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "node:assert:150\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: a cached movement-policy proof must not survive disabling that policy\n+ actual - expected\n\n+ {\n+   dataPlans: [\n+     {\n+       goal: {\n+         id: 'data:income:4',\n+         incomeBefore: 8,\n+         incomeCardId: 'card-68-0',\n+         kind: 'income',\n+         required: {},\n+         targetComputerSlot: 4\n+       },\n+       incomeCardId: 'card-68-0',\n+       netGain: 10.5,\n+       requiredNativeInputs: 9\n+     }\n+   ],\n+   firstActionId: 'place_data:01c038e2',\n+   kind: 'data-end-turn',\n+   markedTiles: [\n+     'a'\n+   ],\n+   netGain: 10.5,\n+   observationAvailable: false,\n+   proof: 'seti-audited-company-quiet-turn-tail-value-v2',\n+   requiredNativeInputs: 11,\n+   scope: 'exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value',\n+   successorEnvelopeAvailable: false\n+ }\n- null\n\n    at Object.<anonymous> (/private/tmp/seti-v72-budget-validation-20261119-2a6i5_vb/randomizer/game/ai/probe-travel-tail.test.js:27:10)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: {\n    proof: 'seti-audited-company-quiet-turn-tail-value-v2',\n    kind: 'data-end-turn',\n    firstActionId: 'place_data:01c038e2',\n    netGain: 10.5,\n    requiredNativeInputs: 11,\n    dataPlans: [\n      {\n        goal: {\n          id: 'data:income:4',\n          kind: 'income',\n          targetComputerSlot: 4,\n          incomeCardId: 'card-68-0',\n          incomeBefore: 8,\n          required: {}\n        },\n        netGain: 10.5,\n        requiredNativeInputs: 9,\n        incomeCardId: 'card-68-0'\n      }\n    ],\n    markedTiles: [ 'a' ],\n    scope: 'exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value',\n    observationAvailable: false,\n    successorEnvelopeAvailable: false\n  },\n  expected: null,\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\n"
+    }
+  },
+  "productionStrategyChanged": false,
+  "newAutonomousGames": 0,
+  "candidateStrategyHashesUnchanged": {
+    "randomizer/game/ai/ready-analysis-capital.js": "fa6e5cff5129fa115a24cc0743a9338125d055617e70c69584e2a8410fc872df",
+    "randomizer/game/ai/state-value.js": "76002a411f97c38077ed1f5fca8a76b8ebe1226e2ba6b9477c4a54eaca44e02b",
+    "randomizer/game/ai/analysis-port.js": "7fbbf981f3ad5051f9c1f79805cea97a004c8dbfb08394b7e221aae75e615953",
+    "randomizer/game/ai/ready-analysis-capital.test.js": "78335622cb46671c5cc0243cb990dba06fc96e7cae8b5ba950ddcca3a4edf90b"
+  },
+  "ownedHashes": {
+    "randomizer/game/ai/probe-travel-tail.test.js": "305421cf62efa9a7bb8d357cc42cf3ba2b2aa77538413ef7e45c9aa689698ca6",
+    "docs/node-testing.md": "c0d55a5f0d364eddf7bb0d8a156d114c7df3c9e374855fb5b1cf09767d210516"
+  },
+  "passed": false
+}
