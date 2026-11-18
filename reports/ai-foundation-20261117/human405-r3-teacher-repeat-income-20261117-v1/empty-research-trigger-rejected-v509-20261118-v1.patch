@@ -1,0 +1,37 @@
+--- a/randomizer/game/ai/local-decision-plans.js
++++ b/randomizer/game/ai/local-decision-plans.js
+@@ -2075,0 +2076,26 @@
++ }
++ function fixedEmptyAmibaResearch({state,seatId,actions,session,knownCards}){
++  const payload=session?.queue?.[0]?.payload,match=payload?.matches?.[0],p=owner(state,seatId);
++  if(!knownCards||actions.length!==2||payload?.matches?.length!==1||match.ruleId!=='amiba1-blue-tech')return null;
++  const card=p?.reservedCards.find(c=>c.id===match.cardInstanceId),model=card&&effects.getCardModel(card);
++  if(card?.cardId!=='amiba_1.webp'||model?.cardType!==1||model.endGameScoring||model.tasks?.length||model.temporaryTasks?.length
++    ||card.cardEffectState?.modelCardId!==card.cardId
++    ||model.triggers.some(t=>t.id!==match.ruleId&&!card.cardEffectState.consumedTriggerIds.includes(t.id)))return null;
++  // Current Native card formulas cannot penalize retaining this type-1 card.
++  // Unknown future formulas keep both branches rather than assume monotonicity.
++  const independent=new Set(['sectorWinsByColor','traceCount','techCount','distinctSignalSectors','planetOrbitOrLand',
++   'remainingResource','planetLandingPairs','allOrbitOrLand','probeLocation','unmarkedFinalRightmost',
++   'chongTraceCount','amibaTraceCount','aomomoTraceCount','runezuMaxSameSymbolCount','runezuMaxSetSize']);
++  if(p.reservedCards.some(c=>{const rule=endScoring.resolveCardEndGameRule(c,effects);return rule&&!independent.has(rule.kind)}))return null;
++  const accept=actions.find(a=>a.target?.choiceId===`confirm:trigger:${card.id}:${match.ruleId}`),skip=actions.find(a=>a.target?.choiceId==='skip:researchTech');
++  if(!accept||!skip)return null;
++  const accepted=residual.previewEmptyAmibaResearchTrigger(session,accept,knownCards),skipped=residual.previewEmptyAmibaResearchTrigger(session,skip,knownCards);
++  if(!accepted||!skipped)return null;
++  const a=owner(accepted,seatId),b=owner(skipped,seatId);
++  if(JSON.stringify(a.reservedCards)!==JSON.stringify(b.reservedCards.filter(c=>c.id!==card.id))
++    ||JSON.stringify(accepted.cards.removedFromGameCardIds)!==JSON.stringify([...skipped.cards.removedFromGameCardIds,card.cardId]))return null;
++  const restored={...accepted,cards:{...accepted.cards,removedFromGameCardIds:skipped.cards.removedFromGameCardIds},
++   players:{...accepted.players,players:accepted.players.players.map(q=>q===a?{...q,reservedCards:b.reservedCards}:q)}};
++  if(JSON.stringify(restored)!==JSON.stringify(skipped))return null;
++  return fixedChoice(actions,skip,'fixed-empty-optional',{reason:'preserve-empty-blue-symbol-trigger',
++   assumption:'Native confirms no reward or followup; consuming the last trigger only removes a non-scoring type-1 card, while skipping retains its future option'});
+@@ -2083,0 +2110,2 @@
++  const emptyBlue=fixedEmptyAmibaResearch({state,seatId,actions,session,knownCards});
++  if(emptyBlue)return emptyBlue;
+--- a/randomizer/game/ai/decision-search.js
++++ b/randomizer/game/ai/decision-search.js
+@@ -9 +9 @@
+-  const VERSION = "seti-complete-decision-search-v508";
++  const VERSION = "seti-complete-decision-search-v509";

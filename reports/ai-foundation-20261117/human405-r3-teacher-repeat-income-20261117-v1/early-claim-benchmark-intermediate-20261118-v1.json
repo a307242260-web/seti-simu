@@ -1,0 +1,14 @@
+{
+  "version": "v507",
+  "restore": "Restore v508 source bundle then replace only these two paths by decompressed files and verify hashes. Local plans are identical to v508.",
+  "files": {
+    "randomizer/game/ai/analysis-port.js": {
+      "file": "early-claim-benchmark-v507-analysis-port-20261118-v1.js.gz",
+      "sha256": "cffa090fffa4cabb146f1e8cbe9be90edb44bf9b1528b21537292534f44a1f47"
+    },
+    "randomizer/game/ai/decision-search.js": {
+      "file": "early-claim-benchmark-v507-decision-search-20261118-v1.js.gz",
+      "sha256": "62cd69c0c120c9ce766820af4d2b7501e9f190cc04849043f3e83e711f7b2100"
+    }
+  }
+}

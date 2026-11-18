@@ -1,0 +1,10 @@
+{
+  "candidate": "v509 rejected before benchmark",
+  "baseCandidate": "v508",
+  "reason": "Native consumption of the last AM1 trigger increments completedTaskCount even when the blue symbol region is empty. Skipping is not an equivalent action and may lose final tile value. Fixed skip was not adopted. Existing two branches remain.",
+  "cases": 4,
+  "benchmarkRun": false,
+  "productionChanged": false,
+  "sourcePatch": "empty-research-trigger-rejected-v509-20261118-v1.patch",
+  "fixtureSha256": "b827bde59892bb430dfc9839f05941b8d88eafa6f7152a80c6df9d9bc687126b"
+}

@@ -1,0 +1,161 @@
+{
+  "date": "2026-11-18",
+  "candidate": "v508/movementv8/valuev71",
+  "promoted": false,
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "noNewFullGameOrBatch": true,
+  "previousGoalTurnClassification": "no progress: status-only turn; authoritative source, goal, existing process results and disk records revalidated before the next safe action.",
+  "changes": [
+    {
+      "version": 507,
+      "contract": "Canonical early positive B117 claim only when its Native claim+END endpoint equals the existing END+fixed-claim endpoint apart from the separate commit authority version. Keep all newly funded goals after claim. Applies only to the untruncated two-action policy case.",
+      "proof": "119 exact Native early/late endpoint pairs; proof quote equals full Native late settlement; controlled actual credits-for-energy offer opens after earlier claim and remains available. Credits uncapped; unknown cards and unclaimed marks decline."
+    },
+    {
+      "version": 508,
+      "contract": "Fold END only after the full existing resource/card/movement/local policies find it is the unique continuation after the tagged positive claim. New goals keep normal search. Both Native inputs consume budget; a budget of1 stops after claim.",
+      "proof": "Actual nonroot resource-corner prefix; full two-input claim/END and one-input cutoff; root/RNG preserved in Node and headless Browser."
+    }
+  ],
+  "pairedComparisons": [
+    {
+      "file": "early-positive-claim-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "ed1d6a8b8c83424c0222fed16270aa7580af9f0944e48ba86e03b288806771c3",
+          "local-decision-plans": "bb34a367362a7fcf10a288dec64647303d0c75d31aea61909608005e97aa9cbc",
+          "decision-search": "cbe269ba47b11ab18824b2d634690124a1919545f5d63ad17d6289ebc8a196db"
+        },
+        "sourceSha256": "ed1d6a8b8c83424c0222fed16270aa7580af9f0944e48ba86e03b288806771c3",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 210,
+        "ms": 1804.800292,
+        "earlyClaimOrders": 0,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "cffa090fffa4cabb146f1e8cbe9be90edb44bf9b1528b21537292534f44a1f47",
+          "local-decision-plans": "f7fa99596770947b0b0b90ec6b9cf632670cca2c5a5172db6f941c855a8b874b",
+          "decision-search": "62cd69c0c120c9ce766820af4d2b7501e9f190cc04849043f3e83e711f7b2100"
+        },
+        "sourceSha256": "cffa090fffa4cabb146f1e8cbe9be90edb44bf9b1528b21537292534f44a1f47",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 209,
+        "ms": 1646.3449580000001,
+        "earlyClaimOrders": 290,
+        "complete": true,
+        "unresolved": []
+      },
+      "beforeGraphNodes": 1950,
+      "afterGraphNodes": 2239,
+      "semanticRootsExact": true
+    },
+    {
+      "file": "early-claim-fixed-tail-point289-comparison-20261118-v1.json.gz",
+      "before": {
+        "kind": "before",
+        "sourceFiles": {
+          "analysis-port": "cffa090fffa4cabb146f1e8cbe9be90edb44bf9b1528b21537292534f44a1f47",
+          "local-decision-plans": "f7fa99596770947b0b0b90ec6b9cf632670cca2c5a5172db6f941c855a8b874b",
+          "decision-search": "62cd69c0c120c9ce766820af4d2b7501e9f190cc04849043f3e83e711f7b2100"
+        },
+        "sourceSha256": "cffa090fffa4cabb146f1e8cbe9be90edb44bf9b1528b21537292534f44a1f47",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 209,
+        "ms": 1714.322792,
+        "earlyClaimOrders": 290,
+        "complete": true,
+        "unresolved": []
+      },
+      "after": {
+        "kind": "after",
+        "sourceFiles": {
+          "analysis-port": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+          "local-decision-plans": "f7fa99596770947b0b0b90ec6b9cf632670cca2c5a5172db6f941c855a8b874b",
+          "decision-search": "cf24ff984c00f45c0c2208f9e16fe20d93b565f2145e38b7aeb6b29fa26d93bc"
+        },
+        "sourceSha256": "f54ee5688bffec002ef2e26132540f4d894f1c2239ce66c6d9615b6f681d01c2",
+        "actionId": "land:d5ee03a2",
+        "value": 235.5,
+        "native": 209,
+        "ms": 1630.369042,
+        "earlyClaimOrders": 290,
+        "complete": true,
+        "unresolved": []
+      },
+      "beforeGraphNodes": 2239,
+      "afterGraphNodes": 1949,
+      "semanticRootsExact": true
+    }
+  ],
+  "timingCaveat": "Independent single before/after pairs are not a cumulative speed series. Instrumented CPU sampling is diagnostic only, not admission.",
+  "rejectedShortcut": {
+    "version": 509,
+    "adopted": false,
+    "hypothesis": "Skip empty blue-region AM1 optional reward to preserve future trigger use.",
+    "NativeCounterexample": "All4 actual contexts consume the last trigger, increase completedTaskCount2→3 and increase current final score181→185 despite no symbol reward. Original branches retained. No full point benchmark run for the rejected policy.",
+    "failureLog": "empty-research-trigger-native-unit-20261118-v2.log",
+    "regressionLog": "empty-research-trigger-native-counterexample-20261118-v2.log",
+    "fixture": "candidate-empty-research-trigger-20261118-v1.json.gz",
+    "patch": "empty-research-trigger-rejected-v509-20261118-v1.patch"
+  },
+  "gate": {
+    "native": 209,
+    "nativeLimit": 256,
+    "milliseconds": 1630.369042,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "verification": {
+    "nodePassed": 30,
+    "nodeFailed": 1,
+    "browserPassed": 18,
+    "valueInputAuditPassed": 68,
+    "sealedNodePassed": 8,
+    "knownFailure": "analysis-port.test.js legacy energy-for-move count expects2; Native ordinary paid moves count0, reproduced in prior candidates",
+    "sourceRestore": {
+      "candidate": "v508/movementv8/valuev71",
+      "sourceFilesVerified": 41,
+      "unchangedBaseFiles": 523,
+      "base": "2c040fdb34376ffa7833b2f1945f074ad9813857",
+      "patchSha256": "ec346b16213df3d21801cf80ac3fa93193d0e37174f70213ce2e22b28e4e7a68",
+      "nodeSyntaxFiles": 27,
+      "sealedRoot": "/private/tmp/seti-early-claim-sealed-20261118-rbwhh49b",
+      "promoted": false,
+      "sealedTestsExecutedOnByteIdenticalRoot": "/private/tmp/seti-early-claim-sealed-20261118-wfiwf6bp",
+      "sealedTestLog": "early-claim-sealed-node-check-20261118-v1.log",
+      "zeroContextPatchRestoredSame41Files": true
+    }
+  },
+  "cpuDiagnostic": {
+    "file": "early-claim-point289-cpu-summary-20261118-v1.json",
+    "inclusiveMilliseconds": {
+      "identity": 184.665,
+      "quietFinalValue": 164.296,
+      "knownCargoFuture": 130.586,
+      "enumerateStableActions": 128.707,
+      "goalMovementSpec": 106.084,
+      "earlyPositiveClaim": 90.166
+    },
+    "inclusiveCostsOverlap": true,
+    "selfCopyMilliseconds": 124.501,
+    "selfGarbageCollectionMilliseconds": 114.828,
+    "selfStructuredCloneMilliseconds": 92.335
+  },
+  "sourceBundle": "early-claim-candidate-source-20261118-v1.json",
+  "intermediateSource": "early-claim-benchmark-intermediate-20261118-v1.json",
+  "report": "reports/iteration/current-full-baseline-20261118-v1.html",
+  "next": [
+    "Audit exact immutable inputs and repeated calls of Native route requirements and goalMovementSpec before adding a narrow cache; retain dynamic wallet/goal/occupancy dependencies and Native semantics.",
+    "Inspect remaining full-state identity/copy and knownCargoFuture costs; prove equivalence and write dependencies before caching any cross-state quote. Do not prune distinct optional task completion states.",
+    "Keep256/600ms gate; after admission validate fixed roots and first two rounds, then continue original R4 same-root teaching comparison and one unique full game."
+  ]
+}

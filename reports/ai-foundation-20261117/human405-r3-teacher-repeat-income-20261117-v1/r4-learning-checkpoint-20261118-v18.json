@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "seti-r4-learning-checkpoint-v18",
+  "date": "2026-11-18",
+  "previous": "r4-learning-checkpoint-20261118-v17.json",
+  "publishedParent": "2c040fdb34376ffa7833b2f1945f074ad9813857",
+  "productionRuntime": "v485/valuev71",
+  "candidate": "v508/movementv8/valuev71",
+  "candidatePromoted": false,
+  "goalStatus": "active",
+  "scope": "Original R3 teaching alignment and authorized R4 same-root learning; preserve first two rounds, exact Native reproducibility and necessary branch coverage. Not complete until original assets/development and admission requirements are met.",
+  "previousGoalTurnClassification": "no progress: status-only turn; authoritative source, goal, existing process results and disk records revalidated before the next safe action.",
+  "thisGoalTurnClassification": "progress: verified canonical positive-task order and checked unique-END folding; independently restored41 files,30 Node pass/1 old failure,18 Browser,68 V-input checks,8 sealed tests. Rejected a zero-reward pruning shortcut using4 complete Native counterexamples with4 final points each. Current CPU profile identifies next costs without running a game.",
+  "AIFormalScoreUnchanged": 272,
+  "teacherLegalReference": 384,
+  "gate": {
+    "native": 209,
+    "nativeLimit": 256,
+    "milliseconds": 1630.369042,
+    "millisecondsLimit": 600,
+    "passed": false
+  },
+  "findings": "early-claim-candidate-findings-20261118-v1.json",
+  "next": [
+    "Audit exact immutable inputs and repeated calls of Native route requirements and goalMovementSpec before adding a narrow cache; retain dynamic wallet/goal/occupancy dependencies and Native semantics.",
+    "Inspect remaining full-state identity/copy and knownCargoFuture costs; prove equivalence and write dependencies before caching any cross-state quote. Do not prune distinct optional task completion states.",
+    "Keep256/600ms gate; after admission validate fixed roots and first two rounds, then continue original R4 same-root teaching comparison and one unique full game."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "candidate": "v508/movementv8/valuev71",
+  "sourceFilesVerified": 41,
+  "unchangedBaseFiles": 523,
+  "base": "2c040fdb34376ffa7833b2f1945f074ad9813857",
+  "patchSha256": "ec346b16213df3d21801cf80ac3fa93193d0e37174f70213ce2e22b28e4e7a68",
+  "nodeSyntaxFiles": 27,
+  "sealedRoot": "/private/tmp/seti-early-claim-sealed-20261118-rbwhh49b",
+  "promoted": false,
+  "sealedTestsExecutedOnByteIdenticalRoot": "/private/tmp/seti-early-claim-sealed-20261118-wfiwf6bp",
+  "sealedTestLog": "early-claim-sealed-node-check-20261118-v1.log",
+  "zeroContextPatchRestoredSame41Files": true
+}

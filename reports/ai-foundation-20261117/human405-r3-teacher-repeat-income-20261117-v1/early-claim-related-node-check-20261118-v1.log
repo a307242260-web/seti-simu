@@ -1,0 +1,69 @@
+{"alienCardQueue":"passed","cases":94,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":73,"nativeFallbackInputs":21}
+{"hiddenDeckPermutations":4,"completeNativeEnvelopesExact":true,"visibleFactsAndContinuationEqual":true}
+{"analysisBeforeOrbit":true,"hiddenWorlds":3,"valueChecks":104,"futureValueChecks":5,"rows":[{"index":0,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":55.00033300000001},{"index":1,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":46.07045899999997},{"index":3,"value":151,"previous":150.41666666666666,"native":27,"extra":12,"ms":43.690458999999976}]}
+trusted analysis fork isolation and exact reuse passed
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+0 !== 2
+
+    at Object.<anonymous> (/private/tmp/seti-early-claim-fixed-tail-20261118-xj4efhzn/randomizer/game/ai/analysis-port.test.js:564:12)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 2,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+data token fungibility, real placement diamonds and every immediate successor passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"earlyClaimFixedTail":"passed","nativeFixedInputs":2,"logicalBudgetStopsBeforeEnd":true,"realRootAndRngPreserved":true}
+{"earlyPositiveClaim":"passed","actualNativeEndpointPairs":119,"proofQuoteMatchesNative":true,"newlyOpenedNativeCreditOffer":1,"guards":2}
+earned pickup task:6 hidden identities, hidden deck reversal, exact Native payoff, root/RNG isolation and5 unsupported contexts pass
+{"emptyResearchTrigger":"passed; both Native branches retained","fullNativeSettlementPairs":4,"guardControls":3,"emptyRewardFinalScoreDifference":4,"rootAndRngPreserved":true}
+{"fundedFreePrefix":true,"nativePrintedLanding":13,"actualRemainingEnergy":1,"noInterveningRotation":true,"rootAndRngIsolated":true}
+{"fundedOneStep":true,"readySectorClosures":0,"printedLanding":13,"extraLandingEnergy":0,"hiddenDeckIndependent":true}
+{"knownDataScanCycle":true,"valueChecks":190,"futureChecks":8,"rows":[{"name":"beforePlay","index":0,"n":81,"extra":38,"ms":107.95016700000002,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":1,"n":81,"extra":38,"ms":103.24399999999991,"value":143.25,"previous":141.58333333333334},{"name":"beforePlay","index":3,"n":81,"extra":38,"ms":114.26362500000005,"value":143.25,"previous":141.58333333333334},{"name":"beforeDiscard","index":0,"n":42,"extra":37,"ms":55.08441599999992,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":1,"n":42,"extra":37,"ms":53.05395800000042,"value":143.25,"previous":138.16666666666666},{"name":"beforeDiscard","index":3,"n":42,"extra":37,"ms":43.78141700000015,"value":143.25,"previous":138.16666666666666}]}
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":10,"maxMs":83.241084,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":10,"maxMs":35.74808299999995,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":24.07333399999993,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":61.891625000000204,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":10,"maxMs":50.515041999999994,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":10,"maxMs":20.973167000000103,"actualInputs":12}]}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"plainTraceQueue":"passed","cases":136,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":84,"nativeFallbackInputs":6}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+{"positiveTaskCopy":"passed","fullNativeStateExact":true,"rootAndRngPreserved":true,"frozenReuse":true,"mutableAndShallowFrozenFallback":true,"theoryTaskFallback":true}
+quiet company swap: full Native envelopes, immutable sources, hidden decks and fallback guards pass
+{"quietR4Ledger":"passed","value":235.5,"nativeFullFormalCompactExact":true,"unrealizedAndDebtZero":true,"pendingGoldDeclined":true,"rootAndRngPreserved":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"stableMenuQuery":"passed","nativeMenuComparisons":24,"frozenSourcePreserved":true,"activeForkSessionPreserved":true,"nextNativeInputExact":true,"hostQueryUnavailable":true}
+{"traceHistoryIdentity":"passed","nativeDiamonds":30,"allImmediateNativeSuccessors":690,"physicalPositionPreserved":true,"rootAndRngPreserved":true}
+{"traceScorePairs":"passed","pairs":79,"cardPairs":0,"guards":5,"firstNativeStateDifferenceExactlyPrintedScore":true,"complementaryFutureFillExact":true,"rngPreserved":true}
+{"traceCardPairs":"passed","cardExamples":26,"cardBranches":234,"sourceCombinations":["blind→blind","blind→cancel","blind→display","cancel→blind","cancel→cancel","cancel→display","display→blind","display→cancel","display→display"],"fullFirstNativeStateExact":true,"cardBeforeRegion":true,"complementaryFutureFillExact":true}
+{"yellowTraceQueue":"passed","cases":62,"completeNativeEnvelopesExact":true,"rootAndRngPreserved":true,"provedInputs":44,"nativeFallbackInputs":18}
+Chong orbit: current rocket binding, printed publicity/scan/income, old cargo isolation and exact recovery pass
+generic card orbit: Production printed rewards, grantRewards=false and following effects pass
+card play domain production composition tests passed
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+planet stats tests passed
+SUMMARY unit passed=30 failed=1 total=31 time=79.94s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=8
+OWNER architecture/effect-session tests=2
+OWNER architecture/policy-host tests=2
+OWNER policy/decision-search tests=16
+OWNER rules/actions tests=1
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=1
+FAIL randomizer/game/ai/analysis-port.test.js status=1 signal=none

@@ -1,0 +1,12 @@
+fair landing cargo: ordinary235.5 equals card235.5; six hidden identities and hidden decks preserve quote, current ledger and Native old-cargo payoff
+{"earlyClaimFixedTail":"passed","nativeFixedInputs":2,"logicalBudgetStopsBeforeEnd":true,"realRootAndRngPreserved":true}
+{"earlyPositiveClaim":"passed","actualNativeEndpointPairs":119,"proofQuoteMatchesNative":true,"newlyOpenedNativeCreditOffer":1,"guards":2}
+{"emptyResearchTrigger":"passed; both Native branches retained","fullNativeSettlementPairs":4,"guardControls":3,"emptyRewardFinalScoreDifference":4,"rootAndRngPreserved":true}
+{"knownPostMainCargo":"passed","allSixNativePayoffs":true,"exactColdRecovery":true,"independentSecondTransport":true,"rows":[{"newFossil":"fossil_01","delivered":"fossil_01","value":242,"native":10,"maxMs":52.615583999999984,"actualInputs":12},{"newFossil":"fossil_02","delivered":"fossil_02","value":249,"native":10,"maxMs":25.205791999999974,"actualInputs":12},{"newFossil":"fossil_03","delivered":"fossil_07","value":235.5,"native":6,"maxMs":22.506582999999864,"actualInputs":7},{"newFossil":"fossil_04","delivered":"fossil_07","value":235.5,"native":6,"maxMs":19.388124999999945,"actualInputs":7},{"newFossil":"fossil_05","delivered":"fossil_05","value":242,"native":10,"maxMs":21.58716699999968,"actualInputs":12},{"newFossil":"fossil_06","delivered":"fossil_06","value":244,"native":10,"maxMs":20.061125000000175,"actualInputs":12}]}
+{"planPrefixReuse":"passed","hits":3,"refreshes":0,"actions":4,"inputs":[102,0,0,0]}
+{"stableMenuQuery":"passed","nativeMenuComparisons":24,"frozenSourcePreserved":true,"activeForkSessionPreserved":true,"nextNativeInputExact":true,"hostQueryUnavailable":true}
+{"traceHistoryIdentity":"passed","nativeDiamonds":30,"allImmediateNativeSuccessors":690,"physicalPositionPreserved":true,"rootAndRngPreserved":true}
+SUMMARY unit passed=8 failed=0 total=8 time=38.65s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/analysis-port tests=2
+OWNER policy/decision-search tests=6
