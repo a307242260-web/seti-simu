@@ -493,3 +493,5 @@ effect drain、observation、serialization 与 inference idle；不得通过省�
 第二轮扫描用途对照使用 `free-analyze-r2-held-scan-control-v1` 与 `free-analyze-r2-scan-tool-control-v1`。两者均固定原73输入及各自已验证的完整扫描、收入、分析用途后交回V72；分别记录固定前缀、来源哈希和已完成轮数。轮次记账从前缀所在轮次继续，受控终局不能记为自主成绩。
 
 教学盘蓝科技第2槽对照使用 `human405-white-blue1-slot2-control-v1` 与 `human405-white-blue3-slot2-control-v1`：保留实际前103条AI输入及第104步研究，只改变第105步科技选择。蓝3尚未完成的原生奖励选择直接交回V72；两分支均清空临时AI状态。入口校验完整策略、固定前缀和原生档指纹，保留待处理session，从第二轮继续记账，终局按受控成绩登记。
+
+第二轮探测器预投入对照使用 `human405-white-r2-original-route-control-v1`（原AI路线至127输入）与 `human405-white-r2-retain-probe-control-v1`（从同一实际AI前83输入接已知教师路线至104输入）。两者均保留原其他席状态、清空临时AI状态，第三轮起的牌和行动不固定；完整原生路线与待续存档须先核对来源、状态和RNG。控制分支从第二轮继续记账，终局不能计作自主AI成绩。
