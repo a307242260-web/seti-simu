@@ -1,5 +1,7 @@
 # SETI RL Simulation Env 契约
 
+固定扫描用途续跑场景 `free-analyze-known-scan-control-v1` 仅用于原20盘第5盘的受控对照：原114输入后接23条已独立原生验证的收入、蓝2研究、付费扫描与分析，再使用未修改的V72。元数据标明137步固定前缀及受控计分，不能当作自主整局成绩。入口校验准备清单、存档、原生重放档及完整策略文件指纹；单点仍按256次／600ms拒绝超限，不进入一般随机盘面入口。
+
 Simulation 是 Production Composition 的无 DOM 宿主。它与 Browser 共用 StateStore、
 Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-player-coordinator.js`），
 不加载 `index.html`、`app.js`、Browser projection、overlay、localStorage 或 Browser 恢复适配器。
