@@ -7,6 +7,42 @@
   },
   "versions": [
     {
+      "id": "v488-funded-scan-launch-teaching-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "\u626b\u63cf\uff0b\u7d2b4\u5019\u9009\uff1a272\u5206\uff08\u6301\u5e73\uff0c\u672a\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v486-teaching-current-full-20261119",
+      "head": "f365a881b",
+      "commits": [
+        "f365a881b"
+      ],
+      "summary": "\u81ea\u4e3b\u7b2c1\u20134\u8f6e\uff0c\u5176\u4ed6\u4e09\u5e2d\u4ec5PASS\uff1b272\u5206\u6301\u5e73\uff0c354\u6761\u884c\u52a8\u53ca\u5168\u90e8\u8f6e\u672b\u8d44\u4ea7\u4e0ev486\u4e00\u81f4\u300215.753\u79d2\uff0c\u6700\u5927256\u6b21\u539f\u751f\u8f93\u5165/393.29ms\u3002\u4e0d\u66ff\u6362\u57fa\u7ebf\uff1b\u539f20\u76d8\u672a\u91cd\u8dd1\u3002",
+      "records": {
+        "7f69a382.f365a881.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "teacher-r4-resource-io-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "\u8d44\u6e90\u56de\u8865\u8def\u7ebf\u5bf9\u7167\uff1a246\u5206\uff08\u4e0d\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "teacher-r4-same-start-20261119",
+      "head": "085ba980c",
+      "commits": [
+        "085ba980c"
+      ],
+      "summary": "\u56fa\u5b9a\u6559\u5e08245\u8f93\u5165\u53ca\u539fAI17\u8f93\u5165\uff0c\u518d\u56fa\u5b9a21\u8f93\u5165\u5206\u6790/Io\u76ee\u7684\uff1b\u539f\u7b56\u7565\u7ee7\u7eed\uff0c246\u5bf9267\u4f4e21\u5206\u3002\u975e\u81ea\u4e3b\u6574\u5c40\uff0c\u4e0d\u91c7\u7528\u65e0\u6761\u4ef6\u8d44\u6e90\u767b\u9646\u504f\u597d\u3002",
+      "records": {
+        "cedb118d.085ba980.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "teacher-r4-free-blind-control-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

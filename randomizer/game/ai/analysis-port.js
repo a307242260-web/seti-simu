@@ -3821,8 +3821,6 @@
         if(node.status==="stable"&&!state.players.players.find(p=>p.id===seatId).mainActionCompleted&&Object.values(resourceDemand.needs(state,seatId,goal)).some(v=>v>0)
           ||node.status==="decision"&&(resourceDemand.isPreparation(source||{})))
           return resourceDemand.step({state,seatId,goal:{...goal,kind:"scan"},actions:node.legalActions,status:node.status,session,operation});
-        if(goal.launch&&node.status==="decision"&&session?.queue?.[0]?.type===scienceSession.EFFECT_TYPES.SCAN_ACTION_4)
-          return localPlans.scanStep({state,seatId,goal,actions:node.legalActions,status:node.status,session,operation});
         if(node.status==="decision"&&node.legalActions.some(a=>goalMovement.isDirection(a)||a.target?.kind==="move-payment")){
           const route=goalMovementSpec(node);if(route?.selectedActionId)return{kind:"fixed",actionId:route.selectedActionId,reason:"fixed-movement-in-scan"};
           if(route?.retainedActionIds?.length===1)return{kind:"fixed",actionId:route.retainedActionIds[0],reason:"fixed-movement-in-scan"};
@@ -4205,9 +4203,7 @@
         const purposeState=node.status==="decision"&&resourceDemand.isPreparation(source||{})?planningState(session.baseState,stored.informationBarrier,knownCards(stored.envelope)):state;
         const preparing=node.status==="decision"&&resourceDemand.isPreparation(source||{}),p=purposeState.players.players.find(p=>p.id===seatId),scanCost=scanEffects.getStandardScanCost(p);
         const launchPossible=!p.mainActionCompleted&&(node.status==="stable"||preparing)&&scanEffects.playerOwnsPurpleTech(p,4,{turn:purposeState.turn})
-          &&(p.resources.energy<(scanCost.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY
-            ||!purposeState.pieces.rockets.some(r=>r.playerId===seatId&&r.surface==="solar-board"
-              &&(r.kind||"standard")==="standard"&&!r.fossilId))&&resourceQuery(purposeState).launchPossible;
+          &&p.resources.energy<(scanCost.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY&&resourceQuery(purposeState).launchPossible;
         const build=required=>localPlans.scanGoals({state:purposeState,seatId,actions:node.legalActions,session:node.status==="decision"&&!preparing?session:null,required,launchPossible});
         const needed=goals.some(g=>g.kind==="scan");goals=goals.flatMap(g=>g.kind==="scan"?build(g.required):[g]);
         if(!needed&&(node.status==="stable"&&node.legalActions.some(a=>a.family==="scan")||node.status==="decision"&&localPlans.scanDecision(node.legalActions)))goals.push(...build(node.status==="stable"?scanCost:{}));

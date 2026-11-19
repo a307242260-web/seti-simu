@@ -1,0 +1,83 @@
+{
+  "status": "phase-complete-no-baseline-upgrade",
+  "acceptedPolicyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "candidateCommit": "f365a881b14841a1821e279f0609d591e0849edb",
+  "autonomousScore": 272,
+  "autonomousScoreGain": 0,
+  "original20Mean": 134.35,
+  "newGames": {
+    "controlledContinuation": 1,
+    "autonomousTeaching": 1,
+    "original20": 0
+  },
+  "candidateTests": {
+    "scanLaunchPlan": "passed",
+    "localDecisionPlans": "passed"
+  },
+  "restoredBaselineTests": {
+    "scanLaunchPlan": "passed",
+    "localDecisionPlans": "passed"
+  },
+  "sourceIsolation": {
+    "unrelatedProductionChanges": 0,
+    "sharedIndexUnchanged": true,
+    "protectedRootProductionUnchanged": true
+  },
+  "restoredProductionHashes": {
+    "randomizer/game/ai/analysis-port.js": "54204f98794081e7c189859f99d6b88f879a74780ed0d860ca30ced0691ba0d8",
+    "randomizer/game/ai/local-decision-plans.js": "b08b2e5a73a9d48b1e69f10de4440e26881fc7ac8b4eca56d4e075ff9b9ce0eb",
+    "randomizer/game/ai/decision-search.js": "012aedb90346d9ecda91b68d23349814b2561361e0c8394dbf0cea34143ca039"
+  },
+  "runtimeHosts": {
+    "candidate": "/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v",
+    "control": "/private/tmp/seti-r4-resource-cycle-20261119-zl_s5fah"
+  },
+  "catalogMerge": {
+    "parent": "f365a881b14841a1821e279f0609d591e0849edb",
+    "beforeWorkingHashes": {
+      "reports/iteration/versions.json": "ebcf034293e48fe6cf4a90a3a9d3040834b42ecd5cc75c6e99840b6bd4850a4a",
+      "reports/iteration/registry.json": "83cde001fcc1868770724018e56b553fb61de114f38b7b28e508b0fbf9b9e3ea",
+      "reports/robot-iteration.html": "3089f0279092c39dff0038b716df798f7f7f079341da61a3bf493c2dbd63f5d1"
+    },
+    "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673",
+    "versions": [
+      "teacher-r4-resource-io-control-20261119",
+      "v488-funded-scan-launch-teaching-20261119"
+    ],
+    "builds": {
+      "head": {
+        "directory": "/private/tmp/seti-expert-trials-registry-0_b3y1lh/head",
+        "paths": {
+          "reports/iteration/versions.json": "bb5191bd37fadadfb3f11fdc9a68a7fc7d7f3f974715c71f8a7127c86bee9940",
+          "reports/iteration/registry.json": "bc09687b562d5f4ed59d25a48c0613d63d74b0566699041ee118f548451f4382",
+          "reports/robot-iteration.html": "6ad527528e2c2578313addcb2f6b31e4af9b0fb4c46b22911849599d563b8dff"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      },
+      "working": {
+        "directory": "/private/tmp/seti-expert-trials-registry-0_b3y1lh/working",
+        "paths": {
+          "reports/iteration/versions.json": "14efc69eec8fe3693f48c4f84dc801d0d0bc4527006d076a9d07528df5aa3d54",
+          "reports/iteration/registry.json": "b1cdbbcae833211209d8be72801ac15917e26728a63797b2303c3439df0b7217",
+          "reports/robot-iteration.html": "26bd66736fdeda03629e5716834e8ad107a6812cf7b2d70e8ce62f92d78bb7ad"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      }
+    }
+  },
+  "fullReplayProofs": [
+    "r4-resource-cycle-control-outcome-20261119-v1.json",
+    "funded-scan-launch-outcome-20261119-v1.json"
+  ],
+  "report": "reports/expert-learning-20261119/expert-strategy-trials-20261119-v1.html",
+  "limitations": [
+    "No score gain; no baseline upgrade.",
+    "Expert high scores have different rule sets and opponents.",
+    "Historical development and host/report failures preserved.",
+    "No further batch experiments authorized by this bounded route."
+  ]
+}

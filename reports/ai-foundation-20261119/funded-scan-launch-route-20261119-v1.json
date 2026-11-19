@@ -1,0 +1,33 @@
+{
+  "status": "closed-not-adopted",
+  "startedEpochSeconds": 1795077757.546079,
+  "deadlineEpochSeconds": 1795081357.546079,
+  "hypothesis": "Retain the purpose scan-plus-Purple4-launch when funded and no ordinary probe, alongside the ordinary scan/free-move purpose. A7-input Native witness236 beats closed235 launch without newly revealed public identities.",
+  "searchContract": {
+    "stateEquivalence": "Unchanged full-state identity/knowledge/RNG dedup. Extra purpose shares scan prefix and has distinct Purple4 launch effect; never call different mode equivalent.",
+    "reachability": "Only standard launch possible and active Purple4. Already-funded new purpose reserved full scan+1E cost; retain old energy-deficit preparation. No new direction enumeration.",
+    "globalBudget": "Keep same global production node/time/frontier configuration and pre-input256Native/600ms gates; complete cold benchmarks before full game.",
+    "validation": "Related Node behavior tests and up to8 fresh exact-state cold gates including historical worst roots. Then one unique registered autonomous teaching game if gates pass, compare all early-round assets and final272.",
+    "stop": "Do not adopt if gates fail, early development regresses or the complete autonomous score does not improve. No seed/card-specific force."
+  },
+  "limits": {
+    "coldGateAttempts": 8,
+    "registeredAutonomousTeachingGames": 1,
+    "decisionNative": 256,
+    "decisionMs": 600,
+    "gameMs": 180000
+  },
+  "decision": "Retain v486: isolated candidate passes targeted tests and cold gates, autonomous354-action game exactly matches baseline272.",
+  "coldAttempts": 8,
+  "coldCompletePassed": 5,
+  "coldFailures": 3,
+  "newAutonomousGames": 1,
+  "autonomousScore": 272,
+  "baselineScore": 272,
+  "scoreGain": 0,
+  "candidatePatch": "adhoc/funded-scan-launch-v488-candidate-20261119.patch.gz",
+  "outcome": "funded-scan-launch-outcome-20261119-v1.json",
+  "original20Rerun": false,
+  "unitFailuresPreserved": "development assertions failed before the Purple4 purpose took precedence over fixed movement; corrected candidate passed2 related tests",
+  "additionalNativeDiagnosticInputs": 4
+}

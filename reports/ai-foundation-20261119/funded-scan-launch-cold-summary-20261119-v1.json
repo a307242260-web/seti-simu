@@ -1,0 +1,239 @@
+{
+  "attempts": 8,
+  "passed": 5,
+  "failed": 3,
+  "records": [
+    {
+      "case": "after287",
+      "status": "passed",
+      "source": "teacher-r4-blind-after287-20261119-v1.json.gz",
+      "sourceSha256": "52524174066dc11fa12d28f9d45cd9f91b9b881b3ba15b9dc3575731fc40a440",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 25.885333000000017,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 120,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u653e\u7f6e\u6570\u636e"
+      },
+      "value": 237.5,
+      "rootAndRngUnchanged": true,
+      "failure": null
+    },
+    {
+      "case": "before246",
+      "status": "passed",
+      "source": "teacher-r4-before-input246-20261119-v1.json.gz",
+      "sourceSha256": "1cf8ebf38c654e4d377610ff4350f241f4ff512853654933c4eb28148a463249",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 63,
+      "milliseconds": 233.84245900000002,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:367a82a7",
+        "actorId": "player-white",
+        "stateVersion": 99,
+        "decisionVersion": 1,
+        "target": {
+          "cardInstanceId": "alien-chong-8-12"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_8.webp\uff1a\u5f03\u724c\u89d2\u6807"
+      },
+      "value": 198.5,
+      "rootAndRngUnchanged": true,
+      "failure": null
+    },
+    {
+      "case": "before263",
+      "status": "passed",
+      "source": "teacher-r4-before-input263-20261119-v1.json.gz",
+      "sourceSha256": "1c4906fda49d72a5755c7e6c1efff8752c817759174fa7f8f99a560c1cec5747",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 140,
+      "milliseconds": 393.47125,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:23807efa",
+        "actorId": "player-white",
+        "stateVersion": 108,
+        "decisionVersion": 1,
+        "target": {
+          "rocketId": 6,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "\u79fb\u52a8\u63a2\u6d4b\u5668 6 \u9006\u65f6\u9488"
+      },
+      "value": 230,
+      "rootAndRngUnchanged": true,
+      "failure": null
+    },
+    {
+      "case": "before287",
+      "status": "passed",
+      "source": "teacher-r4-before-input287-20261119-v1.json.gz",
+      "sourceSha256": "fa76b519a3efa54edab6f1bfb17a2675153c1e14d0398999f5b24ff81a38b497",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 1,
+      "milliseconds": 37.914833,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6d03126f",
+        "actorId": "player-white",
+        "stateVersion": 119,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:display:9",
+          "source": "display",
+          "cardIndex": 9
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u83b7\u5f97\u5c55\u793a\u7684\u866b",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "9",
+          "imageSrc": "../assets/aliens/\u866b/cards/9.webp",
+          "imageAlt": "\u866b"
+        }
+      },
+      "value": 237.5,
+      "rootAndRngUnchanged": true,
+      "failure": null
+    },
+    {
+      "case": "io",
+      "status": "failed",
+      "source": "teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "sourceSha256": "81ca149984f49b3d887deab81c9d447cd074e096ab62ded2c9bdd549af453340",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": null,
+      "nativeInputs": null,
+      "milliseconds": null,
+      "action": null,
+      "value": null,
+      "rootAndRngUnchanged": null,
+      "failure": {
+        "message": "probeCapital is not defined",
+        "stack": "ReferenceError: probeCapital is not defined\n    at Object.resourceSpec (/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/randomizer/game/ai/analysis-port.js:4207:16)\n    at add (/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/randomizer/game/ai/decision-search.js:330:59)\n    at searchDecision (/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/randomizer/game/ai/decision-search.js:539:32)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-funded-scan-launch-policy-20261119.cjs:13:15)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)"
+      }
+    },
+    {
+      "case": "io",
+      "status": "failed",
+      "source": "teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "sourceSha256": "81ca149984f49b3d887deab81c9d447cd074e096ab62ded2c9bdd549af453340",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 20,
+      "milliseconds": 121.05366699999999,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 118,
+        "decisionVersion": 1,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "\u53d1\u5c04"
+      },
+      "value": 235,
+      "rootAndRngUnchanged": true,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'launch' !== 'scan'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'launch' !== 'scan'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-funded-scan-launch-policy-20261119.cjs:16:25)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+      }
+    },
+    {
+      "case": "io",
+      "status": "failed",
+      "source": "teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "sourceSha256": "81ca149984f49b3d887deab81c9d447cd074e096ab62ded2c9bdd549af453340",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 20,
+      "milliseconds": 119.07491700000001,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 118,
+        "decisionVersion": 1,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "\u53d1\u5c04"
+      },
+      "value": 235,
+      "rootAndRngUnchanged": true,
+      "failure": {
+        "message": "Expected values to be strictly equal:\n\n'launch' !== 'scan'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n'launch' !== 'scan'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-funded-scan-launch-policy-20261119.cjs:16:25)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+      }
+    },
+    {
+      "case": "io",
+      "status": "passed",
+      "source": "teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "sourceSha256": "81ca149984f49b3d887deab81c9d447cd074e096ab62ded2c9bdd549af453340",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v488-funded-scan-launch/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 41,
+      "milliseconds": 219.357834,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 118,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u626b\u63cf"
+      },
+      "value": 239.5,
+      "rootAndRngUnchanged": true,
+      "failure": null
+    }
+  ]
+}

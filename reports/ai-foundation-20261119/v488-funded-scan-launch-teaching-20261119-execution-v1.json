@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "seti-teacher-r4-resource-cycle-execution-v1",
+  "status": "failed",
+  "runtime": "/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v",
+  "experimentCommit": "f365a881b14841a1821e279f0609d591e0849edb",
+  "policyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "strategyChanged": true,
+  "newRegisteredR4Continuations": 0,
+  "controlledTeacherRounds": [],
+  "autonomousScope": "rounds1-4",
+  "startedEpochSeconds": 1795078281.22868,
+  "collectionFailure": "AssertionError(['/Users/bilibili/code/seti-simu/reports/research/a9ba4051.94299f38.full.json', '/Users/bilibili/code/seti-simu/reports/research/2170d824.5fabd621.full.json'])"
+}

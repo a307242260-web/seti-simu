@@ -1,0 +1,262 @@
+{
+  "status": "complete-not-adopted",
+  "strategyChanged": false,
+  "scope": "Teacher245 + acceptedAI17 + fixed21-input purpose; unchanged AI after283. Not an autonomous full game.",
+  "baseline": 267,
+  "challenger": 246,
+  "delta": -21,
+  "newControlledGames": 1,
+  "additionalAIGames": 0,
+  "independentNativeReplayInputs": 318,
+  "fullStateSessionAndRngExactlyEqual": true,
+  "nativeReplayExpected": {
+    "nativeStateSha256": "948b83f1f4c13433c0f3789805dd6301bc128c34848434989309b272692810b5",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "nativeReplayActual": {
+    "nativeStateSha256": "948b83f1f4c13433c0f3789805dd6301bc128c34848434989309b272692810b5",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "record": "reports/research/cedb118d.085ba980.full.json",
+  "report": "reports/iteration/teacher-r4-resource-io-control-20261119/cedb118d.085ba980.full.action-log.html",
+  "archive": "reports/iteration/teacher-r4-resource-io-control-20261119/native-replay-20261119-v1.json.gz",
+  "rawRecordSha256": "7efc48a18e7706e26073434b943ba5b7ed4051fd0b3c23a9dd66d5ee2d9b9cb3",
+  "scores": {
+    "baseline": {
+      "baseScore": 182,
+      "cardScore": 6,
+      "cards": [
+        {
+          "cardId": "dlc_31.png",
+          "rule": {
+            "count": 2,
+            "kind": "planetLandingPairs",
+            "scorePer": 6
+          },
+          "score": 0
+        },
+        {
+          "cardId": "amiba_7.webp",
+          "rule": {
+            "kind": "amibaTraceCount",
+            "scorePer": 2,
+            "traceType": "blue"
+          },
+          "score": 6
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-white",
+      "prePenaltyTotalScore": 267,
+      "runezuSymbolScore": 0,
+      "tileScore": 79,
+      "tileScoresById": {
+        "a": 0,
+        "b": 24,
+        "c": 20,
+        "d": 35
+      },
+      "tiles": [
+        {
+          "baseValue": 3,
+          "formulaId": "b1",
+          "multiplier": 8,
+          "score": 24,
+          "slotIndex": 1,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 5,
+          "formulaId": "c1",
+          "multiplier": 4,
+          "score": 20,
+          "slotIndex": 1,
+          "tileId": "c",
+          "variant": 1
+        },
+        {
+          "baseValue": 5,
+          "formulaId": "d2",
+          "multiplier": 7,
+          "score": 35,
+          "slotIndex": 1,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 267
+    },
+    "challenger": {
+      "baseScore": 168,
+      "cardScore": 10,
+      "cards": [
+        {
+          "cardId": "dlc_31.png",
+          "rule": {
+            "count": 2,
+            "kind": "planetLandingPairs",
+            "scorePer": 6
+          },
+          "score": 0
+        },
+        {
+          "cardId": "amiba_7.webp",
+          "rule": {
+            "kind": "amibaTraceCount",
+            "scorePer": 2,
+            "traceType": "blue"
+          },
+          "score": 4
+        },
+        {
+          "cardId": "chong_2.webp",
+          "rule": {
+            "kind": "chongTraceCount",
+            "scorePer": 1
+          },
+          "score": 6
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-white",
+      "prePenaltyTotalScore": 246,
+      "runezuSymbolScore": 0,
+      "tileScore": 68,
+      "tileScoresById": {
+        "a": 0,
+        "b": 24,
+        "c": 16,
+        "d": 28
+      },
+      "tiles": [
+        {
+          "baseValue": 3,
+          "formulaId": "b1",
+          "multiplier": 8,
+          "score": 24,
+          "slotIndex": 1,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 4,
+          "formulaId": "c1",
+          "multiplier": 4,
+          "score": 16,
+          "slotIndex": 1,
+          "tileId": "c",
+          "variant": 1
+        },
+        {
+          "baseValue": 4,
+          "formulaId": "d2",
+          "multiplier": 7,
+          "score": 28,
+          "slotIndex": 1,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 246
+    }
+  },
+  "scoreDelta": {
+    "base": -14,
+    "tile": -11,
+    "card": 4
+  },
+  "terminalWallet": {
+    "additionalPublicScan": 0,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 0,
+    "energy": 2,
+    "handSize": 1,
+    "publicity": 4,
+    "score": 168
+  },
+  "terminalIncome": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 7,
+    "energy": 4,
+    "handSize": 1,
+    "publicity": 0
+  },
+  "terminalTech": {
+    "blueBoardSlots": {
+      "blue1": 2,
+      "blue2": 1,
+      "blue4": 3
+    },
+    "disabledTiles": {},
+    "ownedTiles": {
+      "blue1": true,
+      "blue2": true,
+      "blue4": true,
+      "orange1": true,
+      "orange2": true,
+      "orange3": true,
+      "orange4": true,
+      "purple2": true,
+      "purple4": true
+    }
+  },
+  "postInterventionActionCounts": {
+    "launch": 1,
+    "end_turn": 6,
+    "scan": 1,
+    "choose_target": 10,
+    "choose_card": 2,
+    "place_data": 5,
+    "card_corner": 1,
+    "play_card": 2,
+    "research_tech": 1,
+    "move": 2,
+    "choose_payment": 2,
+    "land": 1,
+    "pass": 1
+  },
+  "subsequentAIInputs": 35,
+  "wallMs": 1924,
+  "maxNative": 59,
+  "maxMilliseconds": 114.04124999999999,
+  "allDecisionsComplete": true,
+  "standardReportReplayInputs": 318,
+  "hostReportRecovery": {
+    "initialRunnerExitCode": 1,
+    "initialReportFailure": "Proxy invariant on a frozen composition inputPort; failed before the first Native report input.",
+    "reportRecoveredFromSavedRecord": true,
+    "additionalAISearches": 0,
+    "observerNotActiveDuringRecovery": true
+  },
+  "conclusion": "For this seeded21-input purpose, resource landing plus unchanged AI loses21 points. The successor scans once, then prioritizes launch/landing; reject an unconditional resource-landing preference. A separate7-input Native witness identifies a missing funded scan+Purple4-launch candidate without changing weights.",
+  "formalScoresUnchanged": {
+    "autonomousTeaching": 272,
+    "original20Mean": 134.35
+  },
+  "copied": [
+    "seti-saves/seti-save-research-teacher-r4-resource-io-control-20261119-085ba980-full-v139.json",
+    "reports/research/cedb118d.085ba980.full.json.round-ends.jsonl",
+    "reports/research/cedb118d.085ba980.full.json.rounds.jsonl",
+    "reports/research/cedb118d.085ba980.full.json.round-end-4.checkpoint.json",
+    "reports/research/cedb118d.085ba980.full.json.round-4.checkpoint.json"
+  ]
+}

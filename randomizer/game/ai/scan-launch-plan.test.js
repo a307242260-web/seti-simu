@@ -13,20 +13,8 @@ try{
  const raw=JSON.parse(original.committedState),actions=legal(),required=production.getResourceGoalRequirements(raw,seat);assert(required.launchPossible);
  const base={state:raw,seatId:seat,actions,required:required.scanCost};assert(local.scanGoals({...base,launchPossible:true}).some(g=>g.launch));assert(!local.scanGoals({...base,launchPossible:false}).some(g=>g.launch),'native rocket/earth availability is required');
  const disabled=structuredClone(raw);disabled.players.players.find(p=>p.id===seat).techState.disabledTiles.purple4=true;assert(!local.scanGoals({...base,state:disabled,launchPossible:true}).some(g=>g.launch),'eligibility ablation: disabled purple4 cannot create a launch purpose');
- assert(c.lifecycle.restore(funded.prefixes[0]).ok);const ready=JSON.parse(funded.prefixes[0].committedState),readyActions=legal();assert(local.scanGoals({state:ready,seatId:seat,actions:readyActions,required:{credits:1,energy:2},launchPossible:true}).some(g=>g.launch),'funded launch needs an explicit purpose alongside the fixed free-move policy');
+ assert(c.lifecycle.restore(funded.prefixes[0]).ok);const ready=JSON.parse(funded.prefixes[0].committedState),readyActions=legal();assert(!local.scanGoals({state:ready,seatId:seat,actions:readyActions,required:{credits:1,energy:2},launchPossible:true}).some(g=>g.launch),'already-funded native scan already offers launch; do not duplicate those plans');
  const pending=funded.prefixes[funded.plan.energyPurchases+3];assert(c.lifecycle.restore(pending).ok);const session=pending.session.session,working=session.workingState,go={kind:'scan-flow',nebulaId:'sector-1-a',launch:true};const step=local.scanStep({state:working,seatId:seat,goal:go,actions:legal(),status:'decision',session,operation:{}});assert.equal(legal().find(a=>a.actionId===step.actionId).target.mode,'launch');assert.equal(step.scanLaunchCompleted,true);assert.equal(local.scanStep({state:working,seatId:seat,goal:go,actions:legal().filter(a=>a.target?.mode!=='launch'),status:'decision',session,operation:{}}).kind,'infeasible','a launch goal must not silently degrade to skip');
  assert(!local.scanGoals({state:working,seatId:seat,actions:legal(),session,required:{},launchPossible:true}).some(g=>g.launch),'pending native scan cannot allocate a fresh launch reserve purpose');
- assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);console.log(JSON.stringify({scanLaunchReserve:true,normalPurposes:6,launchPurposes:6,nativeLaunchExecuted:true,availabilityAndDisabledGuards:true,alreadyFundedPurposeRetained:true,interruptionAndRootRngRestored:true}));
+ assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);console.log(JSON.stringify({scanLaunchReserve:true,normalPurposes:6,launchPurposes:6,nativeLaunchExecuted:true,availabilityAndDisabledGuards:true,alreadyFundedNotDuplicated:true,interruptionAndRootRngRestored:true}));
 }finally{c.dispose();}
-
-// Real R4: two fossil carriers are not ordinary probes. The fixed scan move
-// must not hide a currently funded Purple4 launch; root/RNG remain isolated.
-{
- const zlib=require('node:zlib'),f=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261119/teacher-r4-held-pickup-io-20261119-v1.json.gz'))));
- const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;
- try{assert(c.lifecycle.restore(f.envelope).ok);const port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
-  try{configure(port);const root=port.openRoot(),spec=port.resourceSpec(root),goal=spec.plans.find(p=>p.goal.launch&&p.goal.nebulaId==='sector-1-a');assert(goal,'missing funded scan-launch purpose');assert.deepEqual(goal.goal.required,{credits:1,energy:3});
-   const result=port.expandResourcePlan(root,goal,()=>null);assert(result.complete);assert.equal(result.prefixes[0].action.family,'scan');assert(result.prefixes.some(p=>p.action.target?.mode==='launch'));assert.deepEqual(c.lifecycle.save().envelope,f.envelope);
-  }finally{port.close();}
- }finally{c.dispose();}
-}

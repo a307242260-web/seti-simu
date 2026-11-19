@@ -1,6 +1,6 @@
 {
   "routeId": "r4-resource-landing-versus-immediate-neptune-score",
-  "status": "preparing",
+  "status": "closed-negative-resource-preference-positive-candidate-gap",
   "startedEpochSeconds": 1795076522.963957,
   "deadlineEpochSeconds": 1795078922.963957,
   "hypothesis": "The same before263 public state can choose known analysis then a held-card Io landing, retaining hand and energy for later scans; determine completed continuation before changing mission utility.",
@@ -22,5 +22,12 @@
     "teacherStartControlledAI": 267,
     "autonomousTeaching": 272,
     "original20Mean": 134.35
-  }
+  },
+  "closedEpochSeconds": 1795077757.4179368,
+  "nativePreparationInputs": 28,
+  "registeredContinuations": 1,
+  "terminalScore": 246,
+  "baseline": 267,
+  "independentReplayInputs": 318,
+  "next": "r4-scan-launch-native-purpose-20261119-v1.json"
 }

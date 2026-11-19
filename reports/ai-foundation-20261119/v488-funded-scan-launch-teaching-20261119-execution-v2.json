@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "seti-funded-scan-launch-teaching-execution-v1",
+  "status": "failed",
+  "runtime": "/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v",
+  "experimentCommit": "f365a881b14841a1821e279f0609d591e0849edb",
+  "policyCommit": "f365a881b14841a1821e279f0609d591e0849edb",
+  "acceptedBaselineCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "strategyChanged": true,
+  "newRegisteredAutonomousGames": 0,
+  "controlledTeacherRounds": [],
+  "autonomousScope": "rounds1-4",
+  "startedEpochSeconds": 1795078307.960068,
+  "existingRecordsCheckedForDuplicate": true,
+  "collectionFailure": "AssertionError(\"node:fs:560\\n  return binding.open(\\n                 ^\\n\\nError: ENOENT: no such file or directory, open '/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/reports/fixed-boards/free-analyze-random20-20261104-v1.json'\\n    at Object.openSync (node:fs:560:18)\\n    at Object.readFileSync (node:fs:444:35)\\n    at Object.<anonymous> (/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/tools/research-free-analyze-random20.js:5:14)\\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\\n    at Module.require (node:internal/modules/cjs/loader:1463:12) {\\n  errno: -2,\\n  code: 'ENOENT',\\n  syscall: 'open',\\n  path: '/private/tmp/seti-funded-scan-launch-20261119-0ui0wz3v/reports/fixed-boards/free-analyze-random20-20261104-v1.json'\\n}\\n\\nNode.js v22.22.0\\n\")"
+}
