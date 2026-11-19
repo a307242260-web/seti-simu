@@ -1,0 +1,8 @@
+{
+  "seed": "seti-analyze-421f46598209",
+  "ruleCommit": "94299f385",
+  "inputs": 240,
+  "decisions": 213,
+  "verified": true,
+  "sourceRecordSha256": "f7b09aa09b685b062e85843d989695648676ec03b12c17bc97d41f5c4756b547"
+}

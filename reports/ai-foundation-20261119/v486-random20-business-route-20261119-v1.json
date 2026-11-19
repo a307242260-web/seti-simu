@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "adopted-v486-original20-business-validation-20261119",
+  "startedEpochSeconds": 1795047616,
+  "deadlineEpochSeconds": 1795048816,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.json"
+  ],
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "businessQuestion": "Validate the committed fixed Runezu pick policy on board06 and the original20 catalog. Preserve old source results. Stop on first new gate/rule failure, no inline strategy repair.",
+  "restartBasis": "The original source failed302 Native inputs; committed policy correction is verified238 inputs335.992ms, all27 root values and chosen action unchanged, related behavior and unique full-flow passed. Actual policy change, not renamed unchanged source.",
+  "priorEvidence": "board06-runezu-fixed-pick-outcome-20261119-v1.json",
+  "stop": "Twenty-minute fixed business validation, no strategy edits, no budget relaxation, no repeated same-source games. Exact baseline/source preflight before the first game.",
+  "closedEpochSeconds": 1795048696.895872,
+  "decision": "All20 completed within original gates and replay-verified; mean134.35 does not meet200, no strategy edit in this business batch."
+}

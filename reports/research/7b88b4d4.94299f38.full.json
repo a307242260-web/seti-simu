@@ -1,0 +1,4141 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "v486-original20-11-20261119",
+  "fingerprint": "7b88b4d418ca234005e81a744cfc0636239f7f8f8078cc769a39c4a0b0eac170",
+  "mode": "full",
+  "seed": "seti-analyze-8cf6f23cc7c1",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-analyze-8cf6f23cc7c1",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "895d940dc41bcb3d958db0b558d8bee86487668ccb46af755c90e991d813bd83",
+    "components": {
+      "aliens": "bf4c48eafb2924b83ffe8c823fb7c3cca1e24537e301cfdd11293925a04dc2ab",
+      "cards": "5b2eff80a045458cef945120f1ee15f06e3ec2196c1f6fb35371cab1d2fb67b6",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "6d97c0bb7ceebe65acedb3c7c736b549b8fd6cb37d6884f83970377646d69b1d",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "575651a8170af7e89a2f640717f81f5c0a9b63feb8392bc67a0838d3746fff54",
+      "solarSystem": "969b65dd98eed7c1feef8e89f4b957d9b7f7c4a6cb796dbb3af6c916066a2a37",
+      "tech": "f2bac5137d798aedd4f006aceb2661750ac5d8c3c14211bc0ef3546f1ce7862f",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "96e1db5a12898ffd565f612ce83d82fa6aa2335c99bfeef3bf806863cfc1539c",
+      "initialRandom": "a6241959d349713edd557a104ac745fe09aef12b3b8dfbef2f14308e8ac366ca"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v486-runezu-free-pick/seti-purpose-capital-state-value-v71/free-analyze-random20-guarded-v1/seti-human405-pass-only-v1",
+  "agentType": "search",
+  "agentTracePath": "reports/research/7b88b4d4.94299f38.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "scenario": "free-analyze-random20-guarded-v1"
+  },
+  "scenario": {
+    "id": "free-analyze-random20-guarded-v1",
+    "learnerSeat": "player-white",
+    "learnerAgentType": "search",
+    "hostAgentFactory": "custom-seat-roles",
+    "boardNumber": 11,
+    "boardName": "免电分析随机盘面11",
+    "catalog": "reports/fixed-boards/free-analyze-random20-20261104-v1.json",
+    "catalogSha256": "239799d9128900f67d0d847283e5133d56826ec9e23dbeab6ab00f3d5ed6cda3",
+    "setupPolicy": "deep-space-white-then-first-offered-initial-cards-and-required-discard-v1",
+    "opponentPolicyVersion": "seti-human405-pass-only-v1",
+    "opponentReserveRule": "historical-preference-if-offered-otherwise-stable-action-id",
+    "roles": {
+      "player-white": "shared-search",
+      "player-green": "pass-only",
+      "player-blue": "pass-only",
+      "player-brown": "pass-only"
+    },
+    "comparisonScope": "white-only-full-game",
+    "scoreSemantics": "terminal-score-with-passive-opponents",
+    "roundEndPhase": "before-pass-card-and-income",
+    "baselineEligible": false,
+    "stopAfterRound": null,
+    "decisionGate": {
+      "nativeInputs": 256,
+      "milliseconds": 600,
+      "enforcement": "reject-before-input"
+    },
+    "gameMillisecondsTarget": 180000
+  },
+  "scenarioResult": {
+    "firstRoundSettled": true,
+    "openingInputs": 23,
+    "fullGameCompleted": true,
+    "completedRounds": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "completedRoundEnds": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "stopReason": "terminal",
+  "scoreSemantics": "terminal-score-with-passive-opponents",
+  "createdAt": "2026-11-19T00:27:35.118Z",
+  "gitCommit": "94299f385",
+  "steps": 229,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 10854,
+  "roundEnds": [
+    {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "beforeInput": 64,
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-end-1.checkpoint.json",
+      "checkpointSha256": "974905e3475b59c3f1b682289103aa41e2717a5328d4961c7a376097db961bf2",
+      "score": 20,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 2,
+        "score": 20
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true
+        }
+      },
+      "hand": [],
+      "playedCards": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probes": [],
+      "sectorWins": [],
+      "scanProgress": [
+        {
+          "sectorId": "sector-2-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "brown",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "green",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "blue": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            }
+          }
+        }
+      ],
+      "aliens": {
+        "slots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "brown",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "green",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "blue": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              }
+            }
+          }
+        ]
+      },
+      "finalScoring": {
+        "thresholds": [
+          25,
+          50,
+          70
+        ],
+        "tileVariants": {
+          "a": 1,
+          "b": 2,
+          "c": 2,
+          "d": 1
+        },
+        "tiles": {
+          "a": {
+            "id": "a",
+            "marks": []
+          },
+          "b": {
+            "id": "b",
+            "marks": []
+          },
+          "c": {
+            "id": "c",
+            "marks": []
+          },
+          "d": {
+            "id": "d",
+            "marks": []
+          }
+        }
+      },
+      "projectedFinalScore": 20
+    },
+    {
+      "round": 2,
+      "phase": "before-pass-card-and-income",
+      "beforeInput": 93,
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-end-2.checkpoint.json",
+      "checkpointSha256": "d3ac7fb7c6048a8855c841fe36d244c75bc9c861aa8cc87e7c8a7046727cefc7",
+      "score": 29,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 29
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1,
+          "blue2": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true
+        }
+      },
+      "hand": [
+        "b_114.webp"
+      ],
+      "playedCards": [
+        "dlc_8.png"
+      ],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-11",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-13",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-14",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-15",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          }
+        ],
+        "poolTokens": []
+      },
+      "probes": [],
+      "sectorWins": [],
+      "scanProgress": [
+        {
+          "sectorId": "sector-1-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-2-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "brown",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "green",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "blue": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            }
+          }
+        }
+      ],
+      "aliens": {
+        "slots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "brown",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "green",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "blue": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              }
+            }
+          }
+        ]
+      },
+      "finalScoring": {
+        "thresholds": [
+          25,
+          50,
+          70
+        ],
+        "tileVariants": {
+          "a": 1,
+          "b": 2,
+          "c": 2,
+          "d": 1
+        },
+        "tiles": {
+          "a": {
+            "id": "a",
+            "marks": [
+              {
+                "id": "final-mark-1",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 25,
+                "tileId": "a"
+              }
+            ]
+          },
+          "b": {
+            "id": "b",
+            "marks": []
+          },
+          "c": {
+            "id": "c",
+            "marks": []
+          },
+          "d": {
+            "id": "d",
+            "marks": []
+          }
+        }
+      },
+      "projectedFinalScore": 39
+    },
+    {
+      "round": 3,
+      "phase": "before-pass-card-and-income",
+      "beforeInput": 134,
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-end-3.checkpoint.json",
+      "checkpointSha256": "168f35c2eaa066c7077ce151b4f9c467a8be41d3e9fc45768ed92a75814c6c0d",
+      "score": 44,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 2,
+        "score": 44
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1,
+          "blue2": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "b_114.webp",
+        "aomomo_5.webp"
+      ],
+      "playedCards": [
+        "dlc_8.png"
+      ],
+      "data": {
+        "discardedCount": 1,
+        "placedTokens": [],
+        "poolTokens": [
+          {
+            "id": "data-token-19",
+            "index": 7,
+            "slotIndex": 3
+          },
+          {
+            "id": "data-token-20",
+            "index": 8,
+            "slotIndex": 4
+          },
+          {
+            "id": "data-token-21",
+            "index": 9,
+            "slotIndex": 5
+          },
+          {
+            "id": "data-token-22",
+            "index": 10,
+            "slotIndex": 6
+          }
+        ]
+      },
+      "probes": [],
+      "sectorWins": [],
+      "scanProgress": [
+        {
+          "sectorId": "sector-1-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-2-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 6
+        },
+        {
+          "sectorId": "sector-2-b",
+          "ownedSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-4-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 6
+        },
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": true,
+          "alienId": "奥陌陌",
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "brown",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "green",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        }
+      ],
+      "aliens": {
+        "slots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": true,
+            "alienId": "奥陌陌",
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "brown",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "green",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          }
+        ]
+      },
+      "finalScoring": {
+        "thresholds": [
+          25,
+          50,
+          70
+        ],
+        "tileVariants": {
+          "a": 1,
+          "b": 2,
+          "c": 2,
+          "d": 1
+        },
+        "tiles": {
+          "a": {
+            "id": "a",
+            "marks": [
+              {
+                "id": "final-mark-1",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 25,
+                "tileId": "a"
+              }
+            ]
+          },
+          "b": {
+            "id": "b",
+            "marks": []
+          },
+          "c": {
+            "id": "c",
+            "marks": []
+          },
+          "d": {
+            "id": "d",
+            "marks": []
+          }
+        }
+      },
+      "projectedFinalScore": 66
+    },
+    {
+      "round": 4,
+      "phase": "before-pass-card-and-income",
+      "beforeInput": 229,
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-end-4.checkpoint.json",
+      "checkpointSha256": "ecbd854176d407a1dc1493991c1a7d9372b05be0b9381940a72c86709d0ffd23",
+      "score": 87,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 2,
+        "score": 87
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1,
+          "blue2": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange4": true,
+          "purple4": true
+        }
+      },
+      "hand": [],
+      "playedCards": [
+        "dlc_8.png",
+        "amiba_5.webp"
+      ],
+      "data": {
+        "discardedCount": 4,
+        "placedTokens": [],
+        "poolTokens": [
+          {
+            "id": "data-token-33",
+            "index": 1,
+            "slotIndex": 1
+          }
+        ]
+      },
+      "probes": [],
+      "sectorWins": [
+        {
+          "sectorId": "sector-2-b",
+          "settlementNumber": 1
+        },
+        {
+          "sectorId": "sector-4-a",
+          "settlementNumber": 1
+        }
+      ],
+      "scanProgress": [
+        {
+          "sectorId": "sector-1-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-2-a",
+          "ownedSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "capacity": 6
+        },
+        {
+          "sectorId": "sector-3-b",
+          "ownedSlots": [
+            3
+          ],
+          "capacity": 6
+        },
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": true,
+          "alienId": "阿米巴",
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 1,
+              "extraMarkers": [
+                {
+                  "ownerPlayerColor": "white"
+                }
+              ],
+              "neutral": false
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": true,
+          "alienId": "奥陌陌",
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "brown",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "green",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        }
+      ],
+      "aliens": {
+        "slots": [
+          {
+            "slotId": 1,
+            "revealed": true,
+            "alienId": "阿米巴",
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 1,
+                "extraMarkers": [
+                  {
+                    "ownerPlayerColor": "white"
+                  }
+                ],
+                "neutral": false
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": true,
+            "alienId": "奥陌陌",
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "brown",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "green",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          }
+        ],
+        "amiba": {
+          "revealInitialized": true,
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "red_1": "symbol_1",
+            "orange_2": "symbol_5",
+            "red_2": "symbol_4",
+            "orange_1": "symbol_2",
+            "orange_3": "symbol_3"
+          },
+          "symbolsById": {
+            "symbol_5": {
+              "symbolId": "symbol_5",
+              "slotId": "orange_2",
+              "sequence": 1
+            },
+            "symbol_2": {
+              "symbolId": "symbol_2",
+              "slotId": "orange_1",
+              "sequence": 2
+            },
+            "symbol_3": {
+              "symbolId": "symbol_3",
+              "slotId": "orange_3",
+              "sequence": 3
+            },
+            "symbol_1": {
+              "symbolId": "symbol_1",
+              "slotId": "red_1",
+              "sequence": 4
+            },
+            "symbol_4": {
+              "symbolId": "symbol_4",
+              "slotId": "red_2",
+              "sequence": 5
+            }
+          }
+        },
+        "amibaTraces": {
+          "revealedSlotId": 1,
+          "traceSlotsByAlienSlotId": {
+            "1": {
+              "pink": {
+                "1": {
+                  "traceType": "pink",
+                  "position": 1,
+                  "sequence": 8,
+                  "playerId": null,
+                  "playerColor": "white",
+                  "rewardApplied": false
+                },
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": {
+                  "traceType": "yellow",
+                  "position": 1,
+                  "sequence": 9,
+                  "playerId": null,
+                  "playerColor": "white",
+                  "rewardApplied": false
+                },
+                "2": null,
+                "3": null,
+                "4": {
+                  "traceType": "yellow",
+                  "position": 4,
+                  "sequence": 10,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "rewardApplied": true
+                }
+              },
+              "blue": {
+                "1": null,
+                "2": {
+                  "traceType": "blue",
+                  "position": 2,
+                  "sequence": 14,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "rewardApplied": true
+                },
+                "3": null,
+                "4": {
+                  "traceType": "blue",
+                  "position": 4,
+                  "sequence": 12,
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "rewardApplied": true
+                }
+              }
+            }
+          },
+          "blindCardCount": 4,
+          "displayedCardAvailable": true,
+          "displayedCardIndex": 2
+        }
+      },
+      "finalScoring": {
+        "thresholds": [
+          25,
+          50,
+          70
+        ],
+        "tileVariants": {
+          "a": 1,
+          "b": 2,
+          "c": 2,
+          "d": 1
+        },
+        "tiles": {
+          "a": {
+            "id": "a",
+            "marks": [
+              {
+                "id": "final-mark-1",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 25,
+                "tileId": "a"
+              }
+            ]
+          },
+          "b": {
+            "id": "b",
+            "marks": [
+              {
+                "id": "final-mark-3",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 70,
+                "tileId": "b"
+              }
+            ]
+          },
+          "c": {
+            "id": "c",
+            "marks": [
+              {
+                "id": "final-mark-2",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 50,
+                "tileId": "c"
+              }
+            ]
+          },
+          "d": {
+            "id": "d",
+            "marks": []
+          }
+        }
+      },
+      "projectedFinalScore": 141
+    }
+  ],
+  "roundEndsPath": "reports/research/7b88b4d4.94299f38.full.json.round-ends.jsonl",
+  "rounds": [
+    {
+      "round": 1,
+      "nextRound": 2,
+      "terminal": false,
+      "steps": 65,
+      "elapsedMs": 1796,
+      "players": [
+        {
+          "seat": "player-blue",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 5,
+            "credits": 6,
+            "energy": 8,
+            "handSize": 5,
+            "publicity": 2,
+            "score": 7
+          },
+          "handCount": 5,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-green",
+          "score": 5,
+          "finalScore": 5,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 4,
+            "handSize": 6,
+            "publicity": 9,
+            "score": 5
+          },
+          "handCount": 6,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-brown",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 7,
+            "energy": 6,
+            "handSize": 5,
+            "publicity": 3,
+            "score": 7
+          },
+          "handCount": 5,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-white",
+          "score": 20,
+          "finalScore": 20,
+          "technology": [
+            "blue1"
+          ],
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 2,
+            "score": 20
+          },
+          "handCount": 3,
+          "reservedCount": 0,
+          "hand": [
+            "dlc_8.png",
+            "b_114.webp",
+            "b_38.webp"
+          ],
+          "reserved": []
+        }
+      ],
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-1.checkpoint.json",
+      "checkpointSha256": "ec2a934e94f5f457e8796da70129538e1b05bc4f4fa8ed6ceca592faaf848ae1",
+      "phase": "after-settlement-and-next-income"
+    },
+    {
+      "round": 2,
+      "nextRound": 3,
+      "terminal": false,
+      "steps": 94,
+      "elapsedMs": 3229,
+      "players": [
+        {
+          "seat": "player-blue",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 6,
+            "credits": 8,
+            "energy": 12,
+            "handSize": 6,
+            "publicity": 2,
+            "score": 7
+          },
+          "handCount": 6,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-green",
+          "score": 5,
+          "finalScore": 5,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 9,
+            "energy": 5,
+            "handSize": 6,
+            "publicity": 10,
+            "score": 5
+          },
+          "handCount": 6,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-brown",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 11,
+            "energy": 8,
+            "handSize": 6,
+            "publicity": 3,
+            "score": 7
+          },
+          "handCount": 6,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-white",
+          "score": 29,
+          "finalScore": 42,
+          "technology": [
+            "blue1",
+            "blue2"
+          ],
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 29
+          },
+          "handCount": 4,
+          "reservedCount": 1,
+          "hand": [
+            "b_114.webp",
+            "b_64.webp",
+            "b_130.webp",
+            "b_53.webp"
+          ],
+          "reserved": [
+            "dlc_8.png"
+          ]
+        }
+      ],
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-2.checkpoint.json",
+      "checkpointSha256": "3018a476c7c1b9f50523ff32b2a0f0558856b3fe3d4a3037a9ca3cf7a4c21d35",
+      "phase": "after-settlement-and-next-income"
+    },
+    {
+      "round": 3,
+      "nextRound": 4,
+      "terminal": false,
+      "steps": 135,
+      "elapsedMs": 4942,
+      "players": [
+        {
+          "seat": "player-blue",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 6,
+            "credits": 10,
+            "energy": 16,
+            "handSize": 6,
+            "publicity": 2,
+            "score": 7
+          },
+          "handCount": 6,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-green",
+          "score": 5,
+          "finalScore": 5,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 12,
+            "energy": 6,
+            "handSize": 7,
+            "publicity": 10,
+            "score": 5
+          },
+          "handCount": 7,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-brown",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 15,
+            "energy": 10,
+            "handSize": 7,
+            "publicity": 3,
+            "score": 7
+          },
+          "handCount": 7,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-white",
+          "score": 44,
+          "finalScore": 69,
+          "technology": [
+            "blue1",
+            "blue2",
+            "purple4"
+          ],
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 5,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 5,
+            "publicity": 2,
+            "score": 44
+          },
+          "handCount": 5,
+          "reservedCount": 1,
+          "hand": [
+            "b_114.webp",
+            "aomomo_5.webp",
+            "b_9.webp",
+            "dlc_33.png",
+            "b_32.webp"
+          ],
+          "reserved": [
+            "dlc_8.png"
+          ]
+        }
+      ],
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-3.checkpoint.json",
+      "checkpointSha256": "bf87b4ec439173e88d26695df5feba527054bb96b02e347ff9124ae1c1297a86",
+      "phase": "after-settlement-and-next-income"
+    },
+    {
+      "round": 4,
+      "nextRound": 4,
+      "terminal": true,
+      "steps": 229,
+      "elapsedMs": 10812,
+      "players": [
+        {
+          "seat": "player-blue",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 6,
+            "credits": 10,
+            "energy": 16,
+            "handSize": 4,
+            "publicity": 2,
+            "score": 7
+          },
+          "handCount": 4,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-green",
+          "score": 5,
+          "finalScore": 5,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 12,
+            "energy": 6,
+            "handSize": 4,
+            "publicity": 10,
+            "score": 5
+          },
+          "handCount": 4,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-brown",
+          "score": 7,
+          "finalScore": 7,
+          "technology": [],
+          "income": {
+            "additionalPublicScan": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 15,
+            "energy": 10,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 7
+          },
+          "handCount": 4,
+          "reservedCount": 0
+        },
+        {
+          "seat": "player-white",
+          "score": 87,
+          "finalScore": 141,
+          "technology": [
+            "blue1",
+            "blue2",
+            "orange4",
+            "purple4"
+          ],
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 87
+          },
+          "handCount": 0,
+          "reservedCount": 2,
+          "hand": [],
+          "reserved": [
+            "dlc_8.png",
+            "amiba_5.webp"
+          ]
+        }
+      ],
+      "checkpointPath": "reports/research/7b88b4d4.94299f38.full.json.round-4.checkpoint.json",
+      "checkpointSha256": "5224731e072848f3e35befbd65ce05d7f5806c64d680f3f2f70b37007941e1fd",
+      "phase": "after-settlement-and-next-income"
+    }
+  ],
+  "roundSummariesPath": "reports/research/7b88b4d4.94299f38.full.json.rounds.jsonl",
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-v486-original20-11-20261119-94299f38-full-v101.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 7,
+      "player-green": 5,
+      "player-brown": 7,
+      "player-white": 141
+    },
+    "avgScore": 40
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 26,
+        "choose_payment": 15,
+        "launch": 1,
+        "move": 4,
+        "place_data": 26,
+        "choose_target": 55,
+        "end_turn": 22,
+        "card_corner": 3,
+        "research_tech": 3,
+        "quick_trade": 4,
+        "land": 1,
+        "analyze": 4,
+        "pass": 4,
+        "scan": 5,
+        "play_card": 8,
+        "complete_task": 2
+      },
+      "player-green": {
+        "choose_card": 10,
+        "pass": 4
+      },
+      "player-blue": {
+        "choose_card": 10,
+        "choose_payment": 2,
+        "pass": 4
+      },
+      "player-brown": {
+        "choose_card": 10,
+        "choose_payment": 2,
+        "pass": 4
+      }
+    },
+    "whiteQuickTrade": 4,
+    "whiteResearchSteps": [
+      50,
+      118,
+      179
+    ],
+    "traceEvents": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "yellow",
+        "owner": "brown"
+      },
+      {
+        "step": 24,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "green"
+      },
+      {
+        "step": 55,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "yellow",
+        "owner": "white"
+      },
+      {
+        "step": 62,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "blue",
+        "owner": "white"
+      },
+      {
+        "step": 132,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "blue",
+        "owner": "white"
+      },
+      {
+        "step": 143,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "white"
+      }
+    ],
+    "revealEvents": [
+      {
+        "step": 133,
+        "seat": "player-white",
+        "slotId": 2,
+        "alienId": "奥陌陌"
+      },
+      {
+        "step": 147,
+        "seat": "player-white",
+        "slotId": 1,
+        "alienId": "阿米巴"
+      }
+    ],
+    "budgetHits": [],
+    "searches": [
+      {
+        "step": 24,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "launch:c94cda79",
+        "complete": true,
+        "stopReason": null,
+        "value": 53.666666666666664,
+        "rootAndSearchMilliseconds": 104.73474999999985,
+        "diagnostics": {
+          "nativeExecutions": 44
+        }
+      },
+      {
+        "step": 25,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "move:e0158279",
+        "complete": true,
+        "stopReason": null,
+        "value": 53.666666666666664,
+        "rootAndSearchMilliseconds": 9.329791999999998,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 26,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:abbb51f1",
+        "complete": true,
+        "stopReason": null,
+        "value": 53.666666666666664,
+        "rootAndSearchMilliseconds": 12.819792000000007,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 27,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 53.666666666666664,
+        "rootAndSearchMilliseconds": 8.365417000000207,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 28,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 31.42358399999989,
+        "diagnostics": {
+          "nativeExecutions": 16
+        }
+      },
+      {
+        "step": 29,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 8.098375000000033,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 30,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 10.203457999999955,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 31,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "move:c488b99f",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 6.361875000000055,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 32,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:abbb51f1",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 9.747540999999956,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 33,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "move:ddf0bb75",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 7.062291999999843,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 34,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:abbb51f1",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 9.400624999999764,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 35,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "move:ddf0bb75",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 7.627290999999786,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 36,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:10bd2456",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 10.402791999999863,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 37,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 8.195124999999734,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 38,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 10.090999999999894,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 39,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 6.654500000000098,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 40,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 8.834374999999909,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 41,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:a37bb024",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 9.461959000000206,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 42,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 39.166666666666664,
+        "rootAndSearchMilliseconds": 6.052708000000166,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 49,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "card_corner:f7279abf",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.166666666666664,
+        "rootAndSearchMilliseconds": 39.57787499999995,
+        "diagnostics": {
+          "nativeExecutions": 30
+        }
+      },
+      {
+        "step": 50,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "research_tech:806ccfc8",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.166666666666664,
+        "rootAndSearchMilliseconds": 5.652791999999863,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 51,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:509236e8",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.166666666666664,
+        "rootAndSearchMilliseconds": 9.3884579999999,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 52,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.166666666666664,
+        "rootAndSearchMilliseconds": 8.90249999999969,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 53,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "quick_trade:f385e2ac",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 17.23733399999992,
+        "diagnostics": {
+          "nativeExecutions": 8
+        }
+      },
+      {
+        "step": 54,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "land:d5ee03a2",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 6.458625000000211,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 55,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:1035d792",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 11.374458000000232,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 56,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 6.497624999999971,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 57,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 15.484709000000294,
+        "diagnostics": {
+          "nativeExecutions": 11
+        }
+      },
+      {
+        "step": 58,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 9.819375000000036,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 59,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 5.468166999999994,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 60,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 8.370124999999916,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 61,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "analyze:a5629aa3",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 5.415915999999925,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 62,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:8f2f1c72",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 9.557750000000397,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 63,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 6.0753749999998945,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 64,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "pass:a1f33c73",
+        "complete": true,
+        "stopReason": null,
+        "value": 55.5,
+        "rootAndSearchMilliseconds": 6.544916999999714,
+        "diagnostics": {
+          "nativeExecutions": 1
+        }
+      },
+      {
+        "step": 65,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:8edd42c0",
+        "complete": true,
+        "stopReason": null,
+        "value": 60,
+        "rootAndSearchMilliseconds": 14.650208999999904,
+        "diagnostics": {
+          "nativeExecutions": 2
+        }
+      },
+      {
+        "step": 75,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "scan:2d21a323",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 368.235917,
+        "diagnostics": {
+          "nativeExecutions": 131
+        }
+      },
+      {
+        "step": 76,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:985366c3",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 11.138082999999824,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 77,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:a0ec3747",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 11.71670899999981,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 78,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:bd863cf6",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 11.92166700000007,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 79,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 9.33441700000003,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 80,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 16.254042000000027,
+        "diagnostics": {
+          "nativeExecutions": 3
+        }
+      },
+      {
+        "step": 81,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 6.611374999999953,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 82,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 8.563041999999768,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 83,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 6.8020839999999225,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 84,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 9.040917000000263,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 85,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 6.920708999999988,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 86,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 8.898790999999619,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 87,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:aa77442c",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 9.378083000000515,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 88,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 74.5,
+        "rootAndSearchMilliseconds": 6.445542000000387,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 89,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:dcf88324",
+        "complete": true,
+        "stopReason": null,
+        "value": 72.5,
+        "rootAndSearchMilliseconds": 25.349583000000166,
+        "diagnostics": {
+          "nativeExecutions": 18
+        }
+      },
+      {
+        "step": 90,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:ee14d0a5",
+        "complete": true,
+        "stopReason": null,
+        "value": 72.5,
+        "rootAndSearchMilliseconds": 10.36316700000043,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 91,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 72.5,
+        "rootAndSearchMilliseconds": 8.43054200000006,
+        "diagnostics": {
+          "nativeExecutions": 2
+        }
+      },
+      {
+        "step": 92,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:4b676cb1",
+        "complete": true,
+        "stopReason": null,
+        "value": 72.5,
+        "rootAndSearchMilliseconds": 10.345874999999978,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 93,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "pass:a1f33c73",
+        "complete": true,
+        "stopReason": null,
+        "value": 72.5,
+        "rootAndSearchMilliseconds": 8.08337500000016,
+        "diagnostics": {
+          "nativeExecutions": 1
+        }
+      },
+      {
+        "step": 94,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:d8744b14",
+        "complete": true,
+        "stopReason": null,
+        "value": 71.5,
+        "rootAndSearchMilliseconds": 15.391625000000204,
+        "diagnostics": {
+          "nativeExecutions": 2
+        }
+      },
+      {
+        "step": 101,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:6afdda5d",
+        "complete": true,
+        "stopReason": null,
+        "value": 81.5,
+        "rootAndSearchMilliseconds": 44.2787500000004,
+        "diagnostics": {
+          "nativeExecutions": 34
+        }
+      },
+      {
+        "step": 102,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:dcf65da7",
+        "complete": true,
+        "stopReason": null,
+        "value": 81.5,
+        "rootAndSearchMilliseconds": 10.477834000000257,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 103,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:dcf65da7",
+        "complete": true,
+        "stopReason": null,
+        "value": 81.5,
+        "rootAndSearchMilliseconds": 12.189249999999447,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 104,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "complete_task:1d97b5d4",
+        "complete": true,
+        "stopReason": null,
+        "value": 81.5,
+        "rootAndSearchMilliseconds": 6.885957999999846,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 105,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 81.5,
+        "rootAndSearchMilliseconds": 6.7011249999995925,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 109,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "scan:2d21a323",
+        "complete": true,
+        "stopReason": null,
+        "value": 88.5,
+        "rootAndSearchMilliseconds": 43.368875000000116,
+        "diagnostics": {
+          "nativeExecutions": 40
+        }
+      },
+      {
+        "step": 110,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:8a5d7b2d",
+        "complete": true,
+        "stopReason": null,
+        "value": 88.5,
+        "rootAndSearchMilliseconds": 10.287457999999788,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 111,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:07848c6c",
+        "complete": true,
+        "stopReason": null,
+        "value": 88.5,
+        "rootAndSearchMilliseconds": 11.47991599999932,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 112,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:52f5f492",
+        "complete": true,
+        "stopReason": null,
+        "value": 88.5,
+        "rootAndSearchMilliseconds": 11.680709000000206,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 113,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 88.5,
+        "rootAndSearchMilliseconds": 7.207292000000052,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 114,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:091c5011",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 70.05854100000033,
+        "diagnostics": {
+          "nativeExecutions": 64
+        }
+      },
+      {
+        "step": 115,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "complete_task:2bac17c5",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 6.7308750000001965,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 116,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 6.210834000000432,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 117,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "card_corner:813b8f24",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 77.15829200000007,
+        "diagnostics": {
+          "nativeExecutions": 43
+        }
+      },
+      {
+        "step": 118,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "research_tech:806ccfc8",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 6.53899999999976,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 119,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:d0b75b83",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 9.912124999999833,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 120,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 90.5,
+        "rootAndSearchMilliseconds": 6.8535839999995005,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 121,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 29.138334000000214,
+        "diagnostics": {
+          "nativeExecutions": 20
+        }
+      },
+      {
+        "step": 122,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:44b74627",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 9.69262499999968,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 123,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "scan:2d21a323",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 7.020375000000058,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 124,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:e18a151e",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 10.19158299999981,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 125,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:20e0c73e",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 11.462999999999738,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 126,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 92.5,
+        "rootAndSearchMilliseconds": 6.898083000000042,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 127,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 20.36762500000077,
+        "diagnostics": {
+          "nativeExecutions": 11
+        }
+      },
+      {
+        "step": 128,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 9.992167000000336,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 129,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 6.837999999999738,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 130,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 9.918084000000817,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 131,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "analyze:a5629aa3",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 6.435875000000124,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 132,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:46f3414a",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 10.839624999999614,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 133,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 6.6551250000002256,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 134,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "pass:a1f33c73",
+        "complete": true,
+        "stopReason": null,
+        "value": 93,
+        "rootAndSearchMilliseconds": 20.30212500000016,
+        "diagnostics": {
+          "nativeExecutions": 16
+        }
+      },
+      {
+        "step": 135,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:7943385d",
+        "complete": true,
+        "stopReason": null,
+        "value": 85,
+        "rootAndSearchMilliseconds": 14.934833999999682,
+        "diagnostics": {
+          "nativeExecutions": 2
+        }
+      },
+      {
+        "step": 138,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "scan:2d21a323",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 201.70095800000036,
+        "diagnostics": {
+          "nativeExecutions": 76
+        }
+      },
+      {
+        "step": 139,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:dcf65da7",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 11.196042000000489,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 140,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:4d7b1d42",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 12.05920900000001,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 141,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:efa8f564",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 12.638333000000785,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 142,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:f042ebe0",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 13.743916999999783,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 143,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:2618cdf2",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 16.215917000000445,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 144,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 10.838917000000038,
+        "diagnostics": {
+          "nativeExecutions": 3
+        }
+      },
+      {
+        "step": 145,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 10.051792000000205,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 146,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 6.524250000000393,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 147,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:653b7ded",
+        "complete": true,
+        "stopReason": null,
+        "value": 105,
+        "rootAndSearchMilliseconds": 10.746375000000626,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 152,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:3d432165",
+        "complete": true,
+        "stopReason": null,
+        "value": 111,
+        "rootAndSearchMilliseconds": 234.47695900000053,
+        "diagnostics": {
+          "nativeExecutions": 188
+        }
+      },
+      {
+        "step": 153,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:bcd0a8bd",
+        "complete": true,
+        "stopReason": null,
+        "value": 111,
+        "rootAndSearchMilliseconds": 12.219499999999243,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 154,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:cf4d7818",
+        "complete": true,
+        "stopReason": null,
+        "value": 111,
+        "rootAndSearchMilliseconds": 17.385792000000038,
+        "diagnostics": {
+          "nativeExecutions": 2
+        }
+      },
+      {
+        "step": 155,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 111,
+        "rootAndSearchMilliseconds": 8.37054099999932,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 156,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 468.8455839999997,
+        "diagnostics": {
+          "nativeExecutions": 247
+        }
+      },
+      {
+        "step": 157,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:44b74627",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 11.180665999999292,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 158,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:d086f84d",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 7.475292000000081,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 159,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:dcf65da7",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 12.346125000000029,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 160,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:871bc118",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 13.795208999999886,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 161,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:efa8f564",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 14.444667000001573,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 162,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:f042ebe0",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 15.592332999998689,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 163,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:9017589f",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 82.99779200000012,
+        "diagnostics": {
+          "nativeExecutions": 25
+        }
+      },
+      {
+        "step": 164,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:3ef0c79f",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 22.653416999999536,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 165,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 117,
+        "rootAndSearchMilliseconds": 7.580707999999504,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 166,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:ba4c0ecf",
+        "complete": true,
+        "stopReason": null,
+        "value": 121,
+        "rootAndSearchMilliseconds": 211.93816600000173,
+        "diagnostics": {
+          "nativeExecutions": 161
+        }
+      },
+      {
+        "step": 167,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:30cf5375",
+        "complete": true,
+        "stopReason": null,
+        "value": 121,
+        "rootAndSearchMilliseconds": 12.311874999999418,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 168,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 121,
+        "rootAndSearchMilliseconds": 8.364416000000347,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 169,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "quick_trade:12411a2c",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 109.44483300000138,
+        "diagnostics": {
+          "nativeExecutions": 82
+        }
+      },
+      {
+        "step": 170,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:c9812a9e",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 10.77929100000074,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 171,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:8db37019",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 12.006457999999839,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 172,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:2cdde653",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 12.300250000000233,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 173,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:e62d8393",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 7.179959000000963,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 174,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:716d1504",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 11.846083000000363,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 175,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:fc29fb3a",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 13.784874999999374,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 176,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 126,
+        "rootAndSearchMilliseconds": 12.124832999999853,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 177,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 192.71141700000044,
+        "diagnostics": {
+          "nativeExecutions": 127
+        }
+      },
+      {
+        "step": 178,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 11.0278330000001,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 179,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "research_tech:806ccfc8",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 7.254249999999956,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 180,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:a16882e3",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 10.767541999999594,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 181,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 9.16925000000083,
+        "diagnostics": {
+          "nativeExecutions": 1
+        }
+      },
+      {
+        "step": 182,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:aba3bdc5",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 12.6875,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 183,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 133.03487499999937,
+        "diagnostics": {
+          "nativeExecutions": 109
+        }
+      },
+      {
+        "step": 184,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 11.726708999998664,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 185,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 7.386915999999474,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 186,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 11.277708999999959,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 187,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:d77a86dc",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 11.37895799999933,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 188,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "quick_trade:a39c1a77",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 7.245291999999608,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 189,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:7c41c206",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 10.783250000000407,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 190,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:dc896ddd",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 11.723958000000493,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 191,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:2cdde653",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 13.05841700000019,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 192,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "scan:2d21a323",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 7.417874999999185,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 193,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:88cedca8",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 11.129583999998431,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 194,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:0e918552",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 13.26654100000087,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 195,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:5704cc24",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 14.230916999998954,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 196,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 147,
+        "rootAndSearchMilliseconds": 8.291917000000467,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 197,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 29.731417000000874,
+        "diagnostics": {
+          "nativeExecutions": 22
+        }
+      },
+      {
+        "step": 198,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 11.363333999999668,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 199,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 7.31854100000055,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 200,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 10.586999999999534,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 201,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "analyze:a5629aa3",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 7.211082999998325,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 202,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:06ca6510",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 11.967915999999605,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 203,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:aae30da2",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 13.080667000000176,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 204,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 146.5,
+        "rootAndSearchMilliseconds": 8.413625000001048,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 205,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "quick_trade:12411a2c",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 197.56395900000098,
+        "diagnostics": {
+          "nativeExecutions": 164
+        }
+      },
+      {
+        "step": 206,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:dddeadb8",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 11.932917000000089,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 207,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:35bdbf97",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 12.19170799999847,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 208,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_payment:2cdde653",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 12.989749999998821,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 209,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "play_card:4c812f97",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 7.761915999999474,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 210,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:3bde96a7",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 12.950041999998575,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 211,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 148.5,
+        "rootAndSearchMilliseconds": 7.681291000000783,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 212,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "card_corner:78f36b03",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 40.71899999999914,
+        "diagnostics": {
+          "nativeExecutions": 26
+        }
+      },
+      {
+        "step": 213,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 7.877250000001368,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 214,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 10.60633400000006,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 215,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 6.735791999999492,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 216,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 11.253209000000425,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 217,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 7.464375000001382,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 218,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 11.039749999999913,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 219,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 6.796667000000525,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 220,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 10.251749999999447,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 221,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_card:ed197454",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 11.753791999999521,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 222,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 7.10320800000045,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 223,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 10.622457999999824,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 224,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "place_data:8fd12fd3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 6.643332999999984,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 225,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:29b5215c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 11.104042000000845,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 226,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "analyze:a5629aa3",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 6.957707999999911,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 227,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "choose_target:411af34c",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 12.03374999999869,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 228,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "end_turn:b2f9b29d",
+        "complete": true,
+        "stopReason": null,
+        "value": 144,
+        "rootAndSearchMilliseconds": 7.357916999999361,
+        "diagnostics": {
+          "nativeExecutions": 0
+        }
+      },
+      {
+        "step": 229,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "pass:a1f33c73",
+        "complete": true,
+        "stopReason": null,
+        "value": 141,
+        "rootAndSearchMilliseconds": 8.06816599999911,
+        "diagnostics": {
+          "nativeExecutions": 1
+        }
+      }
+    ]
+  },
+  "archiveRetention": {
+    "mode": "decisions-and-budgets",
+    "sourceRecordSha256": "4c7626d1edb6f04b2207760df29948e93d79f0b9f85e5a8b99a5005ab9599aa0",
+    "replayArchive": "reports/iteration/v486-original20-20261119/board-11-replay-20261119-v1.json.gz",
+    "fullSearchGraphsOmitted": true,
+    "activeBenchmarkSavesRetained": true,
+    "roundAssetsRetained": true
+  }
+}

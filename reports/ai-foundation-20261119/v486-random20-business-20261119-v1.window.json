@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "v486-random20-business-route-20261119-v1.json",
+  "startedEpochSeconds": 1795047616,
+  "deadlineEpochSeconds": 1795048816,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795047684.179297,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795048816,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 37094,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795047684.385518
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795047813.40515,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795048816,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 38106,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795047814.014892
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/run-v486-random20-20261119.py"
+      ],
+      "startedEpochSeconds": 1795047866.1341271,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795048816,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 38698,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795048360.466788
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795048432.5755641,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795048816,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 57307,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795048462.257824
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795048551.093479,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795048816,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-random20-business-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 58256,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795048557.35111
+    }
+  ],
+  "scope": "Committed-source original20 guarded evaluation only, board06 first; checkpoint all attempts and stop at first failure.",
+  "closedEpochSeconds": 1795048696.8957179,
+  "outcome": "v486-random20-business-outcome-20261119-v1.json",
+  "passed": true
+}

@@ -1,0 +1,41 @@
+{
+  "snapshot": "/private/tmp/seti-v486-random20-publish-20261119-h8g8g_lb",
+  "metadataPaths": [
+    "reports/iteration/versions.json",
+    "reports/iteration/registry.json",
+    "reports/robot-iteration.html"
+  ],
+  "extraGroupReports": [
+    "reports/iteration/v486-original20-20261119/1ed71131.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/591a90af.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/397394cb.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/279e3c0e.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/8d68c835.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/e590f148.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/33eaf9f6.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/bb435792.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/b359964f.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/7f76680a.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/7b88b4d4.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/9ae5f22e.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/1e0b44d2.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/5ca133e7.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/f68952fa.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/f5fda3f0.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/7072468f.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/52db641e.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/0abcb0bd.94299f38.full.action-log.html",
+    "reports/iteration/v486-original20-20261119/3a4edb37.94299f38.full.action-log.html"
+  ],
+  "sharedWorkingMetadataSha256": {
+    "reports/iteration/versions.json": "a05768443b8a6b16c4c2da3afc1faeed3288464402c6f81ac80a5054d232add5",
+    "reports/iteration/registry.json": "ea3ea2a282823da4dd31258e46136b9b905c6832f8b1acf80e0d896ed11bb2b1",
+    "reports/robot-iteration.html": "9fbb88a910d257a802cf609862083fe71a8dc827fc3fe8eba8d95a7eb6b92bc5"
+  },
+  "oldVersionEntriesPreserved": 370,
+  "oldRegistryEntriesPreserved": 364,
+  "registeredNewV2GroupResults": 20,
+  "allOldEntriesUnchanged": true,
+  "all20ActionReportsPresent": true,
+  "workingMetadataNotOverwritten": true
+}

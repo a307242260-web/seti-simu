@@ -7,6 +7,41 @@
   },
   "versions": [
     {
+      "id": "v486-original20-20261119",
+      "name": "v486 original20: mean134.35, completed20/20",
+      "date": "2026-11-19",
+      "baseline": "formal272-original20-20261119",
+      "head": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+      "commits": [
+        "94299f385450f80f2720b3dc0d15ea92c9d771f7"
+      ],
+      "summary": "Original20 White-only evaluation: all20 completed, mean134.35 median135 range113-161; mean8.3141s max11.105s; target mean>200 not met. Report:reports/iteration/v486-original20-20261119/summary-20261119-v1.html",
+      "records": {
+        "1ed71131.94299f38.full.json": {},
+        "591a90af.94299f38.full.json": {},
+        "397394cb.94299f38.full.json": {},
+        "279e3c0e.94299f38.full.json": {},
+        "8d68c835.94299f38.full.json": {},
+        "e590f148.94299f38.full.json": {},
+        "33eaf9f6.94299f38.full.json": {},
+        "bb435792.94299f38.full.json": {},
+        "b359964f.94299f38.full.json": {},
+        "7f76680a.94299f38.full.json": {},
+        "7b88b4d4.94299f38.full.json": {},
+        "9ae5f22e.94299f38.full.json": {},
+        "1e0b44d2.94299f38.full.json": {},
+        "5ca133e7.94299f38.full.json": {},
+        "f68952fa.94299f38.full.json": {},
+        "f5fda3f0.94299f38.full.json": {},
+        "7072468f.94299f38.full.json": {},
+        "52db641e.94299f38.full.json": {},
+        "0abcb0bd.94299f38.full.json": {},
+        "3a4edb37.94299f38.full.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false
+    },
+    {
       "id": "formal272-original20-20261119",
       "name": "272分策略·原20盘面：5完成、1失败、14未运行",
       "date": "2026-11-19",
