@@ -178,3 +178,24 @@ console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,pro
   }finally{p.close();}
  }finally{c.dispose();}
 }
+
+// A final-round landing card can save conversion costs even when a normal
+// landing is payable. This executable lower bound does not widen forecasts.
+{
+ const saved=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(__dirname,'final-income-land-20261119-v1.fixture.json.gz'))));
+ const source=JSON.parse(saved.envelope.committedState),seat='player-white';
+ const native=require('../production-kernel');
+ function quote(s,executionOnly=true){return demand.heldLandingGoal({state:s,seatId:seat,executionOnly,
+  candidates:()=>native.getProbeRouteRequirements(s,seat)?.candidates||[],compareTiming:()=>{throw Error('unexpected timing query');}});}
+ const s=structuredClone(source),p=s.players.players.find(p=>p.id===seat);p.mainActionCompleted=false;
+ const before=JSON.stringify(s),g=quote(s);assert(g&&g.kind==='held-landing-route');
+ assert.equal(g.cardId,p.hand[0].id);assert.equal(g.endpointTarget.type,'planet');assert.equal(g.required.credits,2);
+ assert.equal(quote(s,false),null,'execution support must not widen the older held-card forecast domain');
+ assert.equal(JSON.stringify(s),before,'route quoting must preserve the full Native source');
+ const rich=structuredClone(s);rich.players.players.find(p=>p.id===seat).resources.energy=20;
+ assert.equal(quote(rich),null,'do not spend a card when its payment is no cheaper than the funded normal landing');
+ const hidden=structuredClone(s);hidden.players.players.find(p=>p.id===seat).hand[0].hidden=true;assert.equal(quote(hidden),null);
+ const poor=structuredClone(s);poor.players.players.find(p=>p.id===seat).resources.credits=1;assert.equal(quote(poor),null);
+ const ambiguous=structuredClone(s),a=ambiguous.players.players.find(p=>p.id===seat);a.hand.push({...a.hand[0],id:'another-visible-landing-card'});
+ assert.equal(quote(ambiguous),null,'two held suppliers need a separate opportunity-cost policy');
+}
