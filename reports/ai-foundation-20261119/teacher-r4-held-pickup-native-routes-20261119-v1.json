@@ -1,0 +1,774 @@
+{
+  "schemaVersion": "seti-r4-held-pickup-native-routes-v1",
+  "status": "complete",
+  "source": "reports/ai-foundation-20261119/teacher-r4-order-analysis-first-20261119-v1.json.gz",
+  "sourceSha256": "d8c31219a1690e9bc594ed1f82ab439f9cdbd8222139b2f6a6b5b254b620f40a",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "nativeInputs": 29,
+  "newAISearches": 0,
+  "newGames": 0,
+  "cases": {
+    "io": {
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "inputs": 15,
+      "candidate": {
+        "id": "rocket:7:land:jupiter:satellite:io",
+        "path": [
+          {
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          {
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          {
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          {
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          {
+            "directionId": "ccw",
+            "deltaX": -1,
+            "deltaY": 0
+          }
+        ],
+        "printedFee": {
+          "credits": 2
+        },
+        "energyForMovement": 5,
+        "knownReward": {
+          "score": 10,
+          "incomeCount": 0,
+          "dataCount": 0,
+          "grossEquivalentValue": 35,
+          "rewardSummary": "获得 10 分；获得 4 能量",
+          "source": "planetRewards.land:jupiter"
+        }
+      },
+      "facts": {
+        "turn": {
+          "actionCycleNumber": 5,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-brown",
+            "player-green",
+            "player-blue"
+          ],
+          "roundNumber": 4,
+          "startPlayerId": "player-brown",
+          "turnNumber": 8,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 7,
+          "score": 129
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp"
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          },
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "alien-amiba-7-5",
+            "cardId": "amiba_7.webp"
+          },
+          {
+            "id": "alien-chong-3-10",
+            "cardId": "chong_3.webp"
+          },
+          {
+            "id": "alien-chong-9-16",
+            "cardId": "chong_9.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": 202.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_05",
+            "id": 8,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 6,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 6,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 6,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "completedTaskCount": 4,
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "evaluation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 217,
+        "components": {
+          "realizedScore": 129,
+          "currentEndGameBonus": 72,
+          "resources": 12,
+          "hand": 4,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "revealBoundaries": [],
+      "conditionalMenus": []
+    },
+    "enceladus": {
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-held-pickup-enceladus-20261119-v1.json.gz",
+      "inputs": 14,
+      "candidate": {
+        "id": "rocket:7:land:saturn:satellite:enceladus",
+        "path": [
+          {
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          {
+            "directionId": "out",
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          {
+            "directionId": "cw",
+            "deltaX": 1,
+            "deltaY": 0
+          }
+        ],
+        "printedFee": {
+          "credits": 2
+        },
+        "energyForMovement": 3,
+        "knownReward": {
+          "score": 13,
+          "incomeCount": 0,
+          "dataCount": 0,
+          "grossEquivalentValue": 15.5,
+          "rewardSummary": "获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          "source": "planetRewards.land:saturn"
+        }
+      },
+      "facts": {
+        "turn": {
+          "actionCycleNumber": 5,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-brown",
+            "player-green",
+            "player-blue"
+          ],
+          "roundNumber": 4,
+          "startPlayerId": "player-brown",
+          "turnNumber": 8,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 3,
+          "energy": 3,
+          "handSize": 4,
+          "publicity": 6,
+          "score": 132
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp"
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          },
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "alien-amiba-7-5",
+            "cardId": "amiba_7.webp"
+          },
+          {
+            "id": "alien-chong-3-10",
+            "cardId": "chong_3.webp"
+          },
+          {
+            "id": "alien-chong-9-16",
+            "cardId": "chong_9.webp"
+          }
+        ],
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": 9.9,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_01",
+            "id": 8,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 2,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 212.48,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 0,
+            "surface": "solar-board"
+          }
+        ],
+        "completedTaskCount": 4,
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": [
+            {
+              "id": "data-token-43",
+              "index": 1,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-44",
+              "index": 2,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-45",
+              "index": 3,
+              "slotIndex": 3
+            }
+          ]
+        },
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "evaluation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 219,
+        "components": {
+          "realizedScore": 132,
+          "currentEndGameBonus": 72,
+          "resources": 11,
+          "hand": 4,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "revealBoundaries": [],
+      "conditionalMenus": [
+        [
+          {
+            "id": "choose_target:f249bfa9",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "land:7:saturn:planet:",
+              "actionType": "land",
+              "rocketId": 7,
+              "planetId": "saturn",
+              "landTarget": {
+                "type": "planet",
+                "rocketId": 7
+              }
+            },
+            "summary": "登陆土星 - 奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记（主星，R7，0）"
+          },
+          {
+            "id": "choose_target:f0d2029f",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "land:7:saturn:satellite:enceladus",
+              "actionType": "land",
+              "rocketId": 7,
+              "planetId": "saturn",
+              "landTarget": {
+                "type": "satellite",
+                "satelliteId": "enceladus",
+                "rocketId": 7
+              }
+            },
+            "summary": "登陆土卫二 - 奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描（土星，R7，0）"
+          }
+        ],
+        [
+          {
+            "id": "choose_target:ce8aa997",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-2-b",
+              "nebulaId": "sector-2-b",
+              "sectorX": null
+            },
+            "summary": "扫描 巴纳德"
+          },
+          {
+            "id": "choose_target:324ce5af",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-3-b",
+              "nebulaId": "sector-3-b",
+              "sectorX": null
+            },
+            "summary": "扫描 比邻星"
+          }
+        ],
+        [
+          {
+            "id": "choose_target:1a902b3f",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-2-a",
+              "nebulaId": "sector-2-a",
+              "sectorX": null
+            },
+            "summary": "扫描 天狼星A"
+          },
+          {
+            "id": "choose_target:50c45347",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": null
+            },
+            "summary": "扫描 南河三"
+          }
+        ],
+        [
+          {
+            "id": "choose_target:9017589f",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-4-a",
+              "nebulaId": "sector-4-a",
+              "sectorX": null
+            },
+            "summary": "扫描 室女座61"
+          },
+          {
+            "id": "choose_target:af617fe7",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "nebula:sector-3-a",
+              "nebulaId": "sector-3-a",
+              "sectorX": null
+            },
+            "summary": "扫描 开普勒22"
+          }
+        ],
+        [
+          {
+            "id": "choose_target:e56c714f",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "chong-fossil:fossil_06",
+              "fossilId": "fossil_06",
+              "planetId": "saturn"
+            },
+            "summary": "fossil_06：2能量"
+          },
+          {
+            "id": "choose_target:8583eacd",
+            "family": "choose_target",
+            "target": {
+              "choiceId": "chong-fossil:fossil_01",
+              "fossilId": "fossil_01",
+              "planetId": "saturn"
+            },
+            "summary": "fossil_01：3宣传"
+          }
+        ]
+      ]
+    }
+  },
+  "oldPlannerReturnsNoHeldRoute": true,
+  "initial": {
+    "turn": {
+      "actionCycleNumber": 4,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [],
+      "currentPlayerId": "player-white",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [
+        "player-brown",
+        "player-green",
+        "player-blue"
+      ],
+      "roundNumber": 4,
+      "startPlayerId": "player-brown",
+      "turnNumber": 7,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 6,
+      "handSize": 5,
+      "publicity": 3,
+      "score": 116
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange1": true,
+        "orange2": true,
+        "orange4": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "id": "alien-chong-2-8",
+        "cardId": "chong_2.webp"
+      },
+      {
+        "id": "alien-chong-4-14",
+        "cardId": "chong_4.webp"
+      },
+      {
+        "id": "card-30-pass-3-1",
+        "cardId": "b_111.webp"
+      },
+      {
+        "id": "card-58-0",
+        "cardId": "dlc_27.png"
+      },
+      {
+        "id": "alien-chong-9-16",
+        "cardId": "chong_9.webp"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp"
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png"
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      },
+      {
+        "id": "alien-amiba-7-5",
+        "cardId": "amiba_7.webp"
+      },
+      {
+        "id": "alien-chong-3-10",
+        "cardId": "chong_3.webp"
+      }
+    ],
+    "probes": [
+      {
+        "angleDegrees": 22.5,
+        "cargo": null,
+        "color": "white",
+        "fossilId": "fossil_07",
+        "id": 6,
+        "kind": "chong-fossil",
+        "launchGrid": {
+          "x": 3,
+          "y": 3
+        },
+        "launchSectorCoordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "playerId": "player-white",
+        "radius": 227.66,
+        "sectorX": 2,
+        "sectorY": 3,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": -9.9,
+        "color": "white",
+        "id": 7,
+        "launchGrid": {
+          "x": 2,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 2,
+          "y": 1
+        },
+        "playerId": "player-white",
+        "playerSequence": 1,
+        "radius": 69.42,
+        "sectorX": 1,
+        "sectorY": 1,
+        "slotIndex": 2,
+        "surface": "solar-board"
+      }
+    ],
+    "completedTaskCount": 3,
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "previousFailureArchive": "reports/ai-foundation-20261119/teacher-r4-held-pickup-idle-inspection-failure-20261119-v1.json.gz"
+}

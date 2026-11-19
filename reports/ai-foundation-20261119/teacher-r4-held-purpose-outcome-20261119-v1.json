@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "seti-r4-held-purpose-outcome-v1",
+  "decision": "coverage-gap-confirmed-no-strategy-adoption",
+  "strategyChanged": false,
+  "newGames": 0,
+  "nativePreparationAndVerificationInputs": 65,
+  "newColdSearches": 2,
+  "totalColdNativeSimulations": 75,
+  "firstTurnFinding": "Orange1 also launches; current Native reproduction matches both archived first-turn endpoints exactly. The teacher paid launch is not a missing launch candidate.",
+  "heldRouteFinding": "heldTransportGoal rejects R4; directTransportGoal additionally only supports zero-energy, one/two paid-corner steps and planet-only endpoints. Current R4 hand includes Chong9, current wallet funds its fee and all movement to Io/Enceladus, and both Native card landings plus pickup/end-turn succeed.",
+  "cases": {
+    "io": {
+      "nativeInputs": 15,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 5,
+        "handSize": 4,
+        "publicity": 7,
+        "score": 129
+      },
+      "value": 217,
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-held-pickup-io-20261119-v1.json.gz",
+      "nextWindowCold": {
+        "complete": true,
+        "actionId": "launch:c94cda79",
+        "value": 235,
+        "nativeInputs": 20,
+        "milliseconds": 116.52562500000002,
+        "rootAndRngUnchanged": true,
+        "gatePassed": true
+      }
+    },
+    "enceladus": {
+      "nativeInputs": 14,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 3,
+        "energy": 3,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 132
+      },
+      "value": 219,
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-held-pickup-enceladus-20261119-v1.json.gz",
+      "nextWindowCold": {
+        "complete": true,
+        "actionId": "industry:e887dc52",
+        "value": 240,
+        "nativeInputs": 55,
+        "milliseconds": 257.34404200000006,
+        "rootAndRngUnchanged": true,
+        "gatePassed": true
+      }
+    }
+  },
+  "comparison": {
+    "existingAnalysisThenTritonTurnValue": 237.5,
+    "ioHeldRouteValue": 217,
+    "enceladusHeldRouteValue": 219,
+    "limits": "Next-window235/240 include an additional main action and are not comparable terminal improvements. Newly carried fossils and retained cards differ; no state equivalence or round-score gain established."
+  },
+  "reasonNotPatched": "A round guard flip is insufficient: energy-funded routes and satellite matching require distinct execution contracts; no same-boundary Native advantage has been established. No generic weights or frozen cargo prototype adopted.",
+  "nextBusinessQuestion": "Actual267 trace input287 chooses displayed Chong9 after all ordinary probes are gone; that card remains unused at terminal. Check free known-card selection versus blind population utility from the actual root, avoiding hypothetical earlier-order improvements."
+}

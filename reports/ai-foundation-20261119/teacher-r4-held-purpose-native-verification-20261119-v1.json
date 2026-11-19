@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "seti-r4-held-purpose-native-verification-v1",
+  "verified": true,
+  "nativeInputs": 36,
+  "points": [
+    {
+      "name": "teacher-launch",
+      "nativeSessionRngExact": true,
+      "inputs": 2
+    },
+    {
+      "name": "ai-orange1-research",
+      "nativeSessionRngExact": true,
+      "inputs": 5
+    },
+    {
+      "name": "io",
+      "nativeSessionRngExact": true,
+      "inputs": 15
+    },
+    {
+      "name": "enceladus",
+      "nativeSessionRngExact": true,
+      "inputs": 14
+    }
+  ],
+  "newAISearches": 0,
+  "newGames": 0
+}

@@ -1,0 +1,485 @@
+{
+  "schemaVersion": "seti-teacher-r4-exact-start-cold-search-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-free-analyze-v1",
+  "status": "complete",
+  "sourceRootArchive": "reports/ai-foundation-20261119/teacher-r4-blind-after287-20261119-v1.json.gz",
+  "sourceRootArchiveSha256": "52524174066dc11fa12d28f9d45cd9f91b9b881b3ba15b9dc3575731fc40a440",
+  "sourceFilesVerified": 536,
+  "controlledPrefixInputs": 287,
+  "newAISearches": 1,
+  "newAutonomousGames": 0,
+  "search": {
+    "schemaVersion": "seti-complete-decision-search-v486-runezu-free-pick",
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "selectionPlan": null,
+    "selectionContinuation": null,
+    "planContinuation": {},
+    "planEvidence": {
+      "evidenceId": "plan-evidence-1",
+      "proof": "seti-complete-window-best-prefix-reuse-v1",
+      "nodeCount": 2
+    },
+    "value": 237.5,
+    "realization": 0,
+    "preparationDebt": 0,
+    "stopReason": null,
+    "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+    "roots": [
+      {
+        "actionId": "quick_trade:f385e2ac",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:49c75492",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v18",
+        "goal": null,
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:12411a2c",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:a39c1a77",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:37140fcf",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v18",
+        "goal": null,
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:71814d67",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v18",
+        "goal": null,
+        "isEquivalence": false
+      },
+      {
+        "actionId": "card_corner:bf0cc13d",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "card_corner:40cda505",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "place_data:8fd12fd3",
+        "target": 1,
+        "value": 237.5,
+        "realization": 0,
+        "preparationDebt": 0,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "blue-end-turn",
+          "firstActionId": "place_data:8fd12fd3",
+          "netGain": 2,
+          "requiredNativeInputs": 5,
+          "dataPlans": [
+            {
+              "goal": {
+                "id": "data:blue:1",
+                "kind": "blue-data",
+                "blueSlot": 1,
+                "targetComputerSlot": 1,
+                "required": {}
+              },
+              "policy": "seti-greedy-blue-resource-tail-v2",
+              "available": true,
+              "selected": true,
+              "realizesForecast": false,
+              "netGain": 2,
+              "blueSlot": 1,
+              "dataCornerId": null,
+              "incomeCardId": null,
+              "computerPlacements": 1,
+              "requiredNativeInputs": 4,
+              "immediateScoreGain": 2,
+              "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity",
+              "dataCornerIds": []
+            }
+          ],
+          "markedTiles": [],
+          "publicAmibaCurrencyTail": true,
+          "unrealizedPurposeDelta": 0,
+          "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+          "r4DeepSpaceDataTail": true,
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v28",
+        "isEquivalence": false
+      }
+    ],
+    "lines": [
+      {
+        "node": 0,
+        "status": "stable",
+        "boundary": null,
+        "expanded": true,
+        "alternatives": 1,
+        "edges": [
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 1,
+            "cost": 5,
+            "equivalent": false,
+            "turnTailPlanValue": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "blue-end-turn",
+              "firstActionId": "place_data:8fd12fd3",
+              "netGain": 2,
+              "requiredNativeInputs": 5,
+              "dataPlans": [
+                {
+                  "goal": {
+                    "id": "data:blue:1",
+                    "kind": "blue-data",
+                    "blueSlot": 1,
+                    "targetComputerSlot": 1,
+                    "required": {}
+                  },
+                  "policy": "seti-greedy-blue-resource-tail-v2",
+                  "available": true,
+                  "selected": true,
+                  "realizesForecast": false,
+                  "netGain": 2,
+                  "blueSlot": 1,
+                  "dataCornerId": null,
+                  "incomeCardId": null,
+                  "computerPlacements": 1,
+                  "requiredNativeInputs": 4,
+                  "immediateScoreGain": 2,
+                  "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity",
+                  "dataCornerIds": []
+                }
+              ],
+              "markedTiles": [],
+              "publicAmibaCurrencyTail": true,
+              "unrealizedPurposeDelta": 0,
+              "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+              "r4DeepSpaceDataTail": true,
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "actualNativeInputs": 0,
+            "provedNativeInputs": 5
+          }
+        ],
+        "distance": 5,
+        "value": 237.5,
+        "realization": 0,
+        "preparationDebt": 0,
+        "completion": "reachable",
+        "cardPickPolicy": {
+          "policy": "seti-purpose-card-pick-policy-v18",
+          "isEquivalence": false,
+          "kind": "card-acquisition-plan",
+          "goal": null,
+          "selectedActionId": null,
+          "selection": null,
+          "discardIds": [],
+          "companySwap": null,
+          "retainedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "card_corner:bf0cc13d",
+            "card_corner:40cda505",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf",
+            "quick_trade:71814d67"
+          ],
+          "reason": "no-pick-purpose"
+        },
+        "resourcePolicy": {
+          "policy": "seti-goal-resource-preparation-v28",
+          "isEquivalence": false,
+          "plans": [
+            {
+              "id": "data:blue:1",
+              "goal": {
+                "id": "data:blue:1",
+                "kind": "blue-data",
+                "blueSlot": 1,
+                "targetComputerSlot": 1,
+                "required": {}
+              },
+              "operation": {
+                "finalPlacement": false
+              },
+              "firstActionId": "place_data:8fd12fd3",
+              "mode": "greedy",
+              "reason": "data-placement-for-goal"
+            }
+          ],
+          "blueTails": [
+            {
+              "goalId": "data:blue:1",
+              "policy": "seti-greedy-blue-resource-tail-v2",
+              "available": true,
+              "selected": true,
+              "realizesForecast": false,
+              "netGain": 2,
+              "blueSlot": 1,
+              "dataCornerId": null,
+              "incomeCardId": null,
+              "computerPlacements": 1,
+              "requiredNativeInputs": 4,
+              "immediateScoreGain": 2,
+              "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity",
+              "dataCornerIds": []
+            }
+          ],
+          "fixedComputerTail": {
+            "policy": "seti-greedy-funded-computer-prefix-v1",
+            "available": true,
+            "selected": true,
+            "netGain": 1.5,
+            "placements": 1,
+            "requiredNativeInputs": 2,
+            "targetComputerSlot": 1,
+            "immediateScoreGain": 2,
+            "assumption": "held data only, consecutive computer resource/score slots; shared current final score and purpose value, no income crossing or new card identity"
+          },
+          "retainedActionIds": [],
+          "excludedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:49c75492",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "quick_trade:37140fcf",
+            "quick_trade:71814d67",
+            "card_corner:bf0cc13d",
+            "card_corner:40cda505",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ]
+        }
+      },
+      {
+        "node": 1,
+        "status": "turn-tail-value",
+        "boundary": "quiet-turn-tail-value",
+        "planSummary": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "blue-end-turn",
+          "firstActionId": "place_data:8fd12fd3",
+          "netGain": 2,
+          "requiredNativeInputs": 5,
+          "dataPlans": [
+            {
+              "goal": {
+                "id": "data:blue:1",
+                "kind": "blue-data",
+                "blueSlot": 1,
+                "targetComputerSlot": 1,
+                "required": {}
+              },
+              "policy": "seti-greedy-blue-resource-tail-v2",
+              "available": true,
+              "selected": true,
+              "realizesForecast": false,
+              "netGain": 2,
+              "blueSlot": 1,
+              "dataCornerId": null,
+              "incomeCardId": null,
+              "computerPlacements": 1,
+              "requiredNativeInputs": 4,
+              "immediateScoreGain": 2,
+              "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity",
+              "dataCornerIds": []
+            }
+          ],
+          "markedTiles": [],
+          "publicAmibaCurrencyTail": true,
+          "unrealizedPurposeDelta": 0,
+          "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+          "r4DeepSpaceDataTail": true,
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "expanded": true,
+        "alternatives": 0,
+        "edges": [],
+        "distance": 0,
+        "value": 237.5,
+        "realization": 0,
+        "preparationDebt": 0,
+        "completion": "reachable"
+      }
+    ],
+    "unresolved": [],
+    "sharedPrefixGraph": {
+      "nodes": [],
+      "edges": []
+    },
+    "candidates": [
+      {
+        "kind": "resource-goal-plan",
+        "plan": {
+          "id": "data:blue:1",
+          "goal": {
+            "id": "data:blue:1",
+            "kind": "blue-data",
+            "blueSlot": 1,
+            "targetComputerSlot": 1,
+            "required": {}
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "place_data:8fd12fd3",
+          "mode": "greedy",
+          "reason": "data-placement-for-goal"
+        },
+        "firstActionId": "place_data:8fd12fd3"
+      }
+    ],
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 1,
+      "valueCacheHits": 3,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 0,
+      "movementDirectionsExcluded": 0,
+      "routeGeometryNodes": 0,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 1,
+      "provedTurnTailInputs": 5,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 0,
+      "logicalResourceInputs": 0,
+      "sharedResourceInputHits": 0,
+      "sharedResourceInternalStates": 0,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 0,
+      "singleAlternativeStates": 1,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 0,
+      "resourceGoalPlans": 0,
+      "resourcePreparationInputs": 0,
+      "resourceFallbacks": 0,
+      "resourceExcludedActions": 10,
+      "transitions": 0,
+      "nodes": 2,
+      "graphNodes": 2,
+      "certificateNodes": 0,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 0,
+      "selectionMacros": 0,
+      "peakFrontier": 1,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v71\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 9.457249999999988,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    }
+  },
+  "cold": {
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 237.5,
+    "nativeInputs": 0,
+    "milliseconds": 22.605625000000003,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  }
+}

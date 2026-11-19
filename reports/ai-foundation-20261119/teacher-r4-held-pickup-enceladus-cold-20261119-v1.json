@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-teacher-r4-held-pickup-endpoint-cold-v1",
+  "branch": "enceladus",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "source": "reports/ai-foundation-20261119/teacher-r4-held-pickup-enceladus-20261119-v1.json.gz",
+  "sourceSha256": "4e1bfaf45080aedb89b15846bffb2dd2fcb16fe453674f4dd59e21759e99315a",
+  "status": "complete",
+  "newAISearches": 1,
+  "newGames": 0,
+  "cold": {
+    "complete": true,
+    "actionId": "industry:e887dc52",
+    "value": 240,
+    "nativeInputs": 55,
+    "milliseconds": 257.34404200000006,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "searchArchive": "reports/ai-foundation-20261119/teacher-r4-held-pickup-search-evidence-20261119-v1.json.gz",
+  "searchArchiveSha256": "1f6d0cd73d5e5efb5e9656641537178053f85f2b6a86ab6f775f1e6203b8f3b1",
+  "archiveBranch": "enceladus"
+}

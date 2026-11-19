@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-held-purpose-route-20261119-v1.json",
+  "startedEpochSeconds": 1795070279.0,
+  "deadlineEpochSeconds": 1795072079.0,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/native-r4-held-pickup-routes-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795070745.8416991,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795072079.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 86041,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795070746.190882
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/native-r4-held-pickup-routes-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795070783.434787,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795072079.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 86476,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795070783.840665
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-r4-held-pickup-endpoints-20261119.cjs",
+        "enceladus"
+      ],
+      "startedEpochSeconds": 1795070864.0740428,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795072079.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 87499,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795070864.53576
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-r4-held-pickup-endpoints-20261119.cjs",
+        "io"
+      ],
+      "startedEpochSeconds": 1795070889.402587,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795072079.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 87821,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795070889.74959
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-r4-held-purpose-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795071592.7948868,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795072079.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 95449,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795071593.2579799
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795070783.11667,
+      "previousStatus": "failed",
+      "reason": "The Native composition reports idle, while analysis-port nodes use stable. The landing and pickup already succeeded. Resume its exact persisted failure envelope/actions, without repeating Native inputs; validate session=null instead of the analysis-node status name. Preserve original failure and original deadline."
+    }
+  ],
+  "closedEpochSeconds": 1795071624.608656,
+  "outcome": "coverage-gap-confirmed-no-strategy-adoption",
+  "evidence": "teacher-r4-held-purpose-outcome-20261119-v1.json"
+}

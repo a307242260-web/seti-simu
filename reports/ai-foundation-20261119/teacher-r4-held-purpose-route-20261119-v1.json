@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "r4-known-held-landing-purpose",
+  "startedEpochSeconds": 1795070279.0,
+  "deadlineEpochSeconds": 1795073879.0,
+  "status": "closed-coverage-gap-no-adoption",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-held-purpose-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Does the round3-only held pickup-card route omit an actually fundable, materially valuable R4 action after the observed analysis reward?",
+  "hypotheses": [
+    "Current paid-launch versus orange1 distinction is not absence of a launch; reuse existing first-turn Native proof instead of forcing teacher imitation.",
+    "R4 known transport-card movement+landing is excluded by a round3 route guard even when current funds suffice; only a legal Native payoff comparison can justify a candidate extension."
+  ],
+  "limits": {
+    "maximumWallSeconds": 3600,
+    "maximumWorkUnits": 2,
+    "maximumLiteralPreparationAndVerificationInputs": 400,
+    "maximumColdSearches": 3,
+    "maximumNewRegisteredGames": 1,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000
+  },
+  "searchContract": {
+    "equivalence": "Use exact saved R4 analysis-first Native state/RNG. Compare Native whole own-turn endpoints; changed landing, cards, cargo and hidden reveals are not equivalent. No score addition or fabricated successor.",
+    "reachability": "Current wallet must separately fund all movement and printed play fee. Only current visible Jupiter/Saturn endpoints; choose newly exposed effects from Native menus without peeking at hidden fossil/deck state.",
+    "dedup": "Do not rerun267 control or oldv487/v514 experiments. Reuse recorded cold search. Candidate allowed only after Native route proof; no arbitrary weights or revival of frozen public-income/cargo prototypes.",
+    "globalBudget": "No generic multistep beam extension. Existing completed graph and bounded fixed goal plan; <=3 fresh cold searches, each complete <=256/600ms. No larger run on a failing gate.",
+    "stop": "If Native route is not legal, not funded, or not materially justified against the existing plan, record coverage limitation and do not patch. Close by original deadline."
+  },
+  "next": "Execute one energy-funded held-card route to Io and one to Enceladus through actual Native menus; record known payouts and reveal boundaries.",
+  "closedEpochSeconds": 1795071624.6083531,
+  "outcome": "coverage-gap-confirmed-no-strategy-adoption",
+  "evidence": "teacher-r4-held-purpose-outcome-20261119-v1.json"
+}

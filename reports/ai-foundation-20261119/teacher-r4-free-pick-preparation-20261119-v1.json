@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seti-r4-free-pick-intervention-preparation-v1",
+  "status": "verified",
+  "sourcePolicyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "nativeInputs": 9,
+  "priorMetadataCheckInputs": 4,
+  "newAISearches": 0,
+  "newGames": 0,
+  "originalOpeningInputs": 23,
+  "teacherInputs": 245,
+  "fixedAIPrefixInputs": 41,
+  "interventionInput": 287,
+  "hostPendingMetadataDifference": {
+    "host": {
+      "actorPlayerId": "player-white",
+      "pendingOwnerPlayerId": "player-white",
+      "effectOwnerPlayerId": "player-white",
+      "currentPlayerId": "player-white",
+      "source": "effect_owner",
+      "decisionType": "conditional_choice",
+      "choiceCount": 3
+    },
+    "trace": {
+      "actorPlayerId": "player-white",
+      "pendingOwnerPlayerId": null,
+      "effectOwnerPlayerId": null,
+      "currentPlayerId": "player-white",
+      "source": "current_player",
+      "decisionType": "turn_action",
+      "choiceCount": 0
+    }
+  },
+  "exactActualInput287Observation": true,
+  "offeredIntervention": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:aef646a1",
+    "actorId": "player-white",
+    "stateVersion": 119,
+    "decisionVersion": 1,
+    "target": {
+      "kind": "residual-domain",
+      "choiceId": "chong:blind",
+      "source": "blind"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "盲抽虫牌"
+  },
+  "gainedCards": [
+    {
+      "id": "alien-chong-6-16",
+      "cardId": "chong_6.webp"
+    }
+  ],
+  "beforePath": "reports/ai-foundation-20261119/teacher-r4-before-input287-20261119-v1.json.gz",
+  "afterPath": "reports/ai-foundation-20261119/teacher-r4-blind-after287-20261119-v1.json.gz",
+  "savePath": "seti-saves/seti-save-teacher-r4-blind-after287-20261119-v1.json",
+  "saveSha256": "a51b0b3f3414caf222b5eef5eb50be36bb159d1f94936dc491e87b5031ffb407",
+  "afterNativeSha256": "b19fe5c1c3276cbb6188bc322dd6da151d98c3d9271729656329daccf0261016"
+}
