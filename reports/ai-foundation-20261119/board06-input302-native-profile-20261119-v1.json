@@ -1,0 +1,2671 @@
+{
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "rootCheckpointSha256": "82d46a1b0761f90bfa631df2faa8435e80379cc04a418e81c0a08c31ef466d8a",
+  "newAutonomousGames": 0,
+  "newCommittedGameInputs": 0,
+  "phase": "complete",
+  "diagnosticOnly": true,
+  "limits": {
+    "nativeInputs": 320,
+    "graphNodes": 1024,
+    "milliseconds": 1500,
+    "observedFrontierMustNotExceed": 128
+  },
+  "profileTimingsAreNotProductionGateEvidence": true,
+  "rows": [
+    {
+      "family": "launch",
+      "actionId": "launch:c94cda79",
+      "key": "4ed50d23c49213bf8da38eb7226b254cec6340938fec5a0a56e998123c65a521",
+      "bytes": 42608,
+      "input": 1,
+      "milliseconds": 1.8942499999999995
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:d0ac03c2",
+      "key": "62e44fbf1add1a4fd2a61fd926c783a6bf177d9d893a3a02ded7082fa1aea44a",
+      "bytes": 42671,
+      "input": 2,
+      "milliseconds": 1.5318340000000035
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:8a6976ad",
+      "key": "dc21f975fbd67f4cdf28c04da4a7f6d4f5c443924eba8def96832fa0b623ff20",
+      "bytes": 42678,
+      "input": 3,
+      "milliseconds": 0.5399170000000026
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:eea1e173",
+      "key": "bf6fbb0c134a63ab95d1eb0d8b5464f137433446ba8bd9c9c8c7d93a75bd8e01",
+      "bytes": 42671,
+      "input": 4,
+      "milliseconds": 0.49712500000001114
+    },
+    {
+      "family": "pass",
+      "actionId": "pass:a1f33c73",
+      "key": "f4d09afef6d17177224d880d3ddd91fd772a1f660e074aa1d24cf1f3b24fe664",
+      "bytes": 42617,
+      "input": 5,
+      "milliseconds": 1.3431659999999965
+    },
+    {
+      "family": "quick_trade",
+      "actionId": "quick_trade:122c43fc",
+      "key": "122f72442b81f0096656f876cb3bc48570fe2481a236b3e76782007a5b79ea52",
+      "bytes": 42679,
+      "input": 6,
+      "milliseconds": 0.8937080000000037
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:4b4ab628",
+      "key": "4390ac3d01cb3f8de8f376d166c301f8417b02dd84284aed71a641bb9b28f490",
+      "bytes": 121517,
+      "input": 7,
+      "milliseconds": 0.7658750000000225
+    },
+    {
+      "family": "industry",
+      "actionId": "industry:e887dc52",
+      "key": "b88dc78f2c3b89ee269889e07577065942e22a7ba8aa3329039a706f27166c6e",
+      "bytes": 42661,
+      "input": 8,
+      "milliseconds": 0.6903340000000071
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:406ad170",
+      "key": "b8c847f7b389321b36cbe2351f1c29714e980162635011d21652587cd8abcfd2",
+      "bytes": 120099,
+      "input": 9,
+      "milliseconds": 0.3003750000000025
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:f8ac54c2",
+      "key": "49f85fb150cec8f4967871c65b70272c3908fc6d264462c7b2f3e908df16813f",
+      "bytes": 121491,
+      "input": 10,
+      "milliseconds": 0.4583329999999819
+    },
+    {
+      "family": "place_data",
+      "actionId": "place_data:8fd12fd3",
+      "key": "024f9c0b122d5215f3fdb2a366f743aa3751c2da7bff457edda5ba0d77f12b39",
+      "bytes": 42629,
+      "input": 11,
+      "milliseconds": 0.34287499999999227
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:e300139a",
+      "key": "8c6aeaad8ae5246435a05a1b67c6dbaa99b4208292e2a44d84422f1b5532f556",
+      "bytes": 42671,
+      "input": 12,
+      "milliseconds": 0.49716699999999037
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "dd46a0cf58ca011ab01f53f687af43414cec8ab2726fb17008cb45f707e5465e",
+      "bytes": 42617,
+      "input": 13,
+      "milliseconds": 1.1219589999999755
+    },
+    {
+      "family": "move",
+      "actionId": "move:e0158279",
+      "key": "21f04303afb4daa2909ccb51c334951f5cdac9fedbc4cbf6d8a24e61ece3265d",
+      "bytes": 42678,
+      "input": 14,
+      "milliseconds": 0.2675000000000125
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "2e0092cb827acaec454516a52acceee4f9b2b7211bbaf81fa6bb063917ee6769",
+      "bytes": 42601,
+      "input": 15,
+      "milliseconds": 0.4099170000000072
+    },
+    {
+      "family": "orbit",
+      "actionId": "orbit:44937d1f",
+      "key": "0e9b22f5b14dfd38c8ea20c943f0aa99aa2b5fdf05dd306a762c49873bb36453",
+      "bytes": 42635,
+      "input": 16,
+      "milliseconds": 0.48587499999999295
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:d07d4493",
+      "key": "cbc38b4fdf13b82b36082bb474dca8e1ddf7a2961a68364c345b83a3662cfc59",
+      "bytes": 120815,
+      "input": 17,
+      "milliseconds": 0.3945420000000013
+    },
+    {
+      "family": "scan",
+      "actionId": "scan:2d21a323",
+      "key": "c72579ca8fb818ca4f74d01178b83174195565b7a679e64c0211a3e6a98e715c",
+      "bytes": 42626,
+      "input": 18,
+      "milliseconds": 0.566332999999986
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "c2c544d242462be76e9fb16b08fd773617ad37a1a7936799f091380012ce40c0",
+      "bytes": 126310,
+      "input": 19,
+      "milliseconds": 0.884208000000001
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "1e6acf31b4ce9df2b6821b417376547991956ceda00c96c4f7023c4361315607",
+      "bytes": 124057,
+      "input": 20,
+      "milliseconds": 0.5389589999999771
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "d4bdb7a3119d107dfe687de6144ce3ccbaf94412bc8d0e7290428bdd2bc6940c",
+      "bytes": 126310,
+      "input": 21,
+      "milliseconds": 0.5624579999999924
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "c1aa8bb3eef74ef2b03be2aab63097edd27003a1c53965b63a4c7fcbdcf6377b",
+      "bytes": 124057,
+      "input": 22,
+      "milliseconds": 0.45699999999999363
+    },
+    {
+      "family": "launch",
+      "actionId": "launch:c94cda79",
+      "key": "0a6d3fea4e49f671e96fb66ae7cf6d4a4ff9d6388c02fd0a13d74b699cd54f18",
+      "bytes": 42624,
+      "input": 23,
+      "milliseconds": 0.4751250000000198
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:d0ac03c2",
+      "key": "45bbdd0b241cde52d3c1ba0d798bebe6f60c6bc198d022e7212786f76fd95e07",
+      "bytes": 42687,
+      "input": 24,
+      "milliseconds": 0.3622079999999812
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:8a6976ad",
+      "key": "07e42316b448b1243a9adbe91f0c6305e2d889a30c994ba4a9bb96da2ea0efba",
+      "bytes": 42694,
+      "input": 25,
+      "milliseconds": 0.29529199999998923
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:eea1e173",
+      "key": "fbbb316437b9acfe1aa55fb9db43691ec4f5411b7a721c401fb394821402ca39",
+      "bytes": 42687,
+      "input": 26,
+      "milliseconds": 0.291041000000007
+    },
+    {
+      "family": "pass",
+      "actionId": "pass:a1f33c73",
+      "key": "ffdcc0e68373faecfd84736397d273840a26c951a82ab83f88e375f611289e9c",
+      "bytes": 42633,
+      "input": 27,
+      "milliseconds": 0.585000000000008
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:e300139a",
+      "key": "12b5b771caedbf56791400d0689cb39cdf04103946dd16ec82f1878e3d0f4c87",
+      "bytes": 42687,
+      "input": 28,
+      "milliseconds": 0.26783399999999347
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "9775ac97c7af374d5d0a2454d8c8ec83bf23dff3108dbebafeb2919697239b3d",
+      "bytes": 42633,
+      "input": 29,
+      "milliseconds": 0.40712500000000773
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "bbd4138762816bfd98570871b6ca76d6cef21fcd7c7b47ad37d11d28bb040269",
+      "bytes": 42633,
+      "input": 30,
+      "milliseconds": 0.3935830000000067
+    },
+    {
+      "family": "orbit",
+      "actionId": "orbit:44937d1f",
+      "key": "2cf8f2dd6b2eceefcd0ac5df1c16dc9a45ea9923fe2508d06b0330924f3cec94",
+      "bytes": 42651,
+      "input": 31,
+      "milliseconds": 0.3209579999999903
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:d07d4493",
+      "key": "677944a37fd7bd2d87a578a2cc6bb2171b9e996b0ecfc34470d0315138de868a",
+      "bytes": 120887,
+      "input": 32,
+      "milliseconds": 0.2184169999999881
+    },
+    {
+      "family": "scan",
+      "actionId": "scan:2d21a323",
+      "key": "629251b0d23ff2cd6f47086c7255c148251d29ace0317200db5f1165c9483233",
+      "bytes": 42642,
+      "input": 33,
+      "milliseconds": 0.19329199999998536
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "53958550594ad50b24bfa7c3d452a6c44dd28272d9ce1452d7c0fbef229abeb9",
+      "bytes": 126381,
+      "input": 34,
+      "milliseconds": 0.49049999999999727
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "34afd1e88df8760a27529ef1bd4239fb7bc62752b135edc4e319b17652a3fc08",
+      "bytes": 124128,
+      "input": 35,
+      "milliseconds": 0.3757500000000107
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "5b1eba87222fab9225fb0c13714efd57962e49dd1abdf60cad7ba6039ae7e294",
+      "bytes": 126381,
+      "input": 36,
+      "milliseconds": 0.4127909999999986
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "57e5abbac9f4ad858ec4e61702a97b119e4bf5e6eeafa1a18161ac192f0fa330",
+      "bytes": 124128,
+      "input": 37,
+      "milliseconds": 0.9571669999999983
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "63563eaf2dc5d4dcf275be95a6d0f5fbcdd9ccccb999ffab1612ea0c2af0766b",
+      "bytes": 43413,
+      "input": 38,
+      "milliseconds": 0.4999170000000106
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "9b2c58ae2638f841b8928e054852316331202abf0024732013382684f142d095",
+      "bytes": 124276,
+      "input": 39,
+      "milliseconds": 0.44950000000000045
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "8ece97223444186cd0cd4839125ba5fae0ddccfcb77c623b02f887964cbd7a3b",
+      "bytes": 43413,
+      "input": 40,
+      "milliseconds": 0.26124999999998977
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "1d4304f379ab529e1126ae8455653482c29b7ea4940c7c717e1f4c139317b81f",
+      "bytes": 124276,
+      "input": 41,
+      "milliseconds": 0.34233299999999645
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:e18a151e",
+      "key": "6f931c8c2f98413410b7892960a58780ae642cdd2c7338827bc448a14b1d4281",
+      "bytes": 122724,
+      "input": 42,
+      "milliseconds": 0.27225000000001387
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b27d2a0c",
+      "key": "8c996271b22f59ac836fa09cad146408e9b70a12ae069dacf87adaf2ac02afec",
+      "bytes": 123513,
+      "input": 43,
+      "milliseconds": 0.4257920000000013
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "0d67ac37fdcf6628a622a10e1c5603604e8fe72eb7d31b6e76b788d4d8f8ab0d",
+      "bytes": 120260,
+      "input": 44,
+      "milliseconds": 0.6360000000000241
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "cef56465dc531b6111da1be2937889814df6b9371e003edfc6cc0349951abb1d",
+      "bytes": 120260,
+      "input": 45,
+      "milliseconds": 0.18483399999996664
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "0e8bdd773b7f92a5ab2259d06a7e10944c924e34b911de43c31dd58302e21901",
+      "bytes": 120260,
+      "input": 46,
+      "milliseconds": 0.09350000000000591
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "27f52372f8f884408f8bae56a4c0a73f9fbb22fb7c7d9fc873bb9317e4772886",
+      "bytes": 120260,
+      "input": 47,
+      "milliseconds": 0.3408749999999827
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "df47532ee72da0c2ff634cf04cbef2044dc5a24f6aaafe0eba9ae63564f84fc9",
+      "bytes": 42610,
+      "input": 48,
+      "milliseconds": 0.21999999999997044
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "784f2912ed7b9bbb8c62e288ae8adf39b542272c545c7043de0319c3fccb1ce7",
+      "bytes": 122099,
+      "input": 49,
+      "milliseconds": 0.4172500000000241
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:73e00671",
+      "key": "1c5a51a912852cab93fd22d71f2eb952f0379f2088065c1205db124ad46a544f",
+      "bytes": 42685,
+      "input": 50,
+      "milliseconds": 0.7612920000000258
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:a5fcf23e",
+      "key": "2fb82038cd53f5ad488193712f162bb9fec83693ac5ed3377e7ee7cd4ebf02cc",
+      "bytes": 42685,
+      "input": 51,
+      "milliseconds": 0.453125
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:3711d7c3",
+      "key": "0a8ed9803b93bed337398ca1df277ebf582fcec0b1a6da07407922c2991f306c",
+      "bytes": 42685,
+      "input": 52,
+      "milliseconds": 0.5557080000000383
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "264e68889b54996212ec0ec454e1e833997728fb269a534b7c1626eb4e419f2d",
+      "bytes": 42642,
+      "input": 53,
+      "milliseconds": 0.1885840000000485
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "3cb091f27257f8267c063c1995ec38df7a56f787d52ad6bbfd61fb6b12c9d5ac",
+      "bytes": 122191,
+      "input": 54,
+      "milliseconds": 0.308749999999975
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "f46a525b3f28ca18fa202a9cd4707ad4eaead8f9b35bf34e135cb5e66136752d",
+      "bytes": 42803,
+      "input": 55,
+      "milliseconds": 0.16033300000003692
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "c08e7da9dac9dd37bc5a7514163525abc0f4294f208ac65a95104b979c4f6867",
+      "bytes": 122626,
+      "input": 56,
+      "milliseconds": 0.3528749999999832
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "321df821f27df7cbf3d48a89b0b1b856c099ec7b444dd33c9e99014300194b36",
+      "bytes": 42747,
+      "input": 57,
+      "milliseconds": 0.16304200000001856
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "63f72a2333b04ee8048616994fb287a5f0238acf24da9a7bd911378f8c4726f6",
+      "bytes": 122474,
+      "input": 58,
+      "milliseconds": 0.29308299999996734
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "c4fe4c6537e3f1388767448f8ac5ca03501294950a99fa56cf5df899c2f52e22",
+      "bytes": 121631,
+      "input": 59,
+      "milliseconds": 0.39695800000004056
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "73416a637fe93f28caf6e24a5cf53c8a17008afc50fea73e4be87eb5745f9939",
+      "bytes": 121611,
+      "input": 60,
+      "milliseconds": 0.38483300000001464
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "01705f4fc81bb30dd1d739f4cf798ff920c33c3a8a423cd9eb548654aa2aac72",
+      "bytes": 121613,
+      "input": 61,
+      "milliseconds": 0.27104200000002265
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "999aff53b1f8f8d276c70a588ff1091fca51b11699d34362500b60d50650ea75",
+      "bytes": 42719,
+      "input": 62,
+      "milliseconds": 0.17008399999997437
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "61af922928d679cc68f5a027506ac3d4c5db7191808311beba1bb92fa27eeabd",
+      "bytes": 122398,
+      "input": 63,
+      "milliseconds": 0.3558750000000259
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "9d5116433a875aa8402b3eec904ab31c3b38a54b18dfe7cf746e71316c62df71",
+      "bytes": 121631,
+      "input": 64,
+      "milliseconds": 0.26258300000000645
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "eca0a528bdfacc861b1705e4af0aa37f447645c5380b1e009f7f16689259789c",
+      "bytes": 121611,
+      "input": 65,
+      "milliseconds": 0.24133299999999736
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "6b82c414a05393148edc125a2852c6dffd4e50a197aa154d3e230e8c03d1bd84",
+      "bytes": 121613,
+      "input": 66,
+      "milliseconds": 0.22287500000004457
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "f080c7a3876fdeff37a85c228c9f135ddaa0be914e71d6d6901a59ec4c90df51",
+      "bytes": 42719,
+      "input": 67,
+      "milliseconds": 0.15570900000000165
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "606a16428875189c68552e6925b40611e5574e6b2463acd97ed08c2fb2ca10a9",
+      "bytes": 122398,
+      "input": 68,
+      "milliseconds": 0.27874999999994543
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "56c44e41ec2ab68566c9bb78c3e2c2cab4fb21874f6724741a94fbeca15d165b",
+      "bytes": 42620,
+      "input": 69,
+      "milliseconds": 0.15387500000002774
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "e9b265a6e1cb1da9f24ccfaaea5fdd0f8dfbc93ca0c614c787acffcc0baa3699",
+      "bytes": 122129,
+      "input": 70,
+      "milliseconds": 0.28591699999998355
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "09d14a78add087665e35c2af6c4ac5f9ac15911ebdc3f146dbf444018b70b4bd",
+      "bytes": 120104,
+      "input": 71,
+      "milliseconds": 0.27770900000001575
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "b109563be4cc82eaea297f952aa40778c60d67708bc6a084f66edab3fc4c3ae9",
+      "bytes": 120104,
+      "input": 72,
+      "milliseconds": 0.13179100000002109
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "b196bae668666ee798c06695c8ec67380a7b77c32dad5a40fb609f90840e3b0c",
+      "bytes": 120104,
+      "input": 73,
+      "milliseconds": 0.08729199999999082
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "f374a8cac407adabda0ebe0f842fdefdb79ee44264d01ec1f6ab032a1a29e0e3",
+      "bytes": 120104,
+      "input": 74,
+      "milliseconds": 0.8500839999999812
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "bb81241f92d6deb65ff0f08287552471f200cf4f9cadee2da2d17e63196c88ca",
+      "bytes": 42554,
+      "input": 75,
+      "milliseconds": 0.19570899999996527
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "788b1e2cdc5f0b34be18b1d6d64a876b794e9c4c37165db67fb83ebc6b183e08",
+      "bytes": 121947,
+      "input": 76,
+      "milliseconds": 0.34808299999997416
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:73e00671",
+      "key": "057ce6b9a7223a67d282a8041c62c093f9fa9ab45719eaffa5dcf92cebd3d812",
+      "bytes": 42629,
+      "input": 77,
+      "milliseconds": 0.425625000000025
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:a5fcf23e",
+      "key": "fdb693972d21fff97b52b1f6aed0f89709f4faffe7ee940a7ce5236178811198",
+      "bytes": 42629,
+      "input": 78,
+      "milliseconds": 0.3330829999999878
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:3711d7c3",
+      "key": "364a7e2b5d341176cf4aab03f086b9e8ef50df177ef8777d6193712f8fe0a057",
+      "bytes": 42629,
+      "input": 79,
+      "milliseconds": 0.3220839999999612
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "89f8dd5428fe310f3cbf89619313571ef69ea41b6a8e20a9810e0b6ec3ac17e4",
+      "bytes": 42586,
+      "input": 80,
+      "milliseconds": 0.14812499999999318
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "0889be6314518d66d1eb2f3b83bc02545b4e7cc0d777c694f1ef872ee50105d4",
+      "bytes": 122039,
+      "input": 81,
+      "milliseconds": 0.303291999999999
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "4e01b4906a321d8da23ab9abb23144b5509b467184619b5113f71b59a3564b6f",
+      "bytes": 42747,
+      "input": 82,
+      "milliseconds": 0.15441700000002356
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "da7213b87d1d809e41c4ea10b61c1a7cd9d6f15abaa73bea5a92a96cc55aeb98",
+      "bytes": 122474,
+      "input": 83,
+      "milliseconds": 0.29808300000001964
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "0db51268f1c887fb22c496fe227117d1b7cde011358a40940a360298f457b517",
+      "bytes": 42691,
+      "input": 84,
+      "milliseconds": 0.15566599999999653
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "befd9e0014a0aa17ca97f506001bc2a536fb76fa28efaa0c23ca76d64d3e16f0",
+      "bytes": 122322,
+      "input": 85,
+      "milliseconds": 0.26175000000000637
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "ea71e3f3ab8909e6f23cd571f4fc8a63559e19d3d01c5894d66457756db147bd",
+      "bytes": 121475,
+      "input": 86,
+      "milliseconds": 0.800166000000047
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "037de0bf76527e4ee2a801a4464d751ebf6cec080b0a8af166d61265abe24a6b",
+      "bytes": 121455,
+      "input": 87,
+      "milliseconds": 0.27600000000001046
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "3647d838a3c13b67b69f151cec999c8ead6c5134bb9f28eb7761c44db5575326",
+      "bytes": 121457,
+      "input": 88,
+      "milliseconds": 0.23212499999999636
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "db511f7421df1a911247c77ca24190ab51a80d1cf34a36a5dfe45320e0f2ad50",
+      "bytes": 42663,
+      "input": 89,
+      "milliseconds": 0.17149999999998045
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "04444d66898dbd9bcb63c6d7036275912d151b5e68f0b7e05d69d38943022db1",
+      "bytes": 122246,
+      "input": 90,
+      "milliseconds": 0.289874999999995
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "99c99f65cc290411080a2121a0e6f7e0236ce7a946e4962edd48e12c6ecb4133",
+      "bytes": 121475,
+      "input": 91,
+      "milliseconds": 0.25404200000002675
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "44ea2713aaf07101b716912241e29f453bb508e6faf725ec1d606c58879f7643",
+      "bytes": 121455,
+      "input": 92,
+      "milliseconds": 0.23625000000004093
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "f70364965b87c29bd0aa94fdafcfea75e2d33c5bea296c864d294858781eef25",
+      "bytes": 121457,
+      "input": 93,
+      "milliseconds": 0.21591699999999037
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "1b0b87c293c7ff9b7f2f11b5b5737cf387bfeb4641558242814d50debf4c73a7",
+      "bytes": 42663,
+      "input": 94,
+      "milliseconds": 0.15500000000002956
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "b9a3de737db166019719c30805e9399fe2ae771803931409d40353247de56c80",
+      "bytes": 122246,
+      "input": 95,
+      "milliseconds": 0.27112499999998363
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "7dc74f4b5d605c366ff37661e8441d720d1e0b503bc4115cc4a94e2c80b29ba4",
+      "bytes": 42564,
+      "input": 96,
+      "milliseconds": 0.14991599999996197
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "ce968ce1b88e88aa37fcb64e2af2c4c2b136fe1f67031aaccbbe73a5cdd825e8",
+      "bytes": 121977,
+      "input": 97,
+      "milliseconds": 0.26662499999997635
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "b34002092a4a1bc16f3393cd0ae1615c1b31c6ce0dbc2da44a935943f02c9249",
+      "bytes": 121403,
+      "input": 98,
+      "milliseconds": 0.16208299999999554
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "5b1569700360dc6bc0258891da001113b4fee878ec4eca248f6660e6e647a7b6",
+      "bytes": 122127,
+      "input": 99,
+      "milliseconds": 0.3491660000000252
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:40f7418f",
+      "key": "455e54be69c9fe872dbc5e4b4ad5bb9c29d310f048170c2b12f4deb2b1fe447c",
+      "bytes": 120929,
+      "input": 100,
+      "milliseconds": 0.422458000000006
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:2dce4bc7",
+      "key": "c17dc3fdc5ea03e7c2ca9df9ee91bd0ceb8fb5b273025ee6d56cf863a5509829",
+      "bytes": 121502,
+      "input": 101,
+      "milliseconds": 0.9080000000000155
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:fc15cd27",
+      "key": "c7a4e1ea2446a4aebe07963f530c45da8581813a570e9ba12360ce699cdf22da",
+      "bytes": 124263,
+      "input": 102,
+      "milliseconds": 0.5429169999999885
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "7ea868618328504412784c1fcb8264101e4d80cecf1109c905657af01d0b4ed2",
+      "bytes": 124276,
+      "input": 103,
+      "milliseconds": 0.9347920000000158
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "4a51bf9f334088b0db90c30c46c651d6da018e3b91005c47e5a00cbbc5dd9e5d",
+      "bytes": 124276,
+      "input": 104,
+      "milliseconds": 0.11574999999999136
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "12c447f2729e01954b89b0ba00ec16779576a7efe2722a67fc6a201409434ec1",
+      "bytes": 124276,
+      "input": 105,
+      "milliseconds": 0.08783300000004601
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "8f998452d16652340f7801841f552fcc061a6818fa4782098c40a1fa54de39fa",
+      "bytes": 124276,
+      "input": 106,
+      "milliseconds": 0.3128749999999627
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:ecee356a",
+      "key": "ab17ffd48545de24ad8e0e08800d3d8ab3c907daf8a078091f9ab1acb0ff9d27",
+      "bytes": 124233,
+      "input": 107,
+      "milliseconds": 0.2998749999999859
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "292964274c07c463c07dc7b5927f5bfb2352fd18575c5266a2732c93ac344e75",
+      "bytes": 42766,
+      "input": 108,
+      "milliseconds": 0.1818749999999909
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "cf0e158f34ed4b4bf5b86caded6249169d154e6ecfa306f699af39660f307115",
+      "bytes": 122523,
+      "input": 109,
+      "milliseconds": 0.2874580000000151
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:73e00671",
+      "key": "2d960e45dc6e2d74a83e045d0f1e87fe7c7bceb9a848250dcc8190915c903df0",
+      "bytes": 42841,
+      "input": 110,
+      "milliseconds": 0.40108299999997143
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:a5fcf23e",
+      "key": "2275adbf03b8c4757f2091942fa4f174eb7972cf78c89a3efad6df582f13f6aa",
+      "bytes": 42841,
+      "input": 111,
+      "milliseconds": 0.3129999999999882
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:3711d7c3",
+      "key": "7fdf46e82b2bbcde9d0132feb86f675b8b13eaac23c1ed6a2e359b6b9904512a",
+      "bytes": 42841,
+      "input": 112,
+      "milliseconds": 0.3573339999999803
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "652d602e02b616fd0872d6dc0ed474f90a23b1d061cbd62df90b631a0f9252c0",
+      "bytes": 42798,
+      "input": 113,
+      "milliseconds": 0.1459169999999972
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "5162d4ddda0521baf20578ee3ccd950c6e04de8bf4eed058d24115fbdf2719df",
+      "bytes": 122615,
+      "input": 114,
+      "milliseconds": 0.26762500000000955
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "b668abfbbca1cf9121d72e284345232e1787c6da989028367ef73e1860ae98dc",
+      "bytes": 42959,
+      "input": 115,
+      "milliseconds": 0.15345800000000054
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "40d24b6df421bbf8ae45e625226fddf5840b9dd0d6b8a0922b77c667a07053f5",
+      "bytes": 123050,
+      "input": 116,
+      "milliseconds": 0.26399999999995316
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "4cbc3b57d18172baf0e33979bfda700741a6dd29b8c724dc3a901ee4ed27b8ef",
+      "bytes": 42903,
+      "input": 117,
+      "milliseconds": 0.1466670000000363
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "fa2b087c566fab343c8d1aad4bd31e1d26e1b6412f3041dc583fe5c0f0c37d25",
+      "bytes": 122898,
+      "input": 118,
+      "milliseconds": 0.3394999999999868
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "0c2ef21278d8aff44cf60153dbe33545bdad8ac4e0e4d93134d5ce393542afbb",
+      "bytes": 125648,
+      "input": 119,
+      "milliseconds": 0.3084580000000301
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "532af0a8ef450c27d0ecfeeca8742cbf3243c6520790642f00b1a2d04e1be680",
+      "bytes": 125628,
+      "input": 120,
+      "milliseconds": 0.27737500000000637
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "4aca0b7f8b8c44d2f6692ab1aa60f5dc20a289a4683f2e8f13f196282d2b1ac3",
+      "bytes": 125630,
+      "input": 121,
+      "milliseconds": 0.2523750000000291
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "6fdf8237aeb4b5c80de6f770c814463acae601607695a654946129208aae4816",
+      "bytes": 42875,
+      "input": 122,
+      "milliseconds": 0.16225000000002865
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "829482d404e632ba41b2db572c533c1914d8ab494fd3763a70ec4cc5cf53d466",
+      "bytes": 122822,
+      "input": 123,
+      "milliseconds": 0.39291699999995444
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "85295cde39b8203e3bb97b3ea1a3b504235140636eca4a98b3a4de7393dbe543",
+      "bytes": 125648,
+      "input": 124,
+      "milliseconds": 0.3823330000000169
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "58afbbc8fd5e23f30b7883a0c661bb1ad473c28bde156bafa4f1a742f85df19b",
+      "bytes": 125628,
+      "input": 125,
+      "milliseconds": 3.4890829999999937
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "ab008aff8d6784ef25898bd05125ac80bb534cc918398d1eab07dd9cb32eb891",
+      "bytes": 125630,
+      "input": 126,
+      "milliseconds": 0.32870900000000347
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "07c507a4bb1bd7b455c9cc3a0e841933e0aa00f8a82bae0822fc58d6a3613280",
+      "bytes": 42875,
+      "input": 127,
+      "milliseconds": 0.185416000000032
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "37af48a96dd4964b107b0cc979edc4155630d87c233d43f17c17b791b0641319",
+      "bytes": 122822,
+      "input": 128,
+      "milliseconds": 0.28570799999999963
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "30d422dae8de97295917841c8e9c850a0ec7d25da46a4a3acb94da06be570f55",
+      "bytes": 42776,
+      "input": 129,
+      "milliseconds": 0.155666999999994
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "95f4d67def216c3e16cbcb5c25d835d9b877c10d2aa0e0f54a11ffc2fdd901a4",
+      "bytes": 122553,
+      "input": 130,
+      "milliseconds": 0.27558299999998326
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:e18a151e",
+      "key": "5b6544d7433c9a6cb9662abe6b63986facc8dbec679da99997b63118c1a464b7",
+      "bytes": 122652,
+      "input": 131,
+      "milliseconds": 0.15916600000002745
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b27d2a0c",
+      "key": "3875e8e696581b8d49845f08fcff1277ddf53dd4f9f0cd56877cb33bcb4d2055",
+      "bytes": 123442,
+      "input": 132,
+      "milliseconds": 0.40504199999998036
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "d4763871169a65506858ef74bc563da9be1d5b4b7b174d5ea6cb08a1a7dfc095",
+      "bytes": 120174,
+      "input": 133,
+      "milliseconds": 0.33237499999995634
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "6a9a42d2f7ba35a82b43390b84dd293ed6be02d8c6538fb46f2fea11c0b4a9d0",
+      "bytes": 120174,
+      "input": 134,
+      "milliseconds": 0.10008299999998371
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "ed0862ad224c12cc0a49e23a1c2920abe5a25c1767d236a77df95e30a72a2429",
+      "bytes": 120174,
+      "input": 135,
+      "milliseconds": 0.08054200000003675
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "042580b67eaf8f7ae935674b44a0251b528ca72fd9fd4302c35d6d474ab4e92c",
+      "bytes": 120174,
+      "input": 136,
+      "milliseconds": 0.27275000000003047
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "d9c882da951e7e2928da228f712918319bab7e3423a8fb01680b203b11eaafd4",
+      "bytes": 121545,
+      "input": 137,
+      "milliseconds": 0.2993329999999901
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "9d22a141ad67f6e9300b11cded2cd0294209a61428763528f65c93dd40a16a48",
+      "bytes": 121525,
+      "input": 138,
+      "milliseconds": 0.2514160000000061
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "2e2eec2c036215582a5b6d239021da7d6e7f4eaf19ef5e6915dc8f0127a8413b",
+      "bytes": 121527,
+      "input": 139,
+      "milliseconds": 0.2517499999999586
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "25371766cf9668797091d6364eb6cdc10562a4c69cb5afb74f19a70d6457287c",
+      "bytes": 121545,
+      "input": 140,
+      "milliseconds": 0.3105419999999981
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "ae4a93ca195ef5f75d575aa75d736ccc34ce91e53249ff6845d6e0ed46c149df",
+      "bytes": 121525,
+      "input": 141,
+      "milliseconds": 0.25637499999999136
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "070401fdbdc36473500a4af18ed9a533ad4e849f7c8ad7ff6f7d7fb6f6950c2e",
+      "bytes": 121527,
+      "input": 142,
+      "milliseconds": 0.238708000000031
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "3049ee26df30b62c0da907eae0a9f77c455d575b995422c047b803543afaf42d",
+      "bytes": 120034,
+      "input": 143,
+      "milliseconds": 0.3315420000000131
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "57071633d29665f713212676064ae7124513488cbc534330ffd3e9d980559eeb",
+      "bytes": 120034,
+      "input": 144,
+      "milliseconds": 0.09141599999998107
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "147c83e1d78f87f1e2119c92208dcb19ea2219fd450ae66ea52ca143e296a723",
+      "bytes": 120034,
+      "input": 145,
+      "milliseconds": 0.0795840000000112
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "7b2570d03db8b718cf3fd731ef428f0b29210a24964492e3a1fb53f8b3e395ee",
+      "bytes": 120034,
+      "input": 146,
+      "milliseconds": 0.3036660000000211
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "0c857b9f8e877bc7d8a53ce2595090e2dc6fd227b5d672fa053cbb59d97bebb1",
+      "bytes": 121405,
+      "input": 147,
+      "milliseconds": 0.2858749999999759
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "dd163ca650e07aa1a86a57f22dee3887922d2070eb18d171fde5967de0309260",
+      "bytes": 121385,
+      "input": 148,
+      "milliseconds": 0.26970899999997755
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "48cb020e0deff65346216c2bf12f47698b52a2944ea043e5cc6eba5ae10a0612",
+      "bytes": 121387,
+      "input": 149,
+      "milliseconds": 0.2938750000000141
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "38265bb4b2acdffb78d0ecaa1edcca8b7ce72413ae4d199d2f16037797f455e1",
+      "bytes": 121405,
+      "input": 150,
+      "milliseconds": 0.28483300000004874
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "42bbc1fe45d75c4667e6d22c5d16ec6c7210c923950f85cead1569d16707c6f5",
+      "bytes": 121385,
+      "input": 151,
+      "milliseconds": 0.24445800000000872
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "d165fcc9abd5ecda7032af29c5505be5449a4cb0df93d03b8e5ff97bfa0b8f09",
+      "bytes": 121387,
+      "input": 152,
+      "milliseconds": 0.22525000000001683
+    },
+    {
+      "family": "launch",
+      "actionId": "launch:c94cda79",
+      "key": "87bc133012f4b98cfba7b9efd168f235e5221766877993e213ba6368ddab1a9d",
+      "bytes": 42821,
+      "input": 153,
+      "milliseconds": 0.49625000000003183
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:8a6976ad",
+      "key": "f38139f5d8dfdb9c689c6fe6bfa8b426737703b6fedad85709f311f0258f132f",
+      "bytes": 42891,
+      "input": 154,
+      "milliseconds": 0.46837499999998045
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:eea1e173",
+      "key": "fcd9d8f2811cd4a38dbad3fc1ca686778f5467859d65ec93db2b8b8c3712e227",
+      "bytes": 42884,
+      "input": 155,
+      "milliseconds": 0.25570799999997007
+    },
+    {
+      "family": "pass",
+      "actionId": "pass:a1f33c73",
+      "key": "793053e9aa6aa5bdf05e2137214bac167f9154baf247643abecf761d4dc07b83",
+      "bytes": 42830,
+      "input": 156,
+      "milliseconds": 0.4014169999999808
+    },
+    {
+      "family": "analyze",
+      "actionId": "analyze:a5629aa3",
+      "key": "81ccfc8eee9fea187ca404e637d77c9143f527cddbee359266794ef4b41f9ed2",
+      "bytes": 42996,
+      "input": 157,
+      "milliseconds": 0.26966700000002675
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:45d68231",
+      "key": "466be9a600a168f0e3472713521e62e2e1b7d65c766271457641b752e00b46ae",
+      "bytes": 42884,
+      "input": 158,
+      "milliseconds": 0.29649999999998045
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:767e5589",
+      "key": "c1b4dd888c6ebd78bf0d87ee5cc4bac9e1fa82c606456fe1115dfbe512799a27",
+      "bytes": 121351,
+      "input": 159,
+      "milliseconds": 0.3276250000000118
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:e300139a",
+      "key": "3a7ad86edc630d42cbbdb511bf822bf22602621a4ff266be4b0e50793abe9044",
+      "bytes": 42884,
+      "input": 160,
+      "milliseconds": 0.20104099999997516
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "593d93afae28e58fadd87823df2ccb35e2b75666ee0a16861c417abb6a5a0ddc",
+      "bytes": 42830,
+      "input": 161,
+      "milliseconds": 0.34345899999999574
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "3a3268dbc981b6e0f4076034b95ee150a4bd0f714b09f725db2d250797934598",
+      "bytes": 42830,
+      "input": 162,
+      "milliseconds": 0.5420409999999833
+    },
+    {
+      "family": "orbit",
+      "actionId": "orbit:44937d1f",
+      "key": "0d0bd95d300583bac5d9d80839abdc3a18e244454b3e8a33267667ed254f8fed",
+      "bytes": 42848,
+      "input": 163,
+      "milliseconds": 0.31120799999996507
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:9a5c9e57",
+      "key": "7e7ffe86b7780a0799bb5cba56444259383af371e8352bdce13280b9ae4fa564",
+      "bytes": 121438,
+      "input": 164,
+      "milliseconds": 0.18804199999999582
+    },
+    {
+      "family": "scan",
+      "actionId": "scan:2d21a323",
+      "key": "afe85925ed4198707d40f70a9c5680f59e031bca319bf13baca5dc00efac02f5",
+      "bytes": 42839,
+      "input": 165,
+      "milliseconds": 0.22624999999999318
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "df7847d538d748e3f0e63de9163fb1c65d128eb8e10404d940aa4fedc5ed2a9c",
+      "bytes": 126297,
+      "input": 166,
+      "milliseconds": 0.5362079999999878
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "1bbd2d952c47d043f06ff0ba4706041b11cc37b7ac89966d788d92a1b6b97d9b",
+      "bytes": 126299,
+      "input": 167,
+      "milliseconds": 0.439042000000029
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "11358ca312449ef6ffd56a235b3ab77ba3ac5f0c6a4c08a956f2e0f5e26e2b3e",
+      "bytes": 126297,
+      "input": 168,
+      "milliseconds": 0.3596249999999941
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "02ee5d4a610a9848a2e2d140985db2d318ac3e6ab0bd8eddb1f0a263f5cbaf4f",
+      "bytes": 124680,
+      "input": 169,
+      "milliseconds": 0.33345900000000483
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "22c5a1f4bd798e9e73a6a1a19fc6e05a5ca674c4d150930af69b07293e32aaa0",
+      "bytes": 126297,
+      "input": 170,
+      "milliseconds": 0.34037499999999454
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "33e4b3527fe0ccd4bf3d601632f3a70a27ec1300a8e4b12942dfdad1c863557a",
+      "bytes": 124680,
+      "input": 171,
+      "milliseconds": 0.318540999999982
+    },
+    {
+      "family": "launch",
+      "actionId": "launch:c94cda79",
+      "key": "8f852715c3e9282f7815f3fa44b59930675483462b1791936fe0af80ad29c840",
+      "bytes": 42853,
+      "input": 172,
+      "milliseconds": 0.3660409999999956
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:8a6976ad",
+      "key": "37b9f96a5ae140af362d9b82380a8dee0d9b803f766385a23b0ee38312c82310",
+      "bytes": 42923,
+      "input": 173,
+      "milliseconds": 0.23529199999995853
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:eea1e173",
+      "key": "5bc417e7c56591c2b1bc4e20c488f5a67caa341f0ed382eae4f941a49e47b1a7",
+      "bytes": 42916,
+      "input": 174,
+      "milliseconds": 0.18491599999998698
+    },
+    {
+      "family": "pass",
+      "actionId": "pass:a1f33c73",
+      "key": "9a5ff9a26df7e88cbebcad909291f196f250568eeab208fc44ea70ac8cab0332",
+      "bytes": 42862,
+      "input": 175,
+      "milliseconds": 0.41287499999998545
+    },
+    {
+      "family": "quick_trade",
+      "actionId": "quick_trade:122c43fc",
+      "key": "5afcede151a00a60688ee5ad6ca75e708adb5b68d179048dd39ab3e2ae965305",
+      "bytes": 42924,
+      "input": 176,
+      "milliseconds": 0.5169999999999959
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:9299d49b",
+      "key": "f12ab56a16e6ffc8a6f35acb0ea57af28d3e5130a5eb0b08b13a664290bfc401",
+      "bytes": 122226,
+      "input": 177,
+      "milliseconds": 0.41183300000000145
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:45d68231",
+      "key": "50dfec1ab906a7218e2c0888c6b5d24118c225759a3ef2874d585e50ed596295",
+      "bytes": 42916,
+      "input": 178,
+      "milliseconds": 0.31416699999999764
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:767e5589",
+      "key": "30004816dc6784664e1627997c74ebaec386a96bb2d3eb897070e1cdbb344575",
+      "bytes": 121439,
+      "input": 179,
+      "milliseconds": 0.3107079999999769
+    },
+    {
+      "family": "play_card",
+      "actionId": "play_card:e300139a",
+      "key": "14b04cd22ce35d6c0922b267fc593314fefe3b27a69ca6de3440631ad883b476",
+      "bytes": 42916,
+      "input": 180,
+      "milliseconds": 0.20924999999999727
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "1dfe12fcaa1b39f4241de46da187846ff92d7959f19f0c3fc635619e4187dd09",
+      "bytes": 42862,
+      "input": 181,
+      "milliseconds": 0.3451249999999959
+    },
+    {
+      "family": "land",
+      "actionId": "land:d5ee03a2",
+      "key": "5d5632e8721515bff5ffca85071964ef6af4631d2ef2cd6ecd9b63309b27b493",
+      "bytes": 42862,
+      "input": 182,
+      "milliseconds": 0.38483300000001464
+    },
+    {
+      "family": "orbit",
+      "actionId": "orbit:44937d1f",
+      "key": "34eaab9cfb915bb17331824ed94574711a9959a969f5609a0832d4f0ad9dd899",
+      "bytes": 42880,
+      "input": 183,
+      "milliseconds": 0.25579199999998536
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:9a5c9e57",
+      "key": "3740bdf162a988178e24ddb975d76aeab941e9e201da1ffcc540c787c81c4ef2",
+      "bytes": 121526,
+      "input": 184,
+      "milliseconds": 0.1510839999999689
+    },
+    {
+      "family": "scan",
+      "actionId": "scan:2d21a323",
+      "key": "375a0ae60f3d24c91429c43508c7fcb8d61bdea609bda4431f9eb13cca6cfc0a",
+      "bytes": 42871,
+      "input": 185,
+      "milliseconds": 0.22870799999998326
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "3acf38b872107d65bb38ba242d5d1b190f37066144ee8f03a636cf1686ff95ba",
+      "bytes": 126384,
+      "input": 186,
+      "milliseconds": 0.405791000000022
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "4b36213c9c53deefabcf31fe9d4418f8649f54468e0330dd7e4589ba98a64062",
+      "bytes": 126386,
+      "input": 187,
+      "milliseconds": 0.37904200000002675
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "284574189c8bb3bf669e0e9c9b721bc5f5727776cb708f6851e9683b41c1c795",
+      "bytes": 126384,
+      "input": 188,
+      "milliseconds": 0.3442919999999958
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "f8dbcc303ee3cf94a149a85cda321ebece31db976c063584e6cae9740a7f4568",
+      "bytes": 124767,
+      "input": 189,
+      "milliseconds": 0.9580830000000446
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "b1b99e2097afb40406601ae7247d98be2966dceccd26951a6a87a1443f1823ec",
+      "bytes": 126384,
+      "input": 190,
+      "milliseconds": 0.4188750000000141
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:1ad3aa1b",
+      "key": "9b3287f75feb018f4baec32632dac62675d6db96f197738634375e2fb5f373af",
+      "bytes": 124767,
+      "input": 191,
+      "milliseconds": 0.3439999999999941
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:0c6b3a23",
+      "key": "c159d505598ccb63ab1643dad28ae56b886036e51a73452259e2c9c17ffe6630",
+      "bytes": 119669,
+      "input": 192,
+      "milliseconds": 0.26729100000000017
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:44d4be98",
+      "key": "894656583adbb2bb497e1291a87c649ace1e839a135738988637087ccd0d0b53",
+      "bytes": 119682,
+      "input": 193,
+      "milliseconds": 0.2529170000000249
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:6ea0847e",
+      "key": "e9efd4e2f5e81c2614a87cfeed7535963894fb45ba02c554117f8496bf709d90",
+      "bytes": 119682,
+      "input": 194,
+      "milliseconds": 0.08929200000000037
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:a50e3f94",
+      "key": "406641c62dc08ee0cc135bbda71b3751b8d0c7d343f6ba1c8f7d0c9262e2aae8",
+      "bytes": 119682,
+      "input": 195,
+      "milliseconds": 0.06791700000002265
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:46f3414a",
+      "key": "484ae6b1f199c85e903680ebd9e76cdaf7e4c567219ed4002a44275f1fc33061",
+      "bytes": 119639,
+      "input": 196,
+      "milliseconds": 0.24895900000001348
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "b7e9b7cadcaacf3f0dcfe695bc1137a5ac32a6a3c1be5e65cee00951e58c60da",
+      "bytes": 121039,
+      "input": 197,
+      "milliseconds": 0.26087499999999864
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "028b436a33acdca23b318f65651f3a0ac9a428067ddeebc9a14232f3d36d3333",
+      "bytes": 121019,
+      "input": 198,
+      "milliseconds": 0.23770899999999529
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "79c405015d81be7e75368387c7afae10fd3d01eb533ff754232a23452f6a9084",
+      "bytes": 121021,
+      "input": 199,
+      "milliseconds": 0.22108300000002146
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "98c183f3fdf95703fe1765763a1f989932b58789d4af2c8219c10b45b30ec379",
+      "bytes": 121039,
+      "input": 200,
+      "milliseconds": 0.2387499999999818
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "9c8932bf54cfbf753d6e93084e2ced09cd343ccf331758cb192f72f1ee7e3b05",
+      "bytes": 121019,
+      "input": 201,
+      "milliseconds": 0.2892079999999737
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "5639a9be5d3bb897da79fd8a4fb296df0a9bbd7870ba1951e11ccb8f5a3fd586",
+      "bytes": 121021,
+      "input": 202,
+      "milliseconds": 0.242416999999989
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:e18a151e",
+      "key": "60affde59f97ae7bc2cb995ec48966219fc95c4dbc731c5b44998d33a64db246",
+      "bytes": 123343,
+      "input": 203,
+      "milliseconds": 0.13187500000003638
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b27d2a0c",
+      "key": "00f2a4d108ba646c3b279ee56c99a626f2d4348e807b6158559da6f13ac00953",
+      "bytes": 124132,
+      "input": 204,
+      "milliseconds": 0.3735830000000533
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "4416fec214faaac7c27ed46f977de2b59192ebc337c989bab6972283efdfbb3f",
+      "bytes": 120899,
+      "input": 205,
+      "milliseconds": 0.28450000000003683
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "98800c9619f18589fb5711e27aa6e908d18afd028a2c36ee83009d17cac4a7a7",
+      "bytes": 120899,
+      "input": 206,
+      "milliseconds": 0.08695899999997891
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "2794c8791dadf9c1e4fa3e9cd3ee98df97b8c8da198324769c7f1b688c6f4364",
+      "bytes": 120899,
+      "input": 207,
+      "milliseconds": 0.07704200000000583
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "dbe131517f181395337779f8bae08d5af81ae50365484af3a2af4c75ba5e57d3",
+      "bytes": 120899,
+      "input": 208,
+      "milliseconds": 0.2657920000000331
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "01ca2afda42661b403ffb2c3940ae2b4d29db1800678097876493c85437f83c4",
+      "bytes": 42839,
+      "input": 209,
+      "milliseconds": 0.171875
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "0831981959a2beaa445c206e5008c7336f218e2ff68d016402b2873575100964",
+      "bytes": 122738,
+      "input": 210,
+      "milliseconds": 1.1955409999999915
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:73e00671",
+      "key": "e9da7b8a49340187c72ba0930c31d8295a186704074426fcac1b43460b29f28e",
+      "bytes": 42914,
+      "input": 211,
+      "milliseconds": 0.48050000000000637
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:a5fcf23e",
+      "key": "e1b200ff08d174eeb0fa57a6f7e7e7012df27e861aff59fd0c71906a7525bbe5",
+      "bytes": 42914,
+      "input": 212,
+      "milliseconds": 0.33695799999998144
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:3711d7c3",
+      "key": "e2970209c0af2fc9f97d371bac87a6f0829c976847ee259b7d15cc8a23aaddb5",
+      "bytes": 42914,
+      "input": 213,
+      "milliseconds": 0.30400000000003047
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "64655aa80d464187f36755f8c213e7eba6dd14e4e43983cd85ab772a0c56fbda",
+      "bytes": 42871,
+      "input": 214,
+      "milliseconds": 0.14979199999999082
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "447cf9569c0f82361731b854c0feef685e00fb744578bc0acbc371ba9c9f16ef",
+      "bytes": 122830,
+      "input": 215,
+      "milliseconds": 0.2646660000000338
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "7ba0060c702224af2e09acdb9d93eb4578fa739039340a779a0f747d2c8b0170",
+      "bytes": 43032,
+      "input": 216,
+      "milliseconds": 0.1502499999999145
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "857941d93d250a8b3c55810cbac143768d731a079db46c8547c83275acf9a72a",
+      "bytes": 123265,
+      "input": 217,
+      "milliseconds": 0.2557090000000244
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "9d2bdf7573aafe97fc2c8839edc449ff8324a25b6c8f4d27e5b825216282eb99",
+      "bytes": 42976,
+      "input": 218,
+      "milliseconds": 0.15345800000000054
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "cf65113e6756f811e484cbd4145dd25d7b1baf343b3291f775e7a9bf0b3c1f6a",
+      "bytes": 123113,
+      "input": 219,
+      "milliseconds": 0.2543340000000853
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "05196d5db8662dbfa2b263de553dc186dad8ecf26d0a63e5d36c15bee928986e",
+      "bytes": 122270,
+      "input": 220,
+      "milliseconds": 0.264583000000016
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "b21bacb2e12708283de3ef0b961188520573f596dbf315ba6663ae4191588e84",
+      "bytes": 122250,
+      "input": 221,
+      "milliseconds": 0.24591699999996308
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "a7bdd7305d262e1b4f40955a0a9e11021654cebcca160d1e85534e532425a107",
+      "bytes": 122252,
+      "input": 222,
+      "milliseconds": 0.23479099999997288
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "a10e2fd1894ddfdf5cf75df9af4e16ef9603dcc8b0bbeec96c54e2b636060d2b",
+      "bytes": 42948,
+      "input": 223,
+      "milliseconds": 0.16562499999997726
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "75006829ff3d2cf486fd8ef61a561a10de26c23fb492de443196b3ded782089b",
+      "bytes": 123037,
+      "input": 224,
+      "milliseconds": 0.28233299999999417
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "0072bf57658fd13341a6354e3d75799ee6f82baa51400c5142d4fe2b10013f33",
+      "bytes": 122270,
+      "input": 225,
+      "milliseconds": 0.24774999999999636
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "6ea9a9a8c6a97cb3a352506ad20e63802fba82afba4c674f7de30d7843b73046",
+      "bytes": 122250,
+      "input": 226,
+      "milliseconds": 0.22449999999992087
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "a8c5e7292fe6f7621c3451cd796699bf45ee1a7422d0db5b5c137c19c9c43a0c",
+      "bytes": 122252,
+      "input": 227,
+      "milliseconds": 0.211791000000062
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "44c01e836ded8318ad14ded090693487247cfa4357343c776f33c8ea42a40d6c",
+      "bytes": 42948,
+      "input": 228,
+      "milliseconds": 0.1537909999999556
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "9864e4c3451cb280710e9cb0fbf8d898a869f5faa1221b40da1e1fe534239ef9",
+      "bytes": 123037,
+      "input": 229,
+      "milliseconds": 0.25162499999999
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "7e503714879959ef9cbad001e5957f924535326ca8fe0c2d645c1248e003021f",
+      "bytes": 42849,
+      "input": 230,
+      "milliseconds": 0.1472079999999778
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "7f225762f3829426eac66e0be4eb7bb4207862e258e9a972efdb4a1acfa391b3",
+      "bytes": 122768,
+      "input": 231,
+      "milliseconds": 0.24845800000002782
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "206bbfb7d5ffa5017b6c734dbabf04055c2743c5407586a97dab90fde87bb2c7",
+      "bytes": 120743,
+      "input": 232,
+      "milliseconds": 0.24620900000002166
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "3d4acb44a53cb57028cda85d008af7ed5f6594f3a2b60a841f01bc614779fbcd",
+      "bytes": 120743,
+      "input": 233,
+      "milliseconds": 0.08170900000004622
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "a99c996d9514a7041506c8e820e6406f12f802e71be50bfb63823729725bc89c",
+      "bytes": 120743,
+      "input": 234,
+      "milliseconds": 0.07195799999999508
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "f2e4f1d93082ec844ef82ede74aac6fe749c9c1ff68c93a645b0b305952c6145",
+      "bytes": 120743,
+      "input": 235,
+      "milliseconds": 0.22183399999994435
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "5987b485443bcbe7183596db8d9f9636418e081ccf4ddd5c116dd0f9101ae99d",
+      "bytes": 42783,
+      "input": 236,
+      "milliseconds": 0.15049999999996544
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "0548b28e749f3d0c107efc2a0bd3949eb2118d2bfd1ce5ff183c5e881633b1ce",
+      "bytes": 122586,
+      "input": 237,
+      "milliseconds": 0.24591700000007677
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:73e00671",
+      "key": "e9f6bf14aaec4d2a33e961a58de13800df44ae33afdeb9dded253cd9389ebaac",
+      "bytes": 42858,
+      "input": 238,
+      "milliseconds": 0.38733300000001236
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:a5fcf23e",
+      "key": "5f553f77f286d1d517df5a0cd62764d8cc818f2cf1070526b0687ea58a0ef2e6",
+      "bytes": 42858,
+      "input": 239,
+      "milliseconds": 0.2959999999999354
+    },
+    {
+      "family": "runezu_face_symbol",
+      "actionId": "runezu_face_symbol:3711d7c3",
+      "key": "364dc3793a734a114343e3633cd3d9faec6d3191b0c4d89b4ac10f7fef6a6c1a",
+      "bytes": 42858,
+      "input": 240,
+      "milliseconds": 0.28141600000003564
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "156651d736bf58100d2e4db7b6b6c5f38c8f252d78dda5564c98b63bae61c8bc",
+      "bytes": 42815,
+      "input": 241,
+      "milliseconds": 0.14066700000000765
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "c6d0c455a1587ac77e3c31cfe6165ab240865ce94cb6cc5d09dd4c4c79c44033",
+      "bytes": 122678,
+      "input": 242,
+      "milliseconds": 0.25204199999996035
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "185c8af6b146f3c52b6bef03b7b19d1d1fb3503432823c5ecd2b74641e33135d",
+      "bytes": 42976,
+      "input": 243,
+      "milliseconds": 0.14508299999999963
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "0e0b42656a82a5bc6e26fb340b18b8a5d140bab3249ee9b74229ec71ed31fea1",
+      "bytes": 123113,
+      "input": 244,
+      "milliseconds": 0.24358300000005784
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "4cbb236bd094498feb4a399f74f897433887907554fb1b0818cbc0bea8459f08",
+      "bytes": 42920,
+      "input": 245,
+      "milliseconds": 0.14370900000005804
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "3a11e42360288f9d42e206bfabf5868a4a9aae05883179d18ddfdaf760d072cb",
+      "bytes": 122961,
+      "input": 246,
+      "milliseconds": 0.2442919999999731
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "4681b4eabc2592b8e1e00c7bf9b49904578465d2b7d8fe9af2f48ab60b189937",
+      "bytes": 122114,
+      "input": 247,
+      "milliseconds": 0.23316699999998036
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "19fd38a186d2bbd46f488ebd7a083836abe8986262a934b04077d928ff0bca16",
+      "bytes": 122094,
+      "input": 248,
+      "milliseconds": 0.2140839999999571
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "d6696030796bb04dacf8452ddce8855efc5778aa57e593efb4f67edcc1a0473e",
+      "bytes": 122096,
+      "input": 249,
+      "milliseconds": 0.20683400000007168
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "7c7f9b247c43e6506e7cbb1ec6e2544c7b760046cc2b0ffe2ba39f9e5e53068a",
+      "bytes": 42892,
+      "input": 250,
+      "milliseconds": 0.14533399999993435
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "0f05c4548aaf7569f8086ea202155e315515d679b8a3f7b595c1daac1365e330",
+      "bytes": 122885,
+      "input": 251,
+      "milliseconds": 0.31954099999995833
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "5b97ffe2f57f32d6ae0f560761f27c527dc52186b3f3fbf7c743865a7b22a41b",
+      "bytes": 122114,
+      "input": 252,
+      "milliseconds": 0.2644999999999982
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "cf4fb12ed0d76e485906267fb91210bbb89d3e6f360c1de39905584271eeb071",
+      "bytes": 122094,
+      "input": 253,
+      "milliseconds": 0.2389579999999114
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "a78f03e53fffef7e37e1137c0702c2b9b00b4bd093b6374c04faa5f513a58ba9",
+      "bytes": 122096,
+      "input": 254,
+      "milliseconds": 0.21833400000002712
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "e43c7f6b51f9303848536c946024b501e01f215a15e8a50aebb0b7d3e4ca1c7f",
+      "bytes": 42892,
+      "input": 255,
+      "milliseconds": 0.15874999999994088
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "879345ae27fc7b76e3d954fb2d9b54d023cfe186859fab0d6ce66075202ca631",
+      "bytes": 122885,
+      "input": 256,
+      "milliseconds": 0.2551659999999174
+    },
+    {
+      "family": "end_turn",
+      "actionId": "end_turn:b2f9b29d",
+      "key": "5e3d8439b5f1b1f44f2ecede5b0e18601c81041b7ea532e23550d19704243164",
+      "bytes": 42793,
+      "input": 257,
+      "milliseconds": 0.14849999999989905
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:91d79691",
+      "key": "5d144f024c7fd7dc78e591d78bdb6df8dca59b9f72747ffa4ecdc75384d1f29f",
+      "bytes": 122616,
+      "input": 258,
+      "milliseconds": 0.24500000000000455
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "893fd66721dfa7ff42467a7ad4bb9f2317b2aa6ae41e657b5012deeacde97bd0",
+      "bytes": 122042,
+      "input": 259,
+      "milliseconds": 0.10679100000004382
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "d42ef9c2dc577352a4f01c05b98c75d9bfb803b2d1655e228ef0a430e29fcbea",
+      "bytes": 122766,
+      "input": 260,
+      "milliseconds": 0.3174580000001015
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:40f7418f",
+      "key": "dabb250fb6577bb465cace9c77a84bda4b40bb422cfebeae4c208bbb5718a648",
+      "bytes": 121568,
+      "input": 261,
+      "milliseconds": 0.44679199999995944
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:e18a151e",
+      "key": "6f01e5a7c7f09ad6789c11ba5d8dbf6fd38a1c0a19283540056ef9d60fdfcbe4",
+      "bytes": 123255,
+      "input": 262,
+      "milliseconds": 0.16275000000007367
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b27d2a0c",
+      "key": "a1b3153caa01f0d2e1f44bb4c62b84ce24135a198fe53cd719e45b6a6eb1443c",
+      "bytes": 124045,
+      "input": 263,
+      "milliseconds": 0.42133400000000165
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "7a2bb4fdc1d7778812a5e470ce2b504bd074e4cdbf1b4190a8b2d02f47a38257",
+      "bytes": 120813,
+      "input": 264,
+      "milliseconds": 0.28929200000004585
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "1cde3f0c6393cd521a6d1a797eb5d496c6b3ce93ae9d48a59a11fc950f7b0620",
+      "bytes": 120813,
+      "input": 265,
+      "milliseconds": 0.09008300000004965
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "007b9a5857284f4df76885d5b46d70c1480f3d0cc6e7e72743adff4e9fb27747",
+      "bytes": 120813,
+      "input": 266,
+      "milliseconds": 0.07345799999995961
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "59ea9d1b308a833e283a87cdfe1b21d359b40e1c47b0e58be3a4512b1d0ec2f4",
+      "bytes": 120813,
+      "input": 267,
+      "milliseconds": 0.24545799999998508
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "96ef436abe016574a33817223cbf2832e1d0bfb56bb30e1e90cebbe91e11b240",
+      "bytes": 122184,
+      "input": 268,
+      "milliseconds": 0.38754199999993943
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "b36f7d71b98bb9398e0642d4a2aa92b201f9ccd6c969fa42e0a826c03ecb7cb6",
+      "bytes": 122164,
+      "input": 269,
+      "milliseconds": 0.24470800000005966
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "b7429e14c96143d6d0cb6f39b47919543a8340167e5d52b55f35ee41ee1feef0",
+      "bytes": 122166,
+      "input": 270,
+      "milliseconds": 0.23308299999996507
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "54e197af496dcc8f57d57d6f792facf6f5623ccedddb8b0ca23fbef14851048e",
+      "bytes": 122184,
+      "input": 271,
+      "milliseconds": 0.31245799999999235
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "11e526e90a94a925f5ac1464275288fdf9209141053575b60a1dd0e82e40a735",
+      "bytes": 122164,
+      "input": 272,
+      "milliseconds": 0.25233300000002146
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "6babb2f1f1dac98574b0b29d1daf47133446511a1af78ab4c00d7e37d419db12",
+      "bytes": 122166,
+      "input": 273,
+      "milliseconds": 0.22008299999993142
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "913fc6370534efb69bf0d97a2f4d32b0bb58ebb0b5798f8ce76696f1cdd1a3df",
+      "bytes": 120657,
+      "input": 274,
+      "milliseconds": 0.2859159999999292
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "be0cbfbc0c28d80a5545bcae7207703aa10a14a1bc886aada286834910c821ed",
+      "bytes": 120657,
+      "input": 275,
+      "milliseconds": 0.08891600000004019
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "c72051bd30ff18afee0832068572b8cc7f60c19b1ba5a70571f5e878c6581f59",
+      "bytes": 120657,
+      "input": 276,
+      "milliseconds": 0.07262500000001637
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "354c99171e32e7a2d3c11ae07d23ebce5e167fe7f70ddcce7806728b0b116de7",
+      "bytes": 120657,
+      "input": 277,
+      "milliseconds": 0.23958300000003874
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "d7b40390438d1f27a9d96ecaf1a7df835c08e9dfb08ee4a17eb33e37b6a99487",
+      "bytes": 122028,
+      "input": 278,
+      "milliseconds": 0.27312500000005
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "5d565ba5d26d550c795ab1242d56dd86dbbec1d8637f462fac41471fe51ce36d",
+      "bytes": 122008,
+      "input": 279,
+      "milliseconds": 0.29824999999993906
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "b1c2eb40267615849119e48361f9d6cfb044ddcf32aea83bea6e4fa8350b196e",
+      "bytes": 122010,
+      "input": 280,
+      "milliseconds": 0.23529200000007222
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "2370624be5d0a3e602815178149affdecff6b0f4c61c8848e57c86cfabd7a1de",
+      "bytes": 122028,
+      "input": 281,
+      "milliseconds": 0.2848749999999427
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "c41ea32533e53ac5a6292354ae3ffdc1ad081293be259c324e01877d713caebc",
+      "bytes": 122008,
+      "input": 282,
+      "milliseconds": 0.24058399999989888
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "6667aed1be8e28a0187eec2f92c4101653c67e996715ef7d3b292b5af47cd0a5",
+      "bytes": 122010,
+      "input": 283,
+      "milliseconds": 0.2189170000000331
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "0fb7d6f3b360b3d0841b2cd02a22fb2ab6ad5e1d0bce233fbb3dd0413284e5b4",
+      "bytes": 121954,
+      "input": 284,
+      "milliseconds": 0.12220800000000054
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "2b8eecee1e935895bc7e8171b884b721fb1509c6a9c86ea83036cc3c82fd99fb",
+      "bytes": 122679,
+      "input": 285,
+      "milliseconds": 0.3230829999999969
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:40f7418f",
+      "key": "12a0a6cf2af0daff03e1f57b0790817b059e103aad716bb4a1889448320f4654",
+      "bytes": 121480,
+      "input": 286,
+      "milliseconds": 0.32949999999993906
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "da96ffc024df71fee0f868ba9cf93070145af4d4af66e2f9016af652eb46a560",
+      "bytes": 121315,
+      "input": 287,
+      "milliseconds": 0.08116600000005292
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:8a5d7b2d",
+      "key": "376c20fa2f10158867cc121c94d2f120be38d69bc1a2d646c21e6ef6f3416ebd",
+      "bytes": 122037,
+      "input": 288,
+      "milliseconds": 0.28704100000004473
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:40f7418f",
+      "key": "05783c4ac8e217b2d0dd5151350b6d9c8a4fac85c94d32417ecc21d08876b273",
+      "bytes": 120844,
+      "input": 289,
+      "milliseconds": 0.3191670000001068
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:2dce4bc7",
+      "key": "92cc3b032131dc678a509e792869b3cab3c23d4add56339adbe8ed7757234b10",
+      "bytes": 121420,
+      "input": 290,
+      "milliseconds": 0.6309159999999565
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:fc15cd27",
+      "key": "53c47374d015760c2d452d298379ec5d5c3b5b860a8f49bccd9b55bd6e8f1c2e",
+      "bytes": 124169,
+      "input": 291,
+      "milliseconds": 0.3175420000000031
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3b0e53fc",
+      "key": "e49db6e3d050fd5a34812f9e5474b806ccd4660781fa651e45a26b76571e9e55",
+      "bytes": 124182,
+      "input": 292,
+      "milliseconds": 0.2870419999999285
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:f79e5b8e",
+      "key": "7b56fcc63468450638e8594f8b7c49d23b1048c8a8f177cce9bd5694c671d08f",
+      "bytes": 124182,
+      "input": 293,
+      "milliseconds": 0.08825000000001637
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:3c812d48",
+      "key": "4adf3eeeae1c71b1cfdbc3cec5ccba96073bfdc0422014187e5bb952becf25cc",
+      "bytes": 124182,
+      "input": 294,
+      "milliseconds": 0.07383299999992232
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:9d0c160e",
+      "key": "afb9607299917fc3d7ba074ccad50fdae0fd0c4ed0681d873116b45187b95372",
+      "bytes": 124182,
+      "input": 295,
+      "milliseconds": 0.26679200000000947
+    },
+    {
+      "family": "choose_target",
+      "actionId": "choose_target:ecee356a",
+      "key": "057f69fb7d086880946cb3a8ce91daf77e6f38f822b3d04159f8edfb32826d9f",
+      "bytes": 124139,
+      "input": 296,
+      "milliseconds": 0.2562080000000151
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "e3c0bcbccbf3912f59adbca95d7ccc9b5d02ea6a9e2fcfc034757666458a5140",
+      "bytes": 125550,
+      "input": 297,
+      "milliseconds": 0.30550000000005184
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "fe152f847cd404ea107691d0a70c3cbfe68265db6e64406f0bb1c316d87079a9",
+      "bytes": 125530,
+      "input": 298,
+      "milliseconds": 0.2635419999999158
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "0be03fbd612fddccf36e866c40c42f8175064015db581c3ae062d2f0e821b98e",
+      "bytes": 125532,
+      "input": 299,
+      "milliseconds": 0.24158299999999144
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:b33d5f9d",
+      "key": "588850f8a293c7b8e52112852978e89228bf178fff74e073e08c8b50dbe03cf1",
+      "bytes": 125550,
+      "input": 300,
+      "milliseconds": 0.25387499999999363
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:7b6ba771",
+      "key": "ef0d2512fe396fda3b474f3b5681f2f939b587adfeef0436966c7a076166ef45",
+      "bytes": 125530,
+      "input": 301,
+      "milliseconds": 0.2428749999999127
+    },
+    {
+      "family": "choose_card",
+      "actionId": "choose_card:2a4543af",
+      "key": "45352df66ed57d9ff05a4fd92d33a38c351a78b30bf3fb348de4aede65a3c2fc",
+      "bytes": 125532,
+      "input": 302,
+      "milliseconds": 0.23195799999996325
+    }
+  ],
+  "diagnosticMilliseconds": 494.000458,
+  "search": {
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 128,
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 132,
+      "valueCacheHits": 264,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 72,
+      "movementDirectionsExcluded": 290,
+      "routeGeometryNodes": 192,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 0,
+      "provedTurnTailInputs": 0,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 302,
+      "logicalResourceInputs": 302,
+      "sharedResourceInputHits": 32,
+      "sharedResourceInternalStates": 173,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 46,
+      "singleAlternativeStates": 137,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 32,
+      "resourceGoalPlans": 113,
+      "resourcePreparationInputs": 302,
+      "resourceFallbacks": 4,
+      "resourceExcludedActions": 1563,
+      "transitions": 578,
+      "nodes": 547,
+      "graphNodes": 315,
+      "certificateNodes": 232,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 48,
+      "selectionMacros": 0,
+      "peakFrontier": 37,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v71\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 491.340375,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    }
+  },
+  "original": {
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 128,
+    "nativeInputs": 302
+  },
+  "sameActionValueAndNativeCount": true,
+  "nativeFamilies": {
+    "launch": 4,
+    "play_card": 16,
+    "pass": 4,
+    "quick_trade": 2,
+    "choose_card": 80,
+    "industry": 1,
+    "place_data": 1,
+    "land": 8,
+    "move": 1,
+    "orbit": 4,
+    "scan": 4,
+    "choose_target": 124,
+    "end_turn": 37,
+    "runezu_face_symbol": 15,
+    "analyze": 1
+  },
+  "exactDuplicateGroups": [],
+  "maximumExactDuplicateSaving": 0,
+  "uniquePhysicalInputs": 302,
+  "rootAndRngUnchanged": true,
+  "portDiagnostics": {
+    "cardPick": {
+      "rankingCacheEntries": 6,
+      "maxRankingCacheEntries": 64,
+      "rankingCacheHits": 16,
+      "rankingCacheMisses": 6,
+      "rankedCards": 18,
+      "companyIntentReuses": 2,
+      "companyIntentRecoveries": 0,
+      "companyIntentGuardRejects": 0,
+      "rankingCacheHitsThisRoot": 16,
+      "rankingCacheMissesThisRoot": 6,
+      "rankedCardsThisRoot": 18,
+      "companyIntentReusesThisRoot": 2,
+      "companyIntentRecoveriesThisRoot": 0,
+      "companyIntentGuardRejectsThisRoot": 0
+    },
+    "goalMovementGeometryNodes": 192,
+    "movementRouteCacheEntries": 6,
+    "maxMovementRouteCacheEntries": 64,
+    "nodeCount": 595,
+    "submissionCount": 302,
+    "provedPinkRefills": 0,
+    "provedPinkFossilMenus": 0,
+    "provedLastPlainPinkInputs": 0,
+    "provedQuietSpecifiedScans": 4,
+    "provedPinkCardMenus": 0,
+    "provedAlienDisplays": 0,
+    "provedAmibaYellowLandingInputs": 0,
+    "provedChongTransportInputs": 0,
+    "provedChongTraceSkips": 0,
+    "provedChongTraceMenus": 0,
+    "provedChongEndMenus": 0,
+    "provedChongQueuedTasks": 0,
+    "provedFinalDataMenuInputs": 51,
+    "provedBlueTwoPickInputs": 0,
+    "provedComputerIncomeMenus": 0,
+    "provedCurrencyIncomeInputs": 0,
+    "provedFinalResourceCorners": 1,
+    "provedActiveFinalTaskInputs": 0,
+    "provedFinalEndTaskInputs": 0,
+    "provedBluePickSettlements": 0,
+    "provedResearchPicks": 4,
+    "provedResearchSelections": 12,
+    "provedEmptyAmibaResearch": 0,
+    "provedQuietEndMenus": 0,
+    "provedQuietEndHandovers": 25,
+    "provedOwnEndHandovers": 0,
+    "provedScan4QuietMoves": 0,
+    "provedScan4QuietLaunchSkips": 0,
+    "scan4RefillHits": 0,
+    "scan4RefillCacheEntries": 0,
+    "provedMoveMenus": 29,
+    "provedMovePayments": 30,
+    "provedPublicScanChoices": 52,
+    "provedFinalDataPlacements": {
+      "blue1:publicity": 50,
+      "computer5": 1,
+      "computer6": 1
+    },
+    "cacheHits": 0,
+    "stableRestoreSkips": 21,
+    "timingPrefixBuilds": 50,
+    "timingPrefixReuses": 80,
+    "movementTimingCacheHits": 71,
+    "movementTimingCacheMisses": 59,
+    "cacheEntries": 256,
+    "observationCount": 132,
+    "observationReleases": 132,
+    "movementTimingCacheEntries": 59,
+    "maxMovementTimingCacheEntries": 256,
+    "normalizedIdentityCacheEntries": 64,
+    "maxNormalizedIdentityCacheEntries": 64,
+    "identityCount": 488,
+    "identityMaterializations": 128,
+    "physicalBucketCount": 427,
+    "identityBucketCollisions": 109,
+    "identitySubtreeCacheHits": 0,
+    "identitySubtreeCacheStores": 0,
+    "identitySliceHits": 97,
+    "identitySliceStores": 687,
+    "maxCacheEntries": 256,
+    "sharedPrefixEdges": 578,
+    "sharedPrefixNodes": 595,
+    "sharedPrefixHits": 32,
+    "decodedStateCacheEntries": 2,
+    "maxDecodedStateCacheEntries": 64,
+    "decodedStateCacheBytes": 149436,
+    "maxDecodedStateCacheBytes": 8388608,
+    "observationCacheHits": 264,
+    "resourceQueryHits": 0,
+    "resourceQueryMisses": 4,
+    "goalCatalogHits": 0,
+    "goalCatalogMisses": 132,
+    "movementBoundQueries": 0,
+    "movementRuleQueries": 0,
+    "movementIntentRecoveries": 0,
+    "completedMovementRecoveries": 0,
+    "committedDecodeCount": 2,
+    "committedDecodeHits": 50,
+    "committedReferenceCount": 302,
+    "committedReferenceHits": 3227,
+    "lazyCommittedEnvelopes": 136,
+    "lazyPreviewSerializations": 15,
+    "selectionEvidenceEntries": 0,
+    "maxSelectionEvidenceEntries": 1,
+    "planEvidenceEntries": 1,
+    "planPrefixEntries": 7,
+    "maxPlanPrefixEntries": 32,
+    "milliseconds": {
+      "restore": 17.84062500000053,
+      "execute": 99.0552189999992,
+      "observation": 28.71037300000006,
+      "checkpoint": 6.877031999999048,
+      "resourceOrder": 0,
+      "valueBound": 0,
+      "postMainPlan": 0.41987400000033404,
+      "preMainDataPlan": 0
+    }
+  }
+}

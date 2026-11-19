@@ -9,7 +9,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe,scan){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v17';
+  const VERSION='seti-purpose-card-pick-policy-v18';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -349,6 +349,16 @@
         const action=actions.find(a=>a.target.source==='display'&&a.target.cardIndex===knownChongDisplayIndex
           &&a.target.choiceId===`chong:display:${knownChongDisplayIndex}`);
         if(action)return fixed(action,{kind:'free-reward',id:'free-known-chong-card'},null,[],actions,'fixed-known-chong-reward');
+      }
+      if(status==='decision'&&head?.type==='residual_alien_card_decision'&&head.ownerId===seatId
+        &&head.payload?.speciesId==='runezu'&&head.payload.source==='trace_reward'
+        &&!head.allowQuickActions&&!session.interruptContext&&state.turn.roundNumber===4
+        &&state.turn.currentPlayerId===seatId&&state.players.players.find(p=>p.id===seatId)?.mainActionCompleted
+        &&actions.length&&actions.every(a=>a.actorId===seatId&&a.family==='choose_card'&&a.target?.kind==='residual-domain'
+          &&/^runezu:(display:\d+|blind|cancel)$/.test(a.target.choiceId))){
+        const action=actions.find(a=>a.target.source==='display'&&Number.isSafeInteger(a.target.cardIndex)
+          &&a.target.choiceId===`runezu:display:${a.target.cardIndex}`);
+        if(action)return fixed(action,{kind:'free-reward',id:'free-visible-runezu-card'},null,[],actions,'fixed-free-runezu-card');
       }
       if(status==='decision'&&head?.type==='residual_alien_card_decision'&&head.payload?.speciesId==='amiba'
         &&actions.length&&actions.every(a=>a.family==='choose_card'&&a.target?.kind==='residual-domain'

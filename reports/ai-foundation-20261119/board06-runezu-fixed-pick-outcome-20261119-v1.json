@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "seti-board06-fixed-free-pick-outcome-v1",
+  "parent": "d6045f30b51b861f034d3b676e4bcafd937e86ec",
+  "sourceCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "changedFiles": {
+    "randomizer/game/ai/card-pick-planning.js": "d87a929f038f530e4c065e5329a02357298af0730201ef4d463ac1be9938dcf3",
+    "randomizer/game/ai/decision-search.js": "012aedb90346d9ecda91b68d23349814b2561361e0c8394dbf0cea34143ca039",
+    "randomizer/game/ai/card-pick-planning.test.js": "38e02a8504721fe7187b86938ba9c4c6ee30a72d74954ee7b280a45b268888a6"
+  },
+  "cause": "Runezu free trace-card menus lacked the fixed acquisition policy:22 states each evaluated display/blind/cancel. Full-envelope/action duplicates were zero.",
+  "classification": "Greedy fixed-policy coverage correction; not a universal equivalence pruning proof.",
+  "originalNativeInputs": 302,
+  "newNativeInputs": 238,
+  "savedNativeInputs": 64,
+  "finalSinglePointMilliseconds": 335.992125,
+  "all27RootValuesUnchanged": true,
+  "chosenActionUnchanged": true,
+  "value": 128,
+  "rootAndRngUnchanged": true,
+  "relatedUnitPassed": true,
+  "uniqueFullFlowPassed": true,
+  "newAutonomousGames": 0,
+  "newCommittedGameInputs": 0,
+  "formalTeachingBoardScoreUnchanged": 272,
+  "original20CompletedMeanUnchanged": 138.6,
+  "original20CompletedCount": 5,
+  "original20RemainingNotRun": 14,
+  "newFullGameOr20BoardGainEstablished": false,
+  "globalRegressionNotClaimed": true,
+  "nextOnlyAction": "Run registered exact-source business validation from the existing board06 failure, retaining original failures and source identity; do not reopen the frozen public-income or v514 routes."
+}

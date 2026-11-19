@@ -1,0 +1,7 @@
+{
+  "cardPick": {
+    "exitCode": 0,
+    "stdout": "{\"purposeCardPick\":\"passed\",\"noUnmotivatedTrades\":true,\"incomeMoveDataAndUnusedPublicity\":true,\"fixedCardAndSemanticCache\":true}\nSUMMARY unit passed=1 failed=0 total=1 time=0.41s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER policy/decision-search tests=1\n",
+    "stderr": ""
+  }
+}

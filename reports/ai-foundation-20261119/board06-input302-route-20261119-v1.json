@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "board06-input169-native302-20261119",
+  "startedEpochSeconds": 1795046399,
+  "deadlineEpochSeconds": 1795047599,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board06-input302-diagnosis-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Original random board06 cannot finish under the existing decision gate: input169 is complete but302 Native submissions. Diagnose actual Native families and duplicate physical transitions at the exact saved root; no game-prefix replay or frozen candidate revival.",
+  "hypotheses": [
+    "The same Native state/action is executed repeatedly under different planning control.",
+    "Forced menus consume Native inputs although their outcomes could be proved under existing contracts."
+  ],
+  "success": "One source/root/RNG matched profile; only implement if a specific proof-preserving reduction can meet256 Native/600ms. Otherwise close with causal evidence; no new full game before benchmark gates.",
+  "stop": "One exact-root profile and at most two falsifiable hypotheses within20 wall minutes. No strategy narrowing, changed value weights or raised runtime gate.",
+  "closedEpochSeconds": 1795047470.242326,
+  "decision": "specific fixed-policy omission repaired; exact-root gate and relevant checks passed; no business rerun in this unit"
+}

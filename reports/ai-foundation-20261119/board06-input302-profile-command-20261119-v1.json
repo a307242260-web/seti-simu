@@ -1,0 +1,5 @@
+{
+  "exitCode": 0,
+  "stdout": "{\"phase\":\"complete\",\"nativeInputs\":302,\"nativeFamilies\":{\"launch\":4,\"play_card\":16,\"pass\":4,\"quick_trade\":2,\"choose_card\":80,\"industry\":1,\"place_data\":1,\"land\":8,\"move\":1,\"orbit\":4,\"scan\":4,\"choose_target\":124,\"end_turn\":37,\"runezu_face_symbol\":15,\"analyze\":1},\"exactDuplicateSaving\":0,\"uniquePhysicalInputs\":302,\"sameActionValueAndNativeCount\":true,\"diagnosticMilliseconds\":494.000458}\n",
+  "stderr": ""
+}

@@ -238,3 +238,20 @@ console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,in
  const after=structuredClone(s);after.players.players.find(p=>p.id===f.seatId).mainActionCompleted=true;
  const idle=run(after);assert(idle);assert(!idle.retainedActionIds.includes(skill.actionId),'no current use and no known portfolio gain means no company exchange');
 }
+
+// A last-round Runezu trace reward uses one visible free acquisition.
+{
+ const s=state(),p=own(s);s.turn.roundNumber=4;s.turn.currentPlayerId=seatId;p.mainActionCompleted=true;
+ const head={type:'residual_alien_card_decision',ownerId:seatId,payload:{speciesId:'runezu',source:'trace_reward'}};
+ const menu=index=>['display:'+index,'blind','cancel'].map((id,i)=>({actorId:seatId,actionId:'runezu-test:'+id,family:'choose_card',target:{kind:'residual-domain',choiceId:'runezu:'+id,source:id.split(':')[0],...(i?{}:{cardIndex:index})}}));
+ const before=structuredClone(s),planner=api.createCardPickPlanner();
+ const run=(state=s,session={queue:[head]},actions=menu(5))=>plan(state,actions,planner,{status:'decision',session});
+ const r=run();assert.equal(r.reason,'fixed-free-runezu-card');assert.equal(r.selectedActionId,menu(5)[0].actionId);assert.equal(r.isEquivalence,false);assert.equal(r.excludedActionIds.length,2);
+ assert.equal(run(s,{queue:[head]},menu(8)).selectedActionId,menu(8)[0].actionId,'the live offer replaces the previous offer without a stale choice');
+ for(const session of [{queue:[{...head,ownerId:'another'}]},{queue:[{...head,allowQuickActions:true}]},{queue:[head],interruptContext:{}},{queue:[{...head,payload:{speciesId:'runezu',source:'card_effect'}}]}])assert.notEqual(run(s,session)?.reason,r.reason);
+ const early=structuredClone(s);early.turn.roundNumber=3;assert.notEqual(run(early)?.reason,r.reason);
+ const active=structuredClone(s);own(active).mainActionCompleted=false;assert.notEqual(run(active)?.reason,r.reason);
+ assert.notEqual(run(s,{queue:[head]},menu(5).slice(1))?.reason,r.reason,'hidden-only menus retain their existing policy');
+ const mixed=menu(5);mixed[0].target.choiceId='amiba:display:5';assert.notEqual(run(s,{queue:[head]},mixed)?.reason,r.reason);
+ assert.deepEqual(s,before,'planning does not mutate the Native state');
+}
