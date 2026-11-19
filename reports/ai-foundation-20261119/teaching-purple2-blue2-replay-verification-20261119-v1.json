@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "seti-native-income-replay-verification-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "archiveSha256": "6dcbfe0029db19ab0f07eae0f0cebf933caa24c45dd5bd3c01448874af44467b",
+  "sourceFilesVerified": 536,
+  "status": "complete",
+  "verifiedInputs": 75,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "branches": [
+    {
+      "name": "teacher-prefix-113-to-126",
+      "inputs": 14,
+      "verified": true,
+      "nativeEnvelopeSha256": "2e94424d368fbf99155b120e58decce8efc364f7962729fe4f740c62eec7da7c"
+    },
+    {
+      "name": "teacher-known-bridge-127-to-145",
+      "inputs": 19,
+      "verified": true,
+      "nativeEnvelopeSha256": "fb5e705fe12e81dc1975c31fade48da4b6455864040f41239df3a969cfcd0fec"
+    },
+    {
+      "name": "teacher-extra-signal",
+      "inputs": 22,
+      "verified": true,
+      "nativeEnvelopeSha256": "b0c54df83b5092af324532655591de0523f11544a551571657773f871f200f9c"
+    },
+    {
+      "name": "skip-extra-signal",
+      "inputs": 20,
+      "verified": true,
+      "nativeEnvelopeSha256": "cd27a2871480aa193d8b93af49438d93b15f35d9638e7ec6db1142adf0bbfd69"
+    }
+  ],
+  "verified": true,
+  "totalNativeIncludingControls": 150
+}

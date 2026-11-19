@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "teaching-earliest-material-trace-technology-divergence",
+  "startedEpochSeconds": 1795062348.459496,
+  "deadlineEpochSeconds": 1795065948.459496,
+  "status": "open",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Which earliest real teaching trajectory choice explains the later trace/technology asset deficit after separating opening assets and existing rejected or frozen hypotheses?",
+  "hypotheses": [
+    "The fourth-round trace/technology gap is already a material third-round asset commitment, rather than a missing terminal-card preservation action.",
+    "A known, funded purpose is excluded or undervalued at one actual earlier root; its cost and opportunity cost can be proven with a short Native pair."
+  ],
+  "limits": {
+    "maximumWorkUnits": 2,
+    "maximumWallSeconds": 3600,
+    "maximumLiteralNativeInputsIncludingVerification": 220,
+    "maximumColdSearches": 3,
+    "maximumNewFullGames": 0,
+    "productionPatchBeforeCausalProof": false
+  },
+  "scope": "First reuse existing teacher and AI trajectories, previous causal evidence and round ledgers. Select one previously unadjudicated actual root only if its known assets and necessary Native control are concrete. Reject/inconclusive if it merely reopens a frozen candidate. No new full game in this route.",
+  "searchContract": {
+    "stateEquivalence": "Same complete Native envelope and RNG per pair; no equivalence across teacher/AI asset differences.",
+    "reachability": "Known funded goals only, preserve main-action timing, movement and cost prerequisites, and PASS-only opponents. No future hidden-card identity.",
+    "budget": "Existing cold search unchanged and complete <=256 Native simulations and <=600ms. At most3 cold searches. No purpose expansion without concrete lower-bound funding.",
+    "stop": "Preserve the fixed absolute parent deadline; close inconclusive instead of reviving old frozen tuning."
+  },
+  "totalNativeInputs": 181,
+  "coldSearches": 2,
+  "businessCheckpoint": "teaching-trace-tech-business-checkpoint-20261119-v2.json",
+  "nextWorkUnit": "Before considering any purple2 capability change, adjudicate the actual B101-orange1 quote and its shared-wallet paid-research opportunity cost at the already saved127 root. Reuse source-exact existing Native witnesses; do not repeat the old orange2 ordering control, tune weights, run a full game, or exceed remaining39 actual-plus-verification inputs and the original parent deadline."
+}

@@ -1,0 +1,288 @@
+{
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "newGames": 0,
+  "rows": [
+    {
+      "board": 1,
+      "purple2": true,
+      "acquiredAt": [
+        194
+      ],
+      "finalTech": [
+        "blue1",
+        "blue2",
+        "blue3",
+        "blue4",
+        "purple1",
+        "purple2",
+        "purple4"
+      ],
+      "scanActions": 3
+    },
+    {
+      "board": 2,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue1",
+        "blue3",
+        "blue4",
+        "orange1",
+        "orange4",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 5
+    },
+    {
+      "board": 3,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "orange3",
+        "orange4",
+        "purple4"
+      ],
+      "scanActions": 1
+    },
+    {
+      "board": 4,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue1",
+        "blue3",
+        "blue4",
+        "orange1",
+        "orange2",
+        "purple4"
+      ],
+      "scanActions": 3
+    },
+    {
+      "board": 5,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "orange1",
+        "orange3",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 1
+    },
+    {
+      "board": 6,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue4",
+        "orange1",
+        "orange4",
+        "purple4"
+      ],
+      "scanActions": 4
+    },
+    {
+      "board": 7,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue3",
+        "blue4",
+        "orange4",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 1
+    },
+    {
+      "board": 8,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue3",
+        "blue4",
+        "orange4",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 1
+    },
+    {
+      "board": 9,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue3",
+        "blue4",
+        "orange1",
+        "purple4"
+      ],
+      "scanActions": 2
+    },
+    {
+      "board": 10,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue4",
+        "orange1",
+        "orange4",
+        "purple4"
+      ],
+      "scanActions": 2
+    },
+    {
+      "board": 11,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue1",
+        "blue2",
+        "orange4",
+        "purple4"
+      ],
+      "scanActions": 5
+    },
+    {
+      "board": 12,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue3",
+        "purple3",
+        "purple4"
+      ],
+      "scanActions": 2
+    },
+    {
+      "board": 13,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "orange1",
+        "purple3",
+        "purple4"
+      ],
+      "scanActions": 3
+    },
+    {
+      "board": 14,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue3",
+        "blue4",
+        "orange4",
+        "purple4"
+      ],
+      "scanActions": 4
+    },
+    {
+      "board": 15,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue4",
+        "orange1",
+        "orange2",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 3
+    },
+    {
+      "board": 16,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue4",
+        "orange1",
+        "orange3",
+        "purple4"
+      ],
+      "scanActions": 1
+    },
+    {
+      "board": 17,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue2",
+        "blue4",
+        "orange1",
+        "orange3",
+        "purple4"
+      ],
+      "scanActions": 3
+    },
+    {
+      "board": 18,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue1",
+        "orange4",
+        "purple3",
+        "purple4"
+      ],
+      "scanActions": 5
+    },
+    {
+      "board": 19,
+      "purple2": false,
+      "acquiredAt": [],
+      "finalTech": [
+        "blue1",
+        "blue2",
+        "blue4",
+        "orange1",
+        "orange3",
+        "orange4",
+        "purple1",
+        "purple4"
+      ],
+      "scanActions": 5
+    },
+    {
+      "board": 20,
+      "purple2": true,
+      "acquiredAt": [
+        165
+      ],
+      "finalTech": [
+        "blue4",
+        "orange3",
+        "purple2",
+        "purple4"
+      ],
+      "scanActions": 4
+    }
+  ],
+  "technologyCounts": {
+    "blue1": 6,
+    "blue2": 13,
+    "blue3": 8,
+    "blue4": 14,
+    "purple1": 7,
+    "purple2": 2,
+    "purple4": 20,
+    "orange1": 11,
+    "orange4": 10,
+    "orange3": 6,
+    "orange2": 2,
+    "purple3": 3
+  }
+}

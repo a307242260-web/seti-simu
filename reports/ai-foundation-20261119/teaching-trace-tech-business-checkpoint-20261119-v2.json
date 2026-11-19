@@ -1,0 +1,461 @@
+{
+  "schemaVersion": "seti-teaching-trace-tech-business-checkpoint-v2",
+  "date": "2026-11-19",
+  "goalStatus": "active",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "strategyChanged": false,
+  "newGames": 0,
+  "coldSearches": 2,
+  "cold": {
+    "complete": true,
+    "actionId": "play_card:52a456f8",
+    "value": 122.58333333333333,
+    "nativeInputs": 59,
+    "milliseconds": 240.95795899999996,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "independentReplayInputs": 90,
+  "totalNativeInputs": 181,
+  "remainingRouteNativeBudgetIncludingVerification": 39,
+  "prior20Purple2Owned": 2,
+  "prior20Boards": 20,
+  "prior20MeanScoreUnchanged": 134.35,
+  "root127ResearchAlternatives": [
+    {
+      "goal": "tech:blue3:3",
+      "value": 114.5,
+      "boundary": "hidden_card_reveal"
+    },
+    {
+      "goal": "tech:blue4:3",
+      "value": 112.75,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:orange1:",
+      "value": 121.58333333333333,
+      "boundary": "hidden_card_reveal"
+    },
+    {
+      "goal": "tech:orange2:",
+      "value": 110.5,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:orange3:",
+      "value": 113,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:orange4:",
+      "value": 110.5,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:purple1:",
+      "value": 118.5,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:purple2:",
+      "value": 115.75,
+      "boundary": "tech_bonus_reveal"
+    },
+    {
+      "goal": "tech:purple3:",
+      "value": 120.5,
+      "boundary": "hidden_card_reveal"
+    }
+  ],
+  "optionalSignalBeforeContinuationModelValues": [
+    125.58333333333333,
+    125.58333333333333
+  ],
+  "continuationEndpoints": [
+    {
+      "name": "teacher-extra-signal",
+      "score": 69,
+      "formalScoreNow": 91,
+      "credits": 3,
+      "energy": 3,
+      "publicity": 1,
+      "data": 0,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "dataProgress": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1
+        ],
+        "blueBonusCount": 1,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": true,
+            "unlocked": true
+          },
+          {
+            "tileId": "blue1",
+            "slot": 2,
+            "occupied": false,
+            "unlocked": false
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp",
+          "set": "alien:\u963f\u7c73\u5df4",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        },
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 126.08333333333333,
+        "components": {
+          "realizedScore": 69,
+          "currentEndGameBonus": 22,
+          "resources": 7,
+          "hand": 2,
+          "income": 10.5,
+          "technologyPotential": 9,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 6,
+          "analysisPotential": 0.5833333333333334,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    },
+    {
+      "name": "skip-extra-signal",
+      "score": 69,
+      "formalScoreNow": 91,
+      "credits": 3,
+      "energy": 2,
+      "publicity": 2,
+      "data": 0,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "dataProgress": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": true
+          },
+          {
+            "tileId": "blue1",
+            "slot": 2,
+            "occupied": false,
+            "unlocked": false
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp",
+          "set": "alien:\u963f\u7c73\u5df4",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        },
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        }
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 124.58333333333333,
+        "components": {
+          "realizedScore": 69,
+          "currentEndGameBonus": 22,
+          "resources": 6.5,
+          "hand": 2,
+          "income": 10.5,
+          "technologyPotential": 9,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 5,
+          "analysisPotential": 0.5833333333333334,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      }
+    }
+  ],
+  "findings": [
+    "Purple2 is included in the complete current search; this is not candidate omission. Its specific quote115.75 is below the winning B101 family quote122.58333333333333.",
+    "Only2 of20 prior complete games acquired purple2. This is prevalence, not proof that obtaining it is better.",
+    "At the actual optional-signal root, accepted and skipped branches have equal model values. After a common known income and free-analysis sequence, one extra data can be consumed for1 energy through the reset blue2 slot. The accepted branch spends1 more publicity; scores, hand, tech and income are equal.",
+    "The remaining optional blue2 slot, pending sector progress and different resource mixes are real state differences; no state equivalence or Pareto dominance is claimed.",
+    "The model difference1.5 at the final comparison is not an earned score increase and is insufficient by itself to overturn the root127 technology comparison."
+  ],
+  "limits": [
+    "Teacher-root witnesses do not evaluate the autonomous AI round3 opening, whose assets differ.",
+    "The common literal sequence contains a blind draw; its identity is equal in the paired replay and is not used to select the root optional action or fund the blue2 placement.",
+    "No new full round, full game, global strategy gain or automatic research-policy adoption.",
+    "Four read-only inspections failed; all failed attempts and manual recoveries retain the original fixed deadlines. A separate failed1-input scan-target attempt is included in the181-input Native ledger."
+  ],
+  "nextWorkUnit": "Before considering any purple2 capability change, adjudicate the actual B101-orange1 quote and its shared-wallet paid-research opportunity cost at the already saved127 root. Reuse source-exact existing Native witnesses; do not repeat the old orange2 ordering control, tune weights, run a full game, or exceed remaining39 actual-plus-verification inputs and the original parent deadline.",
+  "evidence": {
+    "replay": "teaching-purple2-blue2-replay-20261119-v1.json.gz",
+    "verification": "teaching-purple2-blue2-replay-verification-20261119-v1.json",
+    "diagnostics": "teaching-trace-tech-diagnostics-20261119-v2.json.gz",
+    "prior20": "teaching-trace-tech-prior20-20261119-v1.json",
+    "fundedScanReplay": "teaching-funded-scan-replay-20261119-v2.json.gz",
+    "fundedScanVerification": "teaching-funded-scan-replay-verification-20261119-v1.json"
+  },
+  "status": "mechanism-confirmed-policy-cause-unresolved",
+  "markerCold": {
+    "complete": true,
+    "nativeInputs": 1,
+    "milliseconds": 35.995333999999986,
+    "actionId": "choose_target:4b676cb1",
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "nativeControlAndRecoveryInputs": 91,
+  "fundedSecondScanEndpoints": [
+    {
+      "name": "teacher-extra-signal",
+      "inputs": 8,
+      "score": 71,
+      "formalScoreNow": 93,
+      "credits": 2,
+      "energy": 1,
+      "publicity": 1,
+      "data": 3,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp",
+          "set": "alien:\u963f\u7c73\u5df4",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        },
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        }
+      ],
+      "mainActionCompleted": false,
+      "publicityBeforeScan": 1,
+      "publicityAfterPurple4Move": 2,
+      "modelValue": 120.58333333333333,
+      "earthScanTarget": {
+        "choiceId": "nebula:sector-1-a",
+        "nebulaId": "sector-1-a",
+        "sectorX": 5
+      },
+      "publicScanTarget": {
+        "choiceId": "public:card-59-0:sector-1-a",
+        "cardInstanceId": "card-59-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-1-a"
+      }
+    },
+    {
+      "name": "skip-extra-signal",
+      "inputs": 7,
+      "score": 69,
+      "formalScoreNow": 91,
+      "credits": 2,
+      "energy": 0,
+      "publicity": 3,
+      "data": 2,
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "orange2": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "id": "alien-amiba-7-5",
+          "cardId": "amiba_7.webp",
+          "set": "alien:\u963f\u7c73\u5df4",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        },
+        {
+          "id": "card-60-0",
+          "cardId": "dlc_25.png",
+          "set": "space-agency",
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 1,
+          "faceUp": true
+        }
+      ],
+      "mainActionCompleted": false,
+      "publicityBeforeScan": 2,
+      "publicityAfterPurple4Move": 3,
+      "modelValue": 118.08333333333333,
+      "earthScanTarget": {
+        "choiceId": "nebula:sector-1-a",
+        "nebulaId": "sector-1-a",
+        "sectorX": 5
+      },
+      "publicScanTarget": {
+        "choiceId": "public:card-59-0:sector-1-a",
+        "cardInstanceId": "card-59-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-1-a"
+      }
+    }
+  ],
+  "secondScanFindings": [
+    "The same actually funded scan is complete in both branches, including the paid branch70-point final marker, with both players returned to mainActionCompleted=false.",
+    "The orange2-supported free purple4 movement supplies1 publicity in each branch. The repeated optional purple2 scan therefore preserves the accepting branch publicity stock during this scan.",
+    "Across the two optional-signal choices and intervening known analysis/blue2 preparation, accepting ends with2 more board points,1 more energy and1 more data, but2 less publicity. This is a concrete asset tradeoff, not Pareto dominance or a new full-game score.",
+    "The2 point gain is a Native scanScore gain on this particular board; it is not a rule that every purple2 activation earns2 points.",
+    "This validates a short scan/analysis resource mechanism. It does not establish that taking purple2 before the actual B101-orange1 line is superior, nor justify a generic future-tech coefficient."
+  ],
+  "additionalExecutionLimitations": [
+    "One scan input was executed before an unavailable planned Earth target was detected. That failed1-input attempt and replaying the start as recovery are included in the181-input total.",
+    "The first followup endpoint still had a required70-point final choice. The published comparison uses the completed end marker selected by the existing policy, not that intermediate state."
+  ],
+  "firstStageNativeControlInputs": 75
+}

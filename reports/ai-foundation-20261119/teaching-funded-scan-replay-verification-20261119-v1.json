@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "seti-native-income-replay-verification-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "archiveSha256": "301ce59d87dfe47a9b9999b62772285e7e6474899f80c6b0bc40c925c2955f58",
+  "sourceFilesVerified": 536,
+  "status": "complete",
+  "verifiedInputs": 15,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "branches": [
+    {
+      "name": "teacher-extra-signal",
+      "inputs": 8,
+      "verified": true,
+      "nativeEnvelopeSha256": "19075a52fd145125298828281aef4082aafeeb3897e33e19928ff9b6df824f37"
+    },
+    {
+      "name": "skip-extra-signal",
+      "inputs": 7,
+      "verified": true,
+      "nativeEnvelopeSha256": "861ff79b0fc8961eeb0b6e6a2f8b70c9945b0ca989cba82c25eed8572e1ff9a0"
+    }
+  ],
+  "verified": true,
+  "totalNativeIncludingControls": 181
+}
