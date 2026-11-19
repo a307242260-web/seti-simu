@@ -178,3 +178,18 @@ console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,pro
   }finally{p.close();}
  }finally{c.dispose();}
 }
+// Final-round native counterexample: the held conditional-return landing card
+// replaces the paid endpoint; its identity cannot also be spent on movement.
+{
+ const z=require('node:zlib'),file=path.resolve(__dirname,'../../../reports/ai-foundation-20261119/autonomous-r4-resource-roots-20261119-v1.json.gz');
+ const f=JSON.parse(z.gunzipSync(fs.readFileSync(file))).find(x=>x.beforeInput===324),seat='player-white',seed=JSON.parse(f.envelope.committedState).meta.seed;
+ const k=createSimulationRuleComposition({seed,activePlayerCount:4,random:createSeededRandom(seed),trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+ try{assert(c.lifecycle.restore(f.envelope).ok);const port=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+  try{port.setResourcePlanning(true);port.setCardPickPlanning(true);port.setMovementPlanning(true);
+   const root=port.openRoot(),spec=port.resourceSpec(root),routes=spec.plans.filter(p=>p.goal.kind==='route'&&p.goal.movementPoints>0);
+   assert.equal(routes.length,1,'one named future destination, not a direction tree');const plan=routes[0];assert.equal(plan.goal.planetId,'mercury');assert.equal(plan.goal.cardId,'card-80-0');assert.deepEqual(plan.goal.endpointCost,{credits:1});
+   const result=port.expandResourcePlan(root,plan,()=>null);assert(result.complete);assert(result.prefixes.some(x=>x.action.family==='play_card'&&x.action.target.cardInstanceId==='card-80-0'));assert(result.prefixes.some(x=>x.action.target?.actionType==='land'&&x.action.target.planetId==='mercury'));assert(!result.prefixes.some(x=>x.action.family==='quick_trade'));assert(!result.prefixes.some(x=>x.action.target?.kind==='move-payment'&&x.action.target.cardIds?.includes('card-80-0')));assert.deepEqual(c.lifecycle.save().envelope,f.envelope);
+   const partial=port.expandResourcePlan(root,plan,n=>n>=1?'test-watchdog':null);assert(!partial.complete);assert.equal(partial.stopReason,'test-watchdog');assert.deepEqual(c.lifecycle.save().envelope,f.envelope);
+  }finally{port.close();}
+ }finally{c.dispose();}
+}
