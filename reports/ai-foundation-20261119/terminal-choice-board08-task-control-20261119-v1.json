@@ -1,0 +1,535 @@
+{
+  "schemaVersion": "seti-native-terminal-task-control-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-analyze-9c11af934643",
+  "status": "failed",
+  "beforeInput": 152,
+  "baselineFinalScore": 132,
+  "checkpointPath": "reports/research/bb435792.94299f38.full.json.round-3.checkpoint.json",
+  "prefixInputs": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "pass",
+      "phase": "main",
+      "actionId": "pass:ff716055",
+      "actorId": "player-green",
+      "stateVersion": 58,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "pass"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "PASS"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:0fc7e418",
+      "actorId": "player-green",
+      "stateVersion": 58,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-5-0|card-25-pass-2-1|card-59-0",
+        "cardIds": [
+          "card-5-0",
+          "card-25-pass-2-1",
+          "card-59-0"
+        ]
+      },
+      "payload": {
+        "discardCount": 3
+      },
+      "decision": null,
+      "summary": "弃置 dlc_34.png、dlc_41.png、b_1.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:a3cf4496",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "cardInstanceId": "card-55-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 1
+      },
+      "decision": null,
+      "summary": "b_9.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:ce8aa997",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "nebula:sector-2-b",
+        "nebulaId": "sector-2-b",
+        "sectorX": null
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "扫描 巴纳德"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:9932bab4",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "public:card-53-0:sector-2-b",
+        "cardInstanceId": "card-53-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-2-b"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "b_56.webp → 巴纳德",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-53-0",
+        "imageSrc": "../assets/cards/basic/split/b_56.webp",
+        "imageAlt": "b_56.webp"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:efa8f564",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "public:done",
+        "done": true
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束公共牌扫描"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:5bb27a70",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "scan4:launch",
+        "mode": "launch"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "发射探测器"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:2618cdf2",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "trace:1:pink",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "外星人 1 粉色痕迹"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:ce8aa997",
+      "actorId": "player-white",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "nebula:sector-2-b",
+        "nebulaId": "sector-2-b",
+        "sectorX": null
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "扫描 巴纳德"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 60,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:29b5215c",
+      "actorId": "player-white",
+      "stateVersion": 60,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "第一排放置位 2"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:29b5215c",
+      "actorId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "第一排放置位 3"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 62,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:29b5215c",
+      "actorId": "player-white",
+      "stateVersion": 62,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "第一排放置位 4"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:481d456e",
+      "actorId": "player-white",
+      "stateVersion": 62,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "income:card-34-pass-3-5",
+        "cardInstanceId": "card-34-pass-3-5"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "收入 b_140.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-34-pass-3-5",
+        "imageSrc": "../assets/cards/basic/split/b_140.webp",
+        "imageAlt": "b_140.webp"
+      }
+    }
+  ],
+  "forcedInputs": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    }
+  ],
+  "acceptedInputs": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:91d79691",
+      "actorId": "player-white",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "final:d",
+        "tileId": "d"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "标记 D",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "d",
+        "imageSrc": "../assets/final/final_d2.png",
+        "imageAlt": "终局计分板块 D"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "accept_optional_effect",
+      "phase": "conditional",
+      "actionId": "accept_optional_effect:87a34659",
+      "actorId": "player-white",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "confirm:task:card-27-pass-2-3:b103-score-task"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结算 b_103.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-27-pass-2-3",
+        "imageSrc": "../assets/cards/basic/split/b_103.webp",
+        "imageAlt": "b_103.webp",
+        "detail": "至少50分：收入"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:e3096b03",
+      "actorId": "player-white",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "card-56-0",
+        "cardInstanceId": "card-56-0"
+      },
+      "payload": {
+        "incomeCode": 0
+      },
+      "decision": null,
+      "summary": "插入 b_34.webp 作为收入"
+    }
+  ],
+  "decisions": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:91d79691",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:d",
+          "tileId": "d"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 D",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "d",
+          "imageSrc": "../assets/final/final_d2.png",
+          "imageAlt": "终局计分板块 D"
+        }
+      },
+      "value": 109,
+      "complete": true,
+      "nativeInputs": 4,
+      "milliseconds": 30.98237499999999,
+      "roots": [
+        {
+          "actionId": "choose_target:aba3bdc5",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-local-decision-policy",
+          "policy": "seti-local-mark-and-scan-purpose-v13",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:653b7ded",
+          "target": null,
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "excluded-by-local-decision-policy",
+          "policy": "seti-local-mark-and-scan-purpose-v13",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_target:91d79691",
+          "target": 1,
+          "value": 109,
+          "realization": -2.5,
+          "preparationDebt": 0,
+          "completion": "complete"
+        }
+      ]
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:87a34659",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "confirm:task:card-27-pass-2-3:b103-score-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结算 b_103.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-27-pass-2-3",
+          "imageSrc": "../assets/cards/basic/split/b_103.webp",
+          "imageAlt": "b_103.webp",
+          "detail": "至少50分：收入"
+        }
+      },
+      "value": 109,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 14.403666000000044,
+      "roots": [
+        {
+          "actionId": "accept_optional_effect:87a34659",
+          "value": 109,
+          "valueType": "attained-lower-bound",
+          "completion": "covered-by-prior-complete-window",
+          "sourceNode": 1
+        },
+        {
+          "actionId": "accept_optional_effect:2d5314f6",
+          "value": 104,
+          "valueType": "attained-lower-bound",
+          "completion": "covered-by-prior-complete-window",
+          "sourceNode": 1
+        }
+      ]
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e3096b03",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "card-56-0",
+          "cardInstanceId": "card-56-0"
+        },
+        "payload": {
+          "incomeCode": 0
+        },
+        "decision": null,
+        "summary": "插入 b_34.webp 作为收入"
+      },
+      "value": 109,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 15.260584000000108,
+      "roots": [
+        {
+          "actionId": "choose_card:e3096b03",
+          "value": 109,
+          "valueType": "attained-lower-bound",
+          "completion": "covered-by-prior-complete-window",
+          "sourceNode": 2
+        }
+      ]
+    }
+  ],
+  "limits": {
+    "maximumCommittedInputs": 100,
+    "maximumDecisionNative": 256,
+    "maximumDecisionMilliseconds": 600,
+    "wallMilliseconds": 15000
+  },
+  "maxNative": 4,
+  "maxMilliseconds": 30.98237499999999,
+  "newFullGames": 0,
+  "rootVerified": true,
+  "failure": {
+    "message": "other seats must already be passive",
+    "stack": "AssertionError [ERR_ASSERTION]: other seats must already be passive\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/control-final-task-card-20261119.cjs:47:25)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

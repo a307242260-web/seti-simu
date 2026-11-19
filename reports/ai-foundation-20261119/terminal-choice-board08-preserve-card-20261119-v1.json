@@ -1,0 +1,1936 @@
+{
+  "schemaVersion": "seti-native-terminal-income-purpose-control-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-analyze-9c11af934643",
+  "status": "complete",
+  "baselineFinalScore": 132,
+  "plan": "Skip the income task until the sole held land card is played; fund its known three-movement route with two credit-energy conversions; land on Venus; resume unchanged v486.",
+  "actions": [
+    {
+      "label": "end without direct income task",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "same final mark D",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:91d79691",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:d",
+          "tileId": "d"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 D",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "d",
+          "imageSrc": "../assets/final/final_d2.png",
+          "imageAlt": "终局计分板块 D"
+        }
+      }
+    },
+    {
+      "label": "skip the automatic income task",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:2d5314f6",
+        "actorId": "player-white",
+        "stateVersion": 63,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "skip:task:card-27-pass-2-3:b103-score-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "跳过 b_103.webp"
+      }
+    },
+    {
+      "label": "passive seat",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ac4b4ab2",
+        "actorId": "player-brown",
+        "stateVersion": 64,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      }
+    },
+    {
+      "label": "passive seat",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:9d794f8e",
+        "actorId": "player-brown",
+        "stateVersion": 64,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-28-pass-2-4|card-47-0",
+          "cardIds": [
+            "card-28-pass-2-4",
+            "card-47-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 2
+        },
+        "decision": null,
+        "summary": "弃置 b_5.webp、b_115.webp"
+      }
+    },
+    {
+      "label": "passive seat",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:c858282e",
+        "actorId": "player-blue",
+        "stateVersion": 65,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      }
+    },
+    {
+      "label": "passive seat",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:d21883e4",
+        "actorId": "player-blue",
+        "stateVersion": 65,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-32-pass-3-3|card-58-0",
+          "cardIds": [
+            "card-32-pass-3-3",
+            "card-58-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 2
+        },
+        "decision": null,
+        "summary": "弃置 b_58.webp、b_61.webp"
+      }
+    },
+    {
+      "label": "fund three movement and preserve the2-credit card payment",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 66,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1能量"
+      }
+    },
+    {
+      "label": "fund three movement and preserve the2-credit card payment",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 67,
+        "decisionVersion": 1,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1能量"
+      }
+    },
+    {
+      "label": "known Venus route",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:f89b84a0",
+        "actorId": "player-white",
+        "stateVersion": 68,
+        "decisionVersion": 2,
+        "target": {
+          "rocketId": 4,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 4 逆时针"
+      }
+    },
+    {
+      "label": "energy movement payment",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:abbb51f1",
+        "actorId": "player-white",
+        "stateVersion": 68,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      }
+    },
+    {
+      "label": "known Venus route",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:c4200b23",
+        "actorId": "player-white",
+        "stateVersion": 69,
+        "decisionVersion": 2,
+        "target": {
+          "rocketId": 4,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 2
+        },
+        "decision": null,
+        "summary": "移动探测器 4 逆时针"
+      }
+    },
+    {
+      "label": "energy movement payment",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:d8bed80b",
+        "actorId": "player-white",
+        "stateVersion": 69,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 2,
+          "requiredMovePoints": 2
+        },
+        "decision": null,
+        "summary": "消耗 2 能量"
+      }
+    },
+    {
+      "label": "play the protected landing card",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:a9945c7f",
+        "actorId": "player-white",
+        "stateVersion": 70,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "card-56-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_34.webp"
+      }
+    },
+    {
+      "label": "same Venus endpoint",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:356cf8ae",
+        "actorId": "player-white",
+        "stateVersion": 70,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "land:4:venus:planet:",
+          "actionType": "land",
+          "rocketId": 4,
+          "planetId": "venus",
+          "landTarget": {
+            "type": "planet",
+            "rocketId": 4
+          }
+        },
+        "payload": {
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": true,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1,
+            "cost": {},
+            "source": "card"
+          }
+        },
+        "decision": null,
+        "summary": "登陆金星 - 奖励：首次登陆：额外获得 2 个数据；获得 5 分；获得 1 个黄色外星人标记（主星，R4，0）"
+      }
+    },
+    {
+      "label": "same yellow trace",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:1035d792",
+        "actorId": "player-white",
+        "stateVersion": 70,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:1:yellow",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "yellow"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "complete_task",
+        "phase": "quick",
+        "actionId": "complete_task:e9fa96e1",
+        "actorId": "player-white",
+        "stateVersion": 71,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "card-14-0",
+          "ruleId": "b67-three-traces-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "完成 b_67.webp"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:1035d792",
+        "actorId": "player-white",
+        "stateVersion": 71,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:1:yellow",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "yellow"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "同一外星人三色痕迹齐全：在该外星人获得任意痕迹 → 外星人 1 黄色痕迹"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:7be78a55",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:2",
+          "target": "blueBonus",
+          "blueSlot": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue3 下方"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:09facccb",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "pick:card-46-0",
+          "cardInstanceId": "card-46-0",
+          "publicSlotIndex": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_80.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-46-0",
+          "imageSrc": "../assets/cards/basic/split/b_80.webp",
+          "imageAlt": "b_80.webp"
+        }
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:87a34659",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "confirm:task:card-27-pass-2-3:b103-score-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结算 b_103.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-27-pass-2-3",
+          "imageSrc": "../assets/cards/basic/split/b_103.webp",
+          "imageAlt": "b_103.webp",
+          "detail": "至少50分：收入"
+        }
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:a616f839",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "alien-aomomo-8-1",
+          "cardInstanceId": "alien-aomomo-8-1"
+        },
+        "payload": {
+          "incomeCode": 0
+        },
+        "decision": null,
+        "summary": "插入 aomomo_8.webp 作为收入"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:420cba18",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-9-3"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "aomomo_9.webp"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:50c45347",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": null
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:268ca147",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:card-54-0:sector-4-a",
+          "cardInstanceId": "card-54-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-4-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_31.png → 室女座61",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-54-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_31.png",
+          "imageAlt": "dlc_31.png"
+        }
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b29903e4",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:card-61-0:sector-4-a",
+          "cardInstanceId": "card-61-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-4-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_89.webp → 室女座61",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-61-0",
+          "imageSrc": "../assets/cards/basic/split/b_89.webp",
+          "imageAlt": "b_89.webp"
+        }
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:efa8f564",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:done",
+          "done": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束公共牌扫描"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 75,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 76,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 76,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 77,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 77,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 78,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:0c6b3a23",
+        "actorId": "player-white",
+        "stateVersion": 78,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:1:blue:state-extra",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue",
+          "stateExtra": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 额外痕迹位（3分）"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 79,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 79,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 80,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 80,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue4 下方"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 81,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:653b7ded",
+        "actorId": "player-white",
+        "stateVersion": 81,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:c",
+          "tileId": "c"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 C",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "c",
+          "imageSrc": "../assets/final/final_c1.png",
+          "imageAlt": "终局计分板块 C"
+        }
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:09649561",
+        "actorId": "player-white",
+        "stateVersion": 82,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-3-2"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "aomomo_3.webp"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "complete_task",
+        "phase": "quick",
+        "actionId": "complete_task:8d31431b",
+        "actorId": "player-white",
+        "stateVersion": 83,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-3-2",
+          "ruleId": "aomomo3-all-trace-types"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "完成 aomomo_3.webp"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 84,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 85,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a16882e3",
+        "actorId": "player-white",
+        "stateVersion": 85,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "tech:orange4",
+          "tileId": "orange4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 orange4"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 86,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "label": "unchanged v486",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 87,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "complete_task",
+        "phase": "quick",
+        "actionId": "complete_task:e9fa96e1",
+        "actorId": "player-white",
+        "stateVersion": 71,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "card-14-0",
+          "ruleId": "b67-three-traces-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "完成 b_67.webp"
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 46,
+      "milliseconds": 71.17204199999998
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:1035d792",
+        "actorId": "player-white",
+        "stateVersion": 71,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:1:yellow",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "yellow"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "同一外星人三色痕迹齐全：在该外星人获得任意痕迹 → 外星人 1 黄色痕迹"
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 10.566000000000031
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.420542000000012
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:7be78a55",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:2",
+          "target": "blueBonus",
+          "blueSlot": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue3 下方"
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.923249999999996
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:09facccb",
+        "actorId": "player-white",
+        "stateVersion": 72,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "pick:card-46-0",
+          "cardInstanceId": "card-46-0",
+          "publicSlotIndex": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_80.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-46-0",
+          "imageSrc": "../assets/cards/basic/split/b_80.webp",
+          "imageAlt": "b_80.webp"
+        }
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.640292000000045
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "value": 112,
+      "complete": true,
+      "nativeInputs": 3,
+      "milliseconds": 8.987332999999921
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "accept_optional_effect",
+        "phase": "conditional",
+        "actionId": "accept_optional_effect:87a34659",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "confirm:task:card-27-pass-2-3:b103-score-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结算 b_103.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-27-pass-2-3",
+          "imageSrc": "../assets/cards/basic/split/b_103.webp",
+          "imageAlt": "b_103.webp",
+          "detail": "至少50分：收入"
+        }
+      },
+      "value": 117,
+      "complete": true,
+      "nativeInputs": 6,
+      "milliseconds": 22.662249999999972
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:a616f839",
+        "actorId": "player-white",
+        "stateVersion": 73,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "alien-aomomo-8-1",
+          "cardInstanceId": "alien-aomomo-8-1"
+        },
+        "payload": {
+          "incomeCode": 0
+        },
+        "decision": null,
+        "summary": "插入 aomomo_8.webp 作为收入"
+      },
+      "value": 117,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 14.137790999999993
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:420cba18",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-9-3"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "aomomo_9.webp"
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 36,
+      "milliseconds": 64.973208
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:50c45347",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": null
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 11.172249999999963
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:268ca147",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:card-54-0:sector-4-a",
+          "cardInstanceId": "card-54-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-4-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_31.png → 室女座61",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-54-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_31.png",
+          "imageAlt": "dlc_31.png"
+        }
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 13.331833999999958
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b29903e4",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:card-61-0:sector-4-a",
+          "cardInstanceId": "card-61-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-4-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_89.webp → 室女座61",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-61-0",
+          "imageSrc": "../assets/cards/basic/split/b_89.webp",
+          "imageAlt": "b_89.webp"
+        }
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 13.283500000000004
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:efa8f564",
+        "actorId": "player-white",
+        "stateVersion": 74,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:done",
+          "done": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束公共牌扫描"
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 14.274000000000001
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 75,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "value": 121,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.224166999999966
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 76,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 15,
+      "milliseconds": 37.49595899999997
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 76,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.057833000000073
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 77,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 5.98762499999998
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 77,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.254875000000084
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 78,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.48133299999995
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:0c6b3a23",
+        "actorId": "player-white",
+        "stateVersion": 78,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "trace:1:blue:state-extra",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue",
+          "stateExtra": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 额外痕迹位（3分）"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.866792000000032
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 79,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.4196660000000065
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 79,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.325209000000086
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 80,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.235500000000002
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 80,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue4 下方"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 8.992082999999866
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 81,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.372000000000071
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:653b7ded",
+        "actorId": "player-white",
+        "stateVersion": 81,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "final:c",
+          "tileId": "c"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "标记 C",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "c",
+          "imageSrc": "../assets/final/final_c1.png",
+          "imageAlt": "终局计分板块 C"
+        }
+      },
+      "value": 133,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.325917000000118
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:09649561",
+        "actorId": "player-white",
+        "stateVersion": 82,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-3-2"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "aomomo_3.webp"
+      },
+      "value": 135,
+      "complete": true,
+      "nativeInputs": 10,
+      "milliseconds": 22.814082999999982
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "complete_task",
+        "phase": "quick",
+        "actionId": "complete_task:8d31431b",
+        "actorId": "player-white",
+        "stateVersion": 83,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-aomomo-3-2",
+          "ruleId": "aomomo3-all-trace-types"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "完成 aomomo_3.webp"
+      },
+      "value": 135,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.047333999999864
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 84,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "value": 135,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.383959000000004
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 85,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "value": 137,
+      "complete": true,
+      "nativeInputs": 2,
+      "milliseconds": 16.59120800000005
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a16882e3",
+        "actorId": "player-white",
+        "stateVersion": 85,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "tech:orange4",
+          "tileId": "orange4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 orange4"
+      },
+      "value": 137,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.760290999999825
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 86,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "value": 137,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.212541000000101
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 87,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "value": 135,
+      "complete": true,
+      "nativeInputs": 1,
+      "milliseconds": 9.044708000000128
+    }
+  ],
+  "maxNative": 46,
+  "maxMilliseconds": 71.17204199999998,
+  "newFullGames": 0,
+  "limits": {
+    "maximumAcceptedInputs": 100,
+    "nativePerDecision": 256,
+    "millisecondsPerDecision": 600,
+    "wallMilliseconds": 15000
+  },
+  "protectedLandingCompleted": true,
+  "finalScore": 135,
+  "finalScoreBreakdown": {
+    "baseScore": 79,
+    "cardScore": 0,
+    "cards": [
+      {
+        "cardId": "b_34.webp",
+        "rule": {
+          "kind": "planetOrbitOrLand",
+          "planetId": "jupiter",
+          "scorePer": 3
+        },
+        "score": 0
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 135,
+    "runezuSymbolScore": 0,
+    "tileScore": 56,
+    "tileScoresById": {
+      "a": 30,
+      "b": 0,
+      "c": 12,
+      "d": 14
+    },
+    "tiles": [
+      {
+        "baseValue": 6,
+        "formulaId": "a1",
+        "multiplier": 5,
+        "score": 30,
+        "slotIndex": 1,
+        "tileId": "a",
+        "variant": 1
+      },
+      {
+        "baseValue": 3,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 12,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 2,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 14,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 135
+  }
+}

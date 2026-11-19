@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "AIChanged": false,
+  "candidatePolicy": "v487-income-landing-purpose",
+  "formalOriginal20MeanUnchanged": 134.35,
+  "newFullGames": 0,
+  "businessEvidence": {
+    "baseline": 132,
+    "endTurnAlone": 132,
+    "explicitProtectedLanding": 135,
+    "autonomousCandidate": 138,
+    "candidateMaxNative": 239,
+    "candidateMaxMilliseconds": 242.27354199999996
+  },
+  "confirmedCause": [
+    "The old held-card execution domain excludes round4 and satellite-capable landing cards, and skips card routes whenever a normal landing is payable.",
+    "Ending the turn alone still queues and accepts the income task, consuming the only landing card.",
+    "The prototype adds a planet-only funded cheaper card route and defers a persistent score-threshold income task while that sole card has a funded purpose. It does not widen the value forecast domain."
+  ],
+  "candidateAdmission": "FROZEN: resource-demand unit and unique standard full-flow pass; current input audit is missing historical case003. Formal AI remains unchanged.",
+  "auditFailures": [
+    "[FAIL] independent-card-choice-equivalence: ENOENT: no such file or directory, open '/private/tmp/seti-terminal-income-candidate-cqkaqhd6/adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json'"
+  ],
+  "candidatePatch": "reports/ai-foundation-20261119/terminal-choice-candidate-20261119-v1.patch",
+  "testFixture": "reports/ai-foundation-20261119/terminal-choice-candidate-test-fixture-20261119-v1.json.gz",
+  "candidateFingerprint": "reports/ai-foundation-20261119/terminal-choice-candidate-preflight-20261119-v1.json",
+  "replayVerification": "reports/ai-foundation-20261119/terminal-choice-replay-verification-20261119-v1.json",
+  "controlledNativeInputs": 173,
+  "nativeReplayVerificationInputs": 610,
+  "patchReproduction": "Restore sourceCommit, apply the zero-context text patch with git apply --unidiff-zero, and copy the archived test fixture to randomizer/game/ai/final-income-land-20261119-v1.fixture.json.gz. The preflight records exact overlay hashes."
+}

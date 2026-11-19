@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "original20-terminal-card-decision-audit",
+  "startedEpochSeconds": 1795051458.059864,
+  "deadlineEpochSeconds": 1795052658.059864,
+  "status": "frozen",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Locate an objectively wrong late-game card decision from the existing20 completed games; do not tune early income or resume frozen routes.",
+  "hypotheses": [
+    "At a final card menu, a higher actual terminal-score choice was fixed/excluded or misvalued.",
+    "A known end-game scoring card is consumed or left unplayed despite a strictly better legal terminal continuation."
+  ],
+  "success": "One reproducible exact-score regret or a quantified absence of such evidence; no production edit without a concrete Native counterexample.",
+  "limits": {
+    "wallSeconds": 1200,
+    "maximumHypotheses": 2,
+    "maximumNativeControlledInputs": 240,
+    "maximumNativeSubmissionsPerDecision": 256,
+    "maximumDecisionMilliseconds": 600
+  },
+  "stop": "At fixed deadline close this audit. No new full games or20-board rerun.",
+  "closedEpochSeconds": 1795052748.997149,
+  "outcome": "terminal-choice-outcome-20261119-v1.json",
+  "reason": "Positive autonomous terminal control132-to138, but required input audit lacks a historical fixture. Do not continue repairs or new games automatically after this window.",
+  "lastResearchEvidenceEpochSeconds": 1795052680.661909,
+  "lastResearchEvidenceBeforeDeadline": false,
+  "enforcementLimit": "The final dependency restoration/audit ran outside the guard wrapper; this audit does not prove uniform command enforcement. After window expiry only archival closure is performed."
+}

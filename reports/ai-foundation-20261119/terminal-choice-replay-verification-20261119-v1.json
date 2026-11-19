@@ -1,0 +1,20 @@
+[
+  {
+    "archive": "reports/ai-foundation-20261119/terminal-choice-delay-replay-20261119-v1.json.gz",
+    "inputs": 203,
+    "score": 132,
+    "verified": true
+  },
+  {
+    "archive": "reports/ai-foundation-20261119/terminal-choice-preserve-replay-20261119-v1.json.gz",
+    "inputs": 200,
+    "score": 135,
+    "verified": true
+  },
+  {
+    "archive": "reports/ai-foundation-20261119/terminal-choice-candidate-replay-20261119-v1.json.gz",
+    "inputs": 207,
+    "score": 138,
+    "verified": true
+  }
+]
