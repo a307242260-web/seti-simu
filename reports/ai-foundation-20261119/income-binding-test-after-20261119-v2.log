@@ -1,0 +1,4 @@
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+{"knownScanIncomeFunding":"passed","nativeInputs":23,"retainedExtraCards":2,"noNewSearchNodes":true}
+{"incomeBindingSource":"passed","beforeInput":110,"uniqueKnownCorner":"card-17-0","noNewSearchBranch":true,"rootAndRngUnchanged":true}

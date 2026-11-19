@@ -1,0 +1,35 @@
+{
+  "status": "closed-no-terminal-improvement",
+  "parentEvidence": "income-binding-outcome-20261119-v1.json",
+  "question": "After the already-verified credit income + blue2 + identical paid scan/analysis intervention, does unchanged accepted V72 realize the two retained cards into a better terminal result?",
+  "source": "paid-scan-income5-alternative-replay-20261119-v1.json.gz",
+  "fixedPrefixInputs": 137,
+  "scope": "Controlled intervention, not an autonomous performance score. Original first114 inputs followed by23 fixed known Native actions; all subsequent decisions use unchanged V72.",
+  "maxNewColdAISearches": 1,
+  "maxRegisteredFullContinuations": 1,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameGateMilliseconds": 180000,
+  "stop": "No policy tweak or20-board batch until this fixed intervention has a terminal outcome. No generic continuation framework.",
+  "startedEpochSeconds": 1795093121.8445508,
+  "deadlineEpochSeconds": 1795094321.8445508,
+  "resumeAmendment": {
+    "atEpochSeconds": 1795093509.638047,
+    "failure": "ROUND_SUMMARY_SKIPPED_BOUNDARY after input138 committed; first source attempt terminal-failed",
+    "firstNativeInputReexecuted": false,
+    "maxAdditionalColdAISearches": 1,
+    "maxAdditionalResumeSegments": 1,
+    "resumeSave": "seti-saves/seti-save-income-scan-control-resume138-20261119-v1.json",
+    "policyChanged": false
+  },
+  "terminalScore": 131,
+  "baselineScore": 135,
+  "policyChanged": false,
+  "logicalControlledGames": 1,
+  "executionSegments": 2,
+  "committedInputReexecuted": false,
+  "closedEpochSeconds": 1795093830.720344,
+  "outcome": "income-scan-control-outcome-20261119-v1.json"
+}

@@ -1,0 +1,72 @@
+{
+  "status": "verified",
+  "sourcePolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "newAISearches": 0,
+  "newGames": 0,
+  "nativeVerificationInputs": 138,
+  "prefixLoadedExactly": true,
+  "policyFilesVerified": 382,
+  "metadata": {
+    "id": "free-analyze-known-scan-control-v1",
+    "learnerSeat": "player-white",
+    "learnerAgentType": "search",
+    "hostAgentFactory": "custom-seat-roles",
+    "boardNumber": 5,
+    "boardName": "免电分析随机盘面05",
+    "catalog": "reports/fixed-boards/free-analyze-random20-20261104-v1.json",
+    "catalogSha256": "239799d9128900f67d0d847283e5133d56826ec9e23dbeab6ab00f3d5ed6cda3",
+    "setupPolicy": "deep-space-white-then-first-offered-initial-cards-and-required-discard-v1",
+    "opponentPolicyVersion": "seti-human405-pass-only-v1",
+    "opponentReserveRule": "historical-preference-if-offered-otherwise-stable-action-id",
+    "roles": {
+      "player-white": "shared-search",
+      "player-green": "pass-only",
+      "player-blue": "pass-only",
+      "player-brown": "pass-only"
+    },
+    "comparisonScope": "white-only-fixed-scan-route-intervention",
+    "scoreSemantics": "terminal-score-with-fixed-known-scan-purpose-prefix",
+    "roundEndPhase": "before-pass-card-and-income",
+    "baselineEligible": false,
+    "stopAfterRound": null,
+    "decisionGate": {
+      "nativeInputs": 256,
+      "milliseconds": 600,
+      "enforcement": "reject-before-input"
+    },
+    "gameMillisecondsTarget": 180000,
+    "openingInputs": 138,
+    "originalOpeningInputs": 24,
+    "controlledPurposePrefix": {
+      "sourcePolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+      "savePath": "seti-saves/seti-save-income-scan-control-resume138-20261119-v1.json",
+      "saveSha256": "88dab280b0b2859d750ee462a837d4af7fd0604e44a3450c4d520e2b4eadd4fc",
+      "preparationPath": "reports/ai-foundation-20261119/income-scan-control-preparation-20261119-v2.json",
+      "preparationSha256": "c26c297e3f9c2f844b46ba07cba08bd571158f0613657c86b87e8f5a6f450011",
+      "nativeArchive": "reports/ai-foundation-20261119/paid-scan-income5-alternative-replay-20261119-v1.json.gz",
+      "nativeArchiveSha256": "5dced3d8919b6cd652a0cfa2e742fb5bc1c43c2b87816e986c24f06d8c6ac44c",
+      "originalInputs": 114,
+      "fixedPurposeInputs": 23,
+      "controlledPrefixInputs": 138,
+      "inheritedAutonomousInputs": 1,
+      "completedRoundsBeforeContinuation": 2
+    },
+    "autonomousScope": "after-fixed137-and-one-committed-autonomous-input"
+  },
+  "expected": {
+    "nativeStateSha256": "7f5e75441cacc3485d5f9935d539ebabb72805d207ed7c92a41482aa62f9c0b3",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 4179339788
+    }
+  },
+  "actual": {
+    "nativeStateSha256": "7f5e75441cacc3485d5f9935d539ebabb72805d207ed7c92a41482aa62f9c0b3",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 4179339788
+    }
+  }
+}

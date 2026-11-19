@@ -1,0 +1,19 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),z=require('node:zlib'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const R=path.resolve(__dirname,'..'),D=path.join(R,'reports/ai-foundation-20261119'),m=JSON.parse(fs.readFileSync('/private/tmp/seti-income-binding-20261119.json')),rt=m.runtime,seat='player-white';
+const old=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(D,'paid-scan-income5-fixture-20261119-v1.json.gz')))),archive=JSON.parse(z.gunzipSync(fs.readFileSync(path.join(D,'paid-scan-income5-before113-replay-20261119-v1.json.gz'))));
+const {createSimulationRuleComposition}=require(path.join(rt,'randomizer/training/simulation-rule-composition')),{createSeededRandom}=require(path.join(rt,'randomizer/game/random')),random=createSeededRandom(archive.seed),rngState={algorithm:'seti-simulation-mulberry32-v1',state:random.getState()},k=createSimulationRuleComposition({seed:archive.seed,activePlayerCount:4,random,rngState,trustedProjectionReader:true}),c=k.composition;
+const ordered=v=>v&&typeof v==='object'?Array.isArray(v)?v.map(ordered):Object.fromEntries(Object.keys(v).sort().map(key=>[key,ordered(v[key])])):v,digest=v=>crypto.createHash('sha256').update(JSON.stringify(ordered(v))).digest('hex');
+const output=path.join(D,'income-binding-root110-fixture-20261119-v1.json.gz');assert(!fs.existsSync(output));
+try{
+ c.lifecycle.newGame({seed:archive.seed,activePlayerCount:4,initialize:true,rngState});c.inputPort.beginDrain({metadata:{source:'research-archive'}});let root;
+ for(const[i,step]of archive.actions.entries()){
+  if(i===109)root=c.lifecycle.save().envelope;
+  const inspect=c.inspect(),d=inspect.phase==='awaiting_input'?inspect.session.decision:null,menu=d?.choices||c.inputPort.enumerateActions({}),a=menu.find(a=>a.actionId===step.action.actionId&&a.family===step.action.family&&digest(a.target)===digest(step.action.target));assert(a,'Native prefix input'+(i+1));const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok);
+ }
+ assert.deepEqual(c.lifecycle.save().envelope,old.rootBeforeData,'Native root110 and its three real preparation inputs reach the independently verified root113');assert(root);
+ const s=JSON.parse(root.committedState),p=s.players.players.find(p=>p.id===seat),cards=require(path.join(rt,'randomizer/game/cards/deck')),data=require(path.join(rt,'randomizer/game/data'));
+ const prefix={...archive,actions:archive.actions.slice(0,109),expected:{nativeStateSha256:digest(s),sessionSha256:digest(root.session),rng:s.meta.rngState},scope:'Nonterminal exact Native binding source before input110; not an autonomous score.'};require(path.join(rt,'tools/archive_research_replay')).replay(prefix);
+ const f={...old,rootBinding:root,bindingInput:110,bindingPreparationActions:archive.actions.slice(109).map(x=>x.action),dataCornerCardId:'card-17-0',sourceCommit:m.parent,scope:'Native root110 is independently replayed from109 literal inputs and reaches root113 through3 exact Native preparation inputs.'};fs.writeFileSync(output,z.gzipSync(JSON.stringify(f)));const arch='income-binding-before110-replay-20261119-v1.json.gz';fs.writeFileSync(path.join(D,arch),z.gzipSync(JSON.stringify(prefix)));
+ const proof={status:'verified',nativePreparationInputs:112,independentReplayInputs:109,newAISearches:0,newGames:0,fixture:path.basename(output),archive:arch,rootBefore113Identical:true,resources:p.resources,slots:data.listComputerPlacedTokens(p),dataCorners:p.hand.filter(c=>cards.getDiscardActionRewardForCard(c)?.dataCount).map(c=>({id:c.id,cardId:c.cardId,reward:cards.getDiscardActionRewardForCard(c)}))};fs.writeFileSync(path.join(D,'income-binding-root110-native-proof-20261119-v1.json'),JSON.stringify(proof,null,2)+'\n');console.log(JSON.stringify(proof));
+}finally{c.dispose();}

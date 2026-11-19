@@ -1,0 +1,25 @@
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+{"knownScanIncomeFunding":"passed","nativeInputs":23,"retainedExtraCards":2,"noNewSearchNodes":true}
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ELOOP: too many symbolic links encountered, open '/private/tmp/seti-income-binding-20261119-olqy245l/reports/ai-foundation-20261119/income-binding-root110-fixture-20261119-v1.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/tmp/seti-income-binding-20261119-olqy245l/randomizer/game/ai/scan-analysis-income-utility.test.js:63:56)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -62,
+  code: 'ELOOP',
+  syscall: 'open',
+  path: '/private/tmp/seti-income-binding-20261119-olqy245l/reports/ai-foundation-20261119/income-binding-root110-fixture-20261119-v1.json.gz'
+}
+
+Node.js v22.22.0

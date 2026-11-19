@@ -1,0 +1,46 @@
+{
+  "status": "verified",
+  "nativePreparationInputs": 112,
+  "independentReplayInputs": 109,
+  "newAISearches": 0,
+  "newGames": 0,
+  "fixture": "income-binding-root110-fixture-20261119-v1.json.gz",
+  "archive": "income-binding-before110-replay-20261119-v1.json.gz",
+  "rootBefore113Identical": true,
+  "resources": {
+    "additionalPublicScan": 2,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 0,
+    "energy": 0,
+    "handSize": 8,
+    "publicity": 6,
+    "score": 53
+  },
+  "slots": [
+    {
+      "id": "data-token-13",
+      "index": 1,
+      "placementKind": "computer",
+      "placementSlot": 1
+    },
+    {
+      "id": "data-token-14",
+      "index": 2,
+      "placementKind": "computer",
+      "placementSlot": 2
+    }
+  ],
+  "dataCorners": [
+    {
+      "id": "card-17-0",
+      "cardId": "b_27.webp",
+      "reward": {
+        "code": 1,
+        "label": "弃牌换1数据",
+        "gain": {},
+        "dataCount": 1
+      }
+    }
+  ]
+}

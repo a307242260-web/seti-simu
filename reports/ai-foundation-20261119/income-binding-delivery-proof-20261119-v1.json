@@ -1,0 +1,38 @@
+{
+  "status": "validated-income-funding-hypothesis-closed",
+  "policyCandidateCommit": "e08c85fa3bbf67bb37bc9f406f94766cf5500129",
+  "controlledSourceCommits": [
+    "c017c68031c1c59f092459d688b0312b5178669c",
+    "fa7e3b17debdb3f64fb5d40c56a7b2e3fdd61370"
+  ],
+  "acceptedProduction": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "policyChanged": false,
+  "candidateAdopted": false,
+  "hypothesisClosed": true,
+  "autonomousTeaching": 272,
+  "autonomousBoard05": 122,
+  "originalBoard05Reference": 135,
+  "controlledPurposeTerminal": 131,
+  "controlledScoreNotAutonomous": true,
+  "newAutonomousGames": 2,
+  "newLogicalControlledGames": 1,
+  "controlledExecutionSegments": 2,
+  "controlledReporterFailureFixed": true,
+  "committedInput138NotRepeated": true,
+  "replays": {
+    "autonomousNativeInputs": 546,
+    "controlledTerminalNativeInputs": 187,
+    "bindingSourceVerified": 221,
+    "controlInitializationVerified": 137,
+    "resumePrefixVerified": 138
+  },
+  "candidateRelatedTestsPassed": 6,
+  "candidateInputAuditPassed": true,
+  "candidateBrowserSmokesPassed": 2,
+  "continuationContractTestsPassed": 2,
+  "completeRound3And4BoundariesVerifiedByControlledTerminal": true,
+  "original20BatchRerun": false,
+  "registryV1AndHistoryPreserved": true,
+  "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673",
+  "scope": "Reject the income tie as an AI improvement. Retain only pinned controlled experiment entry and its round bookkeeping fix. All382 Production JavaScript files and Browser index remain byte-identical to the accepted base."
+}

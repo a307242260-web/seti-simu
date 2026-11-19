@@ -1,0 +1,26 @@
+{
+  "status": "closed-rejected-autonomous-regression",
+  "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
+  "actualBindingInput": 110,
+  "pendingIncomeInput": 115,
+  "previousCandidate": "be9664dd",
+  "previousResult": "unchanged autonomous paths because supplier bound before data exists",
+  "hypothesis": "Bind an exact-tied income supplier using the already-known greedy data-corner cost before the fixed income plan begins; exclude the same card from scan payment. No new search branch or weight change.",
+  "stateEquivalence": "Exact Native root/session/RNG; known cards and public scan targets only. No fabricated successor or state equivalence introduced.",
+  "reachability": "Existing capacity/resource lower bounds and fixed native preparation remain authoritative; new tie only quotes an exact known data corner and reserves it against income/scanner/payment roles.",
+  "budgets": "Existing global node/time/frontier contract unchanged. No extra search branch or Native input in the new quote.",
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameGateMilliseconds": 180000,
+  "maxColdAISearches": 4,
+  "maxRegisteredFullGames": 2,
+  "order": "Root110 cold must actually bind credit before any full game; required teaching preservation before one original board05 game. No20-board batch.",
+  "startedEpochSeconds": 1795092425.332066,
+  "deadlineEpochSeconds": 1795093925.332066,
+  "candidateAdopted": false,
+  "newAutonomousGames": 2,
+  "closedEpochSeconds": 1795093121.843526,
+  "outcome": "income-binding-outcome-20261119-v1.json"
+}

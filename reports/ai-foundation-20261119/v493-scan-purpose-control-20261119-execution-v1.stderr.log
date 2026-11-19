@@ -1,0 +1,19 @@
+/private/tmp/seti-income-scan-control-20261119-biujynpj/tools/run_research_validation.js:715
+    throw error;
+    ^
+
+Error: ROUND_SUMMARY_SKIPPED_BOUNDARY
+    at runValidation (/private/tmp/seti-income-scan-control-20261119-biujynpj/tools/run_research_validation.js:578:54)
+    at main (/private/tmp/seti-income-scan-control-20261119-biujynpj/tools/run_research_validation.js:841:3)
+    at Object.<anonymous> (/private/tmp/seti-income-scan-control-20261119-biujynpj/tools/run_research_validation.js:844:30)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+
+Node.js v22.22.0
+
+[失败] run_research_validation 退出码 1

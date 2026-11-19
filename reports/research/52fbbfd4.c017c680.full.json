@@ -1,0 +1,224 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "v493-scan-purpose-control-20261119",
+  "fingerprint": "52fbbfd431141a4a059c8eeaa6b0542ecd5faa91ee204fc22fd5cc9ceeaa9222",
+  "mode": "full",
+  "seed": "seti-analyze-5001578c1141",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-analyze-5001578c1141",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "cfeffcf5d8c9e4e66400817701b1d5421869e731763933a040c801d01c334aa0",
+    "components": {
+      "aliens": "f5728969d3518e51418337ec46cbbf5f3af5a6313f382a4faa2624614a7b0421",
+      "cards": "f9d21d502624804ca60f957bd85fced82349fb09e57992364591cba849cd6e10",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "e7f454da488a1aca043cf5a38d2c773f96d866a165dd826d1a2186fb334a56df",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "b197bc45e182a4e4a95c1bdfb1917f9d529719c21b7a224f5b429d41f4cbe35c",
+      "solarSystem": "85c29a33fb80e6027a0c15ad12418f374ed4b73b7672b7401f0d5e48aa584a31",
+      "tech": "3122e777402f81d19d3014a007a30775af3762af9860e5faa08c3b0de5a099ef",
+      "turn": "36a23e0076854c4301c65afbf3b01ce499d880c308b28dcf072a0d975ee5cd70",
+      "initialOffers": "7a7403eba8db892d92cfbfe4856d9b5232da3d216334a0ac64a916828dfb0bae",
+      "initialRandom": "23e91e6f516d425c47d492075c92e2ad32104f951392c90a3ef26063f006191f"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency/free-analyze-known-scan-control-v1/seti-human405-pass-only-v1",
+  "agentType": "search",
+  "agentTracePath": "reports/research/52fbbfd4.c017c680.full.json.decisions.jsonl",
+  "searchCoverage": "incomplete",
+  "flags": {
+    "compactReplay": true,
+    "scenario": "free-analyze-known-scan-control-v1"
+  },
+  "scenario": {
+    "id": "free-analyze-known-scan-control-v1",
+    "learnerSeat": "player-white",
+    "learnerAgentType": "search",
+    "hostAgentFactory": "custom-seat-roles",
+    "boardNumber": 5,
+    "boardName": "免电分析随机盘面05",
+    "catalog": "reports/fixed-boards/free-analyze-random20-20261104-v1.json",
+    "catalogSha256": "239799d9128900f67d0d847283e5133d56826ec9e23dbeab6ab00f3d5ed6cda3",
+    "setupPolicy": "deep-space-white-then-first-offered-initial-cards-and-required-discard-v1",
+    "opponentPolicyVersion": "seti-human405-pass-only-v1",
+    "opponentReserveRule": "historical-preference-if-offered-otherwise-stable-action-id",
+    "roles": {
+      "player-white": "shared-search",
+      "player-green": "pass-only",
+      "player-blue": "pass-only",
+      "player-brown": "pass-only"
+    },
+    "comparisonScope": "white-only-fixed-scan-route-intervention",
+    "scoreSemantics": "terminal-score-with-fixed-known-scan-purpose-prefix",
+    "roundEndPhase": "before-pass-card-and-income",
+    "baselineEligible": false,
+    "stopAfterRound": null,
+    "decisionGate": {
+      "nativeInputs": 256,
+      "milliseconds": 600,
+      "enforcement": "reject-before-input"
+    },
+    "gameMillisecondsTarget": 180000,
+    "openingInputs": 137,
+    "originalOpeningInputs": 24,
+    "controlledPurposePrefix": {
+      "sourcePolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+      "savePath": "seti-saves/seti-save-income-scan-control-prefix137-20261119-v1.json",
+      "saveSha256": "4226a91dad74a0d20fc975e4e3a38273f08cb2ed6c20089b86d65031a0992f72",
+      "preparationPath": "reports/ai-foundation-20261119/income-scan-control-preparation-20261119-v1.json",
+      "preparationSha256": "cc990ccd8b7737e954b072d7786ab401d31521a9a1a418968e49f7da3e4516f5",
+      "nativeArchive": "reports/ai-foundation-20261119/paid-scan-income5-alternative-replay-20261119-v1.json.gz",
+      "nativeArchiveSha256": "5dced3d8919b6cd652a0cfa2e742fb5bc1c43c2b87816e986c24f06d8c6ac44c",
+      "originalInputs": 114,
+      "fixedPurposeInputs": 23,
+      "controlledPrefixInputs": 137
+    },
+    "autonomousScope": "after-fixed-137-input-prefix"
+  },
+  "scenarioResult": {
+    "firstRoundSettled": true,
+    "openingInputs": 137
+  },
+  "createdAt": "2026-11-19T13:02:55.177Z",
+  "gitCommit": "c017c6803",
+  "steps": 138,
+  "stepsLimit": 200,
+  "terminal": false,
+  "status": "failed",
+  "scoreSemantics": "terminal-score-with-fixed-known-scan-purpose-prefix",
+  "wallMs": 203,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-v493-scan-purpose-control-20261119-c017c680-full-failed-v56.json",
+  "rounds": [],
+  "roundSummariesPath": "reports/research/52fbbfd4.c017c680.full.json.rounds.jsonl",
+  "summary": {
+    "round": 3,
+    "terminal": false,
+    "scores": {},
+    "avgScore": null
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 14,
+        "choose_payment": 10,
+        "launch": 1,
+        "move": 5,
+        "place_data": 13,
+        "choose_target": 28,
+        "end_turn": 11,
+        "play_card": 4,
+        "land": 2,
+        "research_tech": 2,
+        "analyze": 2,
+        "pass": 2,
+        "accept_optional_effect": 1,
+        "card_corner": 2,
+        "quick_trade": 1
+      },
+      "player-blue": {
+        "choose_card": 8,
+        "choose_payment": 3,
+        "pass": 3
+      },
+      "player-brown": {
+        "choose_card": 9,
+        "pass": 3
+      },
+      "player-green": {
+        "choose_card": 9,
+        "choose_payment": 2,
+        "pass": 3
+      }
+    },
+    "whiteQuickTrade": 1,
+    "whiteResearchSteps": [
+      53,
+      116
+    ],
+    "traceEvents": [
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "blue",
+        "owner": "white"
+      },
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "yellow",
+        "owner": "white"
+      },
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "blue",
+        "owner": "white"
+      },
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "brown"
+      },
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 2,
+        "tt": "yellow",
+        "owner": "green"
+      }
+    ],
+    "revealEvents": [
+      {
+        "step": 138,
+        "seat": "player-white",
+        "slotId": 2,
+        "alienId": "奥陌陌"
+      }
+    ],
+    "budgetHits": [],
+    "searches": [
+      {
+        "step": 138,
+        "searchIndex": 0,
+        "seat": "player-white",
+        "action": "card_corner:7fc94a59",
+        "complete": true,
+        "stopReason": null,
+        "value": 119.5,
+        "rootAndSearchMilliseconds": 109.56783299999998,
+        "diagnostics": {
+          "nativeExecutions": 42
+        }
+      }
+    ]
+  },
+  "failure": {
+    "code": "SCENARIO_FAILED",
+    "message": "ROUND_SUMMARY_SKIPPED_BOUNDARY",
+    "checkpointPath": null,
+    "attemptTracePath": null,
+    "searchGraphClosed": false,
+    "decisionAdmitted": true,
+    "failedDecisionCommitted": true,
+    "checkpointRetainedAsBrowserSave": true,
+    "checkpointFileOmitted": true
+  },
+  "archiveRetention": {
+    "mode": "decision-and-checkpoint-save",
+    "rawRecordSha256": "088e4572b18c6ee594929e57b02ea95f8adf5c1067d17fa763386e1bf3d18358",
+    "noDecisionReexecuted": true
+  }
+}
