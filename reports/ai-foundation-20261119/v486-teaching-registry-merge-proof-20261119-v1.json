@@ -19,11 +19,13 @@
     "reports/robot-iteration.html": "09dbbc76db4f2737edfc4676d9c1f5665e30e963704fcee8ea6090d1a5e209e4"
   },
   "committedSnapshotHashes": {
-    "reports/iteration/versions.json": "95f3dd021f24508e4ebc66b461a66725a9e47de5b1d7135e7e94015627e4294c",
-    "reports/iteration/registry.json": "b32479c9df934ec108d47e2e467dd117103634078cd5bbefde3b916db3de4cb8",
+    "reports/iteration/versions.json": "49cad1afae2f3568c20bced6b8a1124d9c2f15a028243a4051e4d1d8bbfa2b04",
+    "reports/iteration/registry.json": "32dc9cff90e87f119b20366703979125b4c9e6b4c05935613fad36cc13addb0f",
     "reports/robot-iteration.html": "b55d6073a9b46b4a2dbf90579c952eecf54c6144dd7fb548108bfb7fd874a77a"
   },
   "newScore": 272,
   "strategyChanged": false,
-  "wholeHistoryRebuildTimedOutAndNotRetried": true
+  "wholeHistoryRebuildTimedOutAndNotRetried": true,
+  "serializationMatchesPriorHead": true,
+  "serializationOnlyFollowupOf": "e13b8ce15d2961e5ab19ff8810df752a968d20fc"
 }
