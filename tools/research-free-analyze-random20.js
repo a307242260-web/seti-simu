@@ -1,28 +1,45 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const whiteFull=require('./research-human405-full'),first=require('./research-human405-round1');
-const ID='v661-free-analyze-random20-v1',STRICT_ID='free-analyze-random20-guarded-v1',CONTROL_ID='free-analyze-known-scan-control-v1',IDS=Object.freeze([ID,STRICT_ID,CONTROL_ID]),FILE='reports/fixed-boards/free-analyze-random20-20261104-v1.json';
+const ID='v661-free-analyze-random20-v1',STRICT_ID='free-analyze-random20-guarded-v1',CONTROL_ID='free-analyze-known-scan-control-v1',R2_HELD_ID='free-analyze-r2-held-scan-control-v1',R2_TRIGGER_ID='free-analyze-r2-scan-tool-control-v1',IDS=Object.freeze([ID,STRICT_ID,CONTROL_ID,R2_HELD_ID,R2_TRIGGER_ID]),FILE='reports/fixed-boards/free-analyze-random20-20261104-v1.json';
 const raw=fs.readFileSync(path.resolve(__dirname,'..',FILE)),catalog=JSON.parse(raw),hash=crypto.createHash('sha256').update(raw).digest('hex');
 const LEARNER='player-white',COMPANY='industry:深空探测.png',SETUP=['start_initial_setup','select_initial_card','confirm_initial_setup','discard-hand-cards'];
 const sorted=(a,key)=>[...a].sort((x,y)=>key(x).localeCompare(key(y)));
 assert.equal(catalog.boards.length,20);assert.equal(new Set(catalog.boards.map(x=>x.seed)).size,20);
-function controlledScanSource(){
- const file='reports/ai-foundation-20261119/income-scan-control-preparation-20261119-v2.json',bytes=fs.readFileSync(path.resolve(__dirname,'..',file)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
- assert.equal(sha(bytes),'c26c297e3f9c2f844b46ba07cba08bd571158f0613657c86b87e8f5a6f450011','SCAN_CONTROL_PREPARATION_DRIFT');const proof=JSON.parse(bytes);
+const CONTROL_SOURCES=Object.freeze({
+  "free-analyze-known-scan-control-v1": {
+    "file": "reports/ai-foundation-20261119/income-scan-control-preparation-20261119-v2.json",
+    "sha256": "c26c297e3f9c2f844b46ba07cba08bd571158f0613657c86b87e8f5a6f450011",
+    "roundNumber": 3
+  },
+  "free-analyze-r2-held-scan-control-v1": {
+    "file": "reports/ai-foundation-20261119/r2-held-scan-purpose-preparation-20261119-v1.json",
+    "sha256": "72ad4ac15f0f6cc8e980ace940bed3f0521417a0be968200d9b0972ca17e231e",
+    "roundNumber": 2
+  },
+  "free-analyze-r2-scan-tool-control-v1": {
+    "file": "reports/ai-foundation-20261119/r2-scan-tool-purpose-preparation-20261119-v1.json",
+    "sha256": "d32f2f02aa25d1dff55aa0cf57a37be36ce759a5d95b76e54c37f792c10e6dea",
+    "roundNumber": 2
+  }
+});
+function controlledScanSource(id=CONTROL_ID){
+ const spec=CONTROL_SOURCES[id];assert(spec,'SCAN_CONTROL_UNKNOWN');const file=spec.file,bytes=fs.readFileSync(path.resolve(__dirname,'..',file)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+ assert.equal(sha(bytes),spec.sha256,'SCAN_CONTROL_PREPARATION_DRIFT');const proof=JSON.parse(bytes);
  for(const[p,h]of Object.entries(proof.runtimeSourceHashes))assert.equal(sha(fs.readFileSync(path.resolve(__dirname,'..',p))),h,'SCAN_CONTROL_POLICY_DRIFT:'+p);
  const saveBytes=fs.readFileSync(path.resolve(__dirname,'..',proof.savePath));assert.equal(sha(saveBytes),proof.saveSha256,'SCAN_CONTROL_SAVE_DRIFT');
  const archive=fs.readFileSync(path.resolve(__dirname,'..',proof.archivePath));assert.equal(sha(archive),proof.archiveSha256,'SCAN_CONTROL_NATIVE_PROOF_DRIFT');
- const save=JSON.parse(saveBytes),state=JSON.parse(save.committedState);assert.equal(save.seed,proof.seed);assert.equal(save.replaySteps.length,138);assert.equal(save.session,null);assert(save.machineAI[LEARNER]);assert.equal(state.turn.roundNumber,3);assert(!state.turn.gameEnded);assert.equal(state.turn.currentPlayerId,LEARNER);
- return{save,provenance:{sourcePolicyCommit:proof.sourcePolicyCommit,savePath:proof.savePath,saveSha256:proof.saveSha256,preparationPath:file,preparationSha256:sha(bytes),nativeArchive:proof.archivePath,nativeArchiveSha256:proof.archiveSha256,originalInputs:114,fixedPurposeInputs:23,controlledPrefixInputs:138,inheritedAutonomousInputs:1,completedRoundsBeforeContinuation:2}};
+ const save=JSON.parse(saveBytes),state=JSON.parse(save.committedState);assert.equal(save.seed,proof.seed);assert.equal(save.replaySteps.length,proof.nativePrefixInputs);assert.equal(save.session,null);if(proof.inheritedAutonomousInputs)assert(save.machineAI[LEARNER]);else assert.deepEqual(save.machineAI,{});assert.equal(state.turn.roundNumber,spec.roundNumber);assert(!state.turn.gameEnded);assert.equal(state.turn.currentPlayerId,LEARNER);
+ return{save,provenance:{sourcePolicyCommit:proof.sourcePolicyCommit,savePath:proof.savePath,saveSha256:proof.saveSha256,preparationPath:file,preparationSha256:sha(bytes),nativeArchive:proof.archivePath,nativeArchiveSha256:proof.archiveSha256,originalInputs:proof.originalPrefixInputs,fixedPurposeInputs:proof.fixedPurposeInputs,controlledPrefixInputs:proof.nativePrefixInputs,inheritedAutonomousInputs:proof.inheritedAutonomousInputs||0,completedRoundsBeforeContinuation:spec.roundNumber-1}};
 }
 function describe(identity,{full}={}){
  if(!full||identity.agentType!=='search'||identity.activePlayerCount!==4)throw Error('RANDOM20_REQUIRES_FOUR_SEAT_SEARCH_FULL_MODE');
  const board=catalog.boards.find(x=>x.seed===identity.seed);
  if(!board)throw Error('RANDOM20_SEED_NOT_IN_ORIGINAL_CATALOG');
- const control=identity.flags?.scenario===CONTROL_ID,prepared=control?controlledScanSource():null;
+ const control=Boolean(CONTROL_SOURCES[identity.flags?.scenario]),prepared=control?controlledScanSource(identity.flags.scenario):null;
  if(control)assert.equal(identity.seed,prepared.save.seed,'SCAN_CONTROL_SEED_MISMATCH');
  const strict=identity.flags?.scenario===STRICT_ID||control;
- return {id:control?CONTROL_ID:strict?STRICT_ID:ID,learnerSeat:LEARNER,learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',
+ return {id:control?identity.flags.scenario:strict?STRICT_ID:ID,learnerSeat:LEARNER,learnerAgentType:'search',hostAgentFactory:'custom-seat-roles',
   boardNumber:board.number,boardName:board.name,catalog:FILE,catalogSha256:hash,
   setupPolicy:'deep-space-white-then-first-offered-initial-cards-and-required-discard-v1',
   opponentPolicyVersion:'seti-human405-pass-only-v1',opponentReserveRule:'historical-preference-if-offered-otherwise-stable-action-id',
@@ -30,11 +47,11 @@ function describe(identity,{full}={}){
   comparisonScope:'white-only-full-game',scoreSemantics:'terminal-score-with-passive-opponents',
   roundEndPhase:'before-pass-card-and-income',baselineEligible:false,stopAfterRound:null,
   decisionGate:{nativeInputs:256,milliseconds:600,enforcement:strict?'reject-before-input':'measure-only'},gameMillisecondsTarget:180000,
-  ...(control?{openingInputs:138,originalOpeningInputs:24,controlledPurposePrefix:prepared.provenance,autonomousScope:'after-fixed137-and-one-committed-autonomous-input',comparisonScope:'white-only-fixed-scan-route-intervention',scoreSemantics:'terminal-score-with-fixed-known-scan-purpose-prefix'}:{})};
+  ...(control?{openingInputs:prepared.provenance.controlledPrefixInputs,originalOpeningInputs:24,controlledPurposePrefix:prepared.provenance,autonomousScope:'after-'+prepared.provenance.controlledPrefixInputs+'-controlled-prefix-inputs',comparisonScope:'white-only-fixed-scan-route-intervention',scoreSemantics:'terminal-score-with-fixed-known-scan-purpose-prefix'}:{})};
 }
 function initialize(env,config,metadata,{checkpointFromSave}={}){
- if(metadata.id===CONTROL_ID){
-  const prepared=controlledScanSource();assert.deepEqual(metadata.controlledPurposePrefix,prepared.provenance);assert.equal(config.seed,prepared.save.seed);
+ if(CONTROL_SOURCES[metadata.id]){
+  const prepared=controlledScanSource(metadata.id);assert.deepEqual(metadata.controlledPurposePrefix,prepared.provenance);assert.equal(config.seed,prepared.save.seed);
   env.loadCheckpoint(checkpointFromSave(prepared.save,{...config,agentType:'custom',seat:LEARNER,opponentIdentity:metadata.opponentPolicyVersion}));
   const restored=env.saveBrowserSave();assert.equal(restored.committedState,prepared.save.committedState);assert.deepEqual(restored.session,prepared.save.session);assert.deepEqual(restored.replaySteps,prepared.save.replaySteps);assert.deepEqual(restored.machineAI,prepared.save.machineAI);return restored.replaySteps;
  }
@@ -72,6 +89,6 @@ function initialize(env,config,metadata,{checkpointFromSave}={}){
  return prefix;
 }
 function createEnvironment(options,metadata){
- return [STRICT_ID,CONTROL_ID].includes(metadata?.id)?first.createEnvironment(options,metadata):whiteFull.createEnvironment(options,metadata);
+ return (metadata?.id===STRICT_ID||CONTROL_SOURCES[metadata?.id])?first.createEnvironment(options,metadata):whiteFull.createEnvironment(options,metadata);
 }
-module.exports={ID,IDS,CONTROL_ID,controlledScanSource,describe,initialize,createEnvironment,settled:whiteFull.settled};
+module.exports={ID,IDS,CONTROL_ID,R2_HELD_ID,R2_TRIGGER_ID,controlledScanSource,describe,initialize,createEnvironment,settled:whiteFull.settled};
