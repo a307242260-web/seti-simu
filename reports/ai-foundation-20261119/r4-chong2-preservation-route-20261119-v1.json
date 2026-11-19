@@ -1,0 +1,19 @@
+{
+  "status": "registered-native-diagnosis",
+  "sourceCommit": "de1cb8b4a59105829d90a00263a55cc5cc7bb727",
+  "acceptedPolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "referenceRecord": "reports/research/adcb348b.42c7f5fd.full.terminal-recovery.json",
+  "teacherPrefixInputs": 245,
+  "question": "At the actual same-teacher-start R4 before263 boundary, can already-held cheap endgame card Chong2 be deployed before its probe leaves the relevant planet, rather than later discarded as movement payment? Charge the extra credit and setup turn before claiming gain.",
+  "stateEquivalence": "Exact Native restore of teacher245 plus actual17 inputs to262; same wallet, hand, tech, probes, sectors, revealed info and RNG. No future teacher blind card is imported.",
+  "resourcePruning": "Check actual card price, native action availability, and fixed continuation funding. Stop at infeasible input; no injection or alternate unregistered branch.",
+  "stateDedup": "Each registered root/envelope+branch input executed once, checkpointed after each input; compare complete same-goal boundaries.",
+  "maxPreparationInputs": 17,
+  "maxBranches": 2,
+  "maxCounterfactualInputs": 48,
+  "maxAISearches": 0,
+  "maxGames": 0,
+  "laterAdmissionRequired": "No full game before a causal gain, cold256Native/600ms decision and pinned source admission.",
+  "startedEpochSeconds": 1795100727.341346,
+  "deadlineEpochSeconds": 1795101927.341346
+}

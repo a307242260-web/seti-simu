@@ -1,0 +1,59 @@
+{
+  "status": "verified",
+  "sourceCommit": "de1cb8b4a59105829d90a00263a55cc5cc7bb727",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "commonPrefixInputs": 262,
+  "branches": [
+    {
+      "name": "baseline",
+      "preparation": "reports/ai-foundation-20261119/r4-scan-engine-baseline-preparation-20261119-v1.json",
+      "archive": "reports/ai-foundation-20261119/r4-scan-engine-baseline-prefix-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-r4-scan-engine-baseline-landed-20261119-v1.json",
+      "preparationSha256": "640f1d30ca1c967b3d8463f95fbb6d22b48efdfcb58ada67869bebb390384661",
+      "prefixInputs": 262,
+      "expected": {
+        "nativeStateSha256": "0bb2d3710edcaf5054908e4e2484b1dc4b6e6b1918cee487aeee379699c4eb6a",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "0bb2d3710edcaf5054908e4e2484b1dc4b6e6b1918cee487aeee379699c4eb6a",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "name": "deployed",
+      "preparation": "reports/ai-foundation-20261119/r4-scan-engine-deployed-preparation-20261119-v1.json",
+      "archive": "reports/ai-foundation-20261119/r4-scan-engine-deployed-prefix-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-r4-scan-engine-deployed-landed-20261119-v1.json",
+      "preparationSha256": "cab6b8a425d4e0c1d14f535b678b5948473c077b9469f892cea83dcece2c409c",
+      "prefixInputs": 264,
+      "expected": {
+        "nativeStateSha256": "587212b72a7b39d548ff7adac07994759288ac678f482f6387ae8dbfcbff50a7",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "587212b72a7b39d548ff7adac07994759288ac678f482f6387ae8dbfcbff50a7",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    }
+  ],
+  "independentReplayInputs": 526
+}

@@ -1,0 +1,20 @@
+{
+  "status": "registered-known-scan-trigger-native-test",
+  "sourceParent": "faf6cb24fea420212f87efdf505ddc0ad8c2b710",
+  "acceptedPolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "root": "reports/ai-foundation-20261119/r4-chong2-before263-20261119-v1.json.gz",
+  "question": "Can the already-held B111 scan engine pay back its2credit setup in one currently affordable identical standard scan, without consuming unknown cards or changing scan targets?",
+  "comparison": "One same Native root, all opponents passed. Baseline scans and ends; engine deploys B111, ends one own setup turn, then executes identical scan choices and ends. All three printed once-only triggers must settle officially.",
+  "knowledge": "No future hand, display or blind identity used for action selection. Original visible scan choices only; new blind cards retained as unknown for valuation.",
+  "budgets": {
+    "branches": 2,
+    "nativeInputs": 48,
+    "aiSearches": 0,
+    "games": 0
+  },
+  "pruning": "Require current credits to cover both printed card2 and scan1, current energy to cover the actual scan cost. Reject if same choices become illegal. No alternate unregistered route.",
+  "identity": "Preserve root, state/session/RNG snapshots, compare actual scan sectors, probes, technology and exact payments. No caches cross changed held/played cards.",
+  "promotion": "Positive single-purpose result is not a terminal or autonomous improvement. No strategy patch or new full game before distinct admission.",
+  "startedEpochSeconds": 1795101592.729085,
+  "deadlineEpochSeconds": 1795102492.729085
+}

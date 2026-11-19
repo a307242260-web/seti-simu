@@ -1,0 +1,60 @@
+{
+  "status": "extracted-existing-complete-plan",
+  "sourceCommit": "410c41e492e2a86e014108d12b8ea85e005106c7",
+  "sourceColdFile": "reports/ai-foundation-20261119/r4-scan-engine-terminal-control-deployed-cold-20261119-v1.json",
+  "sourceColdSha256": "2ddf4add4f12cb5dbe4971dab5ed048d3592e888a2d3db4f3055540bcb0d81bf",
+  "sourceRootSave": "seti-saves/seti-save-r4-scan-engine-deployed-landed-20261119-v1.json",
+  "newAISearches": 0,
+  "newGames": 0,
+  "currentSelectedValue": 222.5,
+  "bestScanValue": 220.5,
+  "scanGoal": {
+    "id": "scan:sector:sector-1-a",
+    "kind": "scan-flow",
+    "nebulaId": "sector-1-a",
+    "required": {
+      "credits": 1,
+      "energy": 2
+    },
+    "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+  },
+  "nativeScanActionIds": [
+    "scan:2d21a323",
+    "choose_target:8a5d7b2d",
+    "choose_card:7f1dded4",
+    "choose_card:75e32e17",
+    "choose_target:f4c617ab",
+    "choose_target:756e7901"
+  ],
+  "bestRewardEdge": {
+    "actionId": "accept_optional_effect:1424ba7f",
+    "target": 52,
+    "cost": 1,
+    "equivalent": false,
+    "fixedCardPlan": null,
+    "fixedChoices": [],
+    "steps": [
+      "accept_optional_effect:1424ba7f"
+    ]
+  },
+  "rewardOptions": [
+    {
+      "actionId": "accept_optional_effect:486eae05",
+      "value": 217
+    },
+    {
+      "actionId": "accept_optional_effect:5f03cf35",
+      "value": 217.5
+    },
+    {
+      "actionId": "accept_optional_effect:1424ba7f",
+      "value": 220.5
+    },
+    {
+      "actionId": "accept_optional_effect:4bd23b48",
+      "value": 216.5
+    }
+  ],
+  "nextQuestion": "B111-deployment-only continuation performs zero scans. Execute this already-evaluated affordable best scan purpose next, including its native free movement and greedy reward, then let unchanged V72 continue. Do not treat250 as evidence that the engine-plus-scan route is inferior.",
+  "scope": "Extracted plan is not a new Native witness or terminal score; source frozen graph retained for the active follow-up."
+}

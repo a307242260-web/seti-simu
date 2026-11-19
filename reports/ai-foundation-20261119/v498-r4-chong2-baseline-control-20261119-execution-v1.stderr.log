@@ -1,0 +1,9 @@
+[full进度] 第 4 轮 · 第 7 回合 · 决策#283 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=140 · 用时=0.167s · 1694.6步/s
+[full进度] 第 4 轮 · 第 9 回合 · 决策#306 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=156 · 用时=1.191s · 256.9步/s
+[full进度] 第 4 轮 · 第 10 回合 · 决策#324 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=173 · 用时=2.2s · 147.3步/s
+Error: 页面模板缺失: /private/tmp/seti-r4-chong2-control-20261119-c346p9dx/reports/iteration/page-template.html
+    at renderPage (/private/tmp/seti-r4-chong2-control-20261119-c346p9dx/tools/robot-iteration-lib.js:1312:11)
+    at buildRegistry (/private/tmp/seti-r4-chong2-control-20261119-c346p9dx/tools/robot-iteration-lib.js:1465:20)
+    at cmdRun (/private/tmp/seti-r4-chong2-control-20261119-c346p9dx/tools/robot_iterate.js:220:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/private/tmp/seti-r4-chong2-control-20261119-c346p9dx/tools/robot_iterate.js:424:17)

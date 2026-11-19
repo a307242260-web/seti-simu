@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "sourceCommits": [
+    "faf6cb24fea420212f87efdf505ddc0ad8c2b710",
+    "410c41e492e2a86e014108d12b8ea85e005106c7"
+  ],
+  "acceptedPolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "policyChanged": false,
+  "newAutonomousGames": 0,
+  "newControlledGames": 4,
+  "terminalScores": {
+    "twoOriginalRouteControls": 267,
+    "paidChong2": 238,
+    "earlyB111": 250
+  },
+  "autonomousTeachingReference": 272,
+  "original20Rerun": false,
+  "independentTerminalReplayInputs": 1295,
+  "nativePrefixReplayInputs": 1093,
+  "priorScenarioMetadataPreserved": true,
+  "resumeTests": {
+    "command": "node tools/run_node_tests.js --match research-world-resume --match frozen-continuation-identity",
+    "eachSnapshotResult": "2 passed,0 failed"
+  },
+  "fullGameGate": {
+    "maxNative": 140,
+    "maxMilliseconds": 306.8235,
+    "maxWallMs": 4066,
+    "allComplete": true
+  },
+  "coldGate": {
+    "maxNative": 140,
+    "maxMilliseconds": 326.310751,
+    "allPassed": true
+  },
+  "firstReportRecovery": {
+    "completed267GamePreserved": true,
+    "templateRestoredFromGit": true,
+    "buildOnly": true,
+    "extraAIGames": 0
+  },
+  "v1AndHistoryPreserved": true,
+  "sharedIndexUnchanged": true,
+  "protectedRootUnchanged": true,
+  "activeFollowup": "B111 deployment-only250 had no scans or engine rewards; actual best visible scan plan is extracted and retained, not yet a new full purpose result.",
+  "candidateAdopted": false
+}

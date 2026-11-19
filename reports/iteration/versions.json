@@ -7,6 +7,78 @@
   },
   "versions": [
     {
+      "id": "v499-r4-scan-engine-deployed-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u63d0\u524d\u90e8\u7f72SETI\u7814\u7a76\u6240\uff1a250\u5206\uff08\u540e\u7eed\u672a\u626b\u63cf\uff09",
+      "date": "2026-11-19",
+      "baseline": "v499-r4-scan-engine-baseline-control-20261119",
+      "head": "410c41e49",
+      "commits": [
+        "410c41e49"
+      ],
+      "summary": "Same first262 inputs, deploy held B111 for2credits and end one own setup turn; all subsequent actions unchanged V72. Terminal250 vs267 (-17). Successor performs zero scans and no B111 reward triggers, so this tests deployment alone, not the full engine-plus-scan purpose.1.964s; max120 Native/213.993ms. Best existing funded scan220.5 versus selected land222.5; preserve concrete scan witness for follow-up.",
+      "records": {
+        "a185d288.410c41e4.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v499-r4-scan-engine-baseline-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u7b2c\u56db\u8f6e\u7b2c263\u6b65\u91cd\u65b0\u89c4\u5212\uff1a267\u5206\uff08\u5b8c\u6574\u590d\u73b0\uff09",
+      "date": "2026-11-19",
+      "baseline": "v498-r4-chong2-baseline-control-20261119",
+      "head": "410c41e49",
+      "commits": [
+        "410c41e49"
+      ],
+      "summary": "Teacher245 plus actual AI17, transient reset before263. All342 actual inputs and complete R4 assets reproduce267. This matches the engine-deployment intervention at the earlier common root rather than a fixed landed prefix.4.066s; max140 Native/306.824ms. Controlled R4 result, not autonomous score.",
+      "records": {
+        "0a3f282a.410c41e4.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v498-r4-chong2-deployed-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u866b\u65cf2\u5148\u90e8\u7f72\uff1a238\u5206\uff08\u4e0d\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v498-r4-chong2-baseline-control-20261119",
+      "head": "faf6cb24f",
+      "commits": [
+        "faf6cb24f"
+      ],
+      "summary": "Same original262 inputs, deploy already-held Chong2, pay3 additional credits and one setup own turn, complete identical landing/data/hand/tech/probes. Local formal+5/model+2, but terminal238 vs267 (-29). Later common scan wallet2C0E versus5C0E cannot fund a second scan.1.489s; max47 Native/79.600ms. Reject this paid preservation route, not all scoring-card uses.",
+      "records": {
+        "bdec4691.faf6cb24.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v498-r4-chong2-baseline-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u7b2c\u56db\u8f6e\u539f\u767b\u9646\u8def\u7ebf\uff1a267\u5206\uff08\u5b8c\u6574\u590d\u73b0\uff09",
+      "date": "2026-11-19",
+      "baseline": "teacher-r4-same-start-20261119",
+      "head": "faf6cb24f",
+      "commits": [
+        "faf6cb24f"
+      ],
+      "summary": "Teacher245 plus actual AI17; same landed-purpose boundary282, transient reset, unchanged V72. All342 actual inputs and R4 assets reproduce prior267. Game2.951s; max61 Native/209.053ms. Missing isolated report template repaired by build-only after game, zero AI reruns. Controlled R4 score.",
+      "records": {
+        "37009cdd.faf6cb24.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v497-amiba1-first-control-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

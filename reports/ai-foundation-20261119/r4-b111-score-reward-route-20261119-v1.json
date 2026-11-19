@@ -1,0 +1,12 @@
+{
+  "status": "registered-adaptive-native-reward-control",
+  "parentEvidence": "reports/ai-foundation-20261119/r4-b111-scan-engine-native-20261119-v1.json",
+  "reason": "Native disproved the all-three-rewards-on-one-scan assumption. Compare choosing the currently offered4score reward instead of overflowing data, without replaying the baseline.",
+  "root": "same before263 checkpoint",
+  "maxNativeInputs": 12,
+  "maxBranches": 1,
+  "newAISearches": 0,
+  "newGames": 0,
+  "repeatedPrefixInputs": 8,
+  "deadlineEpochSeconds": 1795102432.661122
+}

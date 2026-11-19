@@ -1,0 +1,25 @@
+{
+  "status": "registered-two-terminal-controls",
+  "sourceParent": "faf6cb24fea420212f87efdf505ddc0ad8c2b710",
+  "policyChanged": false,
+  "question": "Does deploying already-held B111 at263 before any further moves improve the unchanged V72 R4 continuation?",
+  "commonPrefixInputs": 262,
+  "baselinePrefixInputs": 262,
+  "deployedPrefixInputs": 264,
+  "transientAIResetBoth": true,
+  "baselineReason": "The earlier267 control reset at282 after a fixed landing. This new baseline resets at262 before any next action, matched to the early engine intervention; no same-source/scenario rerun.",
+  "knownWitness": "The same affordable scan can select B1114score, costs2 extra credits and one setup turn, gives current formal+4/model+1.5. Only one remaining reward is claimed per scan, not all three.",
+  "limits": {
+    "coldAISearches": 2,
+    "controlledGames": 2,
+    "autonomousGames": 0,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000,
+    "nativePrefixReplayInputs": 526
+  },
+  "knowledge": "No future blind card or public refill identity imposed. After intervention, every action and reward is chosen by unchanged V72.",
+  "promotion": "Controlled gain alone is not autonomous improvement. No production patch or20-board experiment before these terminal outcomes.",
+  "startedEpochSeconds": 1795101959.663,
+  "deadlineEpochSeconds": 1795103159.663
+}

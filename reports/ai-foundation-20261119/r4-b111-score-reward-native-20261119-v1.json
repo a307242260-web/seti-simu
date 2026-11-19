@@ -1,0 +1,353 @@
+{
+  "status": "verified-one-score-reward-only",
+  "newAISearches": 0,
+  "newGames": 0,
+  "nativeInputs": 10,
+  "replayedPrefixInputs": 8,
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:9edf7e4a",
+      "actorId": "player-white",
+      "stateVersion": 108,
+      "decisionVersion": 1,
+      "target": {
+        "cardInstanceId": "card-30-pass-3-1"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "handIndex": 2
+      },
+      "decision": null,
+      "summary": "b_111.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 109,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "scan",
+      "phase": "main",
+      "actionId": "scan:2d21a323",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "standard-scan"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "扫描"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:8a5d7b2d",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "nebula:sector-2-a",
+        "nebulaId": "sector-2-a",
+        "sectorX": 1
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "扫描 天狼星A"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:7f1dded4",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "public:card-66-0:sector-1-a",
+        "cardInstanceId": "card-66-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-1-a"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "dlc_16.png → 南河三",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-66-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_16.png",
+        "imageAlt": "dlc_16.png"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:75e32e17",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "public:card-74-0:sector-3-a",
+        "cardInstanceId": "card-74-0",
+        "publicSlotIndex": 1,
+        "nebulaId": "sector-3-a"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "dlc_8.png → 开普勒22",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-74-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_8.png",
+        "imageAlt": "dlc_8.png"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:f042ebe0",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "scan4:skip",
+        "mode": "skip"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "跳过"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:756e7901",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "nebula:sector-1-a",
+        "nebulaId": "sector-1-a",
+        "sectorX": 5
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "扫描 南河三"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "accept_optional_effect",
+      "phase": "conditional",
+      "actionId": "accept_optional_effect:1424ba7f",
+      "actorId": "player-white",
+      "stateVersion": 110,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "confirm:trigger:card-30-pass-3-1:b111-scan-score",
+        "cardInstanceId": "card-30-pass-3-1",
+        "ruleId": "b111-scan-score"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结算 b_111.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-30-pass-3-1",
+        "imageSrc": "../assets/cards/basic/split/b_111.webp",
+        "imageAlt": "b_111.webp",
+        "detail": "扫描行动：4分"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 111,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    }
+  ],
+  "rewardChoices": [
+    {
+      "kind": "residual-domain",
+      "choiceId": "confirm:trigger:card-30-pass-3-1:b111-scan-data",
+      "cardInstanceId": "card-30-pass-3-1",
+      "ruleId": "b111-scan-data"
+    },
+    {
+      "kind": "residual-domain",
+      "choiceId": "confirm:trigger:card-30-pass-3-1:b111-scan-draw",
+      "cardInstanceId": "card-30-pass-3-1",
+      "ruleId": "b111-scan-draw"
+    },
+    {
+      "kind": "residual-domain",
+      "choiceId": "confirm:trigger:card-30-pass-3-1:b111-scan-score",
+      "cardInstanceId": "card-30-pass-3-1",
+      "ruleId": "b111-scan-score"
+    },
+    {
+      "kind": "residual-domain",
+      "choiceId": "skip:scanAction"
+    }
+  ],
+  "result": {
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 5,
+      "credits": 1,
+      "energy": 4,
+      "handSize": 3,
+      "publicity": 3,
+      "score": 119
+    },
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+      "total": 219,
+      "components": {
+        "realizedScore": 119,
+        "currentEndGameBonus": 68,
+        "resources": 9,
+        "hand": 3,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 20,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      },
+      "terminal": false,
+      "purposePreparationDebt": 0
+    },
+    "formalScore": {
+      "playerId": "player-white",
+      "baseScore": 119,
+      "tileScore": 64,
+      "cardScore": 4,
+      "jiuzheCardScore": 0,
+      "runezuSymbolScore": 0,
+      "jiuzheThreat": 0,
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "prePenaltyTotalScore": 187,
+      "totalScore": 187,
+      "tileScoresById": {
+        "a": 0,
+        "b": 24,
+        "c": 12,
+        "d": 28
+      },
+      "tiles": [
+        {
+          "tileId": "b",
+          "variant": 1,
+          "formulaId": "b1",
+          "slotIndex": 1,
+          "baseValue": 3,
+          "multiplier": 8,
+          "score": 24
+        },
+        {
+          "tileId": "c",
+          "variant": 1,
+          "formulaId": "c1",
+          "slotIndex": 1,
+          "baseValue": 3,
+          "multiplier": 4,
+          "score": 12
+        },
+        {
+          "tileId": "d",
+          "variant": 2,
+          "formulaId": "d2",
+          "slotIndex": 1,
+          "baseValue": 4,
+          "multiplier": 7,
+          "score": 28
+        }
+      ],
+      "cards": [
+        {
+          "cardId": "dlc_31.png",
+          "rule": {
+            "kind": "planetLandingPairs",
+            "count": 2,
+            "scorePer": 6
+          },
+          "score": 0
+        },
+        {
+          "cardId": "amiba_7.webp",
+          "rule": {
+            "kind": "amibaTraceCount",
+            "traceType": "blue",
+            "scorePer": 2
+          },
+          "score": 4
+        }
+      ],
+      "jiuzheCards": []
+    },
+    "completedTaskCount": 3,
+    "engineCard": {
+      "cardEffectState": {
+        "completedTaskIds": [],
+        "consumedTriggerIds": [
+          "b111-scan-score"
+        ],
+        "modelCardId": "b_111.webp"
+      },
+      "cardId": "b_111.webp",
+      "cardTypeCode": 1,
+      "discardActionCode": 1,
+      "faceUp": true,
+      "id": "card-30-pass-3-1",
+      "incomeCode": 1,
+      "price": 2,
+      "scanActionCode": 1,
+      "set": "basic"
+    }
+  },
+  "currentFormalGain": 4,
+  "modelGain": 1.5,
+  "rootAndRngRestored": true
+}

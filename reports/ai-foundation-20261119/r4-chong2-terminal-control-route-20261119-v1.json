@@ -1,0 +1,27 @@
+{
+  "status": "registered-controlled-terminal-test",
+  "sourceParent": "de1cb8b4a59105829d90a00263a55cc5cc7bb727",
+  "acceptedPolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "nativeWitness": "reports/ai-foundation-20261119/r4-chong2-preservation-native-20261119-v1.json",
+  "question": "Does the paid cheap-scoring-card deployment keep its5-point advantage after charging3credits and allowing the same V72 to finish both landed states?",
+  "commonPrefixInputs": 262,
+  "originalTeacherPrefixInputs": 245,
+  "inheritedAutonomousInputs": 17,
+  "baselineNativePrefixInputs": 282,
+  "deployedNativePrefixInputs": 285,
+  "stateDifference": "Same realized score140, income, hand, tech, computer and pool data, probes and RNG. Deployed branch has3 fewer credits, Chong2 on board(+5 current card score), and one extra own setup turn; no opponent remains active.",
+  "stateIdentityAndDedup": "Exact full Native state/session/RNG and root-source hashes; each unique scenario/source run once through robot_iterate.",
+  "resourceReachability": "Complete land purpose already executed in Native; no assumed future cards. Future engine remains autonomous, all preparation keeps its real payment costs.",
+  "budget": {
+    "coldAISearches": 2,
+    "controlledGames": 2,
+    "autonomousGames": 0,
+    "nativeReplayInputs": 567,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000
+  },
+  "promotion": "Controlled gain is not autonomous gain. No valuation edit or20-board run before full continuation evidence.",
+  "startedEpochSeconds": 1795100929.630425,
+  "deadlineEpochSeconds": 1795102129.630425
+}

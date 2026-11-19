@@ -1,0 +1,11 @@
+{
+  "status": "failed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "nativeInputs": 0,
+  "branches": [],
+  "failure": {
+    "message": "Cannot assign to read only property 'hand' of object '#<Object>'",
+    "stack": "TypeError: Cannot assign to read only property 'hand' of object '#<Object>'\n    at summary (/Users/bilibili/code/seti-simu/adhoc/verify-r4-b111-scan-engine-20261119.cjs:8:116)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-r4-b111-scan-engine-20261119.cjs:12:67)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

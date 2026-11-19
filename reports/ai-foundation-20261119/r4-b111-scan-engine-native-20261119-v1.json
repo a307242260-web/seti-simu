@@ -1,0 +1,1499 @@
+{
+  "status": "complete-data-reward-control",
+  "newAISearches": 0,
+  "newGames": 0,
+  "nativeInputs": 17,
+  "branches": [
+    {
+      "name": "baseline",
+      "actions": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u626b\u63cf"
+          },
+          "label": "same paid standard scan"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:8a5d7b2d",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "nebula:sector-2-a",
+              "nebulaId": "sector-2-a",
+              "sectorX": 1
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "\u626b\u63cf \u5929\u72fc\u661fA"
+          },
+          "label": "fixed visible scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:7f1dded4",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "public:card-66-0:sector-1-a",
+              "cardInstanceId": "card-66-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-1-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_16.png \u2192 \u5357\u6cb3\u4e09",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-66-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_16.png",
+              "imageAlt": "dlc_16.png"
+            }
+          },
+          "label": "fixed visible scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:75e32e17",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "public:card-74-0:sector-3-a",
+              "cardInstanceId": "card-74-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_8.png \u2192 \u5f00\u666e\u52d222",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-74-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_8.png",
+              "imageAlt": "dlc_8.png"
+            }
+          },
+          "label": "fixed visible scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u8df3\u8fc7"
+          },
+          "label": "fixed visible scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:756e7901",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "\u626b\u63cf \u5357\u6cb3\u4e09"
+          },
+          "label": "fixed visible scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 109,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u7ed3\u675f\u56de\u5408"
+          },
+          "label": "same complete scan boundary"
+        }
+      ],
+      "initial": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 6,
+          "handSize": 4,
+          "publicity": 3,
+          "score": 111
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png",
+            "knownAtRoot": true
+          }
+        ],
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "formalScore": {
+          "playerId": "player-white",
+          "baseScore": 111,
+          "tileScore": 64,
+          "cardScore": 4,
+          "jiuzheCardScore": 0,
+          "runezuSymbolScore": 0,
+          "jiuzheThreat": 0,
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "prePenaltyTotalScore": 179,
+          "totalScore": 179,
+          "tileScoresById": {
+            "a": 0,
+            "b": 24,
+            "c": 12,
+            "d": 28
+          },
+          "tiles": [
+            {
+              "tileId": "b",
+              "variant": 1,
+              "formulaId": "b1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 8,
+              "score": 24
+            },
+            {
+              "tileId": "c",
+              "variant": 1,
+              "formulaId": "c1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 4,
+              "score": 12
+            },
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 1,
+              "baseValue": 4,
+              "multiplier": 7,
+              "score": 28
+            }
+          ],
+          "cards": [
+            {
+              "cardId": "dlc_31.png",
+              "rule": {
+                "kind": "planetLandingPairs",
+                "count": 2,
+                "scorePer": 6
+              },
+              "score": 0
+            },
+            {
+              "cardId": "amiba_7.webp",
+              "rule": {
+                "kind": "amibaTraceCount",
+                "traceType": "blue",
+                "scorePer": 2
+              },
+              "score": 4
+            }
+          ],
+          "jiuzheCards": []
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+          "total": 215.5,
+          "components": {
+            "realizedScore": 111,
+            "currentEndGameBonus": 68,
+            "resources": 12.5,
+            "hand": 4,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 20,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "turn": 6,
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "goal": {
+        "id": "scan:sector:sector-1-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-1-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "result": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 4,
+          "publicity": 2,
+          "score": 115
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png",
+            "knownAtRoot": true
+          }
+        ],
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-43",
+              "index": 34,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-44",
+              "index": 35,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-45",
+              "index": 36,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-46",
+              "index": 37,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "formalScore": {
+          "playerId": "player-white",
+          "baseScore": 115,
+          "tileScore": 64,
+          "cardScore": 4,
+          "jiuzheCardScore": 0,
+          "runezuSymbolScore": 0,
+          "jiuzheThreat": 0,
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "prePenaltyTotalScore": 183,
+          "totalScore": 183,
+          "tileScoresById": {
+            "a": 0,
+            "b": 24,
+            "c": 12,
+            "d": 28
+          },
+          "tiles": [
+            {
+              "tileId": "b",
+              "variant": 1,
+              "formulaId": "b1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 8,
+              "score": 24
+            },
+            {
+              "tileId": "c",
+              "variant": 1,
+              "formulaId": "c1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 4,
+              "score": 12
+            },
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 1,
+              "baseValue": 4,
+              "multiplier": 7,
+              "score": 28
+            }
+          ],
+          "cards": [
+            {
+              "cardId": "dlc_31.png",
+              "rule": {
+                "kind": "planetLandingPairs",
+                "count": 2,
+                "scorePer": 6
+              },
+              "score": 0
+            },
+            {
+              "cardId": "amiba_7.webp",
+              "rule": {
+                "kind": "amibaTraceCount",
+                "traceType": "blue",
+                "scorePer": 2
+              },
+              "score": 4
+            }
+          ],
+          "jiuzheCards": []
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+          "total": 217.5,
+          "components": {
+            "realizedScore": 115,
+            "currentEndGameBonus": 68,
+            "resources": 10.5,
+            "hand": 4,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 20,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "turn": 7,
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "complete": true,
+      "checkpoint": "reports/ai-foundation-20261119/r4-b111-scan-engine-baseline-scan-complete-20261119-v1.json.gz"
+    },
+    {
+      "name": "engine",
+      "actions": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:9edf7e4a",
+            "actorId": "player-white",
+            "stateVersion": 108,
+            "decisionVersion": 1,
+            "target": {
+              "cardInstanceId": "card-30-pass-3-1"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 2
+            },
+            "decision": null,
+            "summary": "b_111.webp"
+          },
+          "label": "deploy known B111"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 109,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u7ed3\u675f\u56de\u5408"
+          },
+          "label": "extra own setup turn"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u626b\u63cf"
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:8a5d7b2d",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "nebula:sector-2-a",
+              "nebulaId": "sector-2-a",
+              "sectorX": 1
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "\u626b\u63cf \u5929\u72fc\u661fA"
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:7f1dded4",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "public:card-66-0:sector-1-a",
+              "cardInstanceId": "card-66-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-1-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_16.png \u2192 \u5357\u6cb3\u4e09",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-66-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_16.png",
+              "imageAlt": "dlc_16.png"
+            }
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:75e32e17",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "public:card-74-0:sector-3-a",
+              "cardInstanceId": "card-74-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_8.png \u2192 \u5f00\u666e\u52d222",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-74-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_8.png",
+              "imageAlt": "dlc_8.png"
+            }
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f042ebe0",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u8df3\u8fc7"
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:756e7901",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "\u626b\u63cf \u5357\u6cb3\u4e09"
+          },
+          "label": "same scan choice"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "accept_optional_effect",
+            "phase": "conditional",
+            "actionId": "accept_optional_effect:486eae05",
+            "actorId": "player-white",
+            "stateVersion": 110,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "confirm:trigger:card-30-pass-3-1:b111-scan-data",
+              "cardInstanceId": "card-30-pass-3-1",
+              "ruleId": "b111-scan-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u7ed3\u7b97 b_111.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-30-pass-3-1",
+              "imageSrc": "../assets/cards/basic/split/b_111.webp",
+              "imageAlt": "b_111.webp",
+              "detail": "\u626b\u63cf\u884c\u52a8\uff1a2\u6570\u636e"
+            }
+          },
+          "label": "settle known B111 trigger"
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 111,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "\u7ed3\u675f\u56de\u5408"
+          },
+          "label": "same complete scan boundary"
+        }
+      ],
+      "initial": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 6,
+          "handSize": 4,
+          "publicity": 3,
+          "score": 111
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png",
+            "knownAtRoot": true
+          }
+        ],
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "formalScore": {
+          "playerId": "player-white",
+          "baseScore": 111,
+          "tileScore": 64,
+          "cardScore": 4,
+          "jiuzheCardScore": 0,
+          "runezuSymbolScore": 0,
+          "jiuzheThreat": 0,
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "prePenaltyTotalScore": 179,
+          "totalScore": 179,
+          "tileScoresById": {
+            "a": 0,
+            "b": 24,
+            "c": 12,
+            "d": 28
+          },
+          "tiles": [
+            {
+              "tileId": "b",
+              "variant": 1,
+              "formulaId": "b1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 8,
+              "score": 24
+            },
+            {
+              "tileId": "c",
+              "variant": 1,
+              "formulaId": "c1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 4,
+              "score": 12
+            },
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 1,
+              "baseValue": 4,
+              "multiplier": 7,
+              "score": 28
+            }
+          ],
+          "cards": [
+            {
+              "cardId": "dlc_31.png",
+              "rule": {
+                "kind": "planetLandingPairs",
+                "count": 2,
+                "scorePer": 6
+              },
+              "score": 0
+            },
+            {
+              "cardId": "amiba_7.webp",
+              "rule": {
+                "kind": "amibaTraceCount",
+                "traceType": "blue",
+                "scorePer": 2
+              },
+              "score": 4
+            }
+          ],
+          "jiuzheCards": []
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+          "total": 215.5,
+          "components": {
+            "realizedScore": 111,
+            "currentEndGameBonus": 68,
+            "resources": 12.5,
+            "hand": 4,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 20,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "turn": 6,
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "result": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 1,
+          "energy": 4,
+          "handSize": 3,
+          "publicity": 3,
+          "score": 115
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp",
+            "knownAtRoot": true
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png",
+            "knownAtRoot": true
+          }
+        ],
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 1,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-43",
+              "index": 34,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-44",
+              "index": 35,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-45",
+              "index": 36,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-46",
+              "index": 37,
+              "slotIndex": 5
+            },
+            {
+              "id": "data-token-47",
+              "index": 38,
+              "slotIndex": 6
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "formalScore": {
+          "playerId": "player-white",
+          "baseScore": 115,
+          "tileScore": 64,
+          "cardScore": 4,
+          "jiuzheCardScore": 0,
+          "runezuSymbolScore": 0,
+          "jiuzheThreat": 0,
+          "jiuzhePenaltyApplied": false,
+          "jiuzhePenaltyScore": 0,
+          "prePenaltyTotalScore": 183,
+          "totalScore": 183,
+          "tileScoresById": {
+            "a": 0,
+            "b": 24,
+            "c": 12,
+            "d": 28
+          },
+          "tiles": [
+            {
+              "tileId": "b",
+              "variant": 1,
+              "formulaId": "b1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 8,
+              "score": 24
+            },
+            {
+              "tileId": "c",
+              "variant": 1,
+              "formulaId": "c1",
+              "slotIndex": 1,
+              "baseValue": 3,
+              "multiplier": 4,
+              "score": 12
+            },
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 1,
+              "baseValue": 4,
+              "multiplier": 7,
+              "score": 28
+            }
+          ],
+          "cards": [
+            {
+              "cardId": "dlc_31.png",
+              "rule": {
+                "kind": "planetLandingPairs",
+                "count": 2,
+                "scorePer": 6
+              },
+              "score": 0
+            },
+            {
+              "cardId": "amiba_7.webp",
+              "rule": {
+                "kind": "amibaTraceCount",
+                "traceType": "blue",
+                "scorePer": 2
+              },
+              "score": 4
+            }
+          ],
+          "jiuzheCards": []
+        },
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+          "total": 215.5,
+          "components": {
+            "realizedScore": 115,
+            "currentEndGameBonus": 68,
+            "resources": 9.5,
+            "hand": 3,
+            "income": 0,
+            "technologyPotential": 0,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 20,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "turn": 8,
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "complete": true,
+      "checkpoint": "reports/ai-foundation-20261119/r4-b111-scan-engine-engine-scan-complete-20261119-v1.json.gz"
+    }
+  ],
+  "failedExpectation": {
+    "message": "Expected values to be strictly equal:\n\n0 !== 4\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 4\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-r4-b111-scan-engine-20261119.cjs:34:215)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  },
+  "finding": "Native settles only one unused trigger of a card per matching scan event. The first fixed choice selected2data, of which1overflowed. It does not also award the draw and4score on the same scan.",
+  "candidateAdopted": false,
+  "currentFormalGain": 0,
+  "modelGain": -2
+}

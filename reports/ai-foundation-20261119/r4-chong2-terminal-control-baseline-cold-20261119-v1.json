@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "case": "baseline",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 0,
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 39,
+  "milliseconds": 100.343292,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "place_data",
+    "phase": "quick",
+    "actionId": "place_data:8fd12fd3",
+    "actorId": "player-white",
+    "stateVersion": 118,
+    "decisionVersion": 1,
+    "target": {
+      "kind": "place-data"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "\u653e\u7f6e\u6570\u636e"
+  },
+  "value": 237.5,
+  "rootAndRngUnchanged": true,
+  "searchSummary": {
+    "actionId": "place_data:8fd12fd3",
+    "complete": true,
+    "value": 237.5
+  },
+  "retention": "closed-trial decision and budget; full search graph omitted"
+}
