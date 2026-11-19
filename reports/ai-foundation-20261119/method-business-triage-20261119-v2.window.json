@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "method-business-triage-20261119-v1.route.json",
+  "startedEpochSeconds": 1795054852.0032792,
+  "deadlineEpochSeconds": 1795056360.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795054852.349758,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 99592,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795054856.3248682
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795054870.31229,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 99886,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795054872.503378
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/audit-original20-development-20261119.py"
+      ],
+      "startedEpochSeconds": 1795054991.96596,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 1464,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795054996.360501
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795055008.823298,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 1680,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055008.8476229
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795055035.1482828,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-5.stderr.log",
+      "pid": 1974,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055035.3589098
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795055067.4098828,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-6.stderr.log",
+      "pid": 2334,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055068.695895
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795055248.9507189,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-7.stderr.log",
+      "pid": 3888,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055248.9991539
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/audit-original20-development-20261119.py"
+      ],
+      "startedEpochSeconds": 1795055289.053353,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.attempt-8.stderr.log",
+      "pid": 4267,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055289.324016
+    }
+  ],
+  "closedEpochSeconds": 1795055324.854249,
+  "outcome": "method-business-triage-outcome-20261119-v1.json"
+}

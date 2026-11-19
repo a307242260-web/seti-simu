@@ -149,3 +149,26 @@
 - verification: python3 adhoc/verify-research-route-binding-20261119.py adhoc/research-deadline-guard-20261119.py <新输出路径>；python3 adhoc/verify-research-deadline-20261119.py <新输出路径>；method-route-binding-frozen-candidate-check-20261119-v1.json。
 - observed_outcome: 新增11项与原有10项控制均通过，真实冻结路线拒绝启动；没有AI搜索、原生输入、新整局或分数变化。
 - keep_or_revise: keep（路线级命令限制）；下一次业务研究须核对原始共同截止，不能以继续方法维护替代AI业务判断。
+
+## SETI-METHOD-20261119-06：基于整局规模选题，区分固定计划与数值搜索
+
+- source: original20-development-audit-20261119-v1.json；original20-income-choice-causal-card-20261119-v1.json；v487-board08-business-outcome-20261119-v1.json；用户的方法论优先要求。
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: /root（SETI AI研究）
+- target_component: 业务选题、实际兑现跟踪和固定计划归因
+- target_file: docs/ai-research-workflow.md §1.5
+- remote_skill_id: none
+- change: 先使用既有整局确定发生范围和资产差距；不把当前根未选当作最终遗漏，不把固定计划排除当成备选数值较低。
+- applied_change: 增加§1.5及一个只读既有记录审计脚本；未改变AI、规则、权重、预算或期限守卫。
+- expected_effect: 避免低覆盖末轮微调替代整体发展诊断，减少对已经兑现的收入机会重复修复；把下一项限定到实际轨迹的一个可反驳问题。
+- evaluation_window: 本次既有20局审计，以及随后第19盘第40步收入菜单和第37步生成计划的一张因果卡；后者尚未执行。
+- success_signal: 原始记录SHA与行动逐条匹配；确认未立即打出却后来入收入的实例；准确区分固定计划排除与数值落败；下一卡能解释保留或修复原因，不能只增加材料。
+- rollback_condition: 将相关性当因果、将菜单差异当策略错误、继续无证据调权重，或对照不能形成可判定结论时仍自动接补丁；结束该提案并保留失败。
+- risk: 低收入可能是合理资产取舍；最高161分盘也在选电样本，必须保护。20盘描述不能外推教师同状态优劣，也不证明收入修正能达到200均分。
+- evidence_before: v487旧起点局部138、唯一完整局132与旧版持平；原20均分134.35，第二轮钱收入平均3.35；单点和完整局速度已达当前门槛。
+- owner_or_agent_decision: 按用户要求先验证方法；只推广有数据支持的选题／归因规则，不恢复被冻结策略，不运行新整局。
+- applied_at: 2026-11-19
+- verification: python3 adhoc/audit-original20-development-20261119.py；原始20记录SHA、行动与存档映射核验；下一步引用固定菜单及源计划。首次只读探查对null goal解析失败留档，第二且最后单元保留原截止，没有AI或Native执行。
+- observed_outcome: 第二轮9盘钱收入无增长；6菜单属于固定计划排除；两例疑似收入遗漏实际已兑现。没有策略改动或成绩提升；同根钱／电优劣仍未知。
+- keep_or_revise: keep（有限推广选题与归因）；整体迭代有效性仍待因果修正、完整局及固定20盘检验。

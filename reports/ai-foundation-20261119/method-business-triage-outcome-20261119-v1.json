@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "seti-method-business-triage-outcome-v1",
+  "parentCommit": "4e1660dd641c3679fc2cb755d47209211a2d8dbe",
+  "route": "reports/ai-foundation-20261119/method-business-triage-20261119-v1.route.json",
+  "closedBeforeOriginalDeadline": true,
+  "elapsedWallMinutes": 12.747570816675822,
+  "originalDeadlineEpochSeconds": 1795056360.0,
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "AIChanged": false,
+  "formalSourceHashes": {
+    "randomizer/game/ai/resource-demand.js": "7485d449b2c27d75358f23972ed350451631b78531bdcbb2ddf02d2902503b75",
+    "randomizer/game/ai/analysis-port.js": "54204f98794081e7c189859f99d6b88f879a74780ed0d860ca30ced0691ba0d8",
+    "randomizer/game/ai/decision-search.js": "012aedb90346d9ecda91b68d23349814b2561361e0c8394dbf0cea34143ca039"
+  },
+  "baselineMeanUnchanged": 134.35,
+  "formalTeachingScoreUnchanged": 272,
+  "report": "reports/iteration/seti-ai-method-review-20261119-v1.html",
+  "facts": {
+    "r2NoCreditsIncomeGrowth": 9,
+    "r2MeanCreditsIncomeGrowth": 0.6,
+    "incomeMenus": 33,
+    "moneyAvailableMenus": 18,
+    "moneyNotChosenMenus": 6,
+    "distinctBoards": 5,
+    "deferredIncomeFalsePositivesExcluded": 2,
+    "fixedPolicyExclusionsVerified": 6
+  },
+  "nextCase": {
+    "board": 19,
+    "step": 40,
+    "planOriginStep": 37,
+    "superiorityEstablished": false,
+    "counterfactualExecuted": false
+  },
+  "methodAdopted": "Existing full-game population first; follow card-instance realization; distinguish fixed-plan exclusion from numerical comparison. No new guard or policy change.",
+  "limits": [
+    "Descriptive low income is not proof of a strategy defect.",
+    "Real money/energy tradeoff still requires a same-root Native control.",
+    "No evidence yet that the methodology improves AI scores or research convergence.",
+    "Audit replay needs the retained active-study runtime identified in the source audit; compact results and source hashes are published, not duplicate full graphs."
+  ],
+  "executionErrors": [
+    "Initial read-only probe assumed non-null root.goal; command exited1, kept its failed window, then corrected parsing in the second and final unit without changing the parent deadline.",
+    "Python py_compile tried a default cache outside writable roots; successful direct AST parse and actual script run verify syntax without that cache."
+  ],
+  "logsArchive": "reports/ai-foundation-20261119/method-business-triage-execution-logs-20261119-v1.json.gz",
+  "wholeGoalComplete": false
+}

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SETI AI 策略迭代评估 · 2026-11-19</title>
+<style>
+  :root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:#203044;background:#f3f6fa;line-height:1.75}
+  body{max-width:1080px;margin:40px auto;padding:0 22px 60px}h1{font-size:32px;margin:6px 0 12px;line-height:1.35}h2{font-size:21px;margin:32px 0 10px}h3{font-size:17px;margin-bottom:6px}
+  p{margin:10px 0}a{color:#185bb0}article{background:white;border:1px solid #dce3ed;border-radius:14px;padding:28px 34px}.date,.note{color:#586b80;font-size:14px}.lead{font-size:19px;color:#173f66}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.metric{background:#eef4fb;border-radius:10px;padding:16px}.metric strong{display:block;font-size:28px;line-height:1.3}.metric small{display:block;color:#586b80}
+  .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;padding:10px 12px;border-bottom:1px solid #e2e8f0;white-space:nowrap}th{background:#edf3f9}li{margin:8px 0}.callout{border-left:4px solid #d38b28;background:#fff7e9;padding:12px 18px;margin:18px 0}code{font-size:13px;overflow-wrap:anywhere}
+  @media(max-width:650px){body{margin:16px auto;padding:0 12px 32px}article{padding:20px 18px}h1{font-size:26px}.metrics{grid-template-columns:1fr}.metric strong{font-size:24px}}
+</style>
+<article>
+<div class="date">SETI · 策略研究评估 · 2026-11-19</div>
+<h1>速度已达标，策略发展仍需因果证据</h1>
+<p class="lead">当前主要任务是解释并修正实际发展损失。继续压缩单点耗时，或围绕一个末轮分支反复调整，尚无证据能够解决整体分数差距。</p>
+<div class="metrics">
+  <div class="metric"><strong>134.35</strong><small>原20盘完整终局均分；目标超过200</small></div>
+  <div class="metric"><strong>8.31秒</strong><small>原20盘平均整局时间；最慢11.11秒</small></div>
+  <div class="metric"><strong>0分</strong><small>最近候选实际整局相对旧版增益</small></div>
+</div>
+<p>原20盘均已完整结束，分数113—161，没有一盘达到200；最大单次决策249次原生输入、468.85ms。与200的均分差为65.65。教学盘已记录的272分属于另一固定盘面，不能作为20盘均分；教师合法重放参考与随机盘之间亦不能直接归因比较。</p>
+
+<h2>现有策略与验证方式</h2>
+<p>搜索围绕实际目的生成行动计划；移动、兑换、弃牌和选牌主要由目的约束下的固定计划处理。比较发生在本席可见行动窗口，估值包含当前分数、资产和已知用途资本，胜出计划可复用已完成的搜索证据。搜索完成只说明在既定候选与政策范围内闭合，不能证明被固定政策排除的所有选择都更差。</p>
+<p>原有验证路径为同状态归因、单点准入、固定源码完整局和固定盘面分布。单点256次／600ms、整局180秒、前两轮资产回归、随机信息隔离及复现要求继续保留。</p>
+
+<h2>已有整局暴露的共性线索</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>时点</th><th>平均盘面分</th><th>平均科技数</th><th>钱收入</th><th>电收入</th><th>牌收入</th><th>钱收入较开局增长</th><th>钱收入无增长盘数</th></tr></thead>
+<tbody>
+<tr><td>开局</td><td>—</td><td>—</td><td>2.75</td><td>2.85</td><td>1.45</td><td>—</td><td>—</td></tr>
+<tr><td>第一轮末</td><td>20.15</td><td>1.40</td><td>3.15</td><td>3.30</td><td>1.65</td><td>0.40</td><td>12 / 20</td></tr>
+<tr><td>第二轮末</td><td>39.70</td><td>2.55</td><td>3.35</td><td>3.60</td><td>1.75</td><td>0.60</td><td>9 / 20</td></tr>
+<tr><td>第三轮末</td><td>65.70</td><td>3.80</td><td>3.85</td><td>3.95</td><td>1.80</td><td>1.10</td><td>4 / 20</td></tr>
+<tr><td>第四轮末</td><td>96.10</td><td>5.10</td><td>4.10</td><td>4.20</td><td>2.20</td><td>1.35</td><td>3 / 20</td></tr>
+</tbody></table></div>
+<p>这组数据支持优先核查早期收入与科技的发展机会，而不是先假设某种收入必须增加。钱收入低可能来自合理的电、牌、科技或即时收益取舍；仅凭相关性不能修改策略。</p>
+
+<h2>需要修正的归因方式</h2>
+<ol>
+<li><strong>局部收益必须回到实际自主轨迹。</strong>最近候选在旧起点续跑得到138分，但完整自主局只有132分，与旧版相同。完整局真实状态的冷算仍选择领取收入，未支持“复用了旧动作”的解释。候选未采用，已恢复验收源码。仅假设这一盘多6分，20盘均值也只变化0.30；这不是该策略的通用收益上界。</li>
+<li><strong>未立即选择，不等于未完成投资。</strong>第1、18盘的dlc_28没有被直接打出，却分别在第53、42步通过固定流程插作收入。判断遗漏必须追踪同一牌实例的实际用途和轮末资产。</li>
+<li><strong>固定计划排除，不等于数值搜索判负。</strong>前两轮33次收入菜单中，18次有钱选项；6次选择别类收入，涉及5盘。6次的备选均被既定目的计划排除，没有执行比较，不能将空估值解释为更低价值。应先检查固定计划的用途和机会成本，保持选牌不作搜索节点的既有要求。</li>
+</ol>
+
+<h2>下一项有限验证</h2>
+<p><strong>第19盘第40步：为什么收入菜单选择dlc_25的电收入，而不是已公开的b_30钱收入？</strong>该盘开局钱电收入均为3，第二轮末仍为3钱／4电；它同时是本批最高161分盘，应作为保护反例，不能预设改选钱更优。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>环节</th><th>应取得的证据</th><th>推进或停止条件</th></tr></thead>
+<tbody>
+<tr><td>固定计划归因</td><td>第37步生成计划时的资金用途、收入选择和持牌机会成本</td><td>先解释实际选择；不以未执行备选的空值判断优劣</td></tr>
+<tr><td>同状态对照</td><td>相同Native根与RNG，钱／电收入到下一轮共同边界的资产</td><td>电有实际筹资优势则保留；未知新牌身份不用于提前规划</td></tr>
+<tr><td>必要时最小修正</td><td>明确遗漏的已知收益、保护反例和原单点性能门槛</td><td>只有因果证据支持才改固定计划；不恢复选牌枚举</td></tr>
+<tr><td>效果验证</td><td>冻结源码唯一自主完整局及逐轮资产，再判断是否扩大到20盘</td><td>局部与整局分别报告；前两轮发展及教学第三／四轮目标保留</td></tr>
+</tbody></table></div>
+<p class="callout">目前已验证的是选题线索和两类误归因的排除。钱／电选择的真实优劣尚未验证，策略未改，也没有新的提分结论。</p>
+
+<h2>方法与证据</h2>
+<p class="note">本评估只读原20个完整记录、对应决策轨迹和存档，核对记录SHA及逐行动映射；没有新AI搜索、原生输入或新对局。轮末统一取本席PASS前，不含轮末选牌和下一轮收入；收入增长以各盘实际开局为基准。6次选别类收入均为当时公开的本席手牌选择，未读取未来牌。全六项收入及逐盘资产见数据附件。原始活动研究数据保留在现有隔离运行目录，未复制全部搜索图。</p>
+<ul>
+<li><a href="v486-original20-20261119/summary-20261119-v1.html">原20盘完整汇总</a></li>
+<li><a href="../ai-foundation-20261119/original20-development-audit-20261119-v1.json">逐盘资产与收入机会审计</a></li>
+<li><a href="../ai-foundation-20261119/original20-income-choice-causal-card-20261119-v1.json">六次收入选择及下一张因果决策卡</a></li>
+<li><a href="../ai-foundation-20261119/v487-board08-business-outcome-20261119-v1.json">最近候选完整局裁决</a></li>
+</ul>
+</article>
+</html>

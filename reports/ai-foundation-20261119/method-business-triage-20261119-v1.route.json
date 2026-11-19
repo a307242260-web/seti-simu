@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "existing-original20-business-triage",
+  "startedEpochSeconds": 1795054560.0,
+  "deadlineEpochSeconds": 1795056360.0,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v2.window.json"
+  ],
+  "businessQuestion": "Use existing original20 Native records to test whether the chosen local fixes target a common development deficit, and distinguish candidate absence from value rejection without changing AI or rerunning games.",
+  "hypotheses": [
+    "Early permanent-income development is weak across the existing20, rather than a board08-only final-round issue.",
+    "Visible early income opportunities can be classified from recorded candidate and action traces without new AI searches."
+  ],
+  "limits": {
+    "noAIChanges": true,
+    "noNewSearches": true,
+    "noNewNativeInputs": true,
+    "noNewGames": true,
+    "wallSeconds": 1800
+  },
+  "stop": "Deliver one source-verified diagnostic and a prioritized next causal question; do not reopen frozen candidates or implement speculative value changes.",
+  "recoveryEvents": [
+    {
+      "atEpochSeconds": 1795054852.003087,
+      "reason": "Read-only diagnostic encountered a recorded null goal; first command exited1 and its window is failed. No AI or Native execution. Continue corrected parsing in the second and final unit, keeping the original parent deadline."
+    }
+  ],
+  "closedEpochSeconds": 1795055324.854249,
+  "outcome": "method-business-triage-outcome-20261119-v1.json",
+  "baselinePromotion": false,
+  "AIChanged": false
+}

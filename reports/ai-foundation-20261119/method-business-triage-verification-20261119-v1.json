@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "seti-method-business-triage-verification-v1",
+  "verified": true,
+  "sourceRows": 20,
+  "roundAggregatesMatchExistingSummary": true,
+  "incomeMenus": 33,
+  "moneyAvailable": 18,
+  "moneyOtherChosen": 6,
+  "policyExclusionVerified": 6,
+  "deferredIncomeRealizationsVerified": 2,
+  "reportLocalLinks": 4,
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "files": {
+    "reports/ai-foundation-20261119/original20-development-audit-20261119-v1.json": "8672a86e0d73eb08cf680aa01b15e845749e5a088348d983718a7d6ed1613b7a",
+    "reports/ai-foundation-20261119/original20-income-choice-causal-card-20261119-v1.json": "4c63f2f42a1eaf76e72a8e1a99617269f22d504cda06b54c766b095f2fa25a8b",
+    "reports/iteration/seti-ai-method-review-20261119-v1.html": "9f3faee0e49a62dbb8ce90fecd824f6552b086b9ae520f9fc0399a794fbef37d",
+    "adhoc/audit-original20-development-20261119.py": "341b42684c949cf530515e252b09b1744d4432b9a844918f58f013b8c49cfa91"
+  }
+}

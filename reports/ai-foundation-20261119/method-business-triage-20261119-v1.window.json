@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "method-business-triage-20261119-v1.route.json",
+  "startedEpochSeconds": 1795054560.0,
+  "deadlineEpochSeconds": 1795056360.0,
+  "status": "failed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795054810.637242,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795056360.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/method-business-triage-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 99012,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795054810.847512
+    }
+  ]
+}

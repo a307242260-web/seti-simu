@@ -1,0 +1,4635 @@
+{
+  "schemaVersion": "seti-existing20-development-audit-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "sources": {
+    "summary": "reports/iteration/v486-original20-20261119/summary-20261119-v1.json",
+    "summarySha256": "2c71ad9cacf189c079b360609270fc57bac2907209facb2a07fa968b7f9d5ae0",
+    "runtime": "/private/tmp/seti-v486-random20-business-20261119-eihjgdmc",
+    "boards": [
+      {
+        "board": 1,
+        "record": "reports/research/1ed71131.94299f38.full.json",
+        "recordSha256": "02c0911e70cd01ce50db781a6b801603a5dd194d5f64402f6e88115a1620b820",
+        "trace": "reports/research/1ed71131.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "91a1f23dd482c40b990b1614e61a2f9ecd526405fba3f65f6192303640535237",
+        "save": "seti-saves/seti-save-research-v486-original20-01-20261119-94299f38-full-v84.json",
+        "saveSha256": "0d01136c300d9783cec83f2e499bf43f56ef063d99f8b0ba0b5960490a598cfd"
+      },
+      {
+        "board": 2,
+        "record": "reports/research/591a90af.94299f38.full.json",
+        "recordSha256": "252a8732021b45cfd3dcde6b724e0b5b01cec3b9037cdc53b7ecc9916b2c140e",
+        "trace": "reports/research/591a90af.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "ad76f41951c7c7ac681bf2969cb6c319d1058733de8431c50b8d5d63a6f87bc7",
+        "save": "seti-saves/seti-save-research-v486-original20-02-20261119-94299f38-full-v97.json",
+        "saveSha256": "68b9440fa75306f0d7bf1b295089767ab019e558f4625af77aec82fd3950b426"
+      },
+      {
+        "board": 3,
+        "record": "reports/research/397394cb.94299f38.full.json",
+        "recordSha256": "79193521d2b81e66efd45ccac87db0d76185ae453675c78dffddb4f04be8ba57",
+        "trace": "reports/research/397394cb.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "1d16ba4ce9abfb216d0c76fa864d0fa6de729a3a623f321d13fee0e75b9d9173",
+        "save": "seti-saves/seti-save-research-v486-original20-03-20261119-94299f38-full-v83.json",
+        "saveSha256": "341384d714f175e01720abc0f4429797f48550e4b3f7fce8f77a69dd2eeb94bc"
+      },
+      {
+        "board": 4,
+        "record": "reports/research/279e3c0e.94299f38.full.json",
+        "recordSha256": "c922e33d7d0989ee7d00f3add28fd869c49ff1e0029d6ccf2339c13f8c476dcf",
+        "trace": "reports/research/279e3c0e.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "fdbc2c1185bc3c24e367a95980d1928a8026d8e805b2c37bca6cdf9223db4410",
+        "save": "seti-saves/seti-save-research-v486-original20-04-20261119-94299f38-full-v91.json",
+        "saveSha256": "9586f63c586792d95a20a1051a7b97d6907e4a261843413795c6cb68bb3d14c9"
+      },
+      {
+        "board": 5,
+        "record": "reports/research/8d68c835.94299f38.full.json",
+        "recordSha256": "c1bcf66b07d5ee3a796c2914af540d5800888d9bbddea0c16bfe85cdf4e12ba2",
+        "trace": "reports/research/8d68c835.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "3bbcf8e5862e5adb95aad202c71174d2926f73046ea1cc8f82adc12afbabaffb",
+        "save": "seti-saves/seti-save-research-v486-original20-05-20261119-94299f38-full-v87.json",
+        "saveSha256": "d3b03479b7a973bf7ea5f26b260befa171908d30bd51f8e194eac50834c14478"
+      },
+      {
+        "board": 6,
+        "record": "reports/research/e590f148.94299f38.full.json",
+        "recordSha256": "f7b09aa09b685b062e85843d989695648676ec03b12c17bc97d41f5c4756b547",
+        "trace": "reports/research/e590f148.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "761788fdbeb3d01676c3e0e952c3bff0800ce2f254a965fd2eec08f457f6ec18",
+        "save": "seti-saves/seti-save-research-v486-original20-06-20261119-94299f38-full-v105.json",
+        "saveSha256": "4881fcdae2eb9492cc09922afb1863ff505104c83eee6b219f7b9de773d9b2ea"
+      },
+      {
+        "board": 7,
+        "record": "reports/research/33eaf9f6.94299f38.full.json",
+        "recordSha256": "113932248301a255e1d8208b09418ef12889bfc06272f2ba36b3e2139f1dd720",
+        "trace": "reports/research/33eaf9f6.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "d28684ee0a71e4f1d7fca4f09169cb08239490c8ae26dae4a49eb315651b374c",
+        "save": "seti-saves/seti-save-research-v486-original20-07-20261119-94299f38-full-v83.json",
+        "saveSha256": "683b3773bdc35ccfca48e95c308b40a6f9428837dc7090839234eda97de48426"
+      },
+      {
+        "board": 8,
+        "record": "reports/research/bb435792.94299f38.full.json",
+        "recordSha256": "5439d060707312de49dfab0f195583239ad96235a3c57b3f8b9159aa6af6ff1a",
+        "trace": "reports/research/bb435792.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "330eb4b68429dcc9bf212ca6efa2c00b41c5225760750285eabbdfd6584600a2",
+        "save": "seti-saves/seti-save-research-v486-original20-08-20261119-94299f38-full-v90.json",
+        "saveSha256": "431b91067bf1247f290adf16a6018278280fc46467471042f239eaafbff065b6"
+      },
+      {
+        "board": 9,
+        "record": "reports/research/b359964f.94299f38.full.json",
+        "recordSha256": "906fc93dd7c7f5a109421c05a731e3f26420ed2a57a9e345685c80252290bf1c",
+        "trace": "reports/research/b359964f.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "dcf3171baba8965c792d1b6dfc6e7b43068d7a7c9ee2a587243bbf6131ad54e2",
+        "save": "seti-saves/seti-save-research-v486-original20-09-20261119-94299f38-full-v75.json",
+        "saveSha256": "d4692eff8c39b219ca6dc0802910a0b2f18c41f5c6d3f6e5406cbafb548e9f27"
+      },
+      {
+        "board": 10,
+        "record": "reports/research/7f76680a.94299f38.full.json",
+        "recordSha256": "77027db8218adbac945f22da8133801c9d6bcab55ec9996a47387256e7ed03c8",
+        "trace": "reports/research/7f76680a.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "b0ac7409db563dc5fada4441f8fea4ec3c01269b53de0aa4a72fac694564210b",
+        "save": "seti-saves/seti-save-research-v486-original20-10-20261119-94299f38-full-v90.json",
+        "saveSha256": "c25a83f4c5400ea9fef2d483c6fa3c3b8a8a10822fce673db965057a8e241d8e"
+      },
+      {
+        "board": 11,
+        "record": "reports/research/7b88b4d4.94299f38.full.json",
+        "recordSha256": "4c7626d1edb6f04b2207760df29948e93d79f0b9f85e5a8b99a5005ab9599aa0",
+        "trace": "reports/research/7b88b4d4.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "a4c5b2ccf0bce54fa51ed582392b53b4d60bb90c23e69671c214f6d8263e39bb",
+        "save": "seti-saves/seti-save-research-v486-original20-11-20261119-94299f38-full-v101.json",
+        "saveSha256": "1b4c47b8ccd4a9ec2c9db6b17ea30696c9157c172942839e6088f3f64eed96e0"
+      },
+      {
+        "board": 12,
+        "record": "reports/research/9ae5f22e.94299f38.full.json",
+        "recordSha256": "05632beaceb2dc78e14042f3e5fd3baceb3f70cda51bf83e3a9130d43fc61d12",
+        "trace": "reports/research/9ae5f22e.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "22c457969e21dc9c9a64e6c0b54c793ccf4d4a013239e333a9c46c0bc0aa645d",
+        "save": "seti-saves/seti-save-research-v486-original20-12-20261119-94299f38-full-v113.json",
+        "saveSha256": "7195b55d0d2422eb9906bfed4057060dc90e43efee79fe7f273b36323a33496c"
+      },
+      {
+        "board": 13,
+        "record": "reports/research/1e0b44d2.94299f38.full.json",
+        "recordSha256": "d967c3c5616d833aecbf547e9b21575c5e3cac99ce1f44cd34d97d9e6b1ca502",
+        "trace": "reports/research/1e0b44d2.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "280b0d35c778b108044408acec19e90b9f3e3be4b9290fd15084cd03f71fce6f",
+        "save": "seti-saves/seti-save-research-v486-original20-13-20261119-94299f38-full-v85.json",
+        "saveSha256": "10ba2befa3bcb587d4de7ed83da659f0fbf41d70136cd1acf3f6912d2fd8f5cf"
+      },
+      {
+        "board": 14,
+        "record": "reports/research/5ca133e7.94299f38.full.json",
+        "recordSha256": "3670562f4128e31961e74a34f15ef2291eeeb5cbc67dac9f80316f91b7c0b34c",
+        "trace": "reports/research/5ca133e7.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "0abbd769bb2d43e44a2725e4d9e08d369cc1d62ab7716c097b36592392257efd",
+        "save": "seti-saves/seti-save-research-v486-original20-14-20261119-94299f38-full-v86.json",
+        "saveSha256": "b085579b5cb6df6127569beaccbb91ec32cf88c4bde95796e5af06905499c55b"
+      },
+      {
+        "board": 15,
+        "record": "reports/research/f68952fa.94299f38.full.json",
+        "recordSha256": "017eea24552619af4b278b22a7495ca889ea1ea0a2bcc03d15b72b404325c22e",
+        "trace": "reports/research/f68952fa.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "1aec7625bf5137130aaf6816b6ece8f90d01b54f98c4b5551a8d0a2672ec9b23",
+        "save": "seti-saves/seti-save-research-v486-original20-15-20261119-94299f38-full-v108.json",
+        "saveSha256": "a9bc8c698e20d2462ce133147161c42c586167e3a43d6aed180d7a963b51dbb2"
+      },
+      {
+        "board": 16,
+        "record": "reports/research/f5fda3f0.94299f38.full.json",
+        "recordSha256": "fd0d06f86d51076be6cf065d0e4e8f8b557c790001897bdf5b65a2feb3a9a173",
+        "trace": "reports/research/f5fda3f0.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "bc0630682505068f2766ebce70034ab36add61cebb33e7a517f0650baeb7944e",
+        "save": "seti-saves/seti-save-research-v486-original20-16-20261119-94299f38-full-v91.json",
+        "saveSha256": "1cce66a8eb8d2fbaba09072666012a4aa8d3a954657e2006277d80dc2aa15d00"
+      },
+      {
+        "board": 17,
+        "record": "reports/research/7072468f.94299f38.full.json",
+        "recordSha256": "00f96d35be6c46f06386e30207fd8180100ddb3c523534b5f547ddba8df8d5a8",
+        "trace": "reports/research/7072468f.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "e7ae5cee3590d3135e5ab87aadb884f9052dd312ee0555105ee87c8e0bbecdfd",
+        "save": "seti-saves/seti-save-research-v486-original20-17-20261119-94299f38-full-v104.json",
+        "saveSha256": "c344256f5ca0d428182ec6f9037c4d43b6d113eae2988edf3bf49fe58c45c551"
+      },
+      {
+        "board": 18,
+        "record": "reports/research/52db641e.94299f38.full.json",
+        "recordSha256": "2d0352ee98dede0bf2536e9a29a65cfc04bc23c577518e3cbed16d40a4d68dc3",
+        "trace": "reports/research/52db641e.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "ba7b1fd3f2b9b557b976fbbd81b2c04506b1a903e6cbe1fb30b70e945b7447f0",
+        "save": "seti-saves/seti-save-research-v486-original20-18-20261119-94299f38-full-v95.json",
+        "saveSha256": "c7d79eb25a4c52a839c6daf8a78b460407a0fe0be015d2b679029300f0c385ba"
+      },
+      {
+        "board": 19,
+        "record": "reports/research/0abcb0bd.94299f38.full.json",
+        "recordSha256": "937a057977aee3b0ae09f183a9c7bfb937dc1a85d9ad70f0bab0d7cca51998ac",
+        "trace": "reports/research/0abcb0bd.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "f04844f7802a2fb5d52916a65b8e0ce34763306e0d604932a43c2980b4dc8c38",
+        "save": "seti-saves/seti-save-research-v486-original20-19-20261119-94299f38-full-v93.json",
+        "saveSha256": "d8ccbfd005c66a37c0d78deb725f0d47ff3465d7de4ebca4715c1a1db2b0223d"
+      },
+      {
+        "board": 20,
+        "record": "reports/research/3a4edb37.94299f38.full.json",
+        "recordSha256": "f394a840786c84be27049e4578e05b13e71fc83d145133211b11e38f7a7aeae3",
+        "trace": "reports/research/3a4edb37.94299f38.full.json.decisions.jsonl",
+        "traceSha256": "1bbe2aa4a36095e5fbe8fb627e4fef4f6c07d9d4a6b791b4547f81309b13ab2a",
+        "save": "seti-saves/seti-save-research-v486-original20-20-20261119-94299f38-full-v94.json",
+        "saveSha256": "8eadce42c1923600b94f28404e84314a12a9e642b2eb3be6bbf9eb065957a8ae"
+      }
+    ]
+  },
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "roundBoundary": "before own PASS, excluding PASS card choice and next-round income",
+  "classificationLimits": [
+    "Income goal metadata is not all possible income production.",
+    "A money option declined does not establish it was better; cards have other uses and payment timing matters.",
+    "Low income and low final score are descriptive, not causal proof.",
+    "Card/energy income code mapping is 0 credits, 1 energy, 2 cards; all choices are observed own hand cards.",
+    "Round income differences are measured from each board actual opening, never inferred from company base."
+  ],
+  "aggregate": {
+    "meanScore": 134.35,
+    "rounds": [
+      {
+        "round": 1,
+        "score": 20.15,
+        "technology": 1.4,
+        "income": {
+          "credits": 3.15,
+          "energy": 3.3,
+          "handSize": 1.65,
+          "publicity": 0.0,
+          "availableData": 0.2,
+          "additionalPublicScan": 1.0
+        },
+        "incomeGainFromOpening": {
+          "credits": 0.4,
+          "energy": 0.45,
+          "handSize": 0.2,
+          "publicity": 0.0,
+          "availableData": 0.0,
+          "additionalPublicScan": 0.0
+        },
+        "noCreditsIncomeGrowthBoards": [
+          5,
+          6,
+          7,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          17,
+          19,
+          20
+        ],
+        "atMostOneTechnologyBoards": [
+          1,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          10,
+          11,
+          12,
+          13,
+          17,
+          18
+        ]
+      },
+      {
+        "round": 2,
+        "score": 39.7,
+        "technology": 2.55,
+        "income": {
+          "credits": 3.35,
+          "energy": 3.6,
+          "handSize": 1.75,
+          "publicity": 0.0,
+          "availableData": 0.2,
+          "additionalPublicScan": 1.0
+        },
+        "incomeGainFromOpening": {
+          "credits": 0.6,
+          "energy": 0.75,
+          "handSize": 0.3,
+          "publicity": 0.0,
+          "availableData": 0.0,
+          "additionalPublicScan": 0.0
+        },
+        "noCreditsIncomeGrowthBoards": [
+          5,
+          6,
+          7,
+          10,
+          12,
+          14,
+          15,
+          19,
+          20
+        ],
+        "atMostOneTechnologyBoards": [
+          6,
+          8,
+          13
+        ]
+      },
+      {
+        "round": 3,
+        "score": 65.7,
+        "technology": 3.8,
+        "income": {
+          "credits": 3.85,
+          "energy": 3.95,
+          "handSize": 1.8,
+          "publicity": 0.0,
+          "availableData": 0.2,
+          "additionalPublicScan": 1.0
+        },
+        "incomeGainFromOpening": {
+          "credits": 1.1,
+          "energy": 1.1,
+          "handSize": 0.35,
+          "publicity": 0.0,
+          "availableData": 0.0,
+          "additionalPublicScan": 0.0
+        },
+        "noCreditsIncomeGrowthBoards": [
+          5,
+          10,
+          14,
+          20
+        ],
+        "atMostOneTechnologyBoards": []
+      },
+      {
+        "round": 4,
+        "score": 96.1,
+        "technology": 5.1,
+        "income": {
+          "credits": 4.1,
+          "energy": 4.2,
+          "handSize": 2.2,
+          "publicity": 0.0,
+          "availableData": 0.2,
+          "additionalPublicScan": 1.0
+        },
+        "incomeGainFromOpening": {
+          "credits": 1.35,
+          "energy": 1.35,
+          "handSize": 0.75,
+          "publicity": 0.0,
+          "availableData": 0.0,
+          "additionalPublicScan": 0.0
+        },
+        "noCreditsIncomeGrowthBoards": [
+          5,
+          10,
+          14
+        ],
+        "atMostOneTechnologyBoards": []
+      }
+    ],
+    "openingIncome": {
+      "credits": 2.75,
+      "energy": 2.85,
+      "handSize": 1.45,
+      "publicity": 0.0,
+      "availableData": 0.2,
+      "additionalPublicScan": 1.0
+    },
+    "incomeMenuCount": 33,
+    "incomeMenuUnknownCards": 0,
+    "moneyAvailableMenus": 18,
+    "moneyDeclinedMenus": 6,
+    "moneyDeclinedBoards": [
+      3,
+      4,
+      8,
+      12,
+      19
+    ],
+    "incomeGoalDistinctCards": 3,
+    "incomeGoalBoards": [
+      1,
+      2,
+      18
+    ],
+    "notImmediateButLaterIncome": [
+      {
+        "board": 1,
+        "step": 26,
+        "round": 1,
+        "cardInstanceId": "card-15-0",
+        "card": "dlc_28.png",
+        "rootValue": 56,
+        "chosenValue": 64,
+        "selectedImmediately": false,
+        "completion": "complete",
+        "firstActualUse": {
+          "step": 53,
+          "round": 1,
+          "family": "choose_card",
+          "cardInstanceId": "card-15-0",
+          "card": "dlc_28.png",
+          "usage": "income",
+          "summary": "收入 dlc_28.png"
+        },
+        "laterTuckedForIncome": true
+      },
+      {
+        "board": 18,
+        "step": 27,
+        "round": 1,
+        "cardInstanceId": "card-13-0",
+        "card": "dlc_28.png",
+        "rootValue": 44.666666666666664,
+        "chosenValue": 63.666666666666664,
+        "selectedImmediately": false,
+        "completion": "complete",
+        "firstActualUse": {
+          "step": 42,
+          "round": 1,
+          "family": "choose_card",
+          "cardInstanceId": "card-13-0",
+          "card": "dlc_28.png",
+          "usage": "income",
+          "summary": "收入 dlc_28.png"
+        },
+        "laterTuckedForIncome": true
+      }
+    ]
+  },
+  "moneyDeclinedEvidence": [
+    {
+      "board": 3,
+      "step": 74,
+      "round": 2,
+      "choices": 4,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 1,
+      "selectedCard": "b_31.webp",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 b_31.webp",
+      "visibleChoiceCards": [
+        {
+          "card": "dlc_20.png",
+          "id": "card-36-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_134.webp",
+          "id": "card-24-pass-1-5",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_31.webp",
+          "id": "card-42-0",
+          "incomeCode": 1
+        },
+        {
+          "card": "b_102.webp",
+          "id": "card-43-0",
+          "incomeCode": 0
+        }
+      ]
+    },
+    {
+      "board": 4,
+      "step": 85,
+      "round": 2,
+      "choices": 2,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 1,
+      "selectedCard": "b_27.webp",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 b_27.webp",
+      "visibleChoiceCards": [
+        {
+          "card": "b_37.webp",
+          "id": "card-22-pass-1-3",
+          "incomeCode": 0
+        },
+        {
+          "card": "b_27.webp",
+          "id": "card-42-0",
+          "incomeCode": 1
+        }
+      ]
+    },
+    {
+      "board": 8,
+      "step": 74,
+      "round": 2,
+      "choices": 2,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 2,
+      "selectedCard": "b_78.webp",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 5,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 b_78.webp",
+      "visibleChoiceCards": [
+        {
+          "card": "b_78.webp",
+          "id": "card-22-pass-1-3",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_102.webp",
+          "id": "card-39-0",
+          "incomeCode": 0
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "step": 38,
+      "round": 1,
+      "choices": 3,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 1,
+      "selectedCard": "dlc_25.png",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 dlc_25.png",
+      "visibleChoiceCards": [
+        {
+          "card": "b_50.webp",
+          "id": "card-14-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_86.webp",
+          "id": "card-15-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_25.png",
+          "id": "card-40-0",
+          "incomeCode": 1
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "step": 108,
+      "round": 2,
+      "choices": 3,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 1,
+      "selectedCard": "b_10.webp",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 b_10.webp",
+      "visibleChoiceCards": [
+        {
+          "card": "b_86.webp",
+          "id": "card-15-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_9.png",
+          "id": "card-43-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_10.webp",
+          "id": "card-18-0",
+          "incomeCode": 1
+        }
+      ]
+    },
+    {
+      "board": 19,
+      "step": 40,
+      "round": 1,
+      "choices": 2,
+      "unknownChoiceCards": 0,
+      "moneyOptionCount": 1,
+      "selectedIncomeCode": 1,
+      "selectedCard": "dlc_25.png",
+      "selectedAsIncome": true,
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "selectedSummary": "收入 dlc_25.png",
+      "visibleChoiceCards": [
+        {
+          "card": "b_30.webp",
+          "id": "card-19-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_25.png",
+          "id": "card-16-0",
+          "incomeCode": 1
+        }
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "board": 1,
+      "seed": "seti-analyze-a2d78cbc07cf",
+      "score": 135,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 30,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 4,
+            "score": 30
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 46,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 46
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 74,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 0,
+            "score": 74
+          },
+          "handCount": 3
+        },
+        {
+          "round": 4,
+          "score": 99,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 7,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 99
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 53,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "dlc_28.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_28.png",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_28.png",
+              "id": "card-15-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": [
+        {
+          "step": 26,
+          "round": 1,
+          "cardInstanceId": "card-15-0",
+          "card": "dlc_28.png",
+          "rootValue": 56,
+          "chosenValue": 64,
+          "selectedImmediately": false,
+          "completion": "complete",
+          "firstActualUse": {
+            "step": 53,
+            "round": 1,
+            "family": "choose_card",
+            "cardInstanceId": "card-15-0",
+            "card": "dlc_28.png",
+            "usage": "income",
+            "summary": "收入 dlc_28.png"
+          },
+          "laterTuckedForIncome": true
+        }
+      ]
+    },
+    {
+      "board": 2,
+      "seed": "seti-analyze-9a90ce3372d6",
+      "score": 140,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 11,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "score": 11
+          },
+          "handCount": 2
+        },
+        {
+          "round": 2,
+          "score": 39,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 39
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 64,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 3,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 6,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 3,
+            "score": 64
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 94,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 3,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 7,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 94
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 41,
+          "round": 1,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 3,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_132.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_132.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_132.webp",
+              "id": "card-13-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_57.webp",
+              "id": "card-16-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_38.webp",
+              "id": "card-18-0",
+              "incomeCode": 0
+            }
+          ]
+        },
+        {
+          "step": 92,
+          "round": 2,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_64.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_64.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_64.webp",
+              "id": "card-48-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": [
+        {
+          "step": 67,
+          "round": 2,
+          "cardInstanceId": "card-49-0",
+          "card": "b_79.webp",
+          "rootValue": 61.166666666666664,
+          "chosenValue": 75.08333333333333,
+          "selectedImmediately": false,
+          "completion": "complete",
+          "firstActualUse": {
+            "step": 85,
+            "round": 2,
+            "family": "card_corner",
+            "cardInstanceId": "card-49-0",
+            "card": "b_79.webp",
+            "usage": "corner",
+            "summary": "b_79.webp：弃牌角标"
+          },
+          "laterTuckedForIncome": false
+        }
+      ]
+    },
+    {
+      "board": 3,
+      "seed": "seti-analyze-702b3104145a",
+      "score": 138,
+      "openingIncome": {
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 15,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 15
+          },
+          "handCount": 2
+        },
+        {
+          "round": 2,
+          "score": 43,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 2,
+            "score": 43
+          },
+          "handCount": 3
+        },
+        {
+          "round": 3,
+          "score": 78,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 78
+          },
+          "handCount": 2
+        },
+        {
+          "round": 4,
+          "score": 108,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 108
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 40,
+          "round": 1,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_120.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_120.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_114.webp",
+              "id": "card-14-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_120.webp",
+              "id": "card-15-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "dlc_20.png",
+              "id": "card-36-0",
+              "incomeCode": 2
+            }
+          ]
+        },
+        {
+          "step": 74,
+          "round": 2,
+          "choices": 4,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_31.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_31.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_20.png",
+              "id": "card-36-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_134.webp",
+              "id": "card-24-pass-1-5",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_31.webp",
+              "id": "card-42-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_102.webp",
+              "id": "card-43-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 4,
+      "seed": "seti-analyze-bef76f5fe6ae",
+      "score": 145,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 29,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 4,
+            "score": 29
+          },
+          "handCount": 2
+        },
+        {
+          "round": 2,
+          "score": 48,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 48
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 62,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 5,
+            "score": 62
+          },
+          "handCount": 2
+        },
+        {
+          "round": 4,
+          "score": 94,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 6,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 3,
+            "score": 94
+          },
+          "handCount": 2
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 58,
+          "round": 1,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_128.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_128.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_8.webp",
+              "id": "card-19-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_94.webp",
+              "id": "card-16-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_128.webp",
+              "id": "card-39-0",
+              "incomeCode": 0
+            }
+          ]
+        },
+        {
+          "step": 85,
+          "round": 2,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_27.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_27.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_37.webp",
+              "id": "card-22-pass-1-3",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_27.webp",
+              "id": "card-42-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 5,
+      "seed": "seti-analyze-5001578c1141",
+      "score": 135,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 32,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 32
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 34,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 34
+          },
+          "handCount": 4
+        },
+        {
+          "round": 3,
+          "score": 63,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 63
+          },
+          "handCount": 2
+        },
+        {
+          "round": 4,
+          "score": 95,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 1,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 95
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 51,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_107.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_107.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_107.webp",
+              "id": "card-14-0",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 6,
+      "seed": "seti-analyze-421f46598209",
+      "score": 138,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 12,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 12
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 23,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 4,
+            "score": 23
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 66,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 66
+          },
+          "handCount": 1
+        },
+        {
+          "round": 4,
+          "score": 101,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 101
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 42,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_3.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_3.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_3.webp",
+              "id": "card-17-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 86,
+          "round": 2,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_76.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_76.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_100.webp",
+              "id": "card-24-pass-1-5",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_76.webp",
+              "id": "card-45-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 94,
+          "round": 2,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_100.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_100.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_100.webp",
+              "id": "card-24-pass-1-5",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 7,
+      "seed": "seti-analyze-a4886c19154b",
+      "score": 135,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 25,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 25
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 44,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 44
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 61,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 61
+          },
+          "handCount": 1
+        },
+        {
+          "round": 4,
+          "score": 99,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 6,
+          "remaining": {
+            "additionalPublicScan": 3,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 99
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 45,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_68.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_68.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_68.webp",
+              "id": "card-16-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 51,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_107.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_107.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_107.webp",
+              "id": "card-17-0",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 8,
+      "seed": "seti-analyze-9c11af934643",
+      "score": 132,
+      "openingIncome": {
+        "credits": 4,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 14,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 2,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 14
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 23,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 3,
+            "score": 23
+          },
+          "handCount": 2
+        },
+        {
+          "round": 3,
+          "score": 41,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 6,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 41
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 80,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 8,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 4,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 1,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 80
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 43,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_122.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 4,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_122.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_122.webp",
+              "id": "card-16-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_72.webp",
+              "id": "card-17-0",
+              "incomeCode": 2
+            }
+          ]
+        },
+        {
+          "step": 74,
+          "round": 2,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_78.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_78.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_78.webp",
+              "id": "card-22-pass-1-3",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_102.webp",
+              "id": "card-39-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 9,
+      "seed": "seti-analyze-24169115909d",
+      "score": 113,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 17,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 17
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 44,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 44
+          },
+          "handCount": 0
+        },
+        {
+          "round": 3,
+          "score": 61,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 5,
+            "score": 61
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 80,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 80
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 45,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_97.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_97.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_46.webp",
+              "id": "card-14-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_97.webp",
+              "id": "card-18-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 10,
+      "seed": "seti-analyze-2ec4582df1f6",
+      "score": 129,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 25,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 25
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 32,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 6,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 4,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 32
+          },
+          "handCount": 0
+        },
+        {
+          "round": 3,
+          "score": 66,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 7,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 3,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 66
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 89,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 7,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 3,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 89
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 55,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_123.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_123.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_107.webp",
+              "id": "card-16-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_123.webp",
+              "id": "card-35-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 99,
+          "round": 2,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_69.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_69.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_69.webp",
+              "id": "card-18-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 11,
+      "seed": "seti-analyze-8cf6f23cc7c1",
+      "score": 141,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 20,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 20
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 29,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 29
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 44,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 4,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 44
+          },
+          "handCount": 2
+        },
+        {
+          "round": 4,
+          "score": 87,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 5,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 87
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 41,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_11.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_11.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_11.webp",
+              "id": "card-14-0",
+              "incomeCode": 2
+            }
+          ]
+        },
+        {
+          "step": 87,
+          "round": 2,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_38.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_38.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_8.png",
+              "id": "card-22-pass-1-3",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_114.webp",
+              "id": "card-38-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_38.webp",
+              "id": "card-39-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 12,
+      "seed": "seti-analyze-bd83842179ca",
+      "score": 144,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 22,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 22
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 41,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 1,
+            "score": 41
+          },
+          "handCount": 2
+        },
+        {
+          "round": 3,
+          "score": 83,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 1,
+            "score": 83
+          },
+          "handCount": 3
+        },
+        {
+          "round": 4,
+          "score": 102,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 102
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 38,
+          "round": 1,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 1,
+          "selectedCard": "dlc_25.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_25.png",
+          "visibleChoiceCards": [
+            {
+              "card": "b_50.webp",
+              "id": "card-14-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_86.webp",
+              "id": "card-15-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "dlc_25.png",
+              "id": "card-40-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 108,
+          "round": 2,
+          "choices": 3,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_10.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_10.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_86.webp",
+              "id": "card-15-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "dlc_9.png",
+              "id": "card-43-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_10.webp",
+              "id": "card-18-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 13,
+      "seed": "seti-analyze-5c5ff536a8da",
+      "score": 114,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 16,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 16
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 30,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 3,
+            "score": 30
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 58,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 4,
+            "score": 58
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 80,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 5,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 80
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 57,
+          "round": 1,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_113.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_113.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_113.webp",
+              "id": "card-17-0",
+              "incomeCode": 1
+            }
+          ]
+        },
+        {
+          "step": 86,
+          "round": 2,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 2,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_37.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_37.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_37.webp",
+              "id": "card-20-pass-1-1",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_4.webp",
+              "id": "card-41-0",
+              "incomeCode": 0
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 14,
+      "seed": "seti-analyze-ed3824aaebd6",
+      "score": 116,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 13,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 2,
+            "score": 13
+          },
+          "handCount": 2
+        },
+        {
+          "round": 2,
+          "score": 51,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 51
+          },
+          "handCount": 0
+        },
+        {
+          "round": 3,
+          "score": 53,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 53
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 94,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 4,
+            "score": 94
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 50,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 2,
+          "selectedCard": "b_77.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_77.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_8.png",
+              "id": "card-19-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_77.webp",
+              "id": "card-16-0",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 15,
+      "seed": "seti-analyze-3cf8ee390c56",
+      "score": 158,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 24,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 24
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 53,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 53
+          },
+          "handCount": 2
+        },
+        {
+          "round": 3,
+          "score": 78,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 78
+          },
+          "handCount": 1
+        },
+        {
+          "round": 4,
+          "score": 117,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 6,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 3,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 6,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 117
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 53,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_59.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_59.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_5.webp",
+              "id": "card-14-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "b_59.webp",
+              "id": "card-39-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 16,
+      "seed": "seti-analyze-92c262b1b98c",
+      "score": 121,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 18,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 18
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 42,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 42
+          },
+          "handCount": 0
+        },
+        {
+          "round": 3,
+          "score": 76,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "score": 76
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 95,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 1,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 3,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 95
+          },
+          "handCount": 0
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 45,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 2,
+          "selectedIncomeCode": 0,
+          "selectedCard": "b_128.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_128.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_18.png",
+              "id": "card-13-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_128.webp",
+              "id": "card-14-0",
+              "incomeCode": 0
+            }
+          ]
+        },
+        {
+          "step": 106,
+          "round": 2,
+          "choices": 1,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_24.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0,
+            "availableData": 1,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_24.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_24.webp",
+              "id": "card-18-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 17,
+      "seed": "seti-analyze-8c7ca70c141f",
+      "score": 157,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 17,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 1,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 17
+          },
+          "handCount": 1
+        },
+        {
+          "round": 2,
+          "score": 39,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 0,
+            "score": 39
+          },
+          "handCount": 2
+        },
+        {
+          "round": 3,
+          "score": 77,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 2,
+            "score": 77
+          },
+          "handCount": 0
+        },
+        {
+          "round": 4,
+          "score": 119,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 5,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 2,
+            "score": 119
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 37,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "b_92.webp",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 b_92.webp",
+          "visibleChoiceCards": [
+            {
+              "card": "b_92.webp",
+              "id": "card-16-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_139.webp",
+              "id": "card-38-0",
+              "incomeCode": 2
+            }
+          ]
+        },
+        {
+          "step": 90,
+          "round": 2,
+          "choices": 4,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "dlc_12.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_12.png",
+          "visibleChoiceCards": [
+            {
+              "card": "b_139.webp",
+              "id": "card-38-0",
+              "incomeCode": 2
+            },
+            {
+              "card": "dlc_12.png",
+              "id": "card-22-pass-1-3",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_123.webp",
+              "id": "card-41-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "dlc_30.png",
+              "id": "card-42-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 18,
+      "seed": "seti-analyze-1466261ceeec",
+      "score": 122,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 11,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 1,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 11
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 35,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 35
+          },
+          "handCount": 0
+        },
+        {
+          "round": 3,
+          "score": 72,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 1,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 72
+          },
+          "handCount": 1
+        },
+        {
+          "round": 4,
+          "score": 88,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 5,
+            "energy": 2,
+            "handSize": 3,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 2,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 88
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 42,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 0,
+          "selectedCard": "dlc_28.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_28.png",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_28.png",
+              "id": "card-13-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "b_125.webp",
+              "id": "card-15-0",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": [
+        {
+          "step": 27,
+          "round": 1,
+          "cardInstanceId": "card-13-0",
+          "card": "dlc_28.png",
+          "rootValue": 44.666666666666664,
+          "chosenValue": 63.666666666666664,
+          "selectedImmediately": false,
+          "completion": "complete",
+          "firstActualUse": {
+            "step": 42,
+            "round": 1,
+            "family": "choose_card",
+            "cardInstanceId": "card-13-0",
+            "card": "dlc_28.png",
+            "usage": "income",
+            "summary": "收入 dlc_28.png"
+          },
+          "laterTuckedForIncome": true
+        }
+      ]
+    },
+    {
+      "board": 19,
+      "seed": "seti-analyze-f54bea5e6f9c",
+      "score": 161,
+      "openingIncome": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 21,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 21
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 48,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 48
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 72,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 6,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 72
+          },
+          "handCount": 1
+        },
+        {
+          "round": 4,
+          "score": 110,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 2,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 8,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 0,
+            "score": 110
+          },
+          "handCount": 1
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 40,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 1,
+          "selectedIncomeCode": 1,
+          "selectedCard": "dlc_25.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 3,
+            "energy": 3,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_25.png",
+          "visibleChoiceCards": [
+            {
+              "card": "b_30.webp",
+              "id": "card-19-0",
+              "incomeCode": 0
+            },
+            {
+              "card": "dlc_25.png",
+              "id": "card-16-0",
+              "incomeCode": 1
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    },
+    {
+      "board": 20,
+      "seed": "seti-analyze-6b38bd2b8e98",
+      "score": 113,
+      "openingIncome": {
+        "credits": 2,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "score": 31,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 2,
+          "remaining": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 0,
+            "publicity": 1,
+            "score": 31
+          },
+          "handCount": 0
+        },
+        {
+          "round": 2,
+          "score": 50,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 1,
+            "publicity": 1,
+            "score": 50
+          },
+          "handCount": 1
+        },
+        {
+          "round": 3,
+          "score": 65,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 2,
+            "energy": 5,
+            "handSize": 1,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 0,
+            "energy": 1,
+            "handSize": 0,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 3,
+          "remaining": {
+            "additionalPublicScan": 2,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 65
+          },
+          "handCount": 3
+        },
+        {
+          "round": 4,
+          "score": 91,
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 5,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "incomeGainFromOpening": {
+            "credits": 1,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "techCount": 4,
+          "remaining": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 0,
+            "handSize": 2,
+            "publicity": 4,
+            "score": 91
+          },
+          "handCount": 2
+        }
+      ],
+      "incomeMenusFirstTwoRounds": [
+        {
+          "step": 47,
+          "round": 1,
+          "choices": 2,
+          "unknownChoiceCards": 0,
+          "moneyOptionCount": 0,
+          "selectedIncomeCode": 1,
+          "selectedCard": "dlc_29.png",
+          "selectedAsIncome": true,
+          "incomeBefore": {
+            "credits": 2,
+            "energy": 4,
+            "handSize": 1,
+            "publicity": 0,
+            "availableData": 0,
+            "additionalPublicScan": 1
+          },
+          "selectedSummary": "收入 dlc_29.png",
+          "visibleChoiceCards": [
+            {
+              "card": "dlc_29.png",
+              "id": "card-15-0",
+              "incomeCode": 1
+            },
+            {
+              "card": "b_54.webp",
+              "id": "card-16-0",
+              "incomeCode": 2
+            }
+          ]
+        }
+      ],
+      "explicitIncomeGoalCards": []
+    }
+  ]
+}

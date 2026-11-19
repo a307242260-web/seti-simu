@@ -1,0 +1,417 @@
+{
+  "schemaVersion": "seti-existing-income-choice-causal-card-v1",
+  "sourceAudit": "reports/ai-foundation-20261119/original20-development-audit-20261119-v1.json",
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "candidateQuestion": "Does the purpose-bound greedy computer income choice prefer energy/cards over money for a real funded downstream reason, or because the fixed plan undervalues next-round purchasing power?",
+  "confirmed": "Six menus across five boards legally offered a money-income card but selected another income type. The recorded alternate was not executed under committed-goal-plan-execution; this is declared policy exclusion, not a numeric search loss or a state-equivalence proof.",
+  "notEstablished": [
+    "Money choice is superior",
+    "Cache/reuse is wrong",
+    "A lower current income is a strategy bug",
+    "Magnitude or generality of a possible score improvement"
+  ],
+  "nextSingleCase": {
+    "board": 19,
+    "step": 40,
+    "reason": "The same choices are currently public, initial money/energy income are both3, and second-round money income never grows. This provides a clean explanatory case, not proof of superiority; the board is also the highest-scoring original20 case and must be protected as a counterexample.",
+    "contrast": "Current dlc_25 energy income versus observed b_30 money income; same Native root and RNG, same income menu, exact known card remaining purposes.",
+    "requiredBoundary": "At least next-round common settled asset boundary plus exact fixed-plan value breakdown; preserve six incomes, tech, cash/energy/data, remaining card purposes and pre-investments.",
+    "stop": "If current energy choice has a funded advantage or no causal improvement can be proved, keep it. Do not tune weights or restore frozen candidates."
+  },
+  "reviews": [
+    {
+      "board": 3,
+      "step": 74,
+      "round": 2,
+      "selectedCard": "b_31.webp",
+      "incomeBefore": {
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "dlc_20.png",
+          "id": "card-36-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_134.webp",
+          "id": "card-24-pass-1-5",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_31.webp",
+          "id": "card-42-0",
+          "incomeCode": 1
+        },
+        {
+          "card": "b_102.webp",
+          "id": "card-43-0",
+          "incomeCode": 0
+        }
+      ],
+      "actualAction": "choose_card:a5868f64",
+      "searchValue": 89.5,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:a6202cc4",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:8297828c",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:a5868f64",
+          "value": 89.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:ed197454",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-9",
+      "planOrigin": {
+        "step": 58,
+        "actionId": "move:7382b5d2",
+        "searchValue": 89.5,
+        "nativeExecutions": 48
+      }
+    },
+    {
+      "board": 4,
+      "step": 85,
+      "round": 2,
+      "selectedCard": "b_27.webp",
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "b_37.webp",
+          "id": "card-22-pass-1-3",
+          "incomeCode": 0
+        },
+        {
+          "card": "b_27.webp",
+          "id": "card-42-0",
+          "incomeCode": 1
+        }
+      ],
+      "actualAction": "choose_card:a5868f64",
+      "searchValue": 93.16666666666667,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:c1a9945c",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "rocket:4:orbit:venus:planet:",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:a5868f64",
+          "value": 93.16666666666667,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "rocket:4:orbit:venus:planet:",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-16",
+      "planOrigin": {
+        "step": 80,
+        "actionId": "move:f89b84a0",
+        "searchValue": 93.16666666666667,
+        "nativeExecutions": 31
+      }
+    },
+    {
+      "board": 8,
+      "step": 74,
+      "round": 2,
+      "selectedCard": "b_78.webp",
+      "incomeBefore": {
+        "credits": 5,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "b_78.webp",
+          "id": "card-22-pass-1-3",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_102.webp",
+          "id": "card-39-0",
+          "incomeCode": 0
+        }
+      ],
+      "actualAction": "choose_card:c1a9945c",
+      "searchValue": 58.5,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:c1a9945c",
+          "value": 58.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "rocket:3:orbit:venus:planet:",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:aa77442c",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "rocket:3:orbit:venus:planet:",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-10",
+      "planOrigin": {
+        "step": 69,
+        "actionId": "move:ddf0bb75",
+        "searchValue": 58.5,
+        "nativeExecutions": 18
+      }
+    },
+    {
+      "board": 12,
+      "step": 38,
+      "round": 1,
+      "selectedCard": "dlc_25.png",
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "b_50.webp",
+          "id": "card-14-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_86.webp",
+          "id": "card-15-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_25.png",
+          "id": "card-40-0",
+          "incomeCode": 1
+        }
+      ],
+      "actualAction": "choose_card:6ddc2a28",
+      "searchValue": 57.166666666666664,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:a37bb024",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:b04e9500",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:6ddc2a28",
+          "value": 57.166666666666664,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-2",
+      "planOrigin": {
+        "step": 31,
+        "actionId": "choose_target:29b5215c",
+        "searchValue": 57.166666666666664,
+        "nativeExecutions": 9
+      }
+    },
+    {
+      "board": 12,
+      "step": 108,
+      "round": 2,
+      "selectedCard": "b_10.webp",
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "b_86.webp",
+          "id": "card-15-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_9.png",
+          "id": "card-43-0",
+          "incomeCode": 2
+        },
+        {
+          "card": "b_10.webp",
+          "id": "card-18-0",
+          "incomeCode": 1
+        }
+      ],
+      "actualAction": "choose_card:b27d2a0c",
+      "searchValue": 91.5,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:b04e9500",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:ed197454",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:b27d2a0c",
+          "value": 91.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-16",
+      "planOrigin": {
+        "step": 104,
+        "actionId": "place_data:8fd12fd3",
+        "searchValue": 91.5,
+        "nativeExecutions": 6
+      }
+    },
+    {
+      "board": 19,
+      "step": 40,
+      "round": 1,
+      "selectedCard": "dlc_25.png",
+      "incomeBefore": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "visibleChoiceCards": [
+        {
+          "card": "b_30.webp",
+          "id": "card-19-0",
+          "incomeCode": 0
+        },
+        {
+          "card": "dlc_25.png",
+          "id": "card-16-0",
+          "incomeCode": 1
+        }
+      ],
+      "actualAction": "choose_card:3158182c",
+      "searchValue": 68.5,
+      "nativeExecutions": 0,
+      "rootRows": [
+        {
+          "actionId": "choose_card:fec02f70",
+          "value": null,
+          "valueType": "not-executed",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        },
+        {
+          "actionId": "choose_card:3158182c",
+          "value": 68.5,
+          "valueType": "attained-lower-bound",
+          "completion": "committed-goal-plan-execution",
+          "policy": "seti-goal-resource-preparation-v1",
+          "goalId": "data:income:4",
+          "isEquivalence": false
+        }
+      ],
+      "reusedEvidenceId": "plan-evidence-4",
+      "planOrigin": {
+        "step": 37,
+        "actionId": "choose_target:29b5215c",
+        "searchValue": 68.5,
+        "nativeExecutions": 3
+      }
+    }
+  ]
+}
