@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "original20-board19-income-fixed-plan-cause",
+  "startedEpochSeconds": 1795055443.0,
+  "deadlineEpochSeconds": 1795057243.0,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.json"
+  ],
+  "businessQuestion": "Explain the actual v486 fixed income choice on board19 input40, and compare its public b30 money alternative under the same Native root and RNG. This is an independent real-trajectory menu diagnosis, not a restart of frozen forecast/income prototypes.",
+  "hypotheses": [
+    "The energy choice has a higher exact known fixed-plan endpoint or preserves a funded current purpose.",
+    "The choices tie under the current model and a deterministic card-order tie-break, rather than a cache defect or numerical search loss, decides."
+  ],
+  "limits": {
+    "wallSeconds": 1800,
+    "maximumNativeControlInputs": 200,
+    "maximumNewFullGames": 0,
+    "maximumNewAIColdSearches": 1,
+    "newProductionPatches": 0
+  },
+  "searchContract": {
+    "stateEquivalence": "Existing production canonical identity and original RNG, never compare different reconstructed roots as the same state.",
+    "reachability": "Only the two legal observed income cards at the exact menu; preserve fixed preparation and known held-card purposes.",
+    "globalBudget": "Existing production four null runtime budgets unchanged; reject incomplete or over256Native/600ms cold decisions, never truncate necessary branches to obtain a pass.",
+    "branchBoundary": "Immediate income endpoint first; at most next-round common asset boundary, no full games, no unseen card oracle.",
+    "stop": "If energy has a funded advantage or money superiority cannot be established, keep current choice and close; no speculative weight changes or candidate resurrection."
+  },
+  "recoveryEvents": [
+    {
+      "atEpochSeconds": 1795055720.5062451,
+      "reason": "Native control completed39 prefix and two money-branch inputs. Diagnostic tried opening a White-owned analysis root after end_turn handed control to another seat. Preserve failed report; recover only its two branch inputs, never the39 input prefix. Snapshot settled assets directly when White does not own the input."
+    },
+    {
+      "atEpochSeconds": 1795055925.917334,
+      "action": "manual resume of existing second unit from saved Native checkpoint, not a third unit or automatic guard recovery",
+      "reason": "Read-only comparison proved both observation and value exactly equal; failure was the missing legalActions container field. Resume the saved post-income checkpoint without repeating the39-input prefix or input40.",
+      "checkpoint": "reports/ai-foundation-20261119/board19-income-recovery-source-20261119-v1.json.gz",
+      "checkpointSha256": "88c9526fb9d597c19b7c4bcf7bdb28c99afa17797cf046e8832cad0f7a257470",
+      "originalDeadlineUnchanged": 1795057243.0,
+      "noNewStrategyPatch": true
+    }
+  ],
+  "declaredAlternativeContinuation": {
+    "money": "After the same literal inputs42..55, omit consumed b30 play/blue2 choice, then take the same ordinary Purple4 research and pass; follow the same already-recorded legal PASS choices to the first White round2 main input. This is an explicit witness, not autonomous money-branch optimality.",
+    "baseline": "Reuse the existing R1 Native checkpoint and literal PASS suffix to first White round2 main input; do not rerun its completed development."
+  },
+  "closedEpochSeconds": 1795056283.763927,
+  "outcome": "board19-income-causal-outcome-20261119-v1.json",
+  "verdict": "keep-current-policy",
+  "AIChanged": false,
+  "newFullGames": 0,
+  "totalNativeInputsIncludingVerification": 127,
+  "closedBeforeDeadline": true,
+  "manualResumeUsed": true
+}

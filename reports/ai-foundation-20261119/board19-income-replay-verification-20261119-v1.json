@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-native-income-replay-verification-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "archiveSha256": "ee69c2faf9f7cf943569802a9d79448afa5633a917bd55b3045997e468354134",
+  "sourceFilesVerified": 536,
+  "status": "complete",
+  "verifiedInputs": 43,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "branches": [
+    {
+      "name": "money",
+      "inputs": 30,
+      "verified": true,
+      "nativeEnvelopeSha256": "66bc52564f107ac47d5a94c486f2ee2f507dc2589e3d0507a34e025e2201b0b7"
+    },
+    {
+      "name": "energy",
+      "inputs": 2,
+      "verified": true,
+      "nativeEnvelopeSha256": "4f657ab9b79017fc1e49e1e8155bc921b174b31471a65282e2fa4961fd55154a"
+    },
+    {
+      "name": "baseline",
+      "inputs": 11,
+      "verified": true,
+      "nativeEnvelopeSha256": "471f0f35c998b6ec21d0389e06fa304a650448eb6ef26e9681814d0303253594"
+    }
+  ],
+  "verified": true,
+  "totalNativeIncludingControls": 127
+}

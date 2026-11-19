@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "board19-income-choice-route-20261119-v1.json",
+  "startedEpochSeconds": 1795055720.506402,
+  "deadlineEpochSeconds": 1795057243.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/continue-board19-income-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795055818.369681,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 11043,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795055818.6967099
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/resume-board19-income-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795055926.290983,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 12133,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055927.1417081
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-board19-income-replay-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795056013.438092,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 13127,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795056013.941257
+    },
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795056087.873209,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 13752,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795056088.466193
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795056283.392422,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v2.window.attempt-5.stderr.log",
+      "pid": 15402,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795056283.440774
+    }
+  ],
+  "recoveryEvents": [
+    {
+      "atEpochSeconds": 1795055925.917334,
+      "action": "manual resume of existing second unit from saved Native checkpoint, not a third unit or automatic guard recovery",
+      "reason": "Read-only comparison proved both observation and value exactly equal; failure was the missing legalActions container field. Resume the saved post-income checkpoint without repeating the39-input prefix or input40.",
+      "checkpoint": "reports/ai-foundation-20261119/board19-income-recovery-source-20261119-v1.json.gz",
+      "checkpointSha256": "88c9526fb9d597c19b7c4bcf7bdb28c99afa17797cf046e8832cad0f7a257470",
+      "originalDeadlineUnchanged": 1795057243.0,
+      "noNewStrategyPatch": true
+    }
+  ],
+  "closedEpochSeconds": 1795056283.763927,
+  "outcome": "board19-income-causal-outcome-20261119-v1.json"
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "board19-income-choice-route-20261119-v1.json",
+  "startedEpochSeconds": 1795055443.0,
+  "deadlineEpochSeconds": 1795057243.0,
+  "status": "failed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795055541.359267,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 7972,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795055541.4495842
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-board19-income-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795055616.280187,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795057243.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board19-income-choice-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 8827,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795055617.058913
+    }
+  ]
+}

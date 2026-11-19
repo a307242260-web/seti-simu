@@ -1,0 +1,202 @@
+{
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "scope": "Read-only next-case selection from the already audited six menus; no additional counterfactuals.",
+  "rows": [
+    {
+      "board": 3,
+      "step": 74,
+      "card": "b_102.webp",
+      "price": 2,
+      "playEffects": [
+        {
+          "id": "b102-proxima-scan-1",
+          "type": "card_scan_nebula",
+          "label": "比邻星扫描 1/2",
+          "icon": "red_scan",
+          "options": {
+            "nebulaId": "sector-3-b",
+            "gainData": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "b102-proxima-scan-2",
+          "type": "card_scan_nebula",
+          "label": "比邻星扫描 2/2",
+          "icon": "red_scan",
+          "options": {
+            "nebulaId": "sector-3-b",
+            "gainData": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "laterUses": []
+    },
+    {
+      "board": 4,
+      "step": 85,
+      "card": "b_37.webp",
+      "price": 3,
+      "playEffects": [
+        {
+          "id": "b37-launch-1",
+          "type": "launch",
+          "label": "发射 1/2（忽略火箭上限）",
+          "icon": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "b37-launch-2",
+          "type": "launch",
+          "label": "发射 2/2（忽略火箭上限）",
+          "icon": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "b37-publicity",
+          "type": "gain_resources",
+          "label": "获得 1 宣传",
+          "icon": "publicity",
+          "options": {
+            "gain": {
+              "publicity": 1
+            },
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "laterUses": [
+        {
+          "step": 198,
+          "round": 4,
+          "family": "choose_payment",
+          "summary": "b_37.webp"
+        }
+      ]
+    },
+    {
+      "board": 8,
+      "step": 74,
+      "card": "b_102.webp",
+      "price": 2,
+      "playEffects": [
+        {
+          "id": "b102-proxima-scan-1",
+          "type": "card_scan_nebula",
+          "label": "比邻星扫描 1/2",
+          "icon": "red_scan",
+          "options": {
+            "nebulaId": "sector-3-b",
+            "gainData": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "b102-proxima-scan-2",
+          "type": "card_scan_nebula",
+          "label": "比邻星扫描 2/2",
+          "icon": "red_scan",
+          "options": {
+            "nebulaId": "sector-3-b",
+            "gainData": true,
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "laterUses": [
+        {
+          "step": 97,
+          "round": 3,
+          "family": "choose_card",
+          "summary": "收入 b_102.webp"
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "step": 38,
+      "card": "b_86.webp",
+      "price": 3,
+      "playEffects": [
+        {
+          "id": "b86-purple-tech",
+          "type": "card_research_tech",
+          "label": "科技（只能选择紫色）",
+          "icon": "research_tech",
+          "options": {
+            "skipCost": true,
+            "techTypes": [
+              "purple"
+            ],
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "laterUses": [
+        {
+          "step": 153,
+          "round": 3,
+          "family": "card_corner",
+          "summary": "b_86.webp：弃牌角标"
+        }
+      ]
+    },
+    {
+      "board": 12,
+      "step": 108,
+      "card": "b_86.webp",
+      "price": 3,
+      "playEffects": [
+        {
+          "id": "b86-purple-tech",
+          "type": "card_research_tech",
+          "label": "科技（只能选择紫色）",
+          "icon": "research_tech",
+          "options": {
+            "skipCost": true,
+            "techTypes": [
+              "purple"
+            ],
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "laterUses": [
+        {
+          "step": 153,
+          "round": 3,
+          "family": "card_corner",
+          "summary": "b_86.webp：弃牌角标"
+        }
+      ]
+    }
+  ],
+  "classificationLimits": [
+    "Later uses list covers actions whose target.cardInstanceId matches; absence is not proof that no array-target discard or payment occurred.",
+    "Board12 explicitly shows b86 used as a card corner at input153; no claim is made that its unused research effect was globally preferable as earlier income."
+  ]
+}

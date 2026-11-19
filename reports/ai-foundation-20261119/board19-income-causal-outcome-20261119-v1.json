@@ -1,0 +1,229 @@
+{
+  "schemaVersion": "seti-board19-income-causal-outcome-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "question": "Why does actual board19 input40 choose energy instead of money income?",
+  "status": "closed-keep-current-policy",
+  "cause": "The fixed plan preserves publicly known b30, whose funded3-credit play grants a blue technology; the recorded original suffix realizes blue2 before taking Purple4. Money income consumes b30.",
+  "modelEvidence": {
+    "moneyValueAtIncomeEndpoint": 60,
+    "energyValueAtIncomeEndpoint": 68.5,
+    "difference": 8.5,
+    "sameIncomeLinearContribution": true,
+    "notActualScoreDelta": true
+  },
+  "round1BeforePass": {
+    "money": {
+      "score": 16,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 16
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_25.png"
+      ],
+      "playedCards": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probeCount": 0,
+      "rngState": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 2409161266
+      }
+    },
+    "baseline": {
+      "score": 21,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 2,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 21
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "hand": [],
+      "playedCards": [
+        "b_30.webp"
+      ],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probeCount": 0,
+      "rngState": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 2409161266
+      }
+    }
+  },
+  "round2Start": {
+    "money": {
+      "score": 16,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 1,
+        "score": 16
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_25.png",
+        "b_134.webp",
+        "dlc_38.png"
+      ],
+      "playedCards": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probeCount": 0,
+      "rngState": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 2409161266
+      }
+    },
+    "baseline": {
+      "score": 21,
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 6,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 21
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "b_134.webp",
+        "dlc_38.png"
+      ],
+      "playedCards": [
+        "b_30.webp"
+      ],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probeCount": 0,
+      "rngState": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 2409161266
+      }
+    }
+  },
+  "comparisonIntegrity": {
+    "sameRootAndRng": true,
+    "round2RngEqual": true,
+    "sameNewlyObtainedCards": true,
+    "originalBaselineRound2ObservationExact": true,
+    "completeNativeEnvelopesIndependentlyReplayed": 3,
+    "sourceFilesVerified": 536
+  },
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "nativeControlAndRecoveryInputs": 84,
+  "nativeVerificationInputs": 43,
+  "totalNewNativeInputs": 127,
+  "AIChanged": false,
+  "meanOriginal20Unchanged": 134.35,
+  "teachingScoreUnchanged": 272,
+  "verdict": "Keep current income choice. The explicit money witness has more money but loses5 board points and blue2; no dominance or optimal money continuation is claimed. Do not tune weights or add income-card search branches.",
+  "nextCase": {
+    "board": 12,
+    "beforeInput": 38,
+    "reason": "Recorded money-income b86 is preserved through first two income menus but later spent for its corner at input153, not played for its purple research effect. Diagnose the forecast-to-execution gap, with board19 retained as a preserve-funded-research counterexample.",
+    "superiorityNotEstablished": true
+  },
+  "limits": [
+    "The alternative deliberately preserves the recorded known prefix and ordinary Purple4 suffix; it is not an optimized money policy or final-score test.",
+    "Native solar rotation and card ownership differ as consequences of the foregone blue technology.",
+    "The method has explained a real fixed plan and avoided an unsupported patch, not demonstrated score improvement.",
+    "Two diagnostic script failures were retained; recovery manually reopened the existing second window after proving an object-shape comparison error, without extending its original deadline. This was not automatic guard recovery."
+  ],
+  "archive": "reports/ai-foundation-20261119/board19-income-replay-20261119-v1.json.gz",
+  "verification": "reports/ai-foundation-20261119/board19-income-replay-verification-20261119-v1.json",
+  "nextCaseEvidence": "reports/ai-foundation-20261119/income-money-alternative-existing-uses-20261119-v1.json"
+}

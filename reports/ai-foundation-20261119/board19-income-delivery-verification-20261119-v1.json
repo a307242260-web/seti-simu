@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "seti-board19-income-delivery-verification-v1",
+  "verified": true,
+  "htmlRows": 11,
+  "localReportLinksVerified": 6,
+  "independentNativeReplayBranches": 3,
+  "nativeInputsIncludingControlsAndReplay": 127,
+  "originalRound2ObservationExact": true,
+  "AIChanged": false,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "artifacts": {
+    "reports/iteration/seti-ai-method-review-20261119-v1.html": "7e67c3733c5b8b1b41dfa4f70bbfc5a9f02ad19d263934af0da64297b33b14d1",
+    "reports/ai-foundation-20261119/board19-income-causal-outcome-20261119-v1.json": "56ed1ded365cc81f73576ad3472191b039924ca84180df0f594165b0cfc3591c",
+    "reports/ai-foundation-20261119/board19-income-replay-20261119-v1.json.gz": "ee69c2faf9f7cf943569802a9d79448afa5633a917bd55b3045997e468354134",
+    "reports/ai-foundation-20261119/board19-income-diagnostics-20261119-v1.json.gz": "f4be7ed8fc0eb63df14786ee41a3ed3288d29506179ce86386e6c2e31d798457",
+    "adhoc/verify-board19-income-replay-20261119.cjs": "6718306a480e967304322a2d2ce6f876d6c7307ef15da8c13285076da1645e9a"
+  }
+}
