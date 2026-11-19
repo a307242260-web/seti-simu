@@ -1,0 +1,132 @@
+{
+  "status": "verified",
+  "sourceCommit": "edca4b5948a7d2408addd40fce8d1200efe77cdb",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 103,
+  "counterfactualInputs": 3,
+  "branches": [
+    {
+      "tile": "blue1",
+      "blueSlot": 2,
+      "prefixInputs": 105,
+      "pendingNativeReward": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 5,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 1,
+        "score": 37
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_37.png"
+      ],
+      "archive": "reports/ai-foundation-20261119/blue-tech-blue1-prefix105-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-blue-tech-blue1-prefix105-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/blue-tech-blue1-preparation-20261119-v1.json",
+      "preparationSha256": "59ace6cb950594d59f0fb8080b72b37395443508ed7bb438d7b5b736c3b79cc5",
+      "expected": {
+        "nativeStateSha256": "4d354b6ab47b3f1edfc7cf979233367921b37f6f3de094f9554430b147faee62",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "4d354b6ab47b3f1edfc7cf979233367921b37f6f3de094f9554430b147faee62",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "tile": "blue3",
+      "blueSlot": 2,
+      "prefixInputs": 105,
+      "pendingNativeReward": true,
+      "resources": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 5,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 1,
+        "score": 34
+      },
+      "income": {
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "tech": {
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true,
+          "blue3": true
+        },
+        "disabledTiles": {},
+        "blueBoardSlots": {
+          "blue2": 1,
+          "blue3": 2
+        }
+      },
+      "hand": [
+        "dlc_37.png"
+      ],
+      "archive": "reports/ai-foundation-20261119/blue-tech-blue3-prefix105-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-blue-tech-blue3-prefix105-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/blue-tech-blue3-preparation-20261119-v1.json",
+      "preparationSha256": "de56e4d0eb11a04aab39994bb79f24f24a95eae0d9ff3a757796c93d1663aaec",
+      "expected": {
+        "nativeStateSha256": "f68982f1bdb3a778b6c2e8d51bc2f9051ef8cd7613237908ac5ff5fd7dd6d423",
+        "sessionSha256": "914878081d0467aed60749c71bb663e243dbc4a6287e6be678f67800916fe1ab",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "f68982f1bdb3a778b6c2e8d51bc2f9051ef8cd7613237908ac5ff5fd7dd6d423",
+        "sessionSha256": "914878081d0467aed60749c71bb663e243dbc4a6287e6be678f67800916fe1ab",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    }
+  ],
+  "priorNativeRootExact": true,
+  "rootAndRngRestored": true,
+  "independentReplayInputs": 210
+}

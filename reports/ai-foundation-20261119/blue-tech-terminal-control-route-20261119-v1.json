@@ -1,0 +1,36 @@
+{
+  "status": "closed-single-blue1-replacement-regresses",
+  "sourceRecord": "reports/research/327c52b2.e08665e6.full.json",
+  "sharedOriginalInputs": 103,
+  "sharedResearchInput": 104,
+  "technologyChoiceInput": 105,
+  "branches": [
+    "blue1-slot2",
+    "blue3-slot2"
+  ],
+  "question": "Does replacing blue3 with blue1 in the same Native teaching research state improve unchanged V72 terminal development?",
+  "scope": "Use the actual first103 AI inputs and the same research104; only the technology105 differs. Hand control straight back, including any pending native reward selection. Clear transient AI state for both branches; not autonomous whole-game performance.",
+  "stateEquivalence": "Exact seed, Native state/session/RNG and actual first103 inputs. No fabricated resources, future public-card knowledge or alternate teacher prefix.",
+  "reachability": "The same actual6-publicity research is paid once per branch; Native determines rewards. No extra resource planning or inferred successor.",
+  "maxNativePreparationInputs": 103,
+  "maxCounterfactualInputs": 3,
+  "maxColdAISearches": 2,
+  "maxRegisteredControlledGames": 2,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameMillisecondsGate": 180000,
+  "stop": "No policy/value/bound patch and no20-board rerun before paired terminal outcomes. Preserve failures without substituting actions.",
+  "priorFrozenPrototype": "Old blue-income valuation prototype failed admission; this experiment changes no AI file and does not waive its proof or tests.",
+  "startedEpochSeconds": 1795096510.849377,
+  "deadlineEpochSeconds": 1795098310.849378,
+  "newControlledGames": 2,
+  "newAutonomousGames": 0,
+  "policyChanged": false,
+  "blue3Terminal": 272,
+  "blue1Terminal": 174,
+  "closedEpochSeconds": 1795097944.713129,
+  "outcome": "blue-tech-terminal-control-outcome-20261119-v1.json",
+  "falseTeacherHandIncomeHypothesisCorrectedBeforeExperiment": true
+}

@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "newNativeInputs": 0,
+  "freshAutonomousMetadataUnchanged": true,
+  "results": [
+    {
+      "id": "human405-white-blue1-slot2-control-v1",
+      "prefixInputs": 105,
+      "pendingNativeReward": false,
+      "rootSessionAndRngExact": true
+    },
+    {
+      "id": "human405-white-blue3-slot2-control-v1",
+      "prefixInputs": 105,
+      "pendingNativeReward": true,
+      "rootSessionAndRngExact": true
+    }
+  ]
+}

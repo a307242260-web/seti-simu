@@ -7,6 +7,42 @@
   },
   "versions": [
     {
+      "id": "v495-blue1-slot2-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u84dd1\u7b2c2\u69fd\u5bf9\u7167\uff1a174\u5206\uff08\u4e0d\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v495-blue3-slot2-control-20261119",
+      "head": "d3a704c05",
+      "commits": [
+        "d3a704c05"
+      ],
+      "summary": "Only technology105 changes blue3 to blue1 slot2; same first104 inputs and paired transient reset. R2 score51 vs48, same6C3E1H income, but terminal174 versus272 (-98). R3 income6C4E1H versus7C4E2H.6.811s; max246 Native/213.269ms;260-input terminal replay verified. Local value reversal does not justify the frozen valuation prototype. Not autonomous performance.",
+      "records": {
+        "b82b92cb.d3a704c0.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v495-blue3-slot2-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u84dd3\u7b2c2\u69fd\u5bf9\u7167\uff1a272\u5206\uff08\u5b8c\u6574\u590d\u73b0\uff09",
+      "date": "2026-11-19",
+      "baseline": "v490-final-currency-teaching-20261119",
+      "head": "d3a704c05",
+      "commits": [
+        "d3a704c05"
+      ],
+      "summary": "Minimal paired control: actual first103 inputs, shared research104, blue3 choice105; unchanged V72 resolves all rewards/actions after transient reset.272 score,354 actions and complete round assets identical to accepted autonomous teaching reference.12.015s; max148 Native/393.050ms. Controlled score, not a new autonomous result; no20-board rerun.",
+      "records": {
+        "7d09ae94.d3a704c0.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v494-r2-scan-tool-control-20261119",
       "aiGeneration": "v2",
       "agentType": "search",
