@@ -1,0 +1,27 @@
+{
+  "routeId": "r4-free-card-public-purpose",
+  "status": "closed-deferred-no-autonomous-score-evidence",
+  "startedEpochSeconds": 1795074289.846615,
+  "deadlineEpochSeconds": 1795076089.846615,
+  "question": "Can a public-information comparison replace unconditional displayed Chong preference without adding selection search nodes?",
+  "limits": {
+    "preparationNativeInputs": 100,
+    "coldDecisions": 8,
+    "registeredGames": 0,
+    "decisionNative": 256,
+    "decisionMs": 600
+  },
+  "searchContract": {
+    "equivalence": "No state equivalence change. One greedily fixed choice; lossiness explicit. Compare public catalog quotes, never hidden deck identities.",
+    "pruning": "No new tree or admissible bound; quotes are policy estimates only.",
+    "budgets": "Existing global node/time/frontier limits unchanged. No whole game before behavior and <=256/600ms cold gates.",
+    "stop": "Reject if same policy cannot explain both useful known cards and actual input287 without depending on hidden information."
+  },
+  "previousTurnClassification": "progress: exact350 Native replay proof and published8141f8b single-choice276 control; general policy still unchanged.",
+  "closedEpochSeconds": 1795075055.2296581,
+  "nativePreparationInputs": 1,
+  "coldBenchmarkAttempts": 8,
+  "registeredGames": 0,
+  "disposition": "reports/ai-foundation-20261119/free-card-purpose-disposition-20261119-v1.json",
+  "productionAdopted": false
+}

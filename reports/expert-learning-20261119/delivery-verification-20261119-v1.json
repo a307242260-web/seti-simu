@@ -1,0 +1,16 @@
+{
+  "status": "verified",
+  "eightTranscriptsFullLength": true,
+  "reportLocalLinksExist": true,
+  "whiteOnlyAudit": true,
+  "invalidAllSeatsAuditExplicitlySuperseded": true,
+  "newProductionPolicy": false,
+  "newWholeGames": 0,
+  "candidatePatchAppliesToAcceptedSource": true,
+  "candidateSyntaxPassed": true,
+  "baselineSearchAgentAssertionStillFails": true,
+  "limitations": [
+    "Machine ASR has no timecodes; complete frame-by-frame Native reconstruction of external games not performed.",
+    "No autonomous score improvement established."
+  ]
+}

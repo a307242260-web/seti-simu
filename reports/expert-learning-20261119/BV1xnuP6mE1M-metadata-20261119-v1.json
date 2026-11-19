@@ -1,0 +1,584 @@
+{
+  "code": 0,
+  "message": "OK",
+  "ttl": 1,
+  "data": {
+    "bvid": "BV1xnuP6mE1M",
+    "aid": 117037020023279,
+    "videos": 1,
+    "tid": 21,
+    "tid_v2": 2077,
+    "tname": "",
+    "tname_v2": "",
+    "copyright": 1,
+    "pic": "http://i0.hdslb.com/bfs/archive/9a422b79bf49e946ae5dd39297800948b074dbd3.jpg",
+    "title": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+    "pubdate": 1785843540,
+    "ctime": 1785843541,
+    "desc": "SETI目前已知最高分，网站是安神手搓网页版@安德维京",
+    "desc_v2": [
+      {
+        "raw_text": "SETI目前已知最高分，网站是安神手搓网页版@安德维京",
+        "type": 1,
+        "biz_id": 0
+      }
+    ],
+    "state": 0,
+    "duration": 1058,
+    "rights": {
+      "bp": 0,
+      "elec": 0,
+      "download": 1,
+      "movie": 0,
+      "pay": 0,
+      "hd5": 0,
+      "no_reprint": 1,
+      "autoplay": 1,
+      "ugc_pay": 0,
+      "is_cooperation": 0,
+      "ugc_pay_preview": 0,
+      "no_background": 0,
+      "clean_mode": 0,
+      "is_stein_gate": 0,
+      "is_360": 0,
+      "no_share": 0,
+      "arc_pay": 0,
+      "free_watch": 0
+    },
+    "owner": {
+      "mid": 450171735,
+      "name": "画风灬",
+      "face": "https://i0.hdslb.com/bfs/face/5ccbddee3d7a0f826e2380e8d244dbfcbc44d4e6.jpg"
+    },
+    "stat": {
+      "aid": 117037020023279,
+      "view": 9992,
+      "danmaku": 14,
+      "reply": 67,
+      "favorite": 192,
+      "coin": 181,
+      "share": 256,
+      "now_rank": 0,
+      "his_rank": 0,
+      "like": 249,
+      "dislike": 0,
+      "evaluation": "",
+      "vt": 0
+    },
+    "argue_info": {
+      "argue_msg": "",
+      "argue_type": 0,
+      "argue_link": ""
+    },
+    "dynamic": "",
+    "cid": 40592018962,
+    "dimension": {
+      "width": 1920,
+      "height": 1080,
+      "rotate": 0
+    },
+    "season_id": 9097821,
+    "premiere": null,
+    "teenage_mode": 1,
+    "is_chargeable_season": false,
+    "is_story": false,
+    "is_upower_exclusive": false,
+    "is_upower_play": false,
+    "is_upower_preview": false,
+    "enable_vt": 0,
+    "vt_display": "",
+    "is_upower_exclusive_with_qa": false,
+    "is_hua_sheng": false,
+    "no_cache": false,
+    "pages": [
+      {
+        "cid": 40592018962,
+        "page": 1,
+        "from": "vupload",
+        "part": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+        "duration": 1058,
+        "vid": "",
+        "weblink": "",
+        "dimension": {
+          "width": 1920,
+          "height": 1080,
+          "rotate": 0
+        },
+        "first_frame": "http://i0.hdslb.com/bfs/storyff/_00001k3fwi3u1ujaj2b6zc0olh9ijib_firsti.jpg",
+        "ctime": 1785843541,
+        "asr_language": "cmn"
+      }
+    ],
+    "subtitle": {
+      "allow_submit": false,
+      "list": []
+    },
+    "ugc_season": {
+      "id": 9097821,
+      "title": "SETI 702分对局复盘",
+      "cover": "https://s1.hdslb.com/bfs/templar/york-static/viedeo_material_default.png",
+      "mid": 450171735,
+      "intro": "",
+      "sign_state": 0,
+      "attribute": 140,
+      "stat": {
+        "season_id": 9097821,
+        "view": 16795,
+        "danmaku": 36,
+        "reply": 122,
+        "fav": 281,
+        "coin": 302,
+        "share": 300,
+        "now_rank": 0,
+        "his_rank": 0,
+        "like": 404,
+        "vt": 0,
+        "vv": 16795
+      },
+      "ep_count": 4,
+      "season_type": 1,
+      "is_pay_season": false,
+      "enable_vt": 0,
+      "sections": [
+        {
+          "season_id": 9097821,
+          "id": 10161227,
+          "title": "正片",
+          "type": 1,
+          "episodes": [
+            {
+              "season_id": 9097821,
+              "section_id": 10161227,
+              "id": 222495179,
+              "aid": 117274451250400,
+              "cid": 41916629279,
+              "title": "SETI 702分对局思路分享第四集：星图详解",
+              "attribute": 0,
+              "arc": {
+                "aid": 117274451250400,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i1.hdslb.com/bfs/archive/3aad2514f236bcfc61575ebdae3b9d779decdf1a.jpg",
+                "title": "SETI 702分对局思路分享第四集：星图详解",
+                "pubdate": 1789466445,
+                "ctime": 1789466445,
+                "desc": "",
+                "state": 0,
+                "duration": 1945,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 450171735,
+                  "name": "画风灬",
+                  "face": "https://i0.hdslb.com/bfs/face/5ccbddee3d7a0f826e2380e8d244dbfcbc44d4e6.jpg"
+                },
+                "stat": {
+                  "aid": 117274451250400,
+                  "view": 2203,
+                  "danmaku": 0,
+                  "reply": 19,
+                  "fav": 28,
+                  "coin": 32,
+                  "share": 19,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 51,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 0,
+                  "vv": 2203
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": "",
+                "type_id_v2": 0,
+                "type_name_v2": "",
+                "is_lesson_video": 0
+              },
+              "page": {
+                "cid": 41916629279,
+                "page": 1,
+                "from": "vupload",
+                "part": "SETI 702分对局思路分享第四集：星图详解",
+                "duration": 1945,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1CLen6pEUV",
+              "pages": [
+                {
+                  "cid": 41916629279,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "SETI 702分对局思路分享第四集：星图详解",
+                  "duration": 1945,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 9097821,
+              "section_id": 10161227,
+              "id": 222495180,
+              "aid": 117132532647674,
+              "cid": 41125284712,
+              "title": "SETI 702分对局思路分享第三集：手牌管理",
+              "attribute": 0,
+              "arc": {
+                "aid": 117132532647674,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i2.hdslb.com/bfs/archive/8287fda093a451ee8ff695ab468b9ed9ef6a0a40.jpg",
+                "title": "SETI 702分对局思路分享第三集：手牌管理",
+                "pubdate": 1787300961,
+                "ctime": 1787300961,
+                "desc": "",
+                "state": 0,
+                "duration": 1581,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 450171735,
+                  "name": "画风灬",
+                  "face": "https://i0.hdslb.com/bfs/face/5ccbddee3d7a0f826e2380e8d244dbfcbc44d4e6.jpg"
+                },
+                "stat": {
+                  "aid": 117132532647674,
+                  "view": 2036,
+                  "danmaku": 10,
+                  "reply": 21,
+                  "fav": 25,
+                  "coin": 33,
+                  "share": 9,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 42,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 0,
+                  "vv": 2036
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": "",
+                "type_id_v2": 0,
+                "type_name_v2": "",
+                "is_lesson_video": 0
+              },
+              "page": {
+                "cid": 41125284712,
+                "page": 1,
+                "from": "vupload",
+                "part": "SETI 702分对局思路分享第三集：手牌管理",
+                "duration": 1581,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1nF8B6QE8L",
+              "pages": [
+                {
+                  "cid": 41125284712,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "SETI 702分对局思路分享第三集：手牌管理",
+                  "duration": 1581,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 9097821,
+              "section_id": 10161227,
+              "id": 222495181,
+              "aid": 117059920922210,
+              "cid": 40721648581,
+              "title": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+              "attribute": 0,
+              "arc": {
+                "aid": 117059920922210,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i1.hdslb.com/bfs/archive/3c7c06923f1b9964e405c1119d9b494de86785c7.jpg",
+                "title": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+                "pubdate": 1786192990,
+                "ctime": 1786192990,
+                "desc": "",
+                "state": 0,
+                "duration": 1161,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 450171735,
+                  "name": "画风灬",
+                  "face": "https://i0.hdslb.com/bfs/face/5ccbddee3d7a0f826e2380e8d244dbfcbc44d4e6.jpg"
+                },
+                "stat": {
+                  "aid": 117059920922210,
+                  "view": 2564,
+                  "danmaku": 12,
+                  "reply": 15,
+                  "fav": 36,
+                  "coin": 56,
+                  "share": 16,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 62,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 0,
+                  "vv": 2564
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": "",
+                "type_id_v2": 0,
+                "type_name_v2": "",
+                "is_lesson_video": 0
+              },
+              "page": {
+                "cid": 40721648581,
+                "page": 1,
+                "from": "vupload",
+                "part": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+                "duration": 1161,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1dvu36nEdN",
+              "pages": [
+                {
+                  "cid": 40721648581,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+                  "duration": 1161,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 9097821,
+              "section_id": 10161227,
+              "id": 222495182,
+              "aid": 117037020023279,
+              "cid": 40592018962,
+              "title": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+              "attribute": 0,
+              "arc": {
+                "aid": 117037020023279,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i0.hdslb.com/bfs/archive/9a422b79bf49e946ae5dd39297800948b074dbd3.jpg",
+                "title": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+                "pubdate": 1785843540,
+                "ctime": 1785843540,
+                "desc": "",
+                "state": 0,
+                "duration": 1058,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 450171735,
+                  "name": "画风灬",
+                  "face": "https://i0.hdslb.com/bfs/face/5ccbddee3d7a0f826e2380e8d244dbfcbc44d4e6.jpg"
+                },
+                "stat": {
+                  "aid": 117037020023279,
+                  "view": 9992,
+                  "danmaku": 14,
+                  "reply": 67,
+                  "fav": 192,
+                  "coin": 181,
+                  "share": 256,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 249,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 0,
+                  "vv": 9992
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": "",
+                "type_id_v2": 0,
+                "type_name_v2": "",
+                "is_lesson_video": 0
+              },
+              "page": {
+                "cid": 40592018962,
+                "page": 1,
+                "from": "vupload",
+                "part": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+                "duration": 1058,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1xnuP6mE1M",
+              "pages": [
+                {
+                  "cid": 40592018962,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+                  "duration": 1058,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "is_season_display": true,
+    "user_garb": {
+      "url_image_ani_cut": ""
+    },
+    "honor_reply": {},
+    "like_icon": "",
+    "need_jump_bv": false,
+    "disable_show_up_info": false,
+    "is_story_play": 1,
+    "is_view_self": false
+  }
+}

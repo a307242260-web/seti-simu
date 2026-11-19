@@ -1,0 +1,83 @@
+{
+  "status": "metadata-verified-transcripts-pending",
+  "videos": [
+    {
+      "bvid": "BV1NWGVztEac",
+      "aid": 114829893308504,
+      "cid": 30964581302,
+      "title": "【SETI】全网第一个599分！基础SOLO复盘第一期",
+      "duration": 348,
+      "series": "599",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1XJuGz8E1Y",
+      "aid": 114835211689831,
+      "cid": 30983259987,
+      "title": "【SETI】反常规的右边外星人开：599分复盘第二期",
+      "duration": 692,
+      "series": "599",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1PguXzfEfD",
+      "aid": 114878429795208,
+      "cid": 31142643679,
+      "title": "【SETI】原地起爆！从66分到205分！SOLO复盘第三期",
+      "duration": 1051,
+      "series": "599",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1er3Z6SEvA",
+      "aid": 117027121404480,
+      "cid": 40539130524,
+      "title": "SETI 700分时代前的最后一舞：599分复盘最终篇",
+      "duration": 1578,
+      "series": "599",
+      "source": "user-specified-outside-ugc-season"
+    },
+    {
+      "bvid": "BV1xnuP6mE1M",
+      "aid": 117037020023279,
+      "cid": 40592018962,
+      "title": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+      "duration": 1058,
+      "series": "702",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1dvu36nEdN",
+      "aid": 117059920922210,
+      "cid": 40721648581,
+      "title": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+      "duration": 1161,
+      "series": "702",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1nF8B6QE8L",
+      "aid": 117132532647674,
+      "cid": 41125284712,
+      "title": "SETI 702分对局思路分享第三集：手牌管理",
+      "duration": 1581,
+      "series": "702",
+      "source": "public-ugc-season"
+    },
+    {
+      "bvid": "BV1CLen6pEUV",
+      "aid": 117274451250400,
+      "cid": 41916629279,
+      "title": "SETI 702分对局思路分享第四集：星图详解",
+      "duration": 1945,
+      "series": "702",
+      "source": "public-ugc-season"
+    }
+  ],
+  "totalVideos": 8,
+  "totalDurationSeconds": 9414,
+  "rulesEvidence": {
+    "599FinalDescription": "本次基础599分解说的最后一期由枣生姜帮忙解说，非常感谢！\n\n随着这一期的发布，以及SETI网页版全扩solo时代的到来，曾经的基础solo也画上了一个句号。江山代有才人出，期待第一个800分的出现~",
+    "702Description": "SETI目前已知最高分，网站是安神手搓网页版@安德维京"
+  }
+}

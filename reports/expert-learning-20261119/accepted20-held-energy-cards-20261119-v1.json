@@ -1,0 +1,123 @@
+{
+  "status": "held-card-use-opportunity-exposure-not-causal-proof",
+  "observedTraceSeats": [
+    "player-blue",
+    "player-brown",
+    "player-green",
+    "player-white"
+  ],
+  "newGames": 0,
+  "newAISearches": 0,
+  "rows": [
+    {
+      "rank": [
+        false,
+        0,
+        -118
+      ],
+      "board": 14,
+      "cardId": "b_41.webp",
+      "instanceId": "card-49-0",
+      "traceLine": 118,
+      "round": 3,
+      "turn": 3,
+      "energyIncomeCardsInHand": 0,
+      "energyIncome": 5,
+      "credits": 1,
+      "energy": 1,
+      "availableData": 1,
+      "hand": [
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_137.webp",
+          "incomeCode": 2
+        },
+        {
+          "id": "card-49-0",
+          "cardId": "b_41.webp",
+          "incomeCode": 2
+        }
+      ],
+      "legalPlay": false,
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:094e1546",
+        "actorId": "player-white",
+        "stateVersion": 55,
+        "decisionVersion": 2,
+        "target": {
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw",
+          "requiredMovePoints": 1
+        },
+        "summary": "移动探测器 2 顺时针"
+      },
+      "record": "reports/research/5ca133e7.94299f38.full.json"
+    },
+    {
+      "rank": [
+        true,
+        1,
+        -166
+      ],
+      "board": 15,
+      "cardId": "b_41.webp",
+      "instanceId": "card-62-0",
+      "traceLine": 166,
+      "round": 4,
+      "turn": 2,
+      "energyIncomeCardsInHand": 1,
+      "energyIncome": 5,
+      "credits": 4,
+      "energy": 6,
+      "availableData": 0,
+      "hand": [
+        {
+          "id": "alien-chong-5-7",
+          "cardId": "chong_5.webp",
+          "incomeCode": 0
+        },
+        {
+          "id": "card-30-pass-3-1",
+          "cardId": "dlc_9.png",
+          "incomeCode": 2
+        },
+        {
+          "id": "card-61-0",
+          "cardId": "dlc_7.png",
+          "incomeCode": 1
+        },
+        {
+          "id": "card-62-0",
+          "cardId": "b_41.webp",
+          "incomeCode": 2
+        }
+      ],
+      "legalPlay": true,
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:ba7e8874",
+        "actorId": "player-white",
+        "stateVersion": 79,
+        "decisionVersion": 3,
+        "target": {
+          "cardInstanceId": "alien-chong-5-7"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "summary": "chong_5.webp：弃牌角标"
+      },
+      "record": "reports/research/f68952fa.94299f38.full.json"
+    }
+  ]
+}

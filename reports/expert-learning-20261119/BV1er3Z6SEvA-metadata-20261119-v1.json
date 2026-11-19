@@ -1,0 +1,252 @@
+{
+  "code": 0,
+  "message": "OK",
+  "ttl": 1,
+  "data": {
+    "bvid": "BV1er3Z6SEvA",
+    "aid": 117027121404480,
+    "videos": 1,
+    "tid": 173,
+    "tid_v2": 2077,
+    "tname": "",
+    "tname_v2": "",
+    "copyright": 1,
+    "pic": "http://i0.hdslb.com/bfs/archive/79e39e7341eb927f9caa1e65abc989ec01c183d8.jpg",
+    "title": "SETI 700分时代前的最后一舞：599分复盘最终篇",
+    "pubdate": 1785717000,
+    "ctime": 1785692240,
+    "desc": "本次基础599分解说的最后一期由枣生姜帮忙解说，非常感谢！\n\n随着这一期的发布，以及SETI网页版全扩solo时代的到来，曾经的基础solo也画上了一个句号。江山代有才人出，期待第一个800分的出现~",
+    "desc_v2": [
+      {
+        "raw_text": "本次基础599分解说的最后一期由枣生姜帮忙解说，非常感谢！\n\n随着这一期的发布，以及SETI网页版全扩solo时代的到来，曾经的基础solo也画上了一个句号。江山代有才人出，期待第一个800分的出现~",
+        "type": 1,
+        "biz_id": 0
+      }
+    ],
+    "state": 0,
+    "duration": 1578,
+    "rights": {
+      "bp": 0,
+      "elec": 0,
+      "download": 1,
+      "movie": 0,
+      "pay": 0,
+      "hd5": 0,
+      "no_reprint": 1,
+      "autoplay": 1,
+      "ugc_pay": 0,
+      "is_cooperation": 1,
+      "ugc_pay_preview": 0,
+      "no_background": 0,
+      "clean_mode": 0,
+      "is_stein_gate": 0,
+      "is_360": 0,
+      "no_share": 0,
+      "arc_pay": 0,
+      "free_watch": 0
+    },
+    "owner": {
+      "mid": 12411973,
+      "name": "安徳维京",
+      "face": "https://i1.hdslb.com/bfs/face/cc41eb450e838efbd98521d4a1fa0dfcedcce988.jpg"
+    },
+    "stat": {
+      "aid": 117027121404480,
+      "view": 3418,
+      "danmaku": 1,
+      "reply": 14,
+      "favorite": 24,
+      "coin": 19,
+      "share": 22,
+      "now_rank": 0,
+      "his_rank": 0,
+      "like": 52,
+      "dislike": 0,
+      "evaluation": "",
+      "vt": 0
+    },
+    "argue_info": {
+      "argue_msg": "",
+      "argue_type": 0,
+      "argue_link": ""
+    },
+    "dynamic": "",
+    "cid": 40539130524,
+    "dimension": {
+      "width": 1920,
+      "height": 1080,
+      "rotate": 0
+    },
+    "premiere": null,
+    "teenage_mode": 1,
+    "is_chargeable_season": false,
+    "is_story": false,
+    "is_upower_exclusive": false,
+    "is_upower_play": false,
+    "is_upower_preview": false,
+    "enable_vt": 0,
+    "vt_display": "",
+    "is_upower_exclusive_with_qa": false,
+    "is_hua_sheng": false,
+    "no_cache": false,
+    "pages": [
+      {
+        "cid": 40539130524,
+        "page": 1,
+        "from": "vupload",
+        "part": "SETI 700分时代前的最后一舞：599分复盘最终篇",
+        "duration": 1578,
+        "vid": "",
+        "weblink": "",
+        "dimension": {
+          "width": 1920,
+          "height": 1080,
+          "rotate": 0
+        },
+        "first_frame": "http://i2.hdslb.com/bfs/storyff/_00003e2n64vj81lmc2fp47lslca1g6b_firsti.jpg",
+        "ctime": 1785692240,
+        "asr_language": "cmn"
+      }
+    ],
+    "subtitle": {
+      "allow_submit": false,
+      "list": []
+    },
+    "staff": [
+      {
+        "mid": 12411973,
+        "title": "UP主",
+        "name": "安徳维京",
+        "face": "https://i1.hdslb.com/bfs/face/cc41eb450e838efbd98521d4a1fa0dfcedcce988.jpg",
+        "vip": {
+          "type": 2,
+          "status": 1,
+          "due_date": 1822924800000,
+          "vip_pay_type": 1,
+          "theme_type": 0,
+          "label": {
+            "path": "http://i0.hdslb.com/bfs/vip/label_annual.png",
+            "text": "年度大会员",
+            "label_theme": "annual_vip",
+            "text_color": "#FFFFFF",
+            "bg_style": 1,
+            "bg_color": "#FB7299",
+            "border_color": "",
+            "use_img_label": true,
+            "img_label_uri_hans": "",
+            "img_label_uri_hant": "",
+            "img_label_uri_hans_static": "https://i0.hdslb.com/bfs/vip/8d4f8bfc713826a5412a0a27eaaac4d6b9ede1d9.png",
+            "img_label_uri_hant_static": "https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/VEW8fCC0hg.png",
+            "label_id": -22,
+            "label_goto": {
+              "mobile": "https://big.bilibili.com/mobile/index?navhide=1&from_spmid=vipicon",
+              "pc_web": "https://account.bilibili.com/big?from_spmid=vipicon"
+            },
+            "img_label_uri_i18n": "",
+            "img_label_uri_i18n_static": "",
+            "label_type": 1
+          },
+          "avatar_subscript": 1,
+          "nickname_color": "#FB7299",
+          "role": 3,
+          "avatar_subscript_url": "",
+          "tv_vip_status": 0,
+          "tv_vip_pay_type": 0,
+          "tv_due_date": 0,
+          "avatar_icon": {
+            "icon_type": 1,
+            "icon_resource": {}
+          },
+          "ott_info": {
+            "vip_type": 0,
+            "pay_type": 0,
+            "pay_channel_id": "",
+            "status": 0,
+            "overdue_time": 0
+          },
+          "super_vip": {
+            "is_super_vip": false
+          }
+        },
+        "official": {
+          "role": 0,
+          "title": "",
+          "desc": "",
+          "type": -1
+        },
+        "follower": 3792,
+        "label_style": 0
+      },
+      {
+        "mid": 177704602,
+        "title": "参演",
+        "name": "轻声_",
+        "face": "https://i1.hdslb.com/bfs/face/7529351c23e1a7e988e5265722239c8dc7a6b684.jpg",
+        "vip": {
+          "type": 1,
+          "status": 0,
+          "due_date": 1712851200000,
+          "vip_pay_type": 0,
+          "theme_type": 0,
+          "label": {
+            "path": "",
+            "text": "",
+            "label_theme": "",
+            "text_color": "",
+            "bg_style": 0,
+            "bg_color": "",
+            "border_color": "",
+            "use_img_label": true,
+            "img_label_uri_hans": "",
+            "img_label_uri_hant": "",
+            "img_label_uri_hans_static": "https://i0.hdslb.com/bfs/vip/d7b702ef65a976b20ed854cbd04cb9e27341bb79.png",
+            "img_label_uri_hant_static": "https://i0.hdslb.com/bfs/activity-plat/static/20220614/e369244d0b14644f5e1a06431e22a4d5/KJunwh19T5.png",
+            "label_id": 0,
+            "label_goto": null,
+            "img_label_uri_i18n": "",
+            "img_label_uri_i18n_static": "",
+            "label_type": 0
+          },
+          "avatar_subscript": 0,
+          "nickname_color": "",
+          "role": 0,
+          "avatar_subscript_url": "",
+          "tv_vip_status": 0,
+          "tv_vip_pay_type": 0,
+          "tv_due_date": 0,
+          "avatar_icon": {
+            "icon_resource": {}
+          },
+          "ott_info": {
+            "vip_type": 0,
+            "pay_type": 0,
+            "pay_channel_id": "",
+            "status": 0,
+            "overdue_time": 0
+          },
+          "super_vip": {
+            "is_super_vip": false
+          }
+        },
+        "official": {
+          "role": 0,
+          "title": "",
+          "desc": "",
+          "type": -1
+        },
+        "follower": 24,
+        "label_style": 0
+      }
+    ],
+    "is_season_display": false,
+    "user_garb": {
+      "url_image_ani_cut": ""
+    },
+    "honor_reply": {},
+    "like_icon": "",
+    "need_jump_bv": false,
+    "disable_show_up_info": false,
+    "is_story_play": 1,
+    "is_view_self": false
+  }
+}

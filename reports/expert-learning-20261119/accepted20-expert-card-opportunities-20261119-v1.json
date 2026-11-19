@@ -1,0 +1,656 @@
+{
+  "status": "superseded-invalid-seat-denominator",
+  "sourcePolicy": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "newGames": 0,
+  "newAISearches": 0,
+  "cohort": 20,
+  "scoreMeanUnchanged": 134.35,
+  "interpretation": "A legal acquisition source and visible card show exposure, not a fundable useful plan or an AI defect. No counterfactual value inferred from counts.",
+  "cards": {
+    "b_41.webp": {
+      "name": "建造燃料箱",
+      "visibleBoards": [
+        14
+      ],
+      "heldBoards": [
+        2,
+        5,
+        8,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "playedBoards": [],
+      "paidOpportunityBoards": [
+        14
+      ],
+      "maximumKnownEnergyHand": 3,
+      "examples": [
+        {
+          "board": 14,
+          "traceLine": 49,
+          "round": 2,
+          "turn": 4,
+          "instanceId": "card-49-0",
+          "knownEnergyIncomeCardsInHand": 2,
+          "credits": 2,
+          "energy": 4,
+          "publicity": 2,
+          "availableData": 3,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "credits-for-card"
+            },
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            },
+            {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 22,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "summary": "结束回合"
+          }
+        }
+      ],
+      "visibleInstanceCount": 1
+    },
+    "b_42.webp": {
+      "name": "聚变反应堆",
+      "visibleBoards": [
+        18
+      ],
+      "heldBoards": [
+        6,
+        9,
+        15
+      ],
+      "playedBoards": [],
+      "paidOpportunityBoards": [
+        18
+      ],
+      "maximumKnownEnergyHand": 4,
+      "examples": [
+        {
+          "board": 18,
+          "traceLine": 131,
+          "round": 3,
+          "turn": 8,
+          "instanceId": "card-55-0",
+          "knownEnergyIncomeCardsInHand": 0,
+          "credits": 0,
+          "energy": 0,
+          "publicity": 6,
+          "availableData": 5,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "publicity-for-card"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 61,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "summary": "结束回合"
+          }
+        }
+      ],
+      "visibleInstanceCount": 1
+    },
+    "b_87.webp": {
+      "name": "最佳发射窗口",
+      "visibleBoards": [
+        13,
+        14,
+        16
+      ],
+      "heldBoards": [
+        2,
+        4,
+        13,
+        18
+      ],
+      "playedBoards": [],
+      "paidOpportunityBoards": [
+        13,
+        14,
+        16
+      ],
+      "maximumKnownEnergyHand": 4,
+      "examples": [
+        {
+          "board": 13,
+          "traceLine": 80,
+          "round": 3,
+          "turn": 3,
+          "instanceId": "card-29-pass-2-5",
+          "knownEnergyIncomeCardsInHand": 1,
+          "credits": 5,
+          "energy": 4,
+          "publicity": 3,
+          "availableData": 2,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "credits-for-card"
+            },
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            },
+            {
+              "tradeId": "publicity-for-card"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 40,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "summary": "扫描"
+          }
+        },
+        {
+          "board": 14,
+          "traceLine": 118,
+          "round": 3,
+          "turn": 3,
+          "instanceId": "card-60-0",
+          "knownEnergyIncomeCardsInHand": 0,
+          "credits": 1,
+          "energy": 1,
+          "publicity": 1,
+          "availableData": 1,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "move",
+            "phase": "quick",
+            "actionId": "move:094e1546",
+            "actorId": "player-white",
+            "stateVersion": 55,
+            "decisionVersion": 2,
+            "target": {
+              "rocketId": 2,
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "cw",
+              "requiredMovePoints": 1
+            },
+            "summary": "移动探测器 2 顺时针"
+          }
+        },
+        {
+          "board": 16,
+          "traceLine": 86,
+          "round": 3,
+          "turn": 1,
+          "instanceId": "card-44-0",
+          "knownEnergyIncomeCardsInHand": 2,
+          "credits": 9,
+          "energy": 4,
+          "publicity": 10,
+          "availableData": 2,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "credits-for-card"
+            },
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            },
+            {
+              "tradeId": "publicity-for-card"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:c858282e",
+            "actorId": "player-blue",
+            "stateVersion": 46,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "summary": "PASS"
+          }
+        }
+      ],
+      "visibleInstanceCount": 3
+    },
+    "b_98.webp": {
+      "name": "发射前试验",
+      "visibleBoards": [
+        2,
+        5,
+        6
+      ],
+      "heldBoards": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "playedBoards": [
+        7
+      ],
+      "paidOpportunityBoards": [
+        2,
+        5,
+        6
+      ],
+      "maximumKnownEnergyHand": 6,
+      "examples": [
+        {
+          "board": 2,
+          "traceLine": 72,
+          "round": 2,
+          "turn": 6,
+          "instanceId": "card-61-0",
+          "knownEnergyIncomeCardsInHand": 0,
+          "credits": 2,
+          "energy": 2,
+          "publicity": 6,
+          "availableData": 2,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "credits-for-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            },
+            {
+              "tradeId": "publicity-for-card"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 34,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "summary": "结束回合"
+          }
+        },
+        {
+          "board": 5,
+          "traceLine": 1,
+          "round": 1,
+          "turn": 1,
+          "instanceId": "card-18-0",
+          "knownEnergyIncomeCardsInHand": 0,
+          "credits": 4,
+          "energy": 4,
+          "publicity": 4,
+          "availableData": 3,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "credits-for-card"
+            },
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            },
+            {
+              "tradeId": "publicity-for-card"
+            },
+            {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:c94cda79",
+            "actorId": "player-white",
+            "stateVersion": 2,
+            "decisionVersion": 0,
+            "target": null,
+            "payload": {},
+            "summary": "发射"
+          }
+        },
+        {
+          "board": 6,
+          "traceLine": 199,
+          "round": 4,
+          "turn": 9,
+          "instanceId": "card-79-0",
+          "knownEnergyIncomeCardsInHand": 0,
+          "credits": 0,
+          "energy": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "legalAcquisitionSources": [
+            {
+              "tradeId": "cards-for-pick-card"
+            },
+            {
+              "tradeId": "energy-for-card"
+            }
+          ],
+          "chosen": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:0a5dfdd4",
+            "actorId": "player-white",
+            "stateVersion": 95,
+            "decisionVersion": 8,
+            "target": {
+              "cardInstanceId": "card-74-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "summary": "dlc_18.png：弃牌角标"
+          }
+        }
+      ],
+      "visibleInstanceCount": 3
+    }
+  },
+  "records": [
+    {
+      "board": 1,
+      "record": "reports/research/1ed71131.94299f38.full.json",
+      "recordSha256": "02c0911e70cd01ce50db781a6b801603a5dd194d5f64402f6e88115a1620b820",
+      "traceSha256": "91a1f23dd482c40b990b1614e61a2f9ecd526405fba3f65f6192303640535237",
+      "ownActionCounts": {
+        "scan": 3,
+        "analyze": 2,
+        "research_tech": 4,
+        "play_card": 4
+      }
+    },
+    {
+      "board": 2,
+      "record": "reports/research/591a90af.94299f38.full.json",
+      "recordSha256": "252a8732021b45cfd3dcde6b724e0b5b01cec3b9037cdc53b7ecc9916b2c140e",
+      "traceSha256": "ad76f41951c7c7ac681bf2969cb6c319d1058733de8431c50b8d5d63a6f87bc7",
+      "ownActionCounts": {
+        "scan": 5,
+        "analyze": 3,
+        "research_tech": 4,
+        "play_card": 4
+      }
+    },
+    {
+      "board": 3,
+      "record": "reports/research/397394cb.94299f38.full.json",
+      "recordSha256": "79193521d2b81e66efd45ccac87db0d76185ae453675c78dffddb4f04be8ba57",
+      "traceSha256": "1d16ba4ce9abfb216d0c76fa864d0fa6de729a3a623f321d13fee0e75b9d9173",
+      "ownActionCounts": {
+        "scan": 1,
+        "analyze": 1,
+        "research_tech": 3,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 4,
+      "record": "reports/research/279e3c0e.94299f38.full.json",
+      "recordSha256": "c922e33d7d0989ee7d00f3add28fd869c49ff1e0029d6ccf2339c13f8c476dcf",
+      "traceSha256": "fdbc2c1185bc3c24e367a95980d1928a8026d8e805b2c37bca6cdf9223db4410",
+      "ownActionCounts": {
+        "scan": 3,
+        "analyze": 2,
+        "research_tech": 4,
+        "play_card": 5
+      }
+    },
+    {
+      "board": 5,
+      "record": "reports/research/8d68c835.94299f38.full.json",
+      "recordSha256": "c1bcf66b07d5ee3a796c2914af540d5800888d9bbddea0c16bfe85cdf4e12ba2",
+      "traceSha256": "3bbcf8e5862e5adb95aad202c71174d2926f73046ea1cc8f82adc12afbabaffb",
+      "ownActionCounts": {
+        "scan": 1,
+        "analyze": 3,
+        "research_tech": 3,
+        "play_card": 5
+      }
+    },
+    {
+      "board": 6,
+      "record": "reports/research/e590f148.94299f38.full.json",
+      "recordSha256": "f7b09aa09b685b062e85843d989695648676ec03b12c17bc97d41f5c4756b547",
+      "traceSha256": "761788fdbeb3d01676c3e0e952c3bff0800ce2f254a965fd2eec08f457f6ec18",
+      "ownActionCounts": {
+        "scan": 4,
+        "analyze": 4,
+        "research_tech": 4,
+        "play_card": 4
+      }
+    },
+    {
+      "board": 7,
+      "record": "reports/research/33eaf9f6.94299f38.full.json",
+      "recordSha256": "113932248301a255e1d8208b09418ef12889bfc06272f2ba36b3e2139f1dd720",
+      "traceSha256": "d28684ee0a71e4f1d7fca4f09169cb08239490c8ae26dae4a49eb315651b374c",
+      "ownActionCounts": {
+        "scan": 1,
+        "analyze": 2,
+        "research_tech": 4,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 8,
+      "record": "reports/research/bb435792.94299f38.full.json",
+      "recordSha256": "5439d060707312de49dfab0f195583239ad96235a3c57b3f8b9159aa6af6ff1a",
+      "traceSha256": "330eb4b68429dcc9bf212ca6efa2c00b41c5225760750285eabbdfd6584600a2",
+      "ownActionCounts": {
+        "scan": 1,
+        "analyze": 3,
+        "research_tech": 4,
+        "play_card": 6
+      }
+    },
+    {
+      "board": 9,
+      "record": "reports/research/b359964f.94299f38.full.json",
+      "recordSha256": "906fc93dd7c7f5a109421c05a731e3f26420ed2a57a9e345685c80252290bf1c",
+      "traceSha256": "dcf3171baba8965c792d1b6dfc6e7b43068d7a7c9ee2a587243bbf6131ad54e2",
+      "ownActionCounts": {
+        "scan": 2,
+        "analyze": 2,
+        "research_tech": 3,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 10,
+      "record": "reports/research/7f76680a.94299f38.full.json",
+      "recordSha256": "77027db8218adbac945f22da8133801c9d6bcab55ec9996a47387256e7ed03c8",
+      "traceSha256": "b0ac7409db563dc5fada4441f8fea4ec3c01269b53de0aa4a72fac694564210b",
+      "ownActionCounts": {
+        "scan": 2,
+        "analyze": 3,
+        "research_tech": 4,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 11,
+      "record": "reports/research/7b88b4d4.94299f38.full.json",
+      "recordSha256": "4c7626d1edb6f04b2207760df29948e93d79f0b9f85e5a8b99a5005ab9599aa0",
+      "traceSha256": "a4c5b2ccf0bce54fa51ed582392b53b4d60bb90c23e69671c214f6d8263e39bb",
+      "ownActionCounts": {
+        "scan": 5,
+        "analyze": 4,
+        "research_tech": 3,
+        "play_card": 8
+      }
+    },
+    {
+      "board": 12,
+      "record": "reports/research/9ae5f22e.94299f38.full.json",
+      "recordSha256": "05632beaceb2dc78e14042f3e5fd3baceb3f70cda51bf83e3a9130d43fc61d12",
+      "traceSha256": "22c457969e21dc9c9a64e6c0b54c793ccf4d4a013239e333a9c46c0bc0aa645d",
+      "ownActionCounts": {
+        "scan": 2,
+        "analyze": 4,
+        "research_tech": 4,
+        "play_card": 5
+      }
+    },
+    {
+      "board": 13,
+      "record": "reports/research/1e0b44d2.94299f38.full.json",
+      "recordSha256": "d967c3c5616d833aecbf547e9b21575c5e3cac99ce1f44cd34d97d9e6b1ca502",
+      "traceSha256": "280b0d35c778b108044408acec19e90b9f3e3be4b9290fd15084cd03f71fce6f",
+      "ownActionCounts": {
+        "scan": 3,
+        "analyze": 3,
+        "research_tech": 3,
+        "play_card": 0
+      }
+    },
+    {
+      "board": 14,
+      "record": "reports/research/5ca133e7.94299f38.full.json",
+      "recordSha256": "3670562f4128e31961e74a34f15ef2291eeeb5cbc67dac9f80316f91b7c0b34c",
+      "traceSha256": "0abbd769bb2d43e44a2725e4d9e08d369cc1d62ab7716c097b36592392257efd",
+      "ownActionCounts": {
+        "scan": 4,
+        "analyze": 2,
+        "research_tech": 4,
+        "play_card": 1
+      }
+    },
+    {
+      "board": 15,
+      "record": "reports/research/f68952fa.94299f38.full.json",
+      "recordSha256": "017eea24552619af4b278b22a7495ca889ea1ea0a2bcc03d15b72b404325c22e",
+      "traceSha256": "1aec7625bf5137130aaf6816b6ece8f90d01b54f98c4b5551a8d0a2672ec9b23",
+      "ownActionCounts": {
+        "scan": 3,
+        "analyze": 4,
+        "research_tech": 5,
+        "play_card": 2
+      }
+    },
+    {
+      "board": 16,
+      "record": "reports/research/f5fda3f0.94299f38.full.json",
+      "recordSha256": "fd0d06f86d51076be6cf065d0e4e8f8b557c790001897bdf5b65a2feb3a9a173",
+      "traceSha256": "bc0630682505068f2766ebce70034ab36add61cebb33e7a517f0650baeb7944e",
+      "ownActionCounts": {
+        "scan": 1,
+        "analyze": 2,
+        "research_tech": 3,
+        "play_card": 5
+      }
+    },
+    {
+      "board": 17,
+      "record": "reports/research/7072468f.94299f38.full.json",
+      "recordSha256": "00f96d35be6c46f06386e30207fd8180100ddb3c523534b5f547ddba8df8d5a8",
+      "traceSha256": "e7ae5cee3590d3135e5ab87aadb884f9052dd312ee0555105ee87c8e0bbecdfd",
+      "ownActionCounts": {
+        "scan": 3,
+        "analyze": 3,
+        "research_tech": 5,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 18,
+      "record": "reports/research/52db641e.94299f38.full.json",
+      "recordSha256": "2d0352ee98dede0bf2536e9a29a65cfc04bc23c577518e3cbed16d40a4d68dc3",
+      "traceSha256": "ba7b1fd3f2b9b557b976fbbd81b2c04506b1a903e6cbe1fb30b70e945b7447f0",
+      "ownActionCounts": {
+        "scan": 5,
+        "analyze": 3,
+        "research_tech": 4,
+        "play_card": 3
+      }
+    },
+    {
+      "board": 19,
+      "record": "reports/research/0abcb0bd.94299f38.full.json",
+      "recordSha256": "937a057977aee3b0ae09f183a9c7bfb937dc1a85d9ad70f0bab0d7cca51998ac",
+      "traceSha256": "f04844f7802a2fb5d52916a65b8e0ce34763306e0d604932a43c2980b4dc8c38",
+      "ownActionCounts": {
+        "scan": 5,
+        "analyze": 3,
+        "research_tech": 5,
+        "play_card": 4
+      }
+    },
+    {
+      "board": 20,
+      "record": "reports/research/3a4edb37.94299f38.full.json",
+      "recordSha256": "f394a840786c84be27049e4578e05b13e71fc83d145133211b11e38f7a7aeae3",
+      "traceSha256": "1bbe2aa4a36095e5fbe8fb627e4fef4f6c07d9d4a6b791b4547f81309b13ab2a",
+      "ownActionCounts": {
+        "scan": 4,
+        "analyze": 3,
+        "research_tech": 4,
+        "play_card": 2
+      }
+    }
+  ],
+  "invalidReason": "Mixed player-white with PASS/forced-decision contexts for other seats. Never use these counts as autonomous White opportunities.",
+  "correctedBy": "accepted20-expert-card-opportunities-20261119-v2.json"
+}

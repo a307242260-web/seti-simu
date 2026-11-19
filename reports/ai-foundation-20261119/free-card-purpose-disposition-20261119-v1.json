@@ -1,0 +1,114 @@
+{
+  "status": "candidate-deferred-no-autonomous-score-evidence",
+  "date": "2026-11-19",
+  "strategyAdopted": false,
+  "productionPolicyUnchanged": true,
+  "candidateRuntime": "/private/tmp/seti-free-card-purpose-20261119-a0a5dbgw",
+  "candidatePatch": "adhoc/free-card-purpose-v19-candidate-20261119.patch.gz",
+  "candidatePatchSha256": "b98a7f99bf4b634df0b95fc00f3f0c628f63068c1628325e81a4decbe9be3813",
+  "candidateSourceHashes": {
+    "randomizer/game/ai/card-pick-planning.js": "b70021f4dd9be2455bf52a1641a3f1eb998ed03647c1845ae57b91a8b10a3ff4",
+    "randomizer/game/ai/card-pick-planning.test.js": "830fa78633a2443603a5c899ab6b4ecbc81b72ca19b6edc070c1f39c92595cd5",
+    "randomizer/game/ai/search-agent.js": "e92f172f472f3e34aa9f67655a0f62896317028cafe5fdfde18697a3a41fe695"
+  },
+  "behavior": "Last-round free Chong reward: choose a blind legal option only if visible card has exclusively probe-dependent play, no owned solar-board probe, no ordinary corner and no immediately payable computer income; preserve other known offers and queued/source-specific rewards. One greedy choice; not a dominance proof.",
+  "behaviorTestsPassed": true,
+  "hiddenDeckIdentitiesNotRead": true,
+  "oldPolicyCheckpointRejected": true,
+  "nativeActual287ExecutedAndExact": true,
+  "nativeExecutionProof": "reports/ai-foundation-20261119/free-card-purpose-native-execution-20261119-v1.json",
+  "coldAttempts": [
+    {
+      "case": "after287",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 0,
+      "milliseconds": 22.84620799999999,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-after287-cold-20261119-v1.json"
+    },
+    {
+      "case": "before246",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 45,
+      "milliseconds": 192.40995800000002,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-before246-cold-20261119-v1.json"
+    },
+    {
+      "case": "before263",
+      "status": "failed",
+      "stopReason": "transition-budget",
+      "nativeInputs": 104,
+      "milliseconds": 258.46166600000004,
+      "complete": false,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-before263-cold-20261119-v1.json"
+    },
+    {
+      "case": "before263",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 140,
+      "milliseconds": 327.092125,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-before263-cold-20261119-v2.json"
+    },
+    {
+      "case": "before287",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 1,
+      "milliseconds": 42.53904200000002,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-before287-cold-20261119-v1.json"
+    },
+    {
+      "case": "enceladus",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 55,
+      "milliseconds": 256.506291,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-enceladus-cold-20261119-v1.json"
+    },
+    {
+      "case": "io",
+      "status": "passed",
+      "stopReason": null,
+      "nativeInputs": 20,
+      "milliseconds": 103.87912500000002,
+      "complete": true,
+      "path": "reports/ai-foundation-20261119/free-card-purpose-io-cold-20261119-v1.json"
+    }
+  ],
+  "verificationCorrections": [
+    {
+      "case": "before263",
+      "initialStop": "transition-budget",
+      "reason": "Probe confused logical transitions with Native simulations;104 Native/256 logical inputs was not a Production256-Native failure. Preserve v1; v2 uses unchanged Production budget and passed140 Native/327.09ms."
+    },
+    {
+      "test": "search-agent",
+      "reason": "Four cleaned historical checkpoint fixtures were restored from HEAD only in the isolated snapshot. The action assertion still failed under both candidate and unmodified accepted policy; no assertion relaxed.",
+      "baselineProof": "reports/ai-foundation-20261119/free-card-purpose-existing-search-agent-test-baseline-20261119-v1.json"
+    }
+  ],
+  "newWholeGames": 0,
+  "scores": {
+    "autonomousTeaching": 272,
+    "original20Mean": 134.35,
+    "controlled267To276IsNotAutonomousImprovement": true
+  },
+  "decision": "Preserve tested candidate for later consideration. Do not promote or spend another full game on this local choice while the autonomous score gap remains unexplained.",
+  "nextBusinessTarget": {
+    "question": "At the same teacher R4 start, why does the AI complete2 scans/2 analyses/1 card play while the teacher completes8 scans/5 analyses/6 card plays? Find the first action where a fundable repeat-income/scan/analysis chain is rejected or absent.",
+    "baseline": "reports/ai-foundation-20261119/teacher-r4-same-start-outcome-20261119-v1.json",
+    "success": "A general policy change must improve a complete autonomous teaching game while retaining early-round assets and256Native/600ms per decision; then evaluate unchanged20-board cohort. Local teacher-prefix scores alone do not count.",
+    "avoid": "No further blind-card permutations, terminal order tie exploration or report regeneration without a score-relevant hypothesis."
+  },
+  "coldEvidenceArchive": "reports/ai-foundation-20261119/free-card-purpose-cold-evidence-20261119-v1.json.gz",
+  "coldEvidenceArchiveSha256": "a6c5e87b3606be90f772262f25ed6bfe34797e6d6dfec312111070858056c81d",
+  "candidatePatchArchiveSha256": "9a3d51b4d7ca0ab512fc1e16a96b9c905a3cbed7ab8a72b702b057295732f737",
+  "candidatePatchCompression": "gzip; decompress before git apply --check"
+}

@@ -1,0 +1,35 @@
+{
+  "status": "verified",
+  "runtime": "/private/tmp/seti-free-card-purpose-20261119-a0a5dbgw",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v486-runezu-free-pick/seti-purpose-capital-state-value-v71/seti-purpose-card-pick-policy-v19",
+  "newGames": 0,
+  "newAISearches": 1,
+  "newRealInputs": 1,
+  "priorVerificationFailure": {
+    "message": "Cannot read properties of undefined (reading 'getActiveDecisionNode')",
+    "stack": "TypeError: Cannot read properties of undefined (reading 'getActiveDecisionNode')\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-free-card-purpose-native-20261119.cjs:14:33)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  },
+  "reusedVerifiedColdAction": true,
+  "selectedAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:aef646a1",
+    "actorId": "player-white",
+    "stateVersion": 119,
+    "decisionVersion": 1,
+    "target": {
+      "kind": "residual-domain",
+      "choiceId": "chong:blind",
+      "source": "blind"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "盲抽虫牌"
+  },
+  "fullNativeStateSessionAndRngEqual": true,
+  "expectedAfter287": "teacher-r4-blind-after287-20261119-v1.json.gz",
+  "nativeStateSha256": "438d60f662e59954aaa1c303aa32818f14a4093abcc491b14a56c99d3f24ab9e",
+  "coldNative": 1,
+  "coldMilliseconds": 42.53904200000002
+}

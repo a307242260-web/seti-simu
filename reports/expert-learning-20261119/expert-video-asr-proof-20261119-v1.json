@@ -1,0 +1,83 @@
+{
+  "status": "eight-full-transcripts-verified",
+  "queryId": 116992762,
+  "partition": "20261118",
+  "table": "ai.cu_llm_asr_filter_full",
+  "sourceKind": "machine-cleaned-ASR-not-timestamped-subtitle",
+  "csvSha256": "349a7ad0161ca5a3c801ee7c9b0bcc40961a3df6727a66c6a2a610f9a8832a52",
+  "videos": [
+    {
+      "bvid": "BV1NWGVztEac",
+      "aid": 114829893308504,
+      "cid": 30964581302,
+      "series": "599",
+      "title": "【SETI】全网第一个599分！基础SOLO复盘第一期",
+      "characters": 1582,
+      "transcript": "BV1NWGVztEac-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1XJuGz8E1Y",
+      "aid": 114835211689831,
+      "cid": 30983259987,
+      "series": "599",
+      "title": "【SETI】反常规的右边外星人开：599分复盘第二期",
+      "characters": 3380,
+      "transcript": "BV1XJuGz8E1Y-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1PguXzfEfD",
+      "aid": 114878429795208,
+      "cid": 31142643679,
+      "series": "599",
+      "title": "【SETI】原地起爆！从66分到205分！SOLO复盘第三期",
+      "characters": 5559,
+      "transcript": "BV1PguXzfEfD-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1er3Z6SEvA",
+      "aid": 117027121404480,
+      "cid": 40539130524,
+      "series": "599",
+      "title": "SETI 700分时代前的最后一舞：599分复盘最终篇",
+      "characters": 4675,
+      "transcript": "BV1er3Z6SEvA-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1xnuP6mE1M",
+      "aid": 117037020023279,
+      "cid": 40592018962,
+      "series": "702",
+      "title": "SETI 700分时代首秀：702分SETI对局思路分享第一集",
+      "characters": 5052,
+      "transcript": "BV1xnuP6mE1M-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1dvu36nEdN",
+      "aid": 117059920922210,
+      "cid": 40721648581,
+      "series": "702",
+      "title": "SETI 702分对局思路分享第二集：扇区之争，素来如此",
+      "characters": 5727,
+      "transcript": "BV1dvu36nEdN-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1nF8B6QE8L",
+      "aid": 117132532647674,
+      "cid": 41125284712,
+      "series": "702",
+      "title": "SETI 702分对局思路分享第三集：手牌管理",
+      "characters": 7306,
+      "transcript": "BV1nF8B6QE8L-asr-20261118-v1.txt"
+    },
+    {
+      "bvid": "BV1CLen6pEUV",
+      "aid": 117274451250400,
+      "cid": 41916629279,
+      "series": "702",
+      "title": "SETI 702分对局思路分享第四集：星图详解",
+      "characters": 8468,
+      "transcript": "BV1CLen6pEUV-asr-20261118-v1.txt"
+    }
+  ],
+  "csvArchive": "expert-video-asr-full-20261118-v1.csv.gz"
+}

@@ -1,0 +1,7 @@
+{
+  "status": "baseline-test-failed",
+  "exitCode": 1,
+  "stdout": "SUMMARY unit passed=0 failed=1 total=1 time=0.39s\nSUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s\nOWNER architecture/policy-host tests=1\n",
+  "stderr": "node:internal/assert/utils:77\n    throw err;\n    ^\n\nAssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(action.agentTrace.actionId.startsWith(chosen + \":\"))\n\n    at Object.<anonymous> (/private/tmp/seti-free-card-purpose-20261119-a0a5dbgw/randomizer/game/ai/search-agent.test.js:74:5)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49 {\n  generatedMessage: true,\n  code: 'ERR_ASSERTION',\n  actual: false,\n  expected: true,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v22.22.0\nFAIL randomizer/game/ai/search-agent.test.js status=1 signal=none\n",
+  "baselinePolicyUnmodified": true
+}
