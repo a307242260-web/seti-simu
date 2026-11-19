@@ -1,5 +1,5 @@
 {
-  "status": "evidence-selected-not-yet-counterfactually-verified",
+  "status": "closed-no-profitable-witness",
   "sourceAudit": "reports/expert-learning-20261119/accepted20-expert-card-opportunities-20261119-v2.json",
   "acceptedCurrentPolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
   "record": {
@@ -42,11 +42,15 @@
         "kind": "end-turn"
       },
       "payload": {},
-      "summary": "\u7ed3\u675f\u56de\u5408"
+      "summary": "结束回合"
     }
   },
   "question": "Can the known public fusion reactor be acquired and played with disjoint resource/data funding, and does its energy enable a higher-value real continuation?",
   "notAssumed": "A legal publicity acquisition action does not prove the play fee or the downstream chain is fundable.",
   "newGames": 0,
-  "newAISearches": 0
+  "newAISearches": 0,
+  "policyChanged": false,
+  "outcome": "fusion18-versus-trade-outcome-20261119-v1.json",
+  "reproducibility": "fusion18-native-witness-proof-20261119-v1.json",
+  "nextEvidence": "original20-development-gap-20261119-v1.json"
 }

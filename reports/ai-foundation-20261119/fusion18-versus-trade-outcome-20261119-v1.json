@@ -1,0 +1,110 @@
+{
+  "status": "not-supported-as-an-improvement",
+  "newGames": 0,
+  "newAISearches": 0,
+  "additionalNativeInputs": 5,
+  "initialInterpretationCorrected": true,
+  "rule": {
+    "effect": "card_count_current_income_resource",
+    "count": "currentIncomeCount - companyBaseIncomeCount",
+    "currentEnergyIncome": 2,
+    "companyBaseEnergyIncome": 2,
+    "countedIncome": 0,
+    "effectEnergy": 0,
+    "tuckIncomeImmediateEnergy": 1
+  },
+  "before": {
+    "name": "round4-before-fusion",
+    "round": 4,
+    "turn": 2,
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 4,
+      "publicity": 0,
+      "score": 72
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "hand": [
+      {
+        "id": "card-55-0",
+        "cardId": "b_42.webp"
+      },
+      {
+        "id": "card-33-pass-3-4",
+        "cardId": "b_52.webp"
+      },
+      {
+        "id": "card-58-0",
+        "cardId": "b_2.webp"
+      },
+      {
+        "id": "card-59-0",
+        "cardId": "b_64.webp"
+      }
+    ],
+    "passed": [
+      "player-brown"
+    ]
+  },
+  "actualFusion": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 3,
+      "energy": 3,
+      "handSize": 3,
+      "publicity": 0,
+      "score": 72
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "handCount": 3,
+    "mainActionCompleted": true,
+    "formalProjectedScore": 106
+  },
+  "ordinaryTrade": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 4,
+      "publicity": 0,
+      "score": 72
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "handCount": 4,
+    "mainActionCompleted": false,
+    "formalProjectedScore": 106
+  },
+  "conclusion": "At this exact round4 wallet the forced fusion play spends3 credits and a main action for1 immediate energy. The legal2-credit quick trade reaches the same energy with1 extra credit, the card retained and the main action still available. The extra energy income has no further scheduled round-income window and does not change current formal score. This does not prove global dominance under every future income-counting card, but does not support a priority or a new full-game test.",
+  "residualScope": "Known later income-count effects could change the value of permanent income; no such profitable continuation is proved here.",
+  "policyChanged": false,
+  "newFullGames": 0
+}

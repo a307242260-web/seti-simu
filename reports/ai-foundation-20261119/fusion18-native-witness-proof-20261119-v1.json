@@ -1,0 +1,27 @@
+{
+  "status": "verified",
+  "independentNativeReplayInputs": 183,
+  "newAISearches": 0,
+  "newGames": 0,
+  "archive": "reports/ai-foundation-20261119/fusion18-native-witness-replay-20261119-v1.json.gz",
+  "expected": {
+    "nativeStateSha256": "d6a3450805585b5369ec48d35215a372f45778de5dcffa9d1817bcb98aef076d",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 2755980191
+    }
+  },
+  "actual": {
+    "nativeStateSha256": "d6a3450805585b5369ec48d35215a372f45778de5dcffa9d1817bcb98aef076d",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 2755980191
+    }
+  },
+  "originalPrefixInputs": 156,
+  "fixedInvestmentInputs": 22,
+  "fixedPassAndCardInputs": 5,
+  "terminal": false
+}

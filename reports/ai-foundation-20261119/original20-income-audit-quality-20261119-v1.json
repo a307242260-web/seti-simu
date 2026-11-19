@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "boards": 20,
+  "validatedRoundEnds": 60,
+  "currencyAndHandIncomeChecks": 180,
+  "allFirstThreeRoundIncomeGrowthExplainedByObservedIncomeSelections": true,
+  "traceHashesVerified": 20,
+  "newGames": 0,
+  "newAISearches": 0,
+  "round4Separate": "Some native card effects can tuck themselves directly without an income menu; no menu-count equality claim for the last round."
+}
