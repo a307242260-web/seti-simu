@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "seti-native-income-replay-verification-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "archiveSha256": "3bd4fc249a1ebc1c71c6dbb2bb5f3e547f8931e669a843e94cdc993e71ebf06e",
+  "sourceFilesVerified": 536,
+  "status": "complete",
+  "verifiedInputs": 87,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "branches": [
+    {
+      "name": "native-prefix-260-to-294",
+      "inputs": 35,
+      "verified": true,
+      "nativeEnvelopeSha256": "45a54bd1e814e4a2c082914bfd7b4da9dd5135e8aa92ac0755eb3815290c6182"
+    },
+    {
+      "name": "known-card-direct-play",
+      "inputs": 1,
+      "verified": true,
+      "nativeEnvelopeSha256": "36a15865d4a8c8014f09f74cc63b76391f1ac92550596ab15a48a15a9559e287"
+    },
+    {
+      "name": "original-analysis",
+      "inputs": 16,
+      "verified": true,
+      "nativeEnvelopeSha256": "f56bde0ca20173291c40673ca409b5ae10c0c7ed895168c51030c938ecc9958b"
+    },
+    {
+      "name": "card-first",
+      "inputs": 17,
+      "verified": true,
+      "nativeEnvelopeSha256": "ad27262ae80115bfafd20d1a0592803ba022111ea5fa15bef84cb86fbe16e45b"
+    },
+    {
+      "name": "analysis-preserve-card",
+      "inputs": 18,
+      "verified": true,
+      "nativeEnvelopeSha256": "ad27262ae80115bfafd20d1a0592803ba022111ea5fa15bef84cb86fbe16e45b"
+    }
+  ],
+  "verified": true,
+  "totalNativeIncludingControls": 174
+}

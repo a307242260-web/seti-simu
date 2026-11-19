@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teaching-chong2-purpose-route-20261119-v1.json",
+  "startedEpochSeconds": 1795059339.0,
+  "deadlineEpochSeconds": 1795061139.0,
+  "status": "expired",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-teaching-chong2-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795059605.2573729,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795061139.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 47937,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795059606.2389262
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795059706.649492,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795061139.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 48723,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795059706.7969432
+    }
+  ],
+  "observedEpochSeconds": 1795061502.521965
+}

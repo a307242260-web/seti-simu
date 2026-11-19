@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teaching-chong2-purpose-route-20261119-v1.json",
+  "startedEpochSeconds": 1795061522.141132,
+  "deadlineEpochSeconds": 1795062939.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/pair-teaching-chong2-order-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795061522.455028,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795062939.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 53213,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795061523.677268
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795061568.0271318,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795062939.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 53752,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795061568.067888
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-board19-income-replay-20261119.cjs",
+        "teaching-chong2-order-replay-20261119-v1.json.gz",
+        "teaching-chong2-order-replay-verification-20261119-v1.json"
+      ],
+      "startedEpochSeconds": 1795062108.824438,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795062939.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 59576,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795062109.66903
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/close-teaching-chong2-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795062182.64975,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795062939.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 60554,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795062182.833035
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795062102.4391282,
+      "reason": "Read-only graph formatter attempted numeric comparison with null; no Native or AI execution in the failed attempt. Resume only predeclared replay verification and adjudication, preserving failed attempt and both original deadlines.",
+      "previousStatus": "failed"
+    }
+  ],
+  "closedEpochSeconds": 1795062246.9937952,
+  "outcome": "teaching-chong2-causal-outcome-20261119-v1.json"
+}

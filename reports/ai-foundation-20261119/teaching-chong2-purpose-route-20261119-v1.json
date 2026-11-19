@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "teaching-input295-chong2-versus-analysis-preparation",
+  "startedEpochSeconds": 1795059339,
+  "deadlineEpochSeconds": 1795062939,
+  "status": "rejected",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-chong2-purpose-20261119-v2.window.json"
+  ],
+  "businessQuestion": "At the actual teaching R4 root295, can the known1-credit chong2 final-scoring card be realized without sacrificing the existing analysis preparation? Is the fixed income plan erasing a profitable funded purpose?",
+  "hypotheses": [
+    "The old play-card quote loses only the turn-local analysis opportunity; two known own turns can realize both while opponents are PASS.",
+    "The fixed income ranking treats a funded final-scoring card as generic hand value and consumes it despite a less costly available supplier."
+  ],
+  "limits": {
+    "maximumWallSeconds": 3600,
+    "maximumWorkUnits": 2,
+    "maximumLiteralNativeInputsIncludingVerification": 300,
+    "maximumColdSearches": 4,
+    "maximumNewFullGames": 1,
+    "productionPatchBeforeCausalProof": false
+  },
+  "searchContract": {
+    "stateEquivalence": "All pairs start from the same complete Native envelope/RNG restored from the formal R3 checkpoint. No equality claim after a different action unless exact endpoint evidence supports it.",
+    "reachability": "Only the known chong2 card, original analysis plan and a concrete known income supplier; preserve costs, required Native choices, slot/data/hand resources and opponent PASS policy. No arbitrary move or discard-combination search.",
+    "globalBudget": "Keep existing runtime search budgets and completeness; each cold/candidate decision must complete within256 simulated Native inputs and600ms, or no larger experiment. Literal controls have an independent300-input safety ledger.",
+    "comparisonBoundary": "Same completed main purposes and real handovers; never count terminal conditional14 points as free gains.",
+    "adoption": "Only after causal Native proof, targeted behavior/standard flow/input audit/source admission; one full fixed23 opening game may follow in the second unit, not before.",
+    "stop": "Reject/inconclusive if effects or opportunity costs defeat the plan; do not mutate weights or continue an expired/frozen candidate under a new name."
+  },
+  "secondUnitScope": "Complete the already-declared three Native order/income controls and adjudicate. Unit1 expired before pair command started; do not repeat prepared Native root or cold search, and do not automatically add a strategy patch/full game.",
+  "closedEpochSeconds": 1795062182.799,
+  "outcome": "teaching-chong2-causal-outcome-20261119-v1.json",
+  "strategyChanged": false,
+  "totalLiteralNativeInputs": 174,
+  "newFullGames": 0
+}

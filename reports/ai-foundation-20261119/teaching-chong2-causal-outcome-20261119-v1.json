@@ -1,0 +1,410 @@
+{
+  "schemaVersion": "seti-teaching-chong2-causal-outcome-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-free-analyze-v1",
+  "status": "rejected",
+  "strategyChanged": false,
+  "newFullGames": 0,
+  "coldSearches": 1,
+  "cold": {
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 224,
+    "nativeInputs": 25,
+    "milliseconds": 127.77541700000006,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "literalControlInputs": 87,
+  "verificationInputs": 87,
+  "totalLiteralNativeInputs": 174,
+  "rows": [
+    {
+      "name": "original-analysis",
+      "nativeActions": 16,
+      "baseScore": 153,
+      "formalScoreNow": 218,
+      "breakdown": {
+        "playerId": "player-white",
+        "baseScore": 153,
+        "tileScore": 59,
+        "cardScore": 6,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 218,
+        "totalScore": 218,
+        "tileScoresById": {
+          "a": 22,
+          "b": 16,
+          "c": 0,
+          "d": 21
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 8,
+            "score": 16
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 7,
+            "score": 21
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 6
+      },
+      "hand": [
+        {
+          "instanceId": "card-64-0",
+          "cardId": "b_16.webp"
+        },
+        {
+          "instanceId": "alien-chong-7-16",
+          "cardId": "chong_7.webp"
+        },
+        {
+          "instanceId": "alien-chong-9-19",
+          "cardId": "chong_9.webp"
+        },
+        {
+          "instanceId": "card-80-0",
+          "cardId": "dlc_1.png"
+        }
+      ],
+      "modelValue": 234,
+      "modelComponents": {
+        "realizedScore": 153,
+        "currentEndGameBonus": 65,
+        "resources": 8,
+        "hand": 4,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 4,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    },
+    {
+      "name": "card-first",
+      "nativeActions": 17,
+      "baseScore": 153,
+      "formalScoreNow": 211,
+      "breakdown": {
+        "playerId": "player-white",
+        "baseScore": 153,
+        "tileScore": 48,
+        "cardScore": 10,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 211,
+        "totalScore": 211,
+        "tileScoresById": {
+          "a": 11,
+          "b": 16,
+          "c": 0,
+          "d": 21
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 11,
+            "score": 11
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 8,
+            "score": 16
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 7,
+            "score": 21
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          },
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 4
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 6
+      },
+      "hand": [
+        {
+          "instanceId": "alien-chong-7-16",
+          "cardId": "chong_7.webp"
+        },
+        {
+          "instanceId": "alien-chong-9-19",
+          "cardId": "chong_9.webp"
+        }
+      ],
+      "modelValue": 225,
+      "modelComponents": {
+        "realizedScore": 153,
+        "currentEndGameBonus": 58,
+        "resources": 8,
+        "hand": 2,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 4,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    },
+    {
+      "name": "analysis-preserve-card",
+      "nativeActions": 18,
+      "baseScore": 153,
+      "formalScoreNow": 211,
+      "breakdown": {
+        "playerId": "player-white",
+        "baseScore": 153,
+        "tileScore": 48,
+        "cardScore": 10,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 211,
+        "totalScore": 211,
+        "tileScoresById": {
+          "a": 11,
+          "b": 16,
+          "c": 0,
+          "d": 21
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 11,
+            "score": 11
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 8,
+            "score": 16
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 7,
+            "score": 21
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          },
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 4
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "resources": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 6
+      },
+      "hand": [
+        {
+          "instanceId": "alien-chong-7-16",
+          "cardId": "chong_7.webp"
+        },
+        {
+          "instanceId": "alien-chong-9-19",
+          "cardId": "chong_9.webp"
+        }
+      ],
+      "modelValue": 225,
+      "modelComponents": {
+        "realizedScore": 153,
+        "currentEndGameBonus": 58,
+        "resources": 8,
+        "hand": 2,
+        "income": 0,
+        "technologyPotential": 0,
+        "handPotential": 0,
+        "researchPotential": 0,
+        "probePotential": 4,
+        "analysisPotential": 0,
+        "researchIncomePotential": 0,
+        "dataPotential": 0,
+        "finalMarkPotential": 0
+      }
+    }
+  ],
+  "exactOrderEndpointsEqual": true,
+  "rootAndRngRestored": true,
+  "allFiveReplayEndpointsVerified": true,
+  "conclusion": "Both known card-preservation orders are legal, but lose11 tile points and gain4 played-card points at the same completed-purpose boundary. They also retain two fewer cards. Reject a forced scoring-card preservation or ordering patch on this evidence.",
+  "limits": [
+    "These are nonterminal current-asset scores, not new full-game results.",
+    "The original income draws an unknown card; its later known identity is not used to choose the root action.",
+    "No optimal continuation, all-alternative dominance, or free recovery of terminal conditional card points is claimed.",
+    "Same-root old trajectories and the current cold-search suffix differ; their quoted values alone do not establish stale cache or valuation drift."
+  ],
+  "methodology": {
+    "adjudicatedWithinParentDeadline": true,
+    "firstWindowExpiredBeforePairStarted": true,
+    "readOnlyFormatterFailedAndManuallyRecoveredWithoutExtension": true,
+    "nextResearchSelection": "Return to the earliest material trace/technology asset divergence in the existing teaching trajectories. Do not reopen this rejected forced-preservation route, frozen candidates, or general income forecast tuning without new causal evidence."
+  },
+  "evidence": {
+    "replayArchive": "teaching-chong2-order-replay-20261119-v1.json.gz",
+    "verification": "teaching-chong2-order-replay-verification-20261119-v1.json",
+    "diagnostics": "teaching-chong2-control-diagnostics-20261119-v1.json.gz"
+  }
+}
