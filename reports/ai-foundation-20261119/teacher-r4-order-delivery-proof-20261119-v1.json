@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-teacher-r4-order-delivery-proof-v1",
+  "verified": true,
+  "syntaxChecks": [
+    "adhoc/prepare-teacher-r4-order-control-20261119.cjs",
+    "adhoc/probe-teacher-r4-order-endpoint-20261119.cjs",
+    "adhoc/compare-teacher-r4-two-actions-20261119.cjs",
+    "adhoc/verify-teacher-r4-order-controls-20261119.cjs"
+  ],
+  "independentNativeVerification": "reports/ai-foundation-20261119/teacher-r4-order-native-verification-20261119-v1.json",
+  "exactNativeCheckpoints": 6,
+  "actualPreparationAndVerificationInputs": 167,
+  "coldSearches": 3,
+  "counterfactualNativeSimulations": 250,
+  "maxSingleColdNative": 149,
+  "maxSingleColdMs": 395.27041699999995,
+  "newAutonomousGames": 0,
+  "AIChanged": false,
+  "orderingRuleAdopted": false,
+  "report": "reports/iteration/teacher-r4-same-start-20261119/adcb348b.42c7f5fd.full.terminal-recovery.action-log.html",
+  "formalScoresUnchanged": true
+}

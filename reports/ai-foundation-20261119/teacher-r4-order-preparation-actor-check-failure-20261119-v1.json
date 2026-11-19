@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "seti-teacher-r4-native-order-preparation-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "status": "failed",
+  "nativeInputs": 5,
+  "newAISearches": 0,
+  "newGames": 0,
+  "analysisPlan": {
+    "steps": [
+      "place_data:8fd12fd3",
+      "choose_target:29b5215c",
+      "analyze:a5629aa3",
+      "choose_target:4c1465ee",
+      "choose_card:6d03126f",
+      "end_turn:b2f9b29d"
+    ],
+    "nodes": [
+      0,
+      8,
+      23,
+      24
+    ],
+    "quotedValue": 221,
+    "boundary": "hidden_alien_card",
+    "status": "information-barrier"
+  },
+  "scanPlan": {
+    "steps": [
+      "scan:2d21a323",
+      "choose_target:8a5d7b2d",
+      "choose_card:7f1dded4",
+      "choose_card:75e32e17",
+      "choose_target:f4c617ab",
+      "choose_target:756e7901",
+      "end_turn:b2f9b29d"
+    ],
+    "nodes": [
+      0,
+      11,
+      150
+    ],
+    "quotedValue": 218,
+    "boundary": "hidden_card_reveal",
+    "status": "information-barrier"
+  },
+  "branches": {},
+  "failure": {
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'player-green'\n- 'player-white'\n          ^\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'player-green'\n- 'player-white'\n          ^\n\n    at submit (/Users/bilibili/code/seti-simu/adhoc/prepare-teacher-r4-order-control-20261119.cjs:28:264)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/prepare-teacher-r4-order-control-20261119.cjs:34:49)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

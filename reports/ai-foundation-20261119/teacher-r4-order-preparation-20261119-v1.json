@@ -1,0 +1,933 @@
+{
+  "schemaVersion": "seti-teacher-r4-native-order-preparation-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "status": "complete",
+  "nativeInputs": 55,
+  "priorPreparationAttemptInputs": 5,
+  "newAISearches": 0,
+  "newGames": 0,
+  "analysisPlan": {
+    "steps": [
+      "place_data:8fd12fd3",
+      "choose_target:29b5215c",
+      "analyze:a5629aa3",
+      "choose_target:4c1465ee",
+      "choose_card:6d03126f",
+      "end_turn:b2f9b29d"
+    ],
+    "nodes": [
+      0,
+      8,
+      23,
+      24
+    ],
+    "quotedValue": 221,
+    "boundary": "hidden_alien_card",
+    "status": "information-barrier"
+  },
+  "scanPlan": {
+    "steps": [
+      "scan:2d21a323",
+      "choose_target:8a5d7b2d",
+      "choose_card:7f1dded4",
+      "choose_card:75e32e17",
+      "choose_target:f4c617ab",
+      "choose_target:756e7901",
+      "end_turn:b2f9b29d"
+    ],
+    "nodes": [
+      0,
+      11,
+      150
+    ],
+    "quotedValue": 218,
+    "boundary": "hidden_card_reveal",
+    "status": "information-barrier"
+  },
+  "branches": {
+    "landing-first": {
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-order-landing-first-20261119-v1.json.gz",
+      "nativeInputs": 20,
+      "facts": {
+        "turn": {
+          "actionCycleNumber": 4,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-brown",
+            "player-green",
+            "player-blue"
+          ],
+          "roundNumber": 4,
+          "startPlayerId": "player-brown",
+          "turnNumber": 7,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 3,
+          "credits": 7,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 8,
+          "score": 140
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          },
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "alien-amiba-7-5",
+            "cardId": "amiba_7.webp"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-43",
+              "index": 34,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-44",
+              "index": 35,
+              "slotIndex": 2
+            }
+          ]
+        },
+        "probes": [],
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "evaluation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 230,
+        "components": {
+          "realizedScore": 140,
+          "currentEndGameBonus": 76,
+          "resources": 13,
+          "hand": 1,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "recordedQuote": 230,
+      "recordedBoundary": "own-turn-complete"
+    },
+    "analysis-first": {
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-order-analysis-first-20261119-v1.json.gz",
+      "nativeInputs": 6,
+      "facts": {
+        "turn": {
+          "actionCycleNumber": 4,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-brown",
+            "player-green",
+            "player-blue"
+          ],
+          "roundNumber": 4,
+          "startPlayerId": "player-brown",
+          "turnNumber": 7,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 6,
+          "handSize": 5,
+          "publicity": 3,
+          "score": 116
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp"
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png"
+          },
+          {
+            "id": "alien-chong-9-16",
+            "cardId": "chong_9.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          },
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          },
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "alien-amiba-7-5",
+            "cardId": "amiba_7.webp"
+          },
+          {
+            "id": "alien-chong-3-10",
+            "cardId": "chong_3.webp"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -9.9,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 69.42,
+            "sectorX": 1,
+            "sectorY": 1,
+            "slotIndex": 2,
+            "surface": "solar-board"
+          }
+        ],
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "evaluation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 221,
+        "components": {
+          "realizedScore": 116,
+          "currentEndGameBonus": 68,
+          "resources": 12,
+          "hand": 5,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 20,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "recordedQuote": 221,
+      "recordedBoundary": "hidden_alien_card"
+    },
+    "scan-first": {
+      "checkpoint": "reports/ai-foundation-20261119/teacher-r4-order-scan-first-20261119-v1.json.gz",
+      "nativeInputs": 7,
+      "facts": {
+        "turn": {
+          "actionCycleNumber": 4,
+          "activePlayerCount": 4,
+          "activePlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "cardTurnEventBonuses": [],
+          "completedTurnPlayerIds": [],
+          "currentPlayerId": "player-white",
+          "gameEndReason": null,
+          "gameEnded": false,
+          "passedPlayerIds": [
+            "player-brown",
+            "player-green",
+            "player-blue"
+          ],
+          "roundNumber": 4,
+          "startPlayerId": "player-brown",
+          "turnNumber": 7,
+          "turnOrderPlayerIds": [
+            "player-white",
+            "player-green",
+            "player-blue",
+            "player-brown"
+          ],
+          "visitedPlanetsByPlayerId": {}
+        },
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 4,
+          "publicity": 3,
+          "score": 115
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 7,
+          "energy": 4,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1,
+            "blue4": 3
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "blue4": true,
+            "orange1": true,
+            "orange2": true,
+            "orange4": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "alien-chong-2-8",
+            "cardId": "chong_2.webp"
+          },
+          {
+            "id": "alien-chong-4-14",
+            "cardId": "chong_4.webp"
+          },
+          {
+            "id": "card-30-pass-3-1",
+            "cardId": "b_111.webp"
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_27.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-13-0",
+            "cardId": "b_117.webp"
+          },
+          {
+            "id": "card-51-0",
+            "cardId": "dlc_31.png"
+          },
+          {
+            "id": "card-29-pass-2-5",
+            "cardId": "b_101.webp"
+          },
+          {
+            "id": "alien-amiba-7-5",
+            "cardId": "amiba_7.webp"
+          },
+          {
+            "id": "alien-chong-3-10",
+            "cardId": "chong_3.webp"
+          }
+        ],
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-34",
+              "index": 26,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-35",
+              "index": 27,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-36",
+              "index": 28,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-33",
+              "index": 25,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "blueSlot": 2,
+              "id": "data-token-37",
+              "index": 29,
+              "placementKind": "blueBonus"
+            },
+            {
+              "id": "data-token-38",
+              "index": 30,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-41",
+              "index": 33,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "blueSlot": 3,
+              "id": "data-token-39",
+              "index": 31,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-40",
+              "index": 32,
+              "slotIndex": 3
+            },
+            {
+              "id": "data-token-43",
+              "index": 34,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-44",
+              "index": 35,
+              "slotIndex": 2
+            },
+            {
+              "id": "data-token-45",
+              "index": 36,
+              "slotIndex": 4
+            },
+            {
+              "id": "data-token-46",
+              "index": 37,
+              "slotIndex": 5
+            }
+          ]
+        },
+        "probes": [
+          {
+            "angleDegrees": 22.5,
+            "cargo": null,
+            "color": "white",
+            "fossilId": "fossil_07",
+            "id": 6,
+            "kind": "chong-fossil",
+            "launchGrid": {
+              "x": 3,
+              "y": 3
+            },
+            "launchSectorCoordinate": {
+              "x": 3,
+              "y": 3
+            },
+            "playerId": "player-white",
+            "radius": 227.66,
+            "sectorX": 2,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          },
+          {
+            "angleDegrees": -22.5,
+            "color": "white",
+            "id": 7,
+            "launchGrid": {
+              "x": 2,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 2,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 156.26,
+            "sectorX": 1,
+            "sectorY": 2,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "evaluation": {
+        "modelVersion": "seti-purpose-capital-state-value-v71",
+        "total": 218,
+        "components": {
+          "realizedScore": 115,
+          "currentEndGameBonus": 68,
+          "resources": 11,
+          "hand": 4,
+          "income": 0,
+          "technologyPotential": 0,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 20,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "recordedQuote": 218,
+      "recordedBoundary": "hidden_card_reveal"
+    }
+  },
+  "rootPath": "reports/ai-foundation-20261119/teacher-r4-before-input263-20261119-v1.json.gz",
+  "rootFacts": {
+    "turn": {
+      "actionCycleNumber": 3,
+      "activePlayerCount": 4,
+      "activePlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "cardTurnEventBonuses": [],
+      "completedTurnPlayerIds": [],
+      "currentPlayerId": "player-white",
+      "gameEndReason": null,
+      "gameEnded": false,
+      "passedPlayerIds": [
+        "player-brown",
+        "player-green",
+        "player-blue"
+      ],
+      "roundNumber": 4,
+      "startPlayerId": "player-brown",
+      "turnNumber": 6,
+      "turnOrderPlayerIds": [
+        "player-white",
+        "player-green",
+        "player-blue",
+        "player-brown"
+      ],
+      "visitedPlanetsByPlayerId": {}
+    },
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 1,
+      "credits": 4,
+      "energy": 6,
+      "handSize": 4,
+      "publicity": 3,
+      "score": 111
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange1": true,
+        "orange2": true,
+        "orange4": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "id": "alien-chong-2-8",
+        "cardId": "chong_2.webp"
+      },
+      {
+        "id": "alien-chong-4-14",
+        "cardId": "chong_4.webp"
+      },
+      {
+        "id": "card-30-pass-3-1",
+        "cardId": "b_111.webp"
+      },
+      {
+        "id": "card-58-0",
+        "cardId": "dlc_27.png"
+      }
+    ],
+    "reserved": [
+      {
+        "id": "card-13-0",
+        "cardId": "b_117.webp"
+      },
+      {
+        "id": "card-51-0",
+        "cardId": "dlc_31.png"
+      },
+      {
+        "id": "card-29-pass-2-5",
+        "cardId": "b_101.webp"
+      },
+      {
+        "id": "alien-amiba-7-5",
+        "cardId": "amiba_7.webp"
+      },
+      {
+        "id": "alien-chong-3-10",
+        "cardId": "chong_3.webp"
+      }
+    ],
+    "data": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-34",
+          "index": 26,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-35",
+          "index": 27,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-36",
+          "index": 28,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-33",
+          "index": 25,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "blueSlot": 2,
+          "id": "data-token-37",
+          "index": 29,
+          "placementKind": "blueBonus"
+        },
+        {
+          "id": "data-token-38",
+          "index": 30,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "id": "data-token-41",
+          "index": 33,
+          "placementKind": "computer",
+          "placementSlot": 5
+        },
+        {
+          "blueSlot": 3,
+          "id": "data-token-39",
+          "index": 31,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": [
+        {
+          "id": "data-token-40",
+          "index": 32,
+          "slotIndex": 3
+        }
+      ]
+    },
+    "probes": [
+      {
+        "angleDegrees": 22.5,
+        "cargo": null,
+        "color": "white",
+        "fossilId": "fossil_07",
+        "id": 6,
+        "kind": "chong-fossil",
+        "launchGrid": {
+          "x": 3,
+          "y": 3
+        },
+        "launchSectorCoordinate": {
+          "x": 3,
+          "y": 3
+        },
+        "playerId": "player-white",
+        "radius": 227.66,
+        "sectorX": 2,
+        "sectorY": 3,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": -9.9,
+        "color": "white",
+        "id": 7,
+        "launchGrid": {
+          "x": 2,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 2,
+          "y": 1
+        },
+        "playerId": "player-white",
+        "playerSequence": 1,
+        "radius": 69.42,
+        "sectorX": 1,
+        "sectorY": 1,
+        "slotIndex": 2,
+        "surface": "solar-board"
+      }
+    ],
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "rootEvaluation": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 215.5,
+    "components": {
+      "realizedScore": 111,
+      "currentEndGameBonus": 68,
+      "resources": 12.5,
+      "hand": 4,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 20,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "rootMatchesRecordedObservation": true
+}

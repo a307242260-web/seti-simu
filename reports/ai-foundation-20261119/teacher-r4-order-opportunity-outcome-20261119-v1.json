@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "seti-teacher-r4-order-opportunity-outcome-v1",
+  "status": "ordering-patch-not-adopted",
+  "strategyChanged": false,
+  "newGames": 0,
+  "nativePreparationAndVerificationInputs": 167,
+  "newColdSearches": 3,
+  "allColdGatesPassed": true,
+  "maximumColdMilliseconds": 395.27041699999995,
+  "maximumColdNative": 149,
+  "formalScoresUnchanged": {
+    "autonomousTeaching": 272,
+    "original20Mean": 134.35,
+    "teacherControlledR4AI": 267,
+    "teacherLegalReference": 384
+  },
+  "commonTwoMainActionBoundary": {
+    "round": 4,
+    "turn": 8,
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 1,
+      "handSize": 2,
+      "publicity": 8,
+      "score": 147
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1,
+        "blue4": 3
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "blue4": true,
+        "orange1": true,
+        "orange2": true,
+        "orange4": true,
+        "purple2": true,
+        "purple4": true
+      }
+    },
+    "modelValue": 237.5,
+    "landingThenAnalysis": {
+      "hand": [
+        {
+          "id": "card-30-pass-3-1",
+          "cardId": "b_111.webp"
+        },
+        {
+          "id": "alien-chong-9-16",
+          "cardId": "chong_9.webp"
+        }
+      ],
+      "publicCards": [
+        {
+          "id": "card-58-0",
+          "cardId": "dlc_27.png",
+          "scanActionCode": 1
+        },
+        {
+          "id": "card-74-0",
+          "cardId": "dlc_8.png",
+          "scanActionCode": 0
+        },
+        {
+          "id": "card-64-0",
+          "cardId": "b_16.webp",
+          "scanActionCode": 0
+        }
+      ]
+    },
+    "analysisThenLanding": {
+      "hand": [
+        {
+          "id": "card-30-pass-3-1",
+          "cardId": "b_111.webp"
+        },
+        {
+          "id": "card-58-0",
+          "cardId": "dlc_27.png"
+        }
+      ],
+      "publicCards": [
+        {
+          "id": "card-66-0",
+          "cardId": "dlc_16.png",
+          "scanActionCode": 2
+        },
+        {
+          "id": "card-74-0",
+          "cardId": "dlc_8.png",
+          "scanActionCode": 0
+        },
+        {
+          "id": "card-64-0",
+          "cardId": "b_16.webp",
+          "scanActionCode": 0
+        }
+      ]
+    }
+  },
+  "findings": [
+    {
+      "hypothesis": "Analysis before the existing landing saves current resources or retains Chong2/Chong4.",
+      "verdict": "rejected-for-this-pair",
+      "evidence": "Same147 board score,7 credits,1 energy,8 publicity,0 available data; same technology and income; both consume Chong2 andChong4."
+    },
+    {
+      "hypothesis": "The221 analysis quote loses an immediate payout solely because it stops at an information barrier.",
+      "verdict": "not-supported",
+      "evidence": "Materializing all6 original analysis plan actions through actual Native handover still evaluates221; the20-input landing plan evaluates230. After both main actions either order evaluates237.5."
+    }
+  ],
+  "nonEquivalence": {
+    "handAndPublicMarketDiffer": true,
+    "nextCurrentPolicyChoice": {
+      "landingThenAnalysis": {
+        "reusedActualInput": 293,
+        "actionId": "research_tech:806ccfc8",
+        "value": 239.5,
+        "native": 35,
+        "milliseconds": 41.2990420000001
+      },
+      "analysisThenLanding": {
+        "complete": true,
+        "actionId": "quick_trade:f385e2ac",
+        "value": 240.5,
+        "nativeInputs": 29,
+        "milliseconds": 123.56199999999998,
+        "rootAndRngUnchanged": true,
+        "gatePassed": true
+      }
+    },
+    "interpretation": "The next-window model difference240.5 vs239.5 is not a one-point terminal improvement or proof of state equivalence. Changed public scan cards and retained hand need a separate causal comparison."
+  },
+  "decision": "No ordering rule, weight adjustment or another full game under this route. The original resource-saving justification is rejected. Preserve the hand/public-market difference as unresolved; do not claim the117-point R4 gap is explained.",
+  "next": "Return to the earliest material R4 divergence (before246 research versus launch), reuse existing first-point evidence and inspect omitted known held-card/analysis purposes before any new strategy patch. Do not re-open frozen cargo/income prototypes.",
+  "totalColdSearchNativeSimulations": 250
+}

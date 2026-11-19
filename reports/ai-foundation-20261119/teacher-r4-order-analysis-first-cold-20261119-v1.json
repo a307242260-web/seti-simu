@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-teacher-r4-order-endpoint-cold-v1",
+  "branch": "analysis-first",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "source": "reports/ai-foundation-20261119/teacher-r4-order-analysis-first-20261119-v1.json.gz",
+  "sourceSha256": "d8c31219a1690e9bc594ed1f82ab439f9cdbd8222139b2f6a6b5b254b620f40a",
+  "status": "complete",
+  "newAISearches": 1,
+  "newGames": 0,
+  "cold": {
+    "complete": true,
+    "actionId": "move:23807efa",
+    "value": 237.5,
+    "nativeInputs": 149,
+    "milliseconds": 395.27041699999995,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "searchArchive": "reports/ai-foundation-20261119/teacher-r4-order-search-evidence-20261119-v1.json.gz",
+  "searchArchiveSha256": "55e74c0b4d91cc94c7b87a2a21bc92711d48ca37ff660a5226b9448d066ba14a",
+  "archiveBranch": "analysis-first"
+}

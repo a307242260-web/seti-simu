@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "seti-teacher-r4-order-native-verification-v1",
+  "status": "verified",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "nativeInputs": 81,
+  "newAISearches": 0,
+  "newGames": 0,
+  "checkpoints": [
+    {
+      "name": "before263",
+      "nativeAndSessionAndRngExact": true
+    },
+    {
+      "name": "landing-first",
+      "nativeAndSessionAndRngExact": true
+    },
+    {
+      "name": "landing-then-analysis",
+      "nativeAndSessionAndRngExact": true
+    },
+    {
+      "name": "analysis-first",
+      "nativeAndSessionAndRngExact": true
+    },
+    {
+      "name": "analysis-then-landing",
+      "nativeAndSessionAndRngExact": true
+    },
+    {
+      "name": "scan-first",
+      "nativeAndSessionAndRngExact": true
+    }
+  ]
+}

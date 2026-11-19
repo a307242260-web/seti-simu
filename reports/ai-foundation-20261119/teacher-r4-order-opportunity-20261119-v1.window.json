@@ -1,0 +1,126 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-order-opportunity-route-20261119-v1.json",
+  "startedEpochSeconds": 1795069329.0,
+  "deadlineEpochSeconds": 1795071129.0,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-teacher-r4-order-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795069576.47784,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 72791,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795069576.775699
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-teacher-r4-order-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795069606.622823,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 73083,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069607.301012
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-teacher-r4-order-endpoint-20261119.cjs",
+        "analysis-first"
+      ],
+      "startedEpochSeconds": 1795069649.495428,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 73429,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069650.1166148
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-teacher-r4-order-endpoint-20261119.cjs",
+        "scan-first"
+      ],
+      "startedEpochSeconds": 1795069692.303833,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 73946,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069692.7637792
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/compare-teacher-r4-two-actions-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795069752.6955671,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 74935,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069753.103429
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-teacher-r4-order-endpoint-20261119.cjs",
+        "analysis-then-landing"
+      ],
+      "startedEpochSeconds": 1795069844.8061361,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 76203,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069845.152521
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-teacher-r4-order-controls-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795070016.258508,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795071129.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-order-opportunity-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 77962,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795070017.106805
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795069606.312955,
+      "previousStatus": "failed",
+      "reason": "The known prefix246..262 includes Green/Blue PASS and forced discards. Preparation mistakenly required White for every prefix input; permit only the already-recorded passive/forced actions. Preserve original failure and count its5 Native inputs in the same500-input budget; no AI search/game rerun or deadline change."
+    }
+  ],
+  "closedEpochSeconds": 1795070151.057472,
+  "outcome": "No resource/technology/income advantage after the same two main purposes. Hand/public market differ; no equivalence or terminal gain claim. All6 Native endpoints independently exact,167 preparation/verification inputs,3 cold gates passed. No AI strategy patch or full game."
+}

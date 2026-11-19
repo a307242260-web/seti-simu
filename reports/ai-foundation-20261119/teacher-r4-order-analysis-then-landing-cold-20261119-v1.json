@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-teacher-r4-order-endpoint-cold-v1",
+  "branch": "analysis-then-landing",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "source": "reports/ai-foundation-20261119/teacher-r4-two-actions-analysis-then-landing-20261119-v1.json.gz",
+  "sourceSha256": "25d8194e60b505d178cb23c70c1a8370e3224f217c3b1f8d6f3c818e0116bbdd",
+  "status": "complete",
+  "newAISearches": 1,
+  "newGames": 0,
+  "cold": {
+    "complete": true,
+    "actionId": "quick_trade:f385e2ac",
+    "value": 240.5,
+    "nativeInputs": 29,
+    "milliseconds": 123.56199999999998,
+    "rootAndRngUnchanged": true,
+    "gatePassed": true
+  },
+  "searchArchive": "reports/ai-foundation-20261119/teacher-r4-order-search-evidence-20261119-v1.json.gz",
+  "searchArchiveSha256": "55e74c0b4d91cc94c7b87a2a21bc92711d48ca37ff660a5226b9448d066ba14a",
+  "archiveBranch": "analysis-then-landing"
+}
