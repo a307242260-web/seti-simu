@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teaching-score-ledger-route-20261119-v1.json",
+  "startedEpochSeconds": 1795057857.0,
+  "deadlineEpochSeconds": 1795059657.0,
+  "status": "failed",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058005.635905,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 33846,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058005.716457
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058258.385065,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 35871,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058258.77563
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/audit-teaching-endgame-ledger-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795058356.4586282,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 36966,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795058356.6615648
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "seti-teaching-endgame-ledger-verification-v1",
+  "verified": true,
+  "sameFirst23RecordedInputs": true,
+  "teacherTerminalNativeStateAndRngMatchVerifiedReplay": true,
+  "twoScoringSourcesTwoSnapshotsExact": true,
+  "totalScoreDifference": 112,
+  "tileDifference": 33,
+  "cardDifference": 32,
+  "markSensitivityAIChange": -6,
+  "cardDifferenceConditionalAssetSplit": [
+    16,
+    16
+  ],
+  "sourceStateGetterBytesUnchangedVerified": true,
+  "sourceOriginalRecordVsCurrentPolicyNotConflated": true,
+  "reportLocalLinks": 14,
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "files": {
+    "reports/ai-foundation-20261119/teaching-endgame-ledger-20261119-v1.json": "8a18a645c12df81e958b963ce8fe33b5d7bcc75d7a6d1ce6ef4758933f357d5f",
+    "reports/ai-foundation-20261119/teaching-terminal-score-inputs-20261119-v1.json.gz": "d8a94243fa52c88d62a9fcf23176306e1ba0503b646b8f7527748c8a7f9f3373",
+    "reports/iteration/teaching-endgame-gap-20261119-v1.html": "3688deb872ba41959522ec32395cb9029c268a565c243ef495fca5c3f7d9889c",
+    "reports/iteration/seti-ai-method-review-20261119-v1.html": "2d7cd1698c98c676763751e5516209320de9ba7a7d7f40588d9c99829e005a54",
+    "adhoc/audit-teaching-endgame-ledger-20261119.cjs": "23436090205a359b85b53d0349451d240bc4b139e600a039f9d6b8084200f2c4"
+  }
+}

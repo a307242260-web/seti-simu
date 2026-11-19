@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "teaching-formal272-reference384-score-ledger",
+  "startedEpochSeconds": 1795057857.0,
+  "deadlineEpochSeconds": 1795059657.0,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.json"
+  ],
+  "businessQuestion": "Verify rule/score comparability and decompose the65-point non-board difference between formal AI272 and legal teacher384 into Native ledger assets; choose a substantial R3/R4 learning target rather than another income menu.",
+  "hypotheses": [
+    "The arithmetic65 is explained by identifiable final-tile and card-scoring assets under identical scoring functions.",
+    "Different endgame mark allocation, rather than asset quantities, explains a material part of the difference."
+  ],
+  "limits": {
+    "wallSeconds": 1800,
+    "maximumWorkUnits": 2,
+    "newAIChanges": 0,
+    "newAISearches": 0,
+    "newAutonomousGames": 0,
+    "newNativeGameInputs": 0
+  },
+  "comparisonContract": {
+    "use": "Existing terminal Native saves and pure Native score functions; preserve source states and RNG.",
+    "crossScoring": "If used, exchange only White mark allocation as a terminal sensitivity analysis, not a legal historical path or achievable score.",
+    "rules": "Read exact source diff and identify scoring dependency identity; allocation-order differences cannot be ignored as a generic same-rule proof.",
+    "boundary": "Original round ends before PASS choices/next income; terminal score must be fully reconciled.",
+    "stop": "Do not patch strategy or infer65 recoverable points without same-state action evidence. No automatic restart of frozen cargo/income candidates."
+  },
+  "recoveryEvents": [
+    {
+      "atEpochSeconds": 1795058392.1255229,
+      "reason": "Old scoring module initialization required randomizer/solar-system/layout outside the initial game-only archive. This was an isolated source-packaging failure before ledger execution; no AI or Native inputs occurred. Restore complete historical randomizer source, verify hashes, then reuse the same scoring audit in the second and final unit.",
+      "noNativeOrAIExecution": true,
+      "originalDeadlineRetained": 1795059657.0
+    }
+  ],
+  "closedEpochSeconds": 1795059274.6435468,
+  "outcome": "teaching-score-ledger-outcome-20261119-v1.json",
+  "newAIChanges": 0,
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "closedBeforeDeadline": true,
+  "wholeGoalComplete": false
+}

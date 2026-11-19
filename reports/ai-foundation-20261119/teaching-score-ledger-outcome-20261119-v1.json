@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "seti-teaching-score-ledger-outcome-v1",
+  "question": "Decompose the65 non-board points and locate a materially relevant R3/R4 decision.",
+  "scoreDifference": {
+    "base": 47,
+    "tile": 33,
+    "cards": 32,
+    "total": 112
+  },
+  "scoringComparability": "Both existing Native terminal states have identical complete scoring ledgers under old5fab and current Native code; teacher exact terminal state/RNG matches its verified474-input archive, and first23 action identities/targets match the AI save. This does not prove all histories replay identically across the amiba allocation-order fix.",
+  "markSensitivity": {
+    "AIAssetsWithAIAllocation": 74,
+    "AIAssetsWithTeacherAllocation": 68,
+    "teacherAssetsWithAIAllocation": 83,
+    "teacherAssetsWithTeacherAllocation": 107
+  },
+  "observedLostCards": {
+    "amiba_7.webp": {
+      "heldFromInput": 192,
+      "consumedInput": 206,
+      "use": "data corner",
+      "conditionalTerminalScoreOnAIAssets": 8
+    },
+    "chong_2.webp": {
+      "heldFromInput": 295,
+      "consumedInput": 309,
+      "use": "card income",
+      "conditionalTerminalScoreOnAIAssets": 6
+    }
+  },
+  "nextDecision": {
+    "historicalInput": 295,
+    "round": 4,
+    "card": "chong_2.webp",
+    "knownCostCredits": 1,
+    "walletCredits": 3,
+    "walletEnergy": 2,
+    "originalCardSearchValue": 212.5,
+    "originalAnalysisPlanValue": 224,
+    "rootContextArchive": "reports/ai-foundation-20261119/teaching-input295-context-20261119-v1.json.gz",
+    "restoreFrom": "reports/research/2170d824.5fabd621.full.json.round-end-3.checkpoint.json",
+    "literalPrefixInputs": [
+      260,
+      294
+    ],
+    "purpose": "Compare analysis-first and card-first plus the same funded preparation across the actual handover; inspect input owner on every submission and preserve PASS opponents.",
+    "notEstablished": "Card-first superiority or14 recoverable points; current v486 root selection has not been benchmarked here."
+  },
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "AIChanged": false,
+  "formalTeachingScoreUnchanged": 272,
+  "original20MeanUnchanged": 134.35,
+  "wholeGoalComplete": false,
+  "closedBeforeOriginalDeadline": true,
+  "elapsedWallMinutes": 23.627392446994783,
+  "report": "reports/iteration/teaching-endgame-gap-20261119-v1.html",
+  "verification": "reports/ai-foundation-20261119/teaching-score-ledger-verification-20261119-v1.json",
+  "sourceRecovery": "Old Native game-only archive missed solar-system dependency. Restored complete same-version randomizer, verified hashes, no Native action occurred in the failed initialization."
+}

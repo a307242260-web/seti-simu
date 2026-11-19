@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 教学整局分差账本 · 2026-11-19</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f3f6fa;color:#203044;line-height:1.75;color-scheme:light}body{max-width:1050px;margin:34px auto;padding:0 18px 50px}article{background:white;border:1px solid #dce3ed;border-radius:14px;padding:30px}h1{font-size:30px;line-height:1.4;margin:8px 0 16px}h2{font-size:21px;margin:28px 0 10px}p{margin:10px 0}.lead{font-size:19px;color:#174b76}.note{font-size:14px;color:#596d82}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.metric{padding:15px;background:#edf4fb;border-radius:9px}.metric strong{display:block;font-size:28px;line-height:1.3}.metric span{font-size:14px;color:#52687f}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;border-bottom:1px solid #e1e7ef;padding:9px 11px;white-space:nowrap}th{background:#edf3f9}.callout{border-left:4px solid #ca8a28;background:#fff8e9;padding:12px 17px;margin:18px 0}a{color:#185bb0}li{margin:7px 0}@media(max-width:650px){article{padding:19px}body{margin:15px auto}.metrics{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+<article>
+<div class="note">SETI · 教学整局资产研究 · 2026-11-19</div>
+<h1>终局差额来自资产与计分牌，不能只改目标选择</h1>
+<p class="lead">教学AI完整记录为272分，教师合法重放参考为384分。112分差额中，47分来自盘面，65分来自终局目标与已打出牌。两条路径的资产不同，差额不等于某项策略可直接追回的收益。</p>
+<div class="metrics"><div class="metric"><strong>47分</strong><span>盘面分差</span></div><div class="metric"><strong>33分</strong><span>终局目标分差</span></div><div class="metric"><strong>32分</strong><span>已打出牌的终局收益差</span></div></div>
+
+<h2>完整分差账本</h2>
+<div class="table"><table><thead><tr><th>来源</th><th>AI</th><th>教师参考</th><th>教师减AI</th></tr></thead><tbody>
+<tr><td>盘面分</td><td>192</td><td>239</td><td>47</td></tr>
+<tr><td>A目标：收入均衡</td><td>22</td><td>0</td><td>−22</td></tr>
+<tr><td>B目标：三色痕迹组</td><td>24</td><td>48</td><td>24</td></tr>
+<tr><td>C目标：完成任务</td><td>0</td><td>24</td><td>24</td></tr>
+<tr><td>D目标：科技数量</td><td>28</td><td>35</td><td>7</td></tr>
+<tr><td>已打出牌的终局收益</td><td>6</td><td>38</td><td>32</td></tr>
+<tr><td><strong>终局总分</strong></td><td><strong>272</strong></td><td><strong>384</strong></td><td><strong>112</strong></td></tr>
+</tbody></table></div>
+<p>B目标按三色痕迹的最少数量计分。AI的蓝／粉／黄痕迹为6／5／3，教师为8／7／6；黄色是AI当前最短的一项，但补到6后还会受粉色5限制，不能将所有单色增加都直接算作8分。D目标按科技数的一半向下取整，AI8项、教师11项，计分基础分别为4和5。</p>
+
+<h2>教师的目标组合并不适合AI现有资产</h2>
+<div class="table"><table><thead><tr><th>终局资产保持不变</th><th>AI的A／B／D组合</th><th>教师的B／C／D组合</th></tr></thead><tbody>
+<tr><td>AI资产</td><td>74</td><td>68</td></tr>
+<tr><td>教师资产</td><td>83</td><td>107</td></tr>
+</tbody></table></div>
+<p>这是一张终局计分敏感性表，不是新对局成绩或合法历史路线。将教师组合直接用于AI终局资产会少6分。教师完成6项任务、牌收入仅1，C目标比A目标更合适；AI完成4项任务、牌收入3，其A目标已有22分。目标选择与后续资产发展有交互，不能把33分目标差全部归为选错标记。</p>
+
+<h2>32分牌分差：既缺资产，也存在拿到后消耗的牌</h2>
+<div class="table"><table><thead><tr><th>计分牌</th><th>AI实际</th><th>教师实际</th><th>仅在AI终局资产上假设计分</th></tr></thead><tbody>
+<tr><td>dlc_31：两处登陆组合</td><td>0</td><td>6</td><td>0</td></tr>
+<tr><td>amiba_7：阿米巴蓝痕迹</td><td>未打出</td><td>8</td><td>8</td></tr>
+<tr><td>chong_2：虫族痕迹</td><td>未打出</td><td>10</td><td>6</td></tr>
+<tr><td>amiba_5：阿米巴粉痕迹</td><td>6</td><td>6</td><td>6</td></tr>
+<tr><td>amiba_6：阿米巴黄痕迹</td><td>未打出</td><td>8</td><td>2</td></tr>
+</tbody></table></div>
+<p>最后一列只计算“该牌已打出时”在现有终局资产上的牌分，不包含获得与打出的代价，也不保证历史可达。AI已有资产上的缺牌差额为16分，其余16分来自相应痕迹和登陆资产差异；不能把32分全部当成补拿几张牌的收益。</p>
+<p>原始行动记录确认：amiba_7在第192—206步已知在手，第206步用于弃牌角标；chong_2在第295—309步已知在手，第309步插作牌收入。两张牌在AI既有终局资产上的条件计分合计14分，是值得核查的真实用途冲突；这不是已证明可追回14分。amiba_6未在记录的已知手牌中出现，不能假设它曾可供选择。</p>
+
+<h2>下一项验证：虫族计分牌与分析准备的冲突</h2>
+<p>优先核查第四轮第295步：AI有3钱2电，chong_2费用1钱，当前可合法打出；旧搜索已完整比较，打牌路径212.5、分析准备路径224，随后准备流程将该牌插作收入。问题涉及行动时机与固定准备，不属于候选遗漏。</p>
+<p>下一步从第三轮末检查点还原同一原根和随机状态，核对行动归属，再比较“分析优先”和“先兑现计分牌、保留分析准备”的实际后续。只有证明代价、准备收益和正式分数可以共同兑现，才考虑修改；不免费增加计分牌、不把终局敏感性表当作可执行计划，也不自动恢复已冻结候选。</p>
+<p class="callout">本报告完成了分差归因与下一决策点定位，没有新增AI对局、搜索或规则输入，没有策略修改。随机20盘均分仍134.35，已记录的教学AI完整成绩仍为272。</p>
+
+<h2>方法与来源</h2>
+<p class="note">对两份既有终局Native存档，分别使用教学AI原源码与当前Native计分模块重算，完整分项逐项一致。两源码唯一Native差异是阿米巴揭示时迁移顺序的规范化；本次未重放全部行动，不宣称全历史规则等价。教师合法参考已有474步原生重放验证。教学AI记录与随机20盘使用不同策略源码，现用v486尚未在此教学盘新增完整验收。行动追踪只使用当时实际已知的本席手牌，未把未来牌身份作为决策输入。</p>
+<ul>
+<li><a href="../ai-foundation-20261119/teaching-endgame-ledger-20261119-v1.json">完整账本、源码指纹、四种目标敏感性与牌去向</a></li>
+<li><a href="../ai-foundation-20261119/teaching-missing-score-card-contexts-20261119-v1.json">计分牌所在行动上下文</a></li>
+<li><a href="../ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-proof-20261118-v1.json">教师合法参考及逐轮资产证明</a></li>
+<li><a href="ai-search-current-full-baseline-20261118/2170d824.5fabd621.full.action-log.html">教学AI原完整行动报告</a></li>
+<li><a href="seti-ai-method-review-20261119-v1.html">策略迭代方法评估</a></li>
+</ul>
+</article></html>

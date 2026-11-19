@@ -1,0 +1,225 @@
+{
+  "scope": "Read-only recorded contexts; no new Native action.",
+  "sourceRecord": "5fabd6213",
+  "rows": [
+    {
+      "step": 192,
+      "round": 3,
+      "wallet": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 9
+      },
+      "mainActionCompleted": true,
+      "cards": [
+        {
+          "id": "alien-amiba-7-10",
+          "cardId": "amiba_7.webp",
+          "set": "alien:阿米巴",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        }
+      ],
+      "legalDirectPlay": [],
+      "resourceGoalRows": [],
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 80,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "summary": "结束回合"
+      }
+    },
+    {
+      "step": 195,
+      "round": 3,
+      "wallet": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 4
+      },
+      "mainActionCompleted": true,
+      "cards": [
+        {
+          "id": "alien-amiba-7-10",
+          "cardId": "amiba_7.webp",
+          "set": "alien:阿米巴",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        }
+      ],
+      "legalDirectPlay": [],
+      "resourceGoalRows": [],
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 82,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "summary": "放置数据"
+      }
+    },
+    {
+      "step": 206,
+      "round": 3,
+      "wallet": {
+        "credits": 1,
+        "energy": 2,
+        "publicity": 5
+      },
+      "mainActionCompleted": true,
+      "cards": [
+        {
+          "id": "alien-amiba-7-10",
+          "cardId": "amiba_7.webp",
+          "set": "alien:阿米巴",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "scanActionCode": 2,
+          "incomeCode": 0,
+          "faceUp": true
+        }
+      ],
+      "legalDirectPlay": [],
+      "resourceGoalRows": [],
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:3c5abf8b",
+        "actorId": "player-white",
+        "stateVersion": 87,
+        "decisionVersion": 2,
+        "target": {
+          "cardInstanceId": "alien-amiba-7-10"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "summary": "amiba_7.webp：弃牌角标"
+      }
+    },
+    {
+      "step": 295,
+      "round": 4,
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5
+      },
+      "mainActionCompleted": false,
+      "cards": [
+        {
+          "id": "alien-chong-2-17",
+          "cardId": "chong_2.webp",
+          "set": "alien:虫",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 5,
+          "scanActionCode": 2,
+          "incomeCode": 2,
+          "faceUp": true
+        }
+      ],
+      "legalDirectPlay": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:e564410b",
+          "actorId": "player-white",
+          "stateVersion": 132,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "alien-chong-2-17"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 3
+          },
+          "summary": "chong_2.webp"
+        }
+      ],
+      "resourceGoalRows": [],
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 132,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "summary": "放置数据"
+      }
+    },
+    {
+      "step": 309,
+      "round": 4,
+      "wallet": {
+        "credits": 3,
+        "energy": 2,
+        "publicity": 6
+      },
+      "mainActionCompleted": true,
+      "cards": [
+        {
+          "id": "alien-chong-2-17",
+          "cardId": "chong_2.webp",
+          "set": "alien:虫",
+          "price": 1,
+          "cardTypeCode": 3,
+          "discardActionCode": 5,
+          "scanActionCode": 2,
+          "incomeCode": 2,
+          "faceUp": true
+        }
+      ],
+      "legalDirectPlay": [],
+      "resourceGoalRows": [],
+      "chosen": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:465f1d10",
+        "actorId": "player-white",
+        "stateVersion": 138,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "income:alien-chong-2-17",
+          "cardInstanceId": "alien-chong-2-17"
+        },
+        "payload": {},
+        "summary": "收入 chong_2.webp"
+      }
+    }
+  ]
+}

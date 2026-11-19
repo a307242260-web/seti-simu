@@ -180,3 +180,7 @@
 - followup_board12_evidence: board12-held-research-outcome-20261119-v1.json；board12-purpose-replay-verification-20261119-v1.json。四次候选已比较，两次研究端点与旧搜索一致；收入平手的价格偏好不代表数值较优。局部省兑换未使真实第三轮根更高，故不改AI、不新跑整局。
 - followup_board12_verification: 8端点／38次独立重放一致；总实际输入167含两笔无效绿方兑换，已从因果分支排除。一次冷搜索94模拟／135.56ms完整通过。诊断驱动与重放器新增行动归属检查；手动恢复仍保留原截止，不能宣称时限机制完全强制。
 - followup_business_priority: keep有限归因方法，整体提分未证实。下一项回到教学整局结算账本与规则身份，先查65分非盘面差额，不继续用零散收入负例替代第三／四轮目标。
+
+- followup_teaching_ledger_evidence: teaching-endgame-ledger-20261119-v1.json；两份终局状态在5fab与当前Native计分逐项一致，65分为目标33／牌32。标记敏感性表显示教师组合在AI资产上反而少6；两张实际持有后被消耗的计分牌成为更具体的用途冲突对象。
+- followup_teaching_ledger_limits: 终局敏感性不证明合法历史或可追回分数；本次无Native输入、AI搜索、新对局。旧源码缺solar-system导致初始化失败后补齐同版本依赖，未改计分或策略。整局与固定20盘质量目标继续未完成。
+- followup_teaching_next: 核查当前源码下教学第295步虫族2与分析准备的时机；同时保留原固定23输入、第三／四轮资产回归，不以历史272宣称现用v486教学整局已验收。

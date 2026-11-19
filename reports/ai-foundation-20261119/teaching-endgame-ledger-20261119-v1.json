@@ -1,0 +1,1047 @@
+{
+  "schemaVersion": "seti-teaching-endgame-ledger-v1",
+  "status": "complete",
+  "sourceCommits": {
+    "formalPolicyCommit": "5fabd62137090f93ab69d4dc1940202917e3c682",
+    "teacherRuleCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+    "currentNativeCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+    "oldNativeRuntime": "/private/tmp/seti-formal272-old-native-_gn5geri",
+    "currentNativeRuntime": "/private/tmp/seti-v486-random20-business-20261119-eihjgdmc",
+    "oldToTeacherChangedNativeFiles": [
+      "randomizer/game/aliens/amiba.js"
+    ],
+    "teacherToCurrentChangedNativeFiles": [],
+    "amibaDifference": "canonical sorted trace-type allocation on reveal; not assumed globally equivalent",
+    "oldSourceFiles": {
+      "randomizer/app.js": "a30eb35a8c942b689bac568c2387f7c17c6d4ecd38c8ec69d5c1fe7471e86359",
+      "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477",
+      "randomizer/solar-system/core.js": "8b5f6e6e35167dc6746191b7d07d5941f4757b3a6e6e810a3a0727573d6e51cb",
+      "randomizer/app/simulation-env.js": "8f51ff2c922df76676571bedcdf88c49e9d63eb003a845354c109ed389be2b54",
+      "randomizer/app/browser-rule-composition.js": "6fbb97557886d7b97e698b5de6c40f5b7927cf269c4c3f295399dc7fede135f0",
+      "randomizer/app/dependencies.js": "ea81aca85e6ae80d543c155263f254d061a78ea8a6e5234110377803b9e9825d",
+      "randomizer/app/rule-observation.js": "e341c33776448cd1b58371dab545f71aadd08ec91edbb8c71cc4b8122a024ff3",
+      "randomizer/app/dom.js": "ddec59fd79b862796f9e88b0bb0b3761417ceab23e078548b4172d8a5630d12f",
+      "randomizer/app/simulation-contract.js": "1db445bd26529966cdd3b53bf84f43f383ca8b038a0ed457d32bca55e2773c8c",
+      "randomizer/app/game-recovery.js": "d28b219e42567490cb6e710612a350ff34253092e561453915aec04f9172a485",
+      "randomizer/app/public-api.js": "f949bf1f3ca079501a6648e17c64b37dc4c9dd873aaca614b4cb643abf14c627",
+      "randomizer/app/browser-host/action-bar.js": "11b224e66cf28711e4a21b11346e8fcaf703fb15f72d210da4e701797c6615ed",
+      "randomizer/app/browser-host/decision-ui.js": "aab3a36c488eacb33c8a7a4c3ab91639dbf6b7b41376c49e40871258a31e388e",
+      "randomizer/app/browser-host/view-state-store.js": "cc7ff7fb43f4e9415f32a4e85bedd6e711c2935d0e5288905b7d3dc8ed067210",
+      "randomizer/app/browser-host/projection-adapter.js": "3f2902c3c23059b59dc0f6d3261d003b0205f4e97ff640fce7c2fc8d4c6e8e29",
+      "randomizer/app/browser-host/resident-renderer.js": "4a836144c0f4ec9453bc5b2758ec34b6c07150a0f8299f32730e2eeecf707b32",
+      "randomizer/app/browser-host/trajectory-recording.js": "42f55335a93376c8d7eb4e0f262cec0b54b68716d65fcf6649deb77a7be80eef",
+      "randomizer/app/browser-host/input-adapter.js": "821f626e265bde866ab1f5aca2760b99f7b4e413380078ab53e7296696db8e06",
+      "randomizer/app/ai/browser-bootstrap.js": "8fca8abdcdce61c96eaa7c151bf8018dd6b1c66d8fbfff22cf2955a5ec86758d",
+      "randomizer/training/heuristic-policy-turn-report.js": "153b8351beadbb15a8543ded7aef810ae9a919d7961659a6daaeb9c72630c46a",
+      "randomizer/training/evaluation.js": "14ec77bfe4e7d8295275fcea9c4bbaba29b67fffd147d649951e7af18bfbad71",
+      "randomizer/training/worker-pool.js": "0c62366f2c36f07f000eaeeb316898df46943aeb822d94d7fec0d1cdfc6d4390",
+      "randomizer/training/simulation-worker.js": "556ceb07510eba13150674585070abab68078b2eaf14801d7f8dc920aecac20e",
+      "randomizer/training/worker-protocol.js": "9d33b73474a029c77025a53aa0a914f712c0cf65f3f7b0d291390a6fc08ed1d8",
+      "randomizer/training/self-play.js": "63f7a1f310352ca53b6c9d79ac0879d63a9336ad5c2641797be551f5a5451a5a",
+      "randomizer/training/trajectory-recorder.js": "90712f8f31776ff1f0240e4e10ca8627cb1494b752dc676289041fb47dab0a11",
+      "randomizer/training/simulation-rule-composition.js": "24d04512bcd67fd226dfc272a2369bfd769dfc2c04b40e01a75a40bdfbbbe0a3",
+      "randomizer/training/episode-report.js": "bda37505c9f8a94b4f80ac60e00d07e012bb588443e576e5ca514d7931fcbf36",
+      "randomizer/training/heuristic-policy.fixed-board.js": "9ac33b063e2161600a421422b9f57912fd6a5308d2490ce5795efd5325f2c9d7",
+      "randomizer/training/fixtures/fast-worker.js": "b4f2b3f7780d6aff07bfa393f0fbba2c04d97338229a58bc16da8f0259f3c89d",
+      "randomizer/game/production-kernel.js": "a4255dfe887b94a01bb8b6e6cb1dec30c53e9969de2338b9ed23aa2318b44233",
+      "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+      "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+      "randomizer/game/turn-flow.js": "c30db5accee34e36ed5b2d20a153803bd2a28bc18e23f87a8bc132b3418d5ea7",
+      "randomizer/game/card-catalog.js": "a35eba8c88990748f1338a05e9473a9703b779fbf168258030bbd6fb4ef06294",
+      "randomizer/game/end-game-scoring.js": "34f6d86465157d16aa354d27d2535594bd64d5acc2212d39728b191c689219a5",
+      "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+      "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+      "randomizer/game/rule-composition.js": "ea354116295f17de44642fc8c0cec9232560f29a480f614766f659abea5f4976",
+      "randomizer/game/rockets.js": "2ebb2222e9c5924995995808fcfb44bc8410322e17b9336f00b6191ff4054f16",
+      "randomizer/game/initial-setup.js": "e30d48741330426c2801f3b70766c720bd8440a539df3a92295c8c7de5b08b46",
+      "randomizer/game/browser-read-model.js": "533c4a73ad0282a489ec16ec6115565fa39997ea42009a120e16ec2471bd1b40",
+      "randomizer/game/final-read-model.js": "dd0953747105a232bc07ae4be8251132e8d3685623ca67af5da1bf3c748cc375",
+      "randomizer/game/production-composition.js": "a3b321a87a4fbec5f34bdd76d3f0a5cdf5b513dcdec05017d8da2f6a6e517e9c",
+      "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+      "randomizer/game/final-scoring.js": "e3466536932846981119cb74d0d36e3f74fd5f491ecde55c44ae650540f7f88e",
+      "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+      "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+      "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+      "randomizer/game/aliens/aomomo.js": "bc1bda7c50ec19186f5d727015d11736dba672321903642af1187b31a5ac8463",
+      "randomizer/game/aliens/chong.js": "fb72d6c4d46d68b2a7e037faffdf947ba2086d440149a1553bfebb1e888e21c4",
+      "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+      "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+      "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+      "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+      "randomizer/game/aliens/amiba.js": "4ff6ca2673926f3cfe3dc5943e5d02562fd3b9e2eca109e434855de67b7f0550",
+      "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+      "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+      "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+      "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+      "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+      "randomizer/game/cards/task-state.js": "b7bdd2c0b559f731523f4ce37b485d6b40d53dd881e6ebce37d311a788d0cd90",
+      "randomizer/game/cards/effects.js": "1f532e1b6f181efa144d423348a3fba7fd1624eb90c366bfc26618da02cd3344",
+      "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+      "randomizer/game/cards/play-domain.js": "7d77ed3c57bb308a528a5accbc5dfe76e30327fa7e9efedd515eff4aa1bc5a76",
+      "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+      "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+      "randomizer/game/state/low-coupling-slices.js": "90266c1303b356a0f59632169cad3e2e5cd9dcdac7592a39dc774794a9147303",
+      "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+      "randomizer/game/state/high-coupling-slices.js": "9b88ecf70f13db7d53f92636efed83ade8a7eb9b10921e9c5eea906007ff5f13",
+      "randomizer/game/state/state-store.js": "6d3ac895a22988a2aef6d7e533bb503e5b3193f8dc5937f9c5bed29c87b6bfe9",
+      "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+      "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+      "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+      "randomizer/game/abilities/rocket.js": "d5ed4ff8b9451fb1be6cd92d938c81a28e69d14a8f5556a868f6892a65b9c11c",
+      "randomizer/game/abilities/planet.js": "8cd0f6ee13c2e429e7a159c5020b1de2795b9239f124df9fd865ad96520fd13a",
+      "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+      "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+      "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+      "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+      "randomizer/game/actions/standard-action.js": "8e82ad06433a67fde79c0c365466db19abc230e1c5628511aaa4a282d865ca20",
+      "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+      "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+      "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+      "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+      "randomizer/game/industry/index.js": "f24fc4ad4b3351b21248d04c569a48ab480ff8356a3115872e1e2679f23a2a31",
+      "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+      "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+      "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+      "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+      "randomizer/game/industry/strategy-passive.js": "8bae3cdb34075fe7df8c1963c2e6d9cb2ba8c64a5e773e775ff4bf969b22e77b",
+      "randomizer/game/effects/probe-turn-session.js": "1740ee0f6d57656a7ed44e4a6df9c648e10d77efd5ea07652c3c0ad41be74493",
+      "randomizer/game/effects/state-store-session.browser-smoke.js": "cf1eaa17974a2ccb7dd6f573e8158912e31030f8456f6ef0a5581b1dbedc6c09",
+      "randomizer/game/effects/standard-action-session.js": "5b6c60ebdee4b05963ab861be8465e15c26039b5b1343059e7651d6d87433d81",
+      "randomizer/game/effects/session-runtime.js": "623927fe0fe973114f14a45baac319a802592d5ababaa61345e60d0cb1c17358",
+      "randomizer/game/effects/residual-domain-session.js": "ab106b42592967543871d0787802c5c7cda11250707504ad4b9ec9636e15d1ed",
+      "randomizer/game/effects/science-session.js": "cefead8cf243cc31a4dbf99195489c26db5772bc16c3619901145dc947a9ce41",
+      "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+      "randomizer/game/data/index.js": "593b159683ca184bf610c0d1097fc8a4c99306c3a664a9fc06d8d24ea1d6c903",
+      "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+      "randomizer/game/data/state.js": "a3f51c069acbb9acbd6d2d4fab423fd1591a552574ff940b1ac5b05c87f0f457",
+      "randomizer/game/data/nebula-state.js": "6ef0ca73cd0e85330ba10a68f6eba36687232efbce05697c70742a4d5dec097b",
+      "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+      "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+      "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+      "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+      "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+      "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+      "randomizer/game/tech/resolver.js": "40c6a2baeaac98b7de0b059875d6f2038293a54706f173c166c854dae8630c90",
+      "randomizer/full-flow/standard-flow-v1.fixture.js": "2e80d31cd3576c3135b5d3d005d4f6670ed7ce4bb716e70a863b87fe8931896d"
+    },
+    "additionalSourcePackage": "complete historical randomizer plus card model, including solar-system required by Native initial-cards",
+    "solarSystemSourceDiffs": []
+  },
+  "sources": {
+    "AI": {
+      "path": "seti-saves/seti-save-research-ai-search-current-full-baseline-20261118-5fabd621-full-v163.json",
+      "sha256": "ed675747b6cebc1ed77ec0bb68fe70261bd563c1165aa731737e8b4892eebc40",
+      "nativeStateSha256": "9486699bc42c518f86e3cc4b5889aebd9cb6dd73a53f17357677393295d8611a"
+    },
+    "teacher": {
+      "path": "seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json",
+      "sha256": "b8d6e45acb87828a8e2b0113323a69f3aea90f3a649287972137d344e42ab03e",
+      "nativeStateSha256": "d874b028ba0727748917c1286ce63ba636ee3bccb7a85c3bff979b90391f8956"
+    }
+  },
+  "sourceStatesUnmodified": true,
+  "scoringOnBothRuleSourcesEqual": true,
+  "fullTrajectoryRuleIdentityClaimed": false,
+  "sourceRuleDifference": "Only amiba reveal allocation key ordering differs between formal5fab and teacher838. Stored terminal scores agree exactly on both Native sources; complete action-history equivalence is not inferred.",
+  "results": {
+    "AI": {
+      "old": {
+        "playerId": "player-white",
+        "baseScore": 192,
+        "tileScore": 74,
+        "cardScore": 6,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 272,
+        "totalScore": 272,
+        "tileScoresById": {
+          "a": 22,
+          "b": 24,
+          "c": 0,
+          "d": 28
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 8,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 4,
+            "multiplier": 7,
+            "score": 28
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "current": {
+        "playerId": "player-white",
+        "baseScore": 192,
+        "tileScore": 74,
+        "cardScore": 6,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 272,
+        "totalScore": 272,
+        "tileScoresById": {
+          "a": 22,
+          "b": 24,
+          "c": 0,
+          "d": 28
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 8,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 4,
+            "multiplier": 7,
+            "score": 28
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCards": []
+      }
+    },
+    "teacher": {
+      "old": {
+        "playerId": "player-white",
+        "baseScore": 239,
+        "tileScore": 107,
+        "cardScore": 38,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 384,
+        "totalScore": 384,
+        "tileScoresById": {
+          "a": 0,
+          "b": 48,
+          "c": 24,
+          "d": 35
+        },
+        "tiles": [
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 8,
+            "score": 48
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 4,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 5,
+            "multiplier": 7,
+            "score": 35
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_7.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "blue",
+              "scorePer": 2
+            },
+            "score": 8
+          },
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 10
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_6.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "yellow",
+              "scorePer": 2
+            },
+            "score": 8
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "current": {
+        "playerId": "player-white",
+        "baseScore": 239,
+        "tileScore": 107,
+        "cardScore": 38,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 384,
+        "totalScore": 384,
+        "tileScoresById": {
+          "a": 0,
+          "b": 48,
+          "c": 24,
+          "d": 35
+        },
+        "tiles": [
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 8,
+            "score": 48
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 6,
+            "multiplier": 4,
+            "score": 24
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 5,
+            "multiplier": 7,
+            "score": 35
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "kind": "planetLandingPairs",
+              "count": 2,
+              "scorePer": 6
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_7.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "blue",
+              "scorePer": 2
+            },
+            "score": 8
+          },
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 10
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "pink",
+              "scorePer": 2
+            },
+            "score": 6
+          },
+          {
+            "cardId": "amiba_6.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "traceType": "yellow",
+              "scorePer": 2
+            },
+            "score": 8
+          }
+        ],
+        "jiuzheCards": []
+      }
+    }
+  },
+  "facts": {
+    "AI": {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 0,
+        "score": 192
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange2": true,
+          "orange3": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "totalOwnedTechnology": 8,
+      "completedTasks": 4,
+      "traceCounts": {
+        "blue": 6,
+        "pink": 5,
+        "yellow": 3
+      },
+      "reservedCards": [
+        "dlc_31.png",
+        "amiba_5.webp"
+      ],
+      "marks": [
+        {
+          "id": "final-mark-2",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 50,
+          "tileId": "a"
+        },
+        {
+          "id": "final-mark-3",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 70,
+          "tileId": "b"
+        },
+        {
+          "id": "final-mark-1",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 25,
+          "tileId": "d"
+        }
+      ]
+    },
+    "teacher": {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 3,
+        "publicity": 4,
+        "score": 239
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 8,
+        "energy": 7,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1,
+          "blue3": 4,
+          "blue4": 3
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "blue4": true,
+          "orange1": true,
+          "orange2": true,
+          "orange3": true,
+          "orange4": true,
+          "purple1": true,
+          "purple2": true,
+          "purple4": true
+        }
+      },
+      "totalOwnedTechnology": 11,
+      "completedTasks": 6,
+      "traceCounts": {
+        "blue": 8,
+        "pink": 7,
+        "yellow": 6
+      },
+      "reservedCards": [
+        "dlc_31.png",
+        "b_101.webp",
+        "amiba_7.webp",
+        "chong_2.webp",
+        "amiba_5.webp",
+        "amiba_6.webp"
+      ],
+      "marks": [
+        {
+          "id": "final-mark-2",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 50,
+          "tileId": "b"
+        },
+        {
+          "id": "final-mark-3",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 70,
+          "tileId": "c"
+        },
+        {
+          "id": "final-mark-1",
+          "playerColor": "white",
+          "playerId": "player-white",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 25,
+          "tileId": "d"
+        }
+      ]
+    }
+  },
+  "differences": {
+    "total": 112,
+    "base": 47,
+    "tile": 33,
+    "card": 32,
+    "other": 0
+  },
+  "markSensitivity": {
+    "scope": "Terminal score sensitivity only; exchanged marks are not a played legal history or a new game score.",
+    "tileScores": {
+      "AI": {
+        "AI": 74,
+        "teacher": 68
+      },
+      "teacher": {
+        "AI": 83,
+        "teacher": 107
+      }
+    },
+    "AIAssetsTeacherAllocationDelta": -6,
+    "teacherAssetsTeacherAllocationDelta": 24
+  },
+  "cardSensitivity": {
+    "scope": "Conditional card scoring on existing assets, without claiming acquisition/payment is legal or free.",
+    "rows": [
+      {
+        "card": "dlc_31.png",
+        "scoreIfThisCardWerePlayedOnAIAssets": 0,
+        "teacherActualScore": 6,
+        "AIActuallyPlayed": true
+      },
+      {
+        "card": "amiba_7.webp",
+        "scoreIfThisCardWerePlayedOnAIAssets": 8,
+        "teacherActualScore": 8,
+        "AIActuallyPlayed": false
+      },
+      {
+        "card": "chong_2.webp",
+        "scoreIfThisCardWerePlayedOnAIAssets": 6,
+        "teacherActualScore": 10,
+        "AIActuallyPlayed": false
+      },
+      {
+        "card": "amiba_5.webp",
+        "scoreIfThisCardWerePlayedOnAIAssets": 6,
+        "teacherActualScore": 6,
+        "AIActuallyPlayed": true
+      },
+      {
+        "card": "amiba_6.webp",
+        "scoreIfThisCardWerePlayedOnAIAssets": 2,
+        "teacherActualScore": 8,
+        "AIActuallyPlayed": false
+      }
+    ]
+  },
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "newGames": 0,
+  "cardFates": {
+    "tracePath": "reports/research/2170d824.5fabd621.full.json.decisions.jsonl",
+    "traceSha256": "7c9842070b25d435e17bcb74eadd973309128ab8388d67e16c0bee2a7a32a542",
+    "traceRows": 331,
+    "stepOffset": 23,
+    "limits": "Only actually known own-hand instances are classified; absence does not prove an unoffered alien card was available.",
+    "cards": {
+      "amiba_7.webp": {
+        "knownHandSnapshots": 15,
+        "firstKnown": {
+          "traceIndex": 168,
+          "round": 3,
+          "instance": "alien-amiba-7-10",
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 9
+          },
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合",
+          "step": 192
+        },
+        "lastKnown": {
+          "traceIndex": 182,
+          "round": 3,
+          "instance": "alien-amiba-7-10",
+          "wallet": {
+            "credits": 1,
+            "energy": 2,
+            "publicity": 5
+          },
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_7.webp：弃牌角标",
+          "step": 206
+        },
+        "uses": [
+          {
+            "traceIndex": 182,
+            "round": 3,
+            "instance": "alien-amiba-7-10",
+            "wallet": {
+              "credits": 1,
+              "energy": 2,
+              "publicity": 5
+            },
+            "selectedFamily": "card_corner",
+            "selectedSummary": "amiba_7.webp：弃牌角标",
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "card_corner",
+              "phase": "quick",
+              "actionId": "card_corner:3c5abf8b",
+              "actorId": "player-white",
+              "stateVersion": 87,
+              "decisionVersion": 2,
+              "target": {
+                "cardInstanceId": "alien-amiba-7-10"
+              },
+              "payload": {
+                "kind": "resource",
+                "multiplier": 1
+              },
+              "summary": "amiba_7.webp：弃牌角标"
+            },
+            "step": 206
+          }
+        ],
+        "fundedPlayRoots": []
+      },
+      "amiba_6.webp": {
+        "knownHandSnapshots": 0,
+        "firstKnown": null,
+        "lastKnown": null,
+        "uses": [],
+        "fundedPlayRoots": []
+      },
+      "chong_2.webp": {
+        "knownHandSnapshots": 15,
+        "firstKnown": {
+          "traceIndex": 271,
+          "round": 4,
+          "instance": "alien-chong-2-17",
+          "wallet": {
+            "credits": 3,
+            "energy": 2,
+            "publicity": 5
+          },
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据",
+          "step": 295
+        },
+        "lastKnown": {
+          "traceIndex": 285,
+          "round": 4,
+          "instance": "alien-chong-2-17",
+          "wallet": {
+            "credits": 3,
+            "energy": 2,
+            "publicity": 6
+          },
+          "selectedFamily": "choose_card",
+          "selectedSummary": "收入 chong_2.webp",
+          "step": 309
+        },
+        "uses": [
+          {
+            "traceIndex": 285,
+            "round": 4,
+            "instance": "alien-chong-2-17",
+            "wallet": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 6
+            },
+            "selectedFamily": "choose_card",
+            "selectedSummary": "收入 chong_2.webp",
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_card",
+              "phase": "conditional",
+              "actionId": "choose_card:465f1d10",
+              "actorId": "player-white",
+              "stateVersion": 138,
+              "decisionVersion": 2,
+              "target": {
+                "choiceId": "income:alien-chong-2-17",
+                "cardInstanceId": "alien-chong-2-17"
+              },
+              "payload": {},
+              "summary": "收入 chong_2.webp"
+            },
+            "step": 309
+          }
+        ],
+        "fundedPlayRoots": [
+          {
+            "traceIndex": 271,
+            "round": 4,
+            "instance": "alien-chong-2-17",
+            "wallet": {
+              "credits": 3,
+              "energy": 2,
+              "publicity": 5
+            },
+            "selectedFamily": "place_data",
+            "selectedSummary": "放置数据",
+            "selectedValue": 224,
+            "cardRoots": [
+              {
+                "actionId": "play_card:e564410b",
+                "target": 4,
+                "value": 212.5,
+                "realization": 0,
+                "preparationDebt": 0,
+                "completion": "complete"
+              }
+            ],
+            "step": 295
+          }
+        ]
+      },
+      "amiba_5.webp": {
+        "knownHandSnapshots": 20,
+        "firstKnown": {
+          "traceIndex": 192,
+          "round": 3,
+          "instance": "alien-amiba-5-12",
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6
+          },
+          "selectedFamily": "accept_optional_effect",
+          "selectedSummary": "结算 amiba_0.webp",
+          "step": 216
+        },
+        "lastKnown": {
+          "traceIndex": 211,
+          "round": 3,
+          "instance": "alien-amiba-5-12",
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 0
+          },
+          "selectedFamily": "play_card",
+          "selectedSummary": "amiba_5.webp",
+          "step": 235
+        },
+        "uses": [
+          {
+            "traceIndex": 211,
+            "round": 3,
+            "instance": "alien-amiba-5-12",
+            "wallet": {
+              "credits": 1,
+              "energy": 0,
+              "publicity": 0
+            },
+            "selectedFamily": "play_card",
+            "selectedSummary": "amiba_5.webp",
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:290e4665",
+              "actorId": "player-white",
+              "stateVersion": 102,
+              "decisionVersion": 2,
+              "target": {
+                "cardInstanceId": "alien-amiba-5-12"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 1
+                },
+                "handIndex": 2
+              },
+              "summary": "amiba_5.webp"
+            },
+            "step": 235
+          }
+        ],
+        "fundedPlayRoots": [
+          {
+            "traceIndex": 211,
+            "round": 3,
+            "instance": "alien-amiba-5-12",
+            "wallet": {
+              "credits": 1,
+              "energy": 0,
+              "publicity": 0
+            },
+            "selectedFamily": "play_card",
+            "selectedSummary": "amiba_5.webp",
+            "selectedValue": 192.5,
+            "cardRoots": [
+              {
+                "actionId": "play_card:290e4665",
+                "target": 4,
+                "value": 192.5,
+                "realization": -8,
+                "preparationDebt": 0,
+                "completion": "complete"
+              }
+            ],
+            "step": 235
+          }
+        ]
+      },
+      "dlc_31.png": {
+        "knownHandSnapshots": 6,
+        "firstKnown": {
+          "traceIndex": 131,
+          "round": 3,
+          "instance": "card-51-0",
+          "wallet": {
+            "credits": 5,
+            "energy": 0,
+            "publicity": 5
+          },
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合",
+          "step": 155
+        },
+        "lastKnown": {
+          "traceIndex": 139,
+          "round": 3,
+          "instance": "card-51-0",
+          "wallet": {
+            "credits": 3,
+            "energy": 0,
+            "publicity": 6
+          },
+          "selectedFamily": "play_card",
+          "selectedSummary": "dlc_31.png",
+          "step": 163
+        },
+        "uses": [
+          {
+            "traceIndex": 139,
+            "round": 3,
+            "instance": "card-51-0",
+            "wallet": {
+              "credits": 3,
+              "energy": 0,
+              "publicity": 6
+            },
+            "selectedFamily": "play_card",
+            "selectedSummary": "dlc_31.png",
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:ec548c50",
+              "actorId": "player-white",
+              "stateVersion": 67,
+              "decisionVersion": 2,
+              "target": {
+                "cardInstanceId": "card-51-0"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 1
+                },
+                "handIndex": 1
+              },
+              "summary": "dlc_31.png"
+            },
+            "step": 163
+          }
+        ],
+        "fundedPlayRoots": [
+          {
+            "traceIndex": 136,
+            "round": 3,
+            "instance": "card-51-0",
+            "wallet": {
+              "credits": 5,
+              "energy": 0,
+              "publicity": 5
+            },
+            "selectedFamily": "quick_trade",
+            "selectedSummary": "2信用点 → 1能量",
+            "selectedValue": 132,
+            "cardRoots": [
+              {
+                "actionId": "play_card:ec548c50",
+                "target": 1,
+                "value": 100.5,
+                "realization": -12.5,
+                "preparationDebt": 0,
+                "completion": "complete"
+              }
+            ],
+            "step": 160
+          }
+        ]
+      }
+    }
+  }
+}

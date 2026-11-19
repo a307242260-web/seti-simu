@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teaching-score-ledger-route-20261119-v1.json",
+  "startedEpochSeconds": 1795058392.125657,
+  "deadlineEpochSeconds": 1795059657.0,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058392.462634,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 37397,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058392.793052
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/audit-teaching-endgame-ledger-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795058393.099542,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 37500,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058393.485269
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058454.233058,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 38009,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058454.257777
+    },
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058454.587243,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 38109,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058454.6711192
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058679.828246,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-5.stderr.log",
+      "pid": 39783,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058680.1486201
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058771.328866,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-6.stderr.log",
+      "pid": 40512,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058771.353726
+    },
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795058938.9002829,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-7.stderr.log",
+      "pid": 41778,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795058938.991609
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795059198.190007,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795059657.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-score-ledger-20261119-v2.window.attempt-8.stderr.log",
+      "pid": 43868,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795059198.2378528
+    }
+  ],
+  "closedEpochSeconds": 1795059274.6435468,
+  "outcome": "teaching-score-ledger-outcome-20261119-v1.json"
+}
