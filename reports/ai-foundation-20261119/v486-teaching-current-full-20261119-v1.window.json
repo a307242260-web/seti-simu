@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "v486-teaching-current-full-route-20261119-v1.json",
+  "startedEpochSeconds": 1795064658.0796192,
+  "deadlineEpochSeconds": 1795066458.0796192,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064708.38836,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 94921,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064708.4129002
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064718.156584,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 95055,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064718.1814332
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064791.728857,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 95402,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064791.777937
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064798.8765829,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 95538,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064798.901461
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/run-v486-teaching-current-full-20261119.py"
+      ],
+      "startedEpochSeconds": 1795064865.863638,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 96093,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064900.2582269
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795065223.36305,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 97813,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795065223.6938229
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795065350.25112,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 98807,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795065352.992247
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prepare-v486-teaching-registry-20261119.py"
+      ],
+      "startedEpochSeconds": 1795065631.6838531,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 935,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795065752.1133518
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prepare-v486-teaching-registry-20261119.py"
+      ],
+      "startedEpochSeconds": 1795065908.661945,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 33140,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795065910.0040371
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795066096.932132,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795066458.0796192,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 33971,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795066096.980924
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795065907.9961789,
+      "previousStatus": "failed",
+      "reason": "Whole historical registry regeneration timed out after120s. The one AI full game had already completed and is not rerun. Continue with a bounded new-entry merge using the already registered runtime row, preserving all prior catalog entries, existing registry rows and HTML template; no deadline extension."
+    }
+  ],
+  "closedEpochSeconds": 1795066218.685926,
+  "businessOutcome": "v486-teaching-current-full-business-outcome-20261119-v1.json"
+}

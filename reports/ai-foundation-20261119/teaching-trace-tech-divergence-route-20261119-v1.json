@@ -3,9 +3,10 @@
   "routeId": "teaching-earliest-material-trace-technology-divergence",
   "startedEpochSeconds": 1795062348.459496,
   "deadlineEpochSeconds": 1795065948.459496,
-  "status": "open",
+  "status": "closed-inconclusive",
   "workUnits": [
-    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v1.window.json"
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.json"
   ],
   "businessQuestion": "Which earliest real teaching trajectory choice explains the later trace/technology asset deficit after separating opening assets and existing rejected or frozen hypotheses?",
   "hypotheses": [
@@ -27,8 +28,10 @@
     "budget": "Existing cold search unchanged and complete <=256 Native simulations and <=600ms. At most3 cold searches. No purpose expansion without concrete lower-bound funding.",
     "stop": "Preserve the fixed absolute parent deadline; close inconclusive instead of reviving old frozen tuning."
   },
-  "totalNativeInputs": 181,
+  "totalNativeInputs": 199,
   "coldSearches": 2,
   "businessCheckpoint": "teaching-trace-tech-business-checkpoint-20261119-v2.json",
-  "nextWorkUnit": "Before considering any purple2 capability change, adjudicate the actual B101-orange1 quote and its shared-wallet paid-research opportunity cost at the already saved127 root. Reuse source-exact existing Native witnesses; do not repeat the old orange2 ordering control, tune weights, run a full game, or exceed remaining39 actual-plus-verification inputs and the original parent deadline."
+  "nextWorkUnit": null,
+  "closedEpochSeconds": 1795064581.061104,
+  "businessOutcome": "teaching-trace-tech-route-outcome-20261119-v1.json"
 }

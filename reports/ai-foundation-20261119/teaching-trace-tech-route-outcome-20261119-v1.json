@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "seti-teaching-trace-tech-route-outcome-v1",
+  "status": "inconclusive-no-policy-adoption",
+  "goalStatus": "active",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "strategyChanged": false,
+  "newFullGames": 0,
+  "totalRouteNativeInputs": 199,
+  "controlAndRecoveryInputs": 100,
+  "independentReplayInputs": 99,
+  "coldSearches": 2,
+  "b101NativeQuote": 122.58333333333333,
+  "b101ActualProjectedValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 122.58333333333333,
+    "components": {
+      "realizedScore": 50,
+      "currentEndGameBonus": 22,
+      "resources": 12.5,
+      "hand": 2,
+      "income": 9.5,
+      "technologyPotential": 9,
+      "handPotential": 3.3333333333333335,
+      "researchPotential": 4,
+      "probePotential": 8.5,
+      "analysisPotential": 1.75,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "b101Resources": {
+    "score": 50,
+    "credits": 6,
+    "energy": 3,
+    "publicity": 6,
+    "availableData": 0,
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "techState": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "purple4": true,
+        "orange1": true
+      }
+    }
+  },
+  "b101ReplayExact": true,
+  "sourceAudit": {
+    "missionCapital": "probe-capital.js evaluateMission recomputes investment capital after the mission payment and subtracts initialCapital. Component addition alone does not establish duplicate funding.",
+    "researchScanPurpose": "The current continuation contract requires a near-empty specific money/energy/data window and is not applicable at root127. Its absence is a coverage boundary, not proof of an incorrect Native execution.",
+    "purple2Forecast": "No independent future-use term in technologyCapital; no new coefficient has been fitted or adopted."
+  },
+  "businessConclusions": [
+    "The short scan/analysis chain is Native-reachable and has a concrete asset payoff: the twice-accepting branch71 board points versus69, with1 more energy and1 more data but2 less publicity.",
+    "The actual highest B101-orange1 preparation is not the old orange2 ordering control. Its9 Native actions, complete endpoint/RNG and projected value122.58333333333333 are verified exactly.",
+    "The current evidence does not prove that research-purple2 should beat that actual B101 choice over a fair common continuation. No generic coefficient or forced technology priority is justified."
+  ],
+  "notClaimed": [
+    "Native quote correctness does not prove that future-purpose valuation is globally correct or that all investment forecasts can be jointly realized.",
+    "No new complete third round, complete game, score improvement or random20 improvement."
+  ],
+  "nextIndependentBusinessCheck": "Before another strategy-learning patch, determine whether the already accepted v486 source has a current full fixed23 teaching-board result; reuse it if present. If absent, admit and run at most one registered current-source unchanged baseline, enforcing256/600 and180s and saving every round. This compares source identity and whole-game behavior, not another continuation of the rejected parameter-tuning route.",
+  "evidence": {
+    "firstUnit": "teaching-trace-tech-business-checkpoint-20261119-v2.json",
+    "b101Diagnostics": "teaching-b101-orange1-native-diagnostics-20261119-v1.json.gz",
+    "b101Replay": "teaching-b101-orange1-native-replay-20261119-v1.json.gz"
+  }
+}

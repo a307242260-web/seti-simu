@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "seti-current-teaching-baseline-export-proof-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "newRecord": "reports/research/a9ba4051.94299f38.full.json",
+  "oldRecord": "reports/research/2170d824.5fabd621.full.json",
+  "files": {
+    "reports/iteration/v486-teaching-current-full-20261119/a9ba4051.94299f38.full.action-log.html": "26e5bc632808f0aead286ec314f35bb20f8e675f13569eb4ae73bf60f540d15b",
+    "reports/research/a9ba4051.94299f38.full.json": "4d393c95e4d9bb7097531bc85596bbf5be3805c93370905438bfe06b6e6d520c",
+    "reports/research/a9ba4051.94299f38.full.json.decisions.jsonl": "f5ae8e7d65b71a01e942644e381d1489ef608314a04f4b8eab4e6f7b6b3ba3fe",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-1.checkpoint.json": "b4eacdf2b562ea4d9463b863e3a8ae1202e33a432a1b36b72fc3542426125cbb",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-2.checkpoint.json": "1bc55a8d4a61542133ad3cc3ceb7e049c52e78416a677ec79e1cffac130d4ce1",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-3.checkpoint.json": "03f6c43938bccefbd7333edc6a93a65eaa0008ed9432eef766e39280dbdca883",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-4.checkpoint.json": "440586e74183557ad5e805d1cb3c3321091b1173eedbb22465fb6508a0d0ad20",
+    "reports/research/a9ba4051.94299f38.full.json.round-ends.jsonl": "cb4b5b42e97227b38fe75e268c58936a8b1b1c0bf2a200ec5173192b8a23b9fa",
+    "reports/research/a9ba4051.94299f38.full.json.rounds.jsonl": "2e9845cc7499fa8406d9d70b877a376c378900d85b18b07569dc829384f9dffd",
+    "seti-saves/seti-save-research-v486-teaching-current-full-20261119-94299f38-full-v163.json": "5cdf9e3d59cda8b586513508a6ce676c8e99c3cca817853a390a0baaace19ec0",
+    "reports/iteration/v486-teaching-current-full-20261119/native-replay-20261119-v1.json.gz": "a51369ffa8590acf9c7e10edc0f3fda68c9fb9f839e1f127ec0244886433a704"
+  },
+  "verified": true,
+  "all354ReplayEntriesExactlyEqual": true,
+  "nativeTerminalStateExactlyEqual": true,
+  "nativeTerminalSessionExactlyEqual": true,
+  "fourNativeRoundEndEnvelopesAndRngExactlyEqual": [
+    {
+      "round": 1,
+      "beforeInput": 61,
+      "nativeEnvelopeAndRngEqual": true,
+      "beforeInputEqual": true,
+      "score": 15
+    },
+    {
+      "round": 2,
+      "beforeInput": 128,
+      "nativeEnvelopeAndRngEqual": true,
+      "beforeInputEqual": true,
+      "score": 48
+    },
+    {
+      "round": 3,
+      "beforeInput": 260,
+      "nativeEnvelopeAndRngEqual": true,
+      "beforeInputEqual": true,
+      "score": 118
+    },
+    {
+      "round": 4,
+      "beforeInput": 354,
+      "nativeEnvelopeAndRngEqual": true,
+      "beforeInputEqual": true,
+      "score": 192
+    }
+  ],
+  "complete": true,
+  "score": 272,
+  "wallMs": 16426,
+  "maxNative": 256,
+  "maxMilliseconds": 446.7400830000006,
+  "newStrategyChanges": 0,
+  "newFullGameAttempts": 1,
+  "newAISearchesInThisExport": 0,
+  "newNativeInputsInThisExport": 0,
+  "sourceRawExportFiles": {
+    "reports/iteration/v486-teaching-current-full-20261119/a9ba4051.94299f38.full.action-log.html": "a0bd49ec0ffa36859d681c5e5cc489db4f9467fc1a84ff148723b4efaefbc345",
+    "reports/research/a9ba4051.94299f38.full.json": "564ac56274d23fe3eb7c5bb89d606cbc8ff50a21e4038785dfa4b10d7e4656a7",
+    "reports/research/a9ba4051.94299f38.full.json.decisions.jsonl": "d7cfa09193b6a3c22a880f8e1b692bb8d9bb63840a872f7aea8669cfe912c12d",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-1.checkpoint.json": "b4eacdf2b562ea4d9463b863e3a8ae1202e33a432a1b36b72fc3542426125cbb",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-2.checkpoint.json": "1bc55a8d4a61542133ad3cc3ceb7e049c52e78416a677ec79e1cffac130d4ce1",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-3.checkpoint.json": "03f6c43938bccefbd7333edc6a93a65eaa0008ed9432eef766e39280dbdca883",
+    "reports/research/a9ba4051.94299f38.full.json.round-end-4.checkpoint.json": "440586e74183557ad5e805d1cb3c3321091b1173eedbb22465fb6508a0d0ad20",
+    "reports/research/a9ba4051.94299f38.full.json.round-ends.jsonl": "cb4b5b42e97227b38fe75e268c58936a8b1b1c0bf2a200ec5173192b8a23b9fa",
+    "reports/research/a9ba4051.94299f38.full.json.rounds.jsonl": "2e9845cc7499fa8406d9d70b877a376c378900d85b18b07569dc829384f9dffd",
+    "seti-saves/seti-save-research-v486-teaching-current-full-20261119-94299f38-full-v163.json": "5cdf9e3d59cda8b586513508a6ce676c8e99c3cca817853a390a0baaace19ec0"
+  },
+  "nativeSeedAndActionReplayVerified": {
+    "seed": "seti-free-analyze-v1",
+    "ruleCommit": "94299f385",
+    "inputs": 354,
+    "decisions": 331,
+    "verified": true
+  },
+  "replayArchive": "reports/iteration/v486-teaching-current-full-20261119/native-replay-20261119-v1.json.gz",
+  "publishedGraphsOmitted": true,
+  "richPointDataRetainedInActiveFrozenRuntime": true,
+  "exportBytesAfterCompaction": 4352028,
+  "reportWhitespaceNormalized": true
+}

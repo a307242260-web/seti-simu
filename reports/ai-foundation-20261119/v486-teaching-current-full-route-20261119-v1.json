@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "accepted-v486-current-source-teaching-full-baseline",
+  "startedEpochSeconds": 1795064658.0796192,
+  "deadlineEpochSeconds": 1795068258.0796192,
+  "status": "complete-baseline",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/v486-teaching-current-full-20261119-v1.window.json"
+  ],
+  "businessQuestion": "What are the accepted v486 source whole-game score and four complete round-end asset ledgers on the unchanged fixed23 teaching opening, distinct from historical5fab272?",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "runtime": "/private/tmp/seti-v486-random20-business-20261119-eihjgdmc",
+  "limits": {
+    "maximumNewFullGames": 1,
+    "maximumWorkUnits": 2,
+    "maximumWallSeconds": 3600,
+    "maximumNewStrategyChanges": 0,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000
+  },
+  "admissionEvidence": [
+    "v486-random20-runtime-preflight-20261119-v1.json",
+    "v486-random20-batch-20261119-v1.json",
+    "teaching-tech-root127-probe-20261119-v1.json",
+    "teaching-chong2-preparation-20261119-v1.json"
+  ],
+  "dedup": "No current942 source human405-white-current-full-v1 full record in workspace or frozen runtime. Checked before route creation; recheck before actual command.",
+  "hypotheses": [
+    "Current-source teaching performance or round assets may differ from the historical5fab record, making old-score-only comparison misleading."
+  ],
+  "scope": "One unchanged accepted source baseline via robot_iterate, White autonomous and other three PASS/forced. No frozen candidate revival, parameter tuning, or retry of an identical experiment. Save failure and stop at an input/decision gate failure.",
+  "closedEpochSeconds": 1795066218.6857998,
+  "score": 272,
+  "strategyChanged": false,
+  "newFullGameAttempts": 1,
+  "businessOutcome": "v486-teaching-current-full-business-outcome-20261119-v1.json"
+}

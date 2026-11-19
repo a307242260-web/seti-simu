@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "seti-targeted-registry-merge-proof-v1",
+  "verified": true,
+  "version": "v486-teaching-current-full-20261119",
+  "parent": "8df1eec1758902994655dd8b131b087d8619027b",
+  "preservedWorkingCatalogEntries": true,
+  "preservedWorkingRegistryRows": true,
+  "preservedWorkingHTMLTemplate": true,
+  "v1Unchanged": true,
+  "independentHeadSnapshotPrepared": true,
+  "beforeWorkingHashes": {
+    "reports/iteration/versions.json": "a05768443b8a6b16c4c2da3afc1faeed3288464402c6f81ac80a5054d232add5",
+    "reports/iteration/registry.json": "ea3ea2a282823da4dd31258e46136b9b905c6832f8b1acf80e0d896ed11bb2b1",
+    "reports/robot-iteration.html": "9fbb88a910d257a802cf609862083fe71a8dc827fc3fe8eba8d95a7eb6b92bc5"
+  },
+  "afterWorkingHashes": {
+    "reports/iteration/versions.json": "b925d44a1ebc5618c375adf645078fa22946c2b518413e257abbc9b4450309e2",
+    "reports/iteration/registry.json": "1caf1e41f50b4f07a5bd4bbc501dd679ff28ea40ce6641af1c53fb65f7cc46de",
+    "reports/robot-iteration.html": "09dbbc76db4f2737edfc4676d9c1f5665e30e963704fcee8ea6090d1a5e209e4"
+  },
+  "committedSnapshotHashes": {
+    "reports/iteration/versions.json": "95f3dd021f24508e4ebc66b461a66725a9e47de5b1d7135e7e94015627e4294c",
+    "reports/iteration/registry.json": "b32479c9df934ec108d47e2e467dd117103634078cd5bbefde3b916db3de4cb8",
+    "reports/robot-iteration.html": "b55d6073a9b46b4a2dbf90579c952eecf54c6144dd7fb548108bfb7fd874a77a"
+  },
+  "newScore": 272,
+  "strategyChanged": false,
+  "wholeHistoryRebuildTimedOutAndNotRetried": true
+}

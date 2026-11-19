@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teaching-trace-tech-divergence-route-20261119-v1.json",
+  "startedEpochSeconds": 1795064147.8225331,
+  "deadlineEpochSeconds": 1795065948.459496,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064148.136003,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 86931,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064148.17654
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064162.528667,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 87448,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064162.569091
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064180.2752798,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 87792,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064180.299645
+    },
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064180.6423411,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 87892,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064180.690484
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064202.740431,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-5.stderr.log",
+      "pid": 88061,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064202.7888389
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064221.4571981,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-6.stderr.log",
+      "pid": 88234,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064221.48158
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064265.2112901,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-7.stderr.log",
+      "pid": 89282,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064265.2597
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064280.86183,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-8.stderr.log",
+      "pid": 89522,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064280.886326
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/audit-teaching-b101-orange1-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795064346.112394,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-9.stderr.log",
+      "pid": 90637,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064346.738673
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064385.859888,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-10.stderr.log",
+      "pid": 90845,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064385.884607
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064395.417526,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-11.stderr.log",
+      "pid": 91083,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064395.442202
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064497.737207,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-12.stderr.log",
+      "pid": 92304,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064497.761812
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064519.7831502,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-13.stderr.log",
+      "pid": 92779,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064519.934365
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064529.975153,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-14.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-14.stderr.log",
+      "pid": 92915,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064530.125889
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795064581.016033,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795065948.459496,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-15.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teaching-trace-tech-divergence-20261119-v2.window.attempt-15.stderr.log",
+      "pid": 93537,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795064581.0650089
+    }
+  ],
+  "scope": "Adjudicate the actual B101-orange1 quote/shared-wallet opportunity cost at root127. No purple2 weights or full game. At most39 further literal Native inputs including verification and1 further cold search; preserve the original parent cutoff.",
+  "closedEpochSeconds": 1795064658.00279,
+  "businessOutcome": "teaching-trace-tech-route-outcome-20261119-v1.json"
+}
