@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "v486-original20-early-investment-diagnosis",
+  "startedEpochSeconds": 1795049070.9353669,
+  "deadlineEpochSeconds": 1795050270.9353669,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/early-investment-20261119-v1.window.json"
+  ],
+  "businessQuestion": "Find one causally supported early investment defect in the new original20 trajectories; do not reopen frozen blue-income forecast or change weights without evidence.",
+  "hypotheses": [
+    "An available income investment is omitted or greedily spent by a fixed plan.",
+    "An investment candidate exists but loses because its common-boundary assets or opportunity cost are valued incorrectly."
+  ],
+  "success": "A concrete same-root diagnosis or falsified proposal with Native evidence when needed; source changes require counterexamples and performance checks.",
+  "stop": "20 minutes wall time including archive; no new autonomous game or batch; no continuation of frozen candidates.",
+  "closedEpochSeconds": 1795049967.003721,
+  "outcome": "early-investment-outcome-20261119-v1.json",
+  "policyChangeAdmitted": false,
+  "decision": "Income proposal frozen without two-round proof; the explicit Purple4-first order is infeasible. No automatic performance patch or alternate route follows."
+}

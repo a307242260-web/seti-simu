@@ -1,0 +1,15 @@
+{
+  "name": "card-income-round1",
+  "archive": "reports/ai-foundation-20261119/early-investment-card-income-round1-replay-20261119-v1.json.gz",
+  "sha256": "46ffa0a6a617d3f47d50f1639960fe770e1d0e8e49b6502126dbeb6b1acf5d6f",
+  "inputs": 60,
+  "verified": true,
+  "expected": {
+    "nativeStateSha256": "f159cf5d5445cbfcd2519f33d66dca9fbb2344b660c49fe6555cdcb50bc14ba5",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 2185593560
+    }
+  }
+}

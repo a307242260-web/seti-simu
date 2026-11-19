@@ -1,0 +1,52 @@
+{
+  "cases": [
+    {
+      "name": "card-income-round1",
+      "archive": "reports/ai-foundation-20261119/early-investment-card-income-round1-replay-20261119-v1.json.gz",
+      "sha256": "46ffa0a6a617d3f47d50f1639960fe770e1d0e8e49b6502126dbeb6b1acf5d6f",
+      "inputs": 60,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "f159cf5d5445cbfcd2519f33d66dca9fbb2344b660c49fe6555cdcb50bc14ba5",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    },
+    {
+      "name": "card-income-round2-stop",
+      "archive": "reports/ai-foundation-20261119/early-investment-card-income-round2-stop-replay-20261119-v1.json.gz",
+      "sha256": "2dec30860b9d359e27c1074deb9572faba02bc4cbd53fa60d7bdd6f58fd6be88",
+      "inputs": 72,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "a0380dc301fe51b78272ea0ec148fd3e4741b61247c738856799405716c709b4",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    },
+    {
+      "name": "purple4-first-stop",
+      "archive": "reports/ai-foundation-20261119/early-investment-purple4-first-stop-replay-20261119-v1.json.gz",
+      "sha256": "f29eaaf92fbd7271912848333681c13c38294254324804c79d7433a3a5436a43",
+      "inputs": 64,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "3c61ad35e9957ecc5d446208a2422c810fb4b610c15c9a6715b2790303ec3a48",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    }
+  ],
+  "nativeReplayInputs": 196,
+  "newAISearches": 0,
+  "newFullGames": 0
+}

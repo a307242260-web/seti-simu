@@ -1,0 +1,709 @@
+{
+  "schemaVersion": "seti-native-income-continuation-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "inputFingerprint": "9891245aa3026e755fd230b0f9044484d86db66256340e26d034ba7a59e7f067",
+  "sourceRoot": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/early-investment-3158182c-endpoint-20261119-v1.json.gz",
+  "sourceRootSha256": "af980af39c624e94921028c7d95210cd265f61aff69c731857bab9a8b6226ce4",
+  "status": "complete",
+  "scope": "Only the card-income branch, unchanged v486 policy to round1 before PASS. Baseline is the existing board20 record.",
+  "limits": {
+    "nativeInputsPerSearch": 256,
+    "millisecondsPerSearch": 600,
+    "maximumCommittedInputs": 80,
+    "wallMilliseconds": 15000
+  },
+  "decisions": [
+    {
+      "input": 1,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 57,
+      "milliseconds": 109.5915,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 9,
+          "score": 17
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 2,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d9ba91f0",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:blue4:slot:1",
+          "tileId": "blue4",
+          "blueSlot": 1
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue4（蓝槽 1）"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 9.085709000000008,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 9,
+          "score": 17
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 5,
+      "milliseconds": 13.446374999999989,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue4 下方"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.669375000000002,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 3,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 5,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:e887dc52",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "深空探测",
+          "abilityId": "deepspace_swap_cards"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "深空探测 1x 行动"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.286000000000001,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 6,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f88a4f80",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-15-0",
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_29.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-15-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_29.png",
+          "imageAlt": "dlc_29.png"
+        }
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.845040999999981,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 7,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:1c64ac21",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "public:0:card-17-0",
+          "slotIndex": 0,
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {
+          "handCardInstanceId": "card-15-0"
+        },
+        "decision": null,
+        "summary": "b_9.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_9.webp",
+          "imageAlt": "b_9.webp"
+        }
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 1,
+      "milliseconds": 11.127625000000023,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 8,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 5.926834000000042,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 9,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:753fb0ad",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_9.webp：弃牌角标"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 40,
+      "milliseconds": 42.62495799999999,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 10,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 5.746708000000012,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 6,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 11,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d0b75b83",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 7.946375000000046,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 6,
+          "score": 22
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 12,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 6.265625,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 13,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 16,
+      "milliseconds": 14.419540999999981,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    }
+  ],
+  "inputs": 12,
+  "maxNative": 57,
+  "maxMilliseconds": 109.5915,
+  "newFullGames": 0,
+  "boundary": {
+    "round": 1,
+    "phase": "before-pass-card-and-income",
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 1,
+      "energy": 1,
+      "handSize": 1,
+      "publicity": 0,
+      "score": 24
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 2,
+      "energy": 4,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "techState": {
+      "blueBoardSlots": {
+        "blue4": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue4": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      {
+        "cardId": "b_3.webp",
+        "cardTypeCode": 0,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-37-0",
+        "incomeCode": 1,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "basic"
+      }
+    ],
+    "dataState": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-8",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-9",
+          "index": 5,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "rockets": []
+  },
+  "wallMilliseconds": 448.9245000000001,
+  "retention": "Compact decision metrics; full Native state reproducible from the seed-and-action archives."
+}

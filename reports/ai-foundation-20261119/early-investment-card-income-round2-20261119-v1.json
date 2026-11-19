@@ -1,0 +1,626 @@
+{
+  "schemaVersion": "seti-native-income-continuation-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "inputFingerprint": "142873dbead9628cc62f322df49d906f29a308253099787c08ac3e7a868c362a",
+  "sourceRoot": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/early-investment-card-income-checkpoint-20261119-v1.json.gz",
+  "sourceRootSha256": "888754f4590b3416c6e4eea5ae61ffd1dcca936ab0c9a1bc7cf1375e9e2061ff",
+  "status": "failed",
+  "scope": "Only the card-income branch, unchanged v486 policy to round2 before PASS. Baseline is the existing board20 record.",
+  "limits": {
+    "nativeInputsPerSearch": 256,
+    "millisecondsPerSearch": 600,
+    "maximumCommittedInputs": 80,
+    "wallMilliseconds": 15000
+  },
+  "decisions": [
+    {
+      "input": 1,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 75.66666666666667,
+      "complete": true,
+      "nativeInputs": 16,
+      "milliseconds": 43.43258300000001,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 2,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0d51baa3",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-20-pass-1-1",
+          "cardId": "b_16.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "decision": null,
+        "summary": "b_16.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-20-pass-1-1",
+          "imageSrc": "../assets/cards/basic/split/b_16.webp",
+          "imageAlt": "b_16.webp"
+        }
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 70.16666666666667,
+      "complete": true,
+      "nativeInputs": 2,
+      "milliseconds": 17.061750000000018,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:c858282e",
+        "actorId": "player-blue",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "reasonCode": "research:opponent-pass",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:1a77eae0",
+        "actorId": "player-blue",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-28-pass-2-4",
+          "cardId": "b_139.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-28-pass-2-4"
+        },
+        "decision": null,
+        "summary": "b_139.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-28-pass-2-4",
+          "imageSrc": "../assets/cards/basic/split/b_139.webp",
+          "imageAlt": "b_139.webp"
+        }
+      },
+      "reasonCode": "research:required-pass-reserve-stable",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 5,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ac4b4ab2",
+        "actorId": "player-brown",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "reasonCode": "research:opponent-pass",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 6,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:82d0ac30",
+        "actorId": "player-brown",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-11-0|card-40-0",
+          "cardIds": [
+            "card-11-0",
+            "card-40-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 2
+        },
+        "decision": null,
+        "summary": "弃置 b_69.webp、b_131.webp"
+      },
+      "reasonCode": "research:required-pass-discard",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 7,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:2665e5aa",
+        "actorId": "player-brown",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-27-pass-2-3",
+          "cardId": "b_137.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-27-pass-2-3"
+        },
+        "decision": null,
+        "summary": "b_137.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-27-pass-2-3",
+          "imageSrc": "../assets/cards/basic/split/b_137.webp",
+          "imageAlt": "b_137.webp"
+        }
+      },
+      "reasonCode": "research:required-pass-reserve-stable",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 8,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ff716055",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "reasonCode": "research:opponent-pass",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 9,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:1a2e4962",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-6-0|card-36-0|card-41-0",
+          "cardIds": [
+            "card-6-0",
+            "card-36-0",
+            "card-41-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 3
+        },
+        "decision": null,
+        "summary": "弃置 dlc_42.png、b_51.webp、b_26.webp"
+      },
+      "reasonCode": "research:required-pass-discard",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 10,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:324b3743",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-26-pass-2-2",
+          "cardId": "dlc_34.png"
+        },
+        "payload": {
+          "cardInstanceId": "card-26-pass-2-2"
+        },
+        "decision": null,
+        "summary": "dlc_34.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-26-pass-2-2",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_34.png",
+          "imageAlt": "dlc_34.png"
+        }
+      },
+      "reasonCode": "research:required-pass-reserve-stable",
+      "nativeInputs": 0,
+      "milliseconds": 0,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 11,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 26,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 76.66666666666667,
+      "complete": true,
+      "nativeInputs": 255,
+      "milliseconds": 345.754709,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 12,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 27,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 76.66666666666667,
+      "complete": true,
+      "nativeInputs": 0,
+      "milliseconds": 14.371999999999957,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    },
+    {
+      "input": 13,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:715deece",
+        "actorId": "player-white",
+        "stateVersion": 28,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 2 逆时针"
+      },
+      "reasonCode": "search:complete-visible-window",
+      "value": 80.5,
+      "complete": true,
+      "nativeInputs": 292,
+      "milliseconds": 367.58720800000003,
+      "assets": {
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 1,
+          "energy": 5,
+          "handSize": 4,
+          "publicity": 0,
+          "score": 24
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 2,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        }
+      }
+    }
+  ],
+  "inputs": 12,
+  "maxNative": 292,
+  "maxMilliseconds": 367.58720800000003,
+  "newFullGames": 0,
+  "failure": {
+    "message": "single-point gate failed; do not commit selected action",
+    "stack": "AssertionError [ERR_ASSERTION]: single-point gate failed; do not commit selected action\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/continue-early-income-control-20261119.cjs:56:3)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

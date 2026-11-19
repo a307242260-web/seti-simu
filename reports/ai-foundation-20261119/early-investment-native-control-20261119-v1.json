@@ -1,0 +1,1109 @@
+{
+  "schemaVersion": "seti-native-income-control-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-analyze-6b38bd2b8e98",
+  "beforeInput": 47,
+  "question": "At the first computer income, does the greedy energy selection hide a strictly better card-income endpoint?",
+  "scope": "Two literal Native branches, end of the same own turn; not an autonomous game or a final-score comparison.",
+  "prefixInputs": 46,
+  "branchInputs": 4,
+  "newAutonomousGames": 0,
+  "newAISearches": 0,
+  "branches": [
+    {
+      "choice": {
+        "actionId": "choose_card:b04e9500",
+        "family": "choose_card",
+        "actorId": "player-white",
+        "target": {
+          "choiceId": "income:card-15-0",
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {}
+      },
+      "steps": [
+        {
+          "actionId": "choose_card:b04e9500",
+          "family": "choose_card",
+          "actorId": "player-white",
+          "target": {
+            "choiceId": "income:card-15-0",
+            "cardInstanceId": "card-15-0"
+          },
+          "payload": {}
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "actorId": "player-white",
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {}
+        }
+      ],
+      "afterIncome": {
+        "legalActions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:71814d67",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "payload": {
+              "cost": {
+                "publicity": 3
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:e887dc52",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:17a0f8a8",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-16-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "b_54.webp：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束回合"
+          }
+        ],
+        "value": {
+          "value": 66.16666666666667,
+          "purposePreparationDebt": 0,
+          "unrealizedPurposeValue": 15.666666666666666
+        },
+        "observation": {
+          "publicState": {
+            "roundNumber": 1,
+            "turnNumber": 5,
+            "currentPlayerId": "player-white",
+            "players": [
+              {
+                "playerId": "player-white",
+                "industryAbilityId": "deepspace_swap_cards",
+                "color": "white",
+                "playerLabel": "白色玩家",
+                "score": 17,
+                "finalScore": 17,
+                "scoreBreakdown": null,
+                "scoreSources": null,
+                "credits": 1,
+                "energy": 1,
+                "publicity": 9,
+                "researchPublicityCost": 6,
+                "availableData": 1,
+                "additionalPublicScan": 0,
+                "handCount": 1,
+                "reservedCount": 0,
+                "completedTaskCount": 0,
+                "dataProgress": {
+                  "discardedCount": 0,
+                  "computerSlots": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "blueBonusCount": 0,
+                  "blueSlots": [],
+                  "analyzeReady": false
+                },
+                "techState": {
+                  "ownedTiles": {},
+                  "disabledTiles": {},
+                  "blueBoardSlots": {}
+                },
+                "income": {
+                  "credits": 2,
+                  "energy": 5,
+                  "handSize": 1,
+                  "publicity": 0,
+                  "availableData": 0,
+                  "additionalPublicScan": 1
+                },
+                "blueBonusAssets": {
+                  "credits": 0,
+                  "energy": 0,
+                  "ordinaryCards": 0
+                },
+                "passed": false,
+                "mainActionCompleted": true,
+                "companyBaseIncome": {
+                  "credits": 2,
+                  "energy": 2,
+                  "handSize": 1,
+                  "additionalPublicScan": 1
+                },
+                "securedEndGameBonus": 0
+              }
+            ]
+          },
+          "selfState": {
+            "playerId": "player-white",
+            "hand": [
+              {
+                "id": "card-16-0",
+                "cardId": "b_54.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      },
+      "atBoundary": {
+        "legalActions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "research_tech",
+            "phase": "main",
+            "actionId": "research_tech:806ccfc8",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "research-tech"
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究科技"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:c346b114",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-16-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "b_54.webp"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:71814d67",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "payload": {
+              "cost": {
+                "publicity": 3
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:e887dc52",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:17a0f8a8",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-16-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "b_54.webp：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          }
+        ],
+        "value": {
+          "value": 66.16666666666667,
+          "purposePreparationDebt": 0,
+          "unrealizedPurposeValue": 15.666666666666666
+        },
+        "observation": {
+          "publicState": {
+            "roundNumber": 1,
+            "turnNumber": 6,
+            "currentPlayerId": "player-white",
+            "players": [
+              {
+                "playerId": "player-white",
+                "industryAbilityId": "deepspace_swap_cards",
+                "color": "white",
+                "playerLabel": "白色玩家",
+                "score": 17,
+                "finalScore": 17,
+                "scoreBreakdown": null,
+                "scoreSources": null,
+                "credits": 1,
+                "energy": 1,
+                "publicity": 9,
+                "researchPublicityCost": 6,
+                "availableData": 1,
+                "additionalPublicScan": 0,
+                "handCount": 1,
+                "reservedCount": 0,
+                "completedTaskCount": 0,
+                "dataProgress": {
+                  "discardedCount": 0,
+                  "computerSlots": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "blueBonusCount": 0,
+                  "blueSlots": [],
+                  "analyzeReady": false
+                },
+                "techState": {
+                  "ownedTiles": {},
+                  "disabledTiles": {},
+                  "blueBoardSlots": {}
+                },
+                "income": {
+                  "credits": 2,
+                  "energy": 5,
+                  "handSize": 1,
+                  "publicity": 0,
+                  "availableData": 0,
+                  "additionalPublicScan": 1
+                },
+                "blueBonusAssets": {
+                  "credits": 0,
+                  "energy": 0,
+                  "ordinaryCards": 0
+                },
+                "passed": false,
+                "mainActionCompleted": false,
+                "companyBaseIncome": {
+                  "credits": 2,
+                  "energy": 2,
+                  "handSize": 1,
+                  "additionalPublicScan": 1
+                },
+                "securedEndGameBonus": 0
+              }
+            ]
+          },
+          "selfState": {
+            "playerId": "player-white",
+            "hand": [
+              {
+                "id": "card-16-0",
+                "cardId": "b_54.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      },
+      "finalEnvelopeSha256": "e35c8e64c8605fcaed1dc1903d366e82529cba263130646add7fe88ef2e9f556"
+    },
+    {
+      "choice": {
+        "actionId": "choose_card:3158182c",
+        "family": "choose_card",
+        "actorId": "player-white",
+        "target": {
+          "choiceId": "income:card-16-0",
+          "cardInstanceId": "card-16-0"
+        },
+        "payload": {}
+      },
+      "steps": [
+        {
+          "actionId": "choose_card:3158182c",
+          "family": "choose_card",
+          "actorId": "player-white",
+          "target": {
+            "choiceId": "income:card-16-0",
+            "cardInstanceId": "card-16-0"
+          },
+          "payload": {}
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "family": "end_turn",
+          "actorId": "player-white",
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {}
+        }
+      ],
+      "afterIncome": {
+        "legalActions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:12411a2c",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1信用点"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:a39c1a77",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1能量"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:37140fcf",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-pick-card"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:71814d67",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "payload": {
+              "cost": {
+                "publicity": 3
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:e887dc52",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:b97751d6",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "move",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "dlc_29.png：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:f7279abf",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-37-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "b_3.webp：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 14,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束回合"
+          }
+        ],
+        "value": {
+          "value": 66.16666666666667,
+          "purposePreparationDebt": 0,
+          "unrealizedPurposeValue": 15.666666666666666
+        },
+        "observation": {
+          "publicState": {
+            "roundNumber": 1,
+            "turnNumber": 5,
+            "currentPlayerId": "player-white",
+            "players": [
+              {
+                "playerId": "player-white",
+                "industryAbilityId": "deepspace_swap_cards",
+                "color": "white",
+                "playerLabel": "白色玩家",
+                "score": 17,
+                "finalScore": 17,
+                "scoreBreakdown": null,
+                "scoreSources": null,
+                "credits": 1,
+                "energy": 0,
+                "publicity": 9,
+                "researchPublicityCost": 6,
+                "availableData": 1,
+                "additionalPublicScan": 0,
+                "handCount": 2,
+                "reservedCount": 0,
+                "completedTaskCount": 0,
+                "dataProgress": {
+                  "discardedCount": 0,
+                  "computerSlots": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "blueBonusCount": 0,
+                  "blueSlots": [],
+                  "analyzeReady": false
+                },
+                "techState": {
+                  "ownedTiles": {},
+                  "disabledTiles": {},
+                  "blueBoardSlots": {}
+                },
+                "income": {
+                  "credits": 2,
+                  "energy": 4,
+                  "handSize": 2,
+                  "publicity": 0,
+                  "availableData": 0,
+                  "additionalPublicScan": 1
+                },
+                "blueBonusAssets": {
+                  "credits": 0,
+                  "energy": 0,
+                  "ordinaryCards": 0
+                },
+                "passed": false,
+                "mainActionCompleted": true,
+                "companyBaseIncome": {
+                  "credits": 2,
+                  "energy": 2,
+                  "handSize": 1,
+                  "additionalPublicScan": 1
+                },
+                "securedEndGameBonus": 0
+              }
+            ]
+          },
+          "selfState": {
+            "playerId": "player-white",
+            "hand": [
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_29.png",
+                "set": "space-agency",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-37-0",
+                "cardId": "b_3.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 1,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      },
+      "atBoundary": {
+        "legalActions": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "research_tech",
+            "phase": "main",
+            "actionId": "research_tech:806ccfc8",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "research-tech"
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究科技"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:b4fc29e3",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 0
+            },
+            "decision": null,
+            "summary": "dlc_29.png"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:10dfb95c",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-37-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 1
+            },
+            "decision": null,
+            "summary": "b_3.webp"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:a1f33c73",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:12411a2c",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-credit"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "credits": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1信用点"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:a39c1a77",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-energy"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "energy": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 1能量"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:37140fcf",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "cards-for-pick-card"
+            },
+            "payload": {
+              "cost": {
+                "handSize": 2
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "2张牌 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "quick_trade",
+            "phase": "quick",
+            "actionId": "quick_trade:71814d67",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "payload": {
+              "cost": {
+                "publicity": 3
+              },
+              "gain": {
+                "handSize": 1
+              }
+            },
+            "decision": null,
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:e887dc52",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:b97751d6",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "move",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "dlc_29.png：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:f7279abf",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-37-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "b_3.webp：弃牌角标"
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          }
+        ],
+        "value": {
+          "value": 66.16666666666667,
+          "purposePreparationDebt": 0,
+          "unrealizedPurposeValue": 15.666666666666666
+        },
+        "observation": {
+          "publicState": {
+            "roundNumber": 1,
+            "turnNumber": 6,
+            "currentPlayerId": "player-white",
+            "players": [
+              {
+                "playerId": "player-white",
+                "industryAbilityId": "deepspace_swap_cards",
+                "color": "white",
+                "playerLabel": "白色玩家",
+                "score": 17,
+                "finalScore": 17,
+                "scoreBreakdown": null,
+                "scoreSources": null,
+                "credits": 1,
+                "energy": 0,
+                "publicity": 9,
+                "researchPublicityCost": 6,
+                "availableData": 1,
+                "additionalPublicScan": 0,
+                "handCount": 2,
+                "reservedCount": 0,
+                "completedTaskCount": 0,
+                "dataProgress": {
+                  "discardedCount": 0,
+                  "computerSlots": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ],
+                  "blueBonusCount": 0,
+                  "blueSlots": [],
+                  "analyzeReady": false
+                },
+                "techState": {
+                  "ownedTiles": {},
+                  "disabledTiles": {},
+                  "blueBoardSlots": {}
+                },
+                "income": {
+                  "credits": 2,
+                  "energy": 4,
+                  "handSize": 2,
+                  "publicity": 0,
+                  "availableData": 0,
+                  "additionalPublicScan": 1
+                },
+                "blueBonusAssets": {
+                  "credits": 0,
+                  "energy": 0,
+                  "ordinaryCards": 0
+                },
+                "passed": false,
+                "mainActionCompleted": false,
+                "companyBaseIncome": {
+                  "credits": 2,
+                  "energy": 2,
+                  "handSize": 1,
+                  "additionalPublicScan": 1
+                },
+                "securedEndGameBonus": 0
+              }
+            ]
+          },
+          "selfState": {
+            "playerId": "player-white",
+            "hand": [
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_29.png",
+                "set": "space-agency",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-37-0",
+                "cardId": "b_3.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 1,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      },
+      "finalEnvelopeSha256": "f3feec07ae0cdf20e845c2e1236044bda2f8250da9910aad52bc1159064060fb"
+    }
+  ],
+  "phase": "complete",
+  "rootVerified": true,
+  "rootEnvelopeSha256": "1a35d40bc3a74691fca109a2d017be3676242b65d219f639d4b7f24498cd3f68",
+  "originalGreedyActionId": "choose_card:b04e9500",
+  "rankings": [
+    {
+      "cardId": "dlc_29.png",
+      "id": "card-15-0",
+      "gain": {
+        "energy": 1
+      },
+      "greedyIncomeValue": 4,
+      "computerIncomeValue": 18.666666666666664
+    },
+    {
+      "cardId": "b_54.webp",
+      "id": "card-16-0",
+      "gain": {
+        "handSize": 1
+      },
+      "greedyIncomeValue": 4,
+      "computerIncomeValue": 18.666666666666664
+    }
+  ],
+  "passed": true,
+  "sourcePreflight": "reports/ai-foundation-20261119/v486-random20-runtime-preflight-20261119-v1.json",
+  "retention": "Compact decision metrics; full Native state reproducible from the seed-and-action archives."
+}

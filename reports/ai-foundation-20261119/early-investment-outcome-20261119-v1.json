@@ -1,0 +1,358 @@
+{
+  "schemaVersion": "seti-early-investment-outcome-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "sourcePreflight": "reports/ai-foundation-20261119/v486-random20-runtime-preflight-20261119-v1.json",
+  "board": 20,
+  "decisionInput": 47,
+  "formalScoresUnchanged": {
+    "teachingBoard": 272,
+    "original20Mean": 134.35
+  },
+  "AIChanged": false,
+  "newFullGames": 0,
+  "findings": [
+    {
+      "kind": "candidate-availability",
+      "result": "No money-income card is offered. Energy and card income have identical greedy scores of4 and computer-income scores of18.666666666666664; fixed ordering selects energy."
+    },
+    {
+      "kind": "same-root-common-round-boundary",
+      "result": "Switching to card income then following unchanged v486 gives round1 score24 instead of31, same Blue4-slot1 and Purple4, +1 credit,+1 energy,+1 hand, and permanent -1 energy,+1 card income. Blue trace from analysis is missing; no dominance is established."
+    },
+    {
+      "kind": "performance-stop",
+      "result": "The card-income continuation is stopped before its thirteenth input of the round2 segment: search complete,292 Native inputs,367.587208ms. The selected move is not submitted. No round2 end score exists."
+    },
+    {
+      "kind": "manual-order-counterexample",
+      "result": "Purple4 first, the known two-data card, visible company swap and free analysis reach publicity5, one below the6 needed for Blue4. The proposed development sequence is infeasible. An incorrect +2 publicity assumption was corrected to Native +1 without repeating the accepted prefix."
+    }
+  ],
+  "comparison": {
+    "baselineRound1": {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "beforeInput": 70,
+      "checkpointPath": "reports/research/3a4edb37.94299f38.full.json.round-end-1.checkpoint.json",
+      "checkpointSha256": "ea47a6bd3c6dd6e271d248da62ec7d773c556de91288fd3bffefc0c32b8b5dd6",
+      "score": 31,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 31
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 5,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue4": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue4": true,
+          "purple4": true
+        }
+      },
+      "hand": [],
+      "playedCards": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "probes": [],
+      "sectorWins": [],
+      "scanProgress": [
+        {
+          "sectorId": "sector-1-a",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            },
+            "blue": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "yellow": {
+              "firstPlaced": true,
+              "ownerPlayerColor": "brown",
+              "extraCount": 0,
+              "extraMarkers": [],
+              "neutral": false
+            },
+            "pink": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            },
+            "blue": {
+              "firstPlaced": false,
+              "ownerPlayerColor": null,
+              "extraCount": 0,
+              "extraMarkers": []
+            }
+          }
+        }
+      ],
+      "aliens": {
+        "slots": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              },
+              "blue": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "white",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "yellow": {
+                "firstPlaced": true,
+                "ownerPlayerColor": "brown",
+                "extraCount": 0,
+                "extraMarkers": [],
+                "neutral": false
+              },
+              "pink": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              },
+              "blue": {
+                "firstPlaced": false,
+                "ownerPlayerColor": null,
+                "extraCount": 0,
+                "extraMarkers": []
+              }
+            }
+          }
+        ]
+      },
+      "finalScoring": {
+        "thresholds": [
+          25,
+          50,
+          70
+        ],
+        "tileVariants": {
+          "a": 2,
+          "b": 2,
+          "c": 1,
+          "d": 1
+        },
+        "tiles": {
+          "a": {
+            "id": "a",
+            "marks": [
+              {
+                "id": "final-mark-1",
+                "playerColor": "white",
+                "playerId": "player-white",
+                "slot3Order": null,
+                "slotIndex": 1,
+                "threshold": 25,
+                "tileId": "a"
+              }
+            ]
+          },
+          "b": {
+            "id": "b",
+            "marks": []
+          },
+          "c": {
+            "id": "c",
+            "marks": []
+          },
+          "d": {
+            "id": "d",
+            "marks": []
+          }
+        }
+      },
+      "projectedFinalScore": 31
+    },
+    "cardIncomeRound1": {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 0,
+        "score": 24
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "techState": {
+        "blueBoardSlots": {
+          "blue4": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue4": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "cardId": "b_3.webp",
+          "cardTypeCode": 0,
+          "discardActionCode": 1,
+          "faceUp": true,
+          "id": "card-37-0",
+          "incomeCode": 1,
+          "price": 1,
+          "scanActionCode": 1,
+          "set": "basic"
+        }
+      ],
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-8",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-9",
+            "index": 5,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "rockets": []
+    }
+  },
+  "counts": {
+    "reconstructedPrefixInputs": 46,
+    "incomeMenuBranchInputs": 4,
+    "cardIncomeRound1AcceptedInputs": 12,
+    "cardIncomeRound2AcceptedInputs": 12,
+    "manualOrderAcceptedInputs": 16,
+    "uniqueDiagnosticCommittedInputs": 90,
+    "archiveVerificationInputs": 196
+  },
+  "outcome": "No admission for an income-priority change; the specific Purple4-first plan is rejected. The income trial is frozen without a completed round2 comparison. Do not optimize the292-input node as an automatic extension of this route.",
+  "evidence": [
+    "early-investment-native-control-20261119-v1.json",
+    "early-investment-card-income-round1-20261119-v1.json",
+    "early-investment-card-income-round2-20261119-v1.json",
+    "early-investment-research-order-control-20261119-v1.json",
+    "early-investment-research-order-control-20261119-v2.json",
+    "early-investment-replay-verification-20261119-v1.json"
+  ],
+  "limitations": [
+    "One board and one menu; no generalization or final-score improvement is proved.",
+    "The manual order is an explicit counterfactual witness, not the production policy.",
+    "The292-input search graph was not persisted; its summarized completed-search metrics and exact unexecuted root are archived."
+  ],
+  "nextEvidenceNeeded": "Before reconsidering income priority, compare a reachable development plan over a common two-round boundary within the existing decision gates; no new weight tuning is justified by this control.",
+  "reproduction": "Each compressed replay contains the seed, ordered literal inputs and expected Native state/session/RNG hashes. Verify with the archived source runtime and tools/archive_research_replay.js. Large study checkpoints remain private and are not historical publication dependencies.",
+  "retention": "Compact decision metrics; full Native state reproducible from the seed-and-action archives."
+}

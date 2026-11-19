@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>第20盘：早期收入投入对照</title>
+<style>body{max-width:980px;margin:48px auto;padding:0 24px;font:16px/1.8 system-ui;color:#17212b}table{border-collapse:collapse;width:100%;margin:24px 0}th,td{border:1px solid #d4dce3;padding:10px;text-align:left}th{background:#edf3f7}small{color:#526273}a{color:#135c98}</style>
+<h1>第20盘：早期收入投入对照</h1>
+<p><strong>当前证据不足以改变收入优先级。</strong>加电与加抽牌收入在当前模型中同分，固定排序选择加电。改选抽牌收入后，第一轮末出现即时得分与后续资产的取舍，尚未证明长期收益更高。</p>
+<p>正式成绩保持不变：20盘平均134.35分，教学盘272分。本次没有修改生产策略，没有运行新整局。</p>
+<h2>第一轮末：相同结算边界</h2>
+<p>两个分支从第47次输入前的同一收入菜单分出，使用相同源码与随机状态；之后沿用原策略。边界为PASS选牌和下一轮收入之前。</p>
+<table><thead><tr><th>指标</th><th>原策略：加电收入</th><th>对照：加抽牌收入</th></tr></thead><tbody>
+<tr><td>盘面分</td><td>31</td><td>24</td></tr>
+<tr><td>科技</td><td>蓝4（槽1）、免电分析</td><td>蓝4（槽1）、免电分析</td></tr>
+<tr><td>钱 / 电 / 手牌余额</td><td>0 / 0 / 0</td><td>1 / 1 / 1</td></tr>
+<tr><td>钱 / 电 / 抽牌永久收入</td><td>2 / 5 / 1</td><td>2 / 4 / 2</td></tr>
+<tr><td>本轮分析获得的蓝色外星人标记</td><td>1</td><td>0</td></tr>
+</tbody></table>
+<p>两种收入在贪心报价中均为4，电脑收入端点报价均为18.6667。这说明选择由固定排序决定；同分本身不能证明两条发展路线等价。</p>
+<h2>未通过的条件</h2>
+<p>抽牌收入分支续到第二轮时，一次已完成搜索执行了292次原生模拟输入，耗时367.59毫秒，超过256次门槛。所选移动没有提交，因此不存在可比较的第二轮末结果。</p>
+<p>另一条原生对照尝试先拿免电分析、使用已知手牌补数据，再补蓝科技。执行分析后只有5宣传，低于研究所需的6宣传，具体方案不可达。已接受的前缀由检查点续接，没有重复执行。</p>
+<h2>方法与证据</h2>
+<p>研究对象仅为一个盘面的一个收入菜单。原始20盘结果直接复用；本次90次已提交诊断输入和三个精简复放档单独记录。三个复放档共196次输入均核对了原生状态、会话和随机状态；复放验证不计为新自主对局。</p>
+<p>收入优先级提案暂不采用；第二轮对照未闭合，具体科技顺序方案被否决。这些结果不能外推为抽牌收入普遍较差，也不构成提分证据。</p>
+<p><a href="../ai-foundation-20261119/early-investment-outcome-20261119-v1.json">结果与证据索引</a> · <a href="v486-original20-20261119/summary-20261119-v1.html">原20盘汇总</a></p>
+<small>2026-11-19 · 策略v486 / 估值V71 · 白色行动，其余三家仅PASS及强制选择</small>
+</html>

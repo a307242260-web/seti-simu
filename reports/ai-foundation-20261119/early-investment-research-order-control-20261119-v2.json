@@ -1,0 +1,653 @@
+{
+  "schemaVersion": "seti-native-development-order-control-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-analyze-6b38bd2b8e98",
+  "question": "From the already observed card-income endpoint, can Purple4-first preserve analysis while developing Blue4?",
+  "plan": [
+    "research purple4",
+    "play known dlc29 for two data",
+    "fill computer5 and6",
+    "swap known b3 for visible b9, use its publicity corner",
+    "analyze for free",
+    "research blue4 in slot1 and place remaining data"
+  ],
+  "maximumInputs": 40,
+  "inputs": [
+    {
+      "label": "research",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:806ccfc8",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 9,
+        "score": 17
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "choose purple4",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d0b75b83",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "end turn",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "play known two-data supplier",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:b4fc29e3",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_29.png"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "place data",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "computer",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "place data",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "computer",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "company swap",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:e887dc52",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "深空探测",
+          "abilityId": "deepspace_swap_cards"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "深空探测 1x 行动"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "outgoing observed b3",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:a61aa634",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-37-0",
+          "cardInstanceId": "card-37-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_3.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-37-0",
+          "imageSrc": "../assets/cards/basic/split/b_3.webp",
+          "imageAlt": "b_3.webp"
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "incoming visible b9",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:8cb58519",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "public:0:card-17-0",
+          "slotIndex": 0,
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {
+          "handCardInstanceId": "card-37-0"
+        },
+        "decision": null,
+        "summary": "b_9.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_9.webp",
+          "imageAlt": "b_9.webp"
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 3,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "known publicity corner",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:753fb0ad",
+        "actorId": "player-white",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_9.webp：弃牌角标"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 4,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "end turn",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 4,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "free analysis",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 4,
+        "score": 19
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "blue trace slot1",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8f2f1c72",
+        "actorId": "player-white",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "trace:1:blue",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 蓝色痕迹"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 5,
+        "score": 24
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    },
+    {
+      "label": "end turn",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 5,
+        "score": 24
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      }
+    }
+  ],
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "status": "failed",
+  "priorFailure": {
+    "message": "Expected values to be strictly equal:\n\n1 !== 2\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 2\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/control-early-income-research-order-20261119.cjs:51:74)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  },
+  "resumedWithoutRepeatedNativeInputs": 11,
+  "failure": {
+    "message": "research unavailable: [{\"f\":\"pass\",\"t\":{\"kind\":\"pass\"},\"p\":{}},{\"f\":\"quick_trade\",\"t\":{\"tradeId\":\"publicity-for-card\"},\"p\":{\"cost\":{\"publicity\":3},\"gain\":{\"handSize\":1}}},{\"f\":\"place_data\",\"t\":{\"kind\":\"place-data\"},\"p\":{}}]\n\n0 !== 1\n",
+    "stack": "AssertionError [ERR_ASSERTION]: research unavailable: [{\"f\":\"pass\",\"t\":{\"kind\":\"pass\"},\"p\":{}},{\"f\":\"quick_trade\",\"t\":{\"tradeId\":\"publicity-for-card\"},\"p\":{\"cost\":{\"publicity\":3},\"gain\":{\"handSize\":1}}},{\"f\":\"place_data\",\"t\":{\"kind\":\"place-data\"},\"p\":{}}]\n\n0 !== 1\n\n    at doAction (/Users/bilibili/code/seti-simu/adhoc/control-early-income-research-order-20261119.cjs:29:9)\n    at research (/Users/bilibili/code/seti-simu/adhoc/control-early-income-research-order-20261119.cjs:37:25)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/control-early-income-research-order-20261119.cjs:59:2)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+  }
+}
