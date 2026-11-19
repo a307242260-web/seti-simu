@@ -23,7 +23,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol, publicityPreparation) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v72-final-currency";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v73-scan-forecast";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -48,10 +48,10 @@
 
   // Forecast hypotheses, not guaranteed rewards or admissible search bounds.
   // The current turn is executed natively; only later-round usage is forecast.
-  // Teacher transport activity: 13 useful purple4 uses in later rounds2-4.
-  // Floor the historical mean to4. Later history is a training estimate,
-  // not current-rule reachability or a guaranteed pruning bound.
-  const FORECAST = Object.freeze({ computerCyclesPerLaterRound: 1, usefulScansPerLaterRound: 4,
+  // Isolated hypothesis: use one later-round scan opportunity instead of
+  // extrapolating the human teaching game's activity to every random board.
+  // This is a calibrated forecast, not a guaranteed reward or pruning bound.
+  const FORECAST = Object.freeze({ computerCyclesPerLaterRound: 1, usefulScansPerLaterRound: 1,
     landingsPerLaterRound: 1 });
   function technologyCapital(techState, round, weights = DEFAULT_WEIGHTS) {
     const later = Math.max(0, 4 - round), owned = techState?.ownedTiles || {}, disabled = techState?.disabledTiles || {};
