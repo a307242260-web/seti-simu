@@ -1,0 +1,13 @@
+{
+  "candidateRelatedTestsPassed": 2,
+  "coldAttempts": 4,
+  "coldPassed": 2,
+  "coldFailed": 2,
+  "developmentFailures": [
+    "Missing historical Venus fixture: restored exact tracked blob in isolated runtime; ROOT left untouched.",
+    "Initial supplier shape incorrectly assumed cardType3; actual Production model is type0.",
+    "Canonical model adds null display and empty afterLandRewards fields; eligibility now checks their values explicitly."
+  ],
+  "nativeRootAndRngIsolated": true,
+  "newAICompleteGames": 1
+}

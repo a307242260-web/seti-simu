@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "v489-held-final-land-teaching-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "\u624b\u724c\u767b\u9646\u5019\u9009\uff1a272\u5206\uff08\u6301\u5e73\uff0c\u672a\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v486-teaching-current-full-20261119",
+      "head": "06d5671a8",
+      "commits": [
+        "06d5671a8"
+      ],
+      "summary": "\u81ea\u4e3b\u7b2c1\u20134\u8f6e\uff0c\u5176\u4ed6\u4e09\u5e2d\u4ec5PASS\uff1b272\u5206\u6301\u5e73\uff0c\u524d310\u8f93\u5165\u53ca\u524d\u4e09\u8f6e\u8d44\u4ea7\u4e00\u81f4\u3002356\u8f93\u516515.317\u79d2\uff0c\u6700\u5927256\u6b21/389.165ms\u3002\u8282\u7701\u8d44\u6e90\u672a\u589e\u52a0\u626b\u63cf\u548c\u5206\u6790\uff0c\u672b\u8f6e\u65b0\u589e\u65e0\u6536\u76ca\u53d1\u5c04\uff1b\u4e0d\u66ff\u6362\u57fa\u7ebf\u3002",
+      "records": {
+        "26000f8b.06d5671a.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v488-funded-scan-launch-teaching-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

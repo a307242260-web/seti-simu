@@ -1,0 +1,105 @@
+{
+  "status": "verified",
+  "nativeInputs": 3,
+  "newAISearches": 0,
+  "newGames": 0,
+  "source": "held-final-land-before-empty-launch-20261119-v1.json.gz",
+  "nonterminal": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 273,
+    "components": {
+      "realizedScore": 192,
+      "currentEndGameBonus": 80,
+      "resources": 1,
+      "hand": 0,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "terminal": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 272,
+    "purposePreparationDebt": 0,
+    "components": {
+      "realizedScore": 192,
+      "currentEndGameBonus": 80,
+      "resources": 0,
+      "hand": 0,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": true
+  },
+  "nonterminalResources": {
+    "additionalPublicScan": 0,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 0,
+    "energy": 1,
+    "handSize": 0,
+    "publicity": 0,
+    "score": 192
+  },
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "launch",
+      "phase": "main",
+      "actionId": "launch:c94cda79",
+      "actorId": "player-white",
+      "stateVersion": 161,
+      "decisionVersion": 3,
+      "target": null,
+      "payload": {},
+      "decision": null,
+      "summary": "发射"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 162,
+      "decisionVersion": 3,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "pass",
+      "phase": "main",
+      "actionId": "pass:a1f33c73",
+      "actorId": "player-white",
+      "stateVersion": 163,
+      "decisionVersion": 3,
+      "target": {
+        "kind": "pass"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "PASS"
+    }
+  ],
+  "conclusion": "The entire one-point advantage of launch/end-turn over terminal PASS is the unspent energy heuristic. Both actual terminal outcomes score272. This is a terminal-versus-nonterminal value comparison issue, not an actual extra point."
+}

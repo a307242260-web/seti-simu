@@ -1,0 +1,34 @@
+{
+  "status": "closed-not-adopted",
+  "startedEpochSeconds": 1795079156.101486,
+  "deadlineEpochSeconds": 1795080356.1014872,
+  "scope": "Actual autonomous v486 root before324; same Mercury landing, substitute held DLC1 for paid native land. No new information used to choose the landing card.",
+  "nativeBudget": 30,
+  "maxFixedEndpoints": 1,
+  "maxColdSearches": 4,
+  "newFullGames": 0,
+  "productionChangesBeforeWitness": 0,
+  "decisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "sourceRoot": "autonomous-r4-resource-roots-20261119-v1.json.gz",
+  "next": "Audit terminal/nonterminal currency utility at actual step354: launch/end-turn273 vs terminalPASS272, entirely one unspent energy; no new full game until a distinct verified fix passes gates.",
+  "nativeWitnessInputs": 19,
+  "coldSearches": 4,
+  "coldPassed": 2,
+  "coldDevelopmentFailures": 2,
+  "relatedTestsPassed": 2,
+  "maxNewAutonomousGames": 1,
+  "productionChanges": [
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/decision-search.js"
+  ],
+  "stateIdentity": "Existing complete Native state + RNG + known-information barrier; no new merging or route equivalence.",
+  "reachability": "Native route directory and shared per-goal currency/movement lower bounds; landing card protected from movement payments.",
+  "searchBudget": "Existing global node/time/frontier policy; 256 Native/600ms reject-before-input gate; no per-root cap or direction enumeration.",
+  "newAutonomousGames": 1,
+  "terminalScore": 272,
+  "scoreGain": 0,
+  "independentFullReplayInputs": 356
+}

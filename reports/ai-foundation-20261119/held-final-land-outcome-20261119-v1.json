@@ -1,0 +1,345 @@
+{
+  "status": "complete-not-adopted",
+  "sourceCommit": "06d5671a850c17deea8c63cc751d6776e55cb7c6",
+  "acceptedPolicyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "newAutonomousGames": 1,
+  "baseline": 272,
+  "challenger": 272,
+  "delta": 0,
+  "wallMs": 15317,
+  "maxNative": 256,
+  "maxMilliseconds": 389.1649589999997,
+  "allDecisionsComplete": true,
+  "first310ReplayActionsExactlyEqual": true,
+  "firstThreeRoundAssetsExactlyEqual": true,
+  "firstDifference": 311,
+  "terminal": {
+    "baseline": {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 0,
+        "score": 192
+      },
+      "hand": [
+        {
+          "blueBonusOwnerId": "player-white",
+          "cardId": "dlc_6.png",
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-77-0",
+          "incomeCode": 2,
+          "price": 2,
+          "scanActionCode": 2,
+          "set": "space-agency"
+        }
+      ],
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange2": true,
+          "orange3": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "probes": [],
+      "score": {
+        "baseScore": 192,
+        "cardScore": 6,
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "count": 2,
+              "kind": "planetLandingPairs",
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "scorePer": 2,
+              "traceType": "pink"
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 272,
+        "runezuSymbolScore": 0,
+        "tileScore": 74,
+        "tileScoresById": {
+          "a": 22,
+          "b": 24,
+          "c": 0,
+          "d": 28
+        },
+        "tiles": [
+          {
+            "baseValue": 2,
+            "formulaId": "a2",
+            "multiplier": 11,
+            "score": 22,
+            "slotIndex": 1,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 3,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 24,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          },
+          {
+            "baseValue": 4,
+            "formulaId": "d2",
+            "multiplier": 7,
+            "score": 28,
+            "slotIndex": 1,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 272
+      }
+    },
+    "challenger": {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 0,
+        "score": 192
+      },
+      "hand": [],
+      "tech": {
+        "blueBoardSlots": {
+          "blue1": 3,
+          "blue2": 1,
+          "blue3": 2
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "blue3": true,
+          "orange1": true,
+          "orange3": true,
+          "orange4": true,
+          "purple1": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "probes": [
+        {
+          "angleDegrees": -9.9,
+          "color": "white",
+          "id": 8,
+          "launchGrid": {
+            "x": 1,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 1,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 69.42,
+          "sectorX": 1,
+          "sectorY": 1,
+          "slotIndex": 2,
+          "surface": "solar-board"
+        }
+      ],
+      "score": {
+        "baseScore": 192,
+        "cardScore": 6,
+        "cards": [
+          {
+            "cardId": "dlc_31.png",
+            "rule": {
+              "count": 2,
+              "kind": "planetLandingPairs",
+              "scorePer": 6
+            },
+            "score": 0
+          },
+          {
+            "cardId": "amiba_5.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "scorePer": 2,
+              "traceType": "pink"
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 272,
+        "runezuSymbolScore": 0,
+        "tileScore": 74,
+        "tileScoresById": {
+          "a": 22,
+          "b": 24,
+          "c": 0,
+          "d": 28
+        },
+        "tiles": [
+          {
+            "baseValue": 2,
+            "formulaId": "a2",
+            "multiplier": 11,
+            "score": 22,
+            "slotIndex": 1,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 3,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 24,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          },
+          {
+            "baseValue": 4,
+            "formulaId": "d2",
+            "multiplier": 7,
+            "score": 28,
+            "slotIndex": 1,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 272
+      }
+    }
+  },
+  "nativeReplay": {
+    "inputs": 356,
+    "verified": true,
+    "expected": {
+      "nativeStateSha256": "8853bfb9e52d4848971509990926151bbdcb63f80c298561dc18da157c02091c",
+      "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "rng": {
+        "algorithm": "seti-simulation-mulberry32-v1",
+        "state": 3171573311
+      }
+    }
+  },
+  "lateUnrealizedLaunch": {
+    "beforeInput": 354,
+    "root": "reports/ai-foundation-20261119/held-final-land-before-empty-launch-20261119-v1.json.gz",
+    "value": 273,
+    "roots": [
+      {
+        "actionId": "launch:c94cda79",
+        "target": 1,
+        "value": 273,
+        "realization": 0,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "pass:a1f33c73",
+        "target": 2,
+        "value": 272,
+        "realization": 0,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "quick_trade:f385e2ac",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v29-held-final-landing",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:49c75492",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v18",
+        "goal": null,
+        "isEquivalence": false
+      }
+    ]
+  },
+  "reason": "The held-card route executed, but saved resources did not add scans or analyses; both finish272. An additional ordinary launch remained unconverted at terminal. Do not replace the baseline.",
+  "record": "reports/research/26000f8b.06d5671a.full.json",
+  "report": "reports/iteration/v489-held-final-land-teaching-20261119/26000f8b.06d5671a.full.action-log.html",
+  "archive": "reports/iteration/v489-held-final-land-teaching-20261119/native-replay-20261119-v1.json.gz",
+  "copied": [
+    "seti-saves/seti-save-research-v489-held-final-land-teaching-20261119-06d5671a-full-v164.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-ends.jsonl",
+    "reports/research/26000f8b.06d5671a.full.json.rounds.jsonl",
+    "reports/research/26000f8b.06d5671a.full.json.round-end-1.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-end-2.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-end-3.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-end-4.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-1.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-2.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-3.checkpoint.json",
+    "reports/research/26000f8b.06d5671a.full.json.round-4.checkpoint.json"
+  ],
+  "rawRecordSha256": "e728bfbafb56461ff44c3ae5c5f74201a9d72b37619fb7fdc46e9f32fd3432dd",
+  "original20Mean": 134.35,
+  "original20Rerun": false,
+  "relatedTestsPassed": 2
+}

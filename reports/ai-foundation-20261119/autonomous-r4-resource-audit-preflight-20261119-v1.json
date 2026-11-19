@@ -1,0 +1,6 @@
+{
+  "status": "corrected-before-native-execution",
+  "nativeInputs": 0,
+  "newAISearches": 0,
+  "failure": "Checkpoint replay entries have additional host journals; comparing their full objects against compact save entries was invalid. Compare exact actor/action sequence, then verify endpoint Native/RNG."
+}

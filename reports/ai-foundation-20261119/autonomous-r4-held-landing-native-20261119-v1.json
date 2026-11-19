@@ -1,0 +1,533 @@
+{
+  "status": "verified",
+  "beforeInput": 324,
+  "newGames": 0,
+  "newAISearches": 0,
+  "nativeInputs": 16,
+  "nativeBudget": 30,
+  "incumbentModelValue": 261,
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:90134ba1",
+      "actorId": "player-white",
+      "stateVersion": 146,
+      "decisionVersion": 2,
+      "target": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "移动探测器 7 逆时针"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:abbb51f1",
+      "actorId": "player-white",
+      "stateVersion": 146,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 1,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "消耗 1 能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:90134ba1",
+      "actorId": "player-white",
+      "stateVersion": 147,
+      "decisionVersion": 2,
+      "target": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "移动探测器 7 逆时针"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:098aae02",
+      "actorId": "player-white",
+      "stateVersion": 147,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "alien-chong-7-16",
+        "cardIds": [
+          "alien-chong-7-16"
+        ]
+      },
+      "payload": {
+        "energyCost": 0,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "弃 1 张移动牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:90134ba1",
+      "actorId": "player-white",
+      "stateVersion": 148,
+      "decisionVersion": 2,
+      "target": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "移动探测器 7 逆时针"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:d732185c",
+      "actorId": "player-white",
+      "stateVersion": 148,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "alien-chong-9-19",
+        "cardIds": [
+          "alien-chong-9-19"
+        ]
+      },
+      "payload": {
+        "energyCost": 0,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "弃 1 张移动牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:2afaed32",
+      "actorId": "player-white",
+      "stateVersion": 149,
+      "decisionVersion": 2,
+      "target": {
+        "cardInstanceId": "card-80-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 1
+      },
+      "decision": null,
+      "summary": "dlc_1.png"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:9e60de9d",
+      "actorId": "player-white",
+      "stateVersion": 149,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "land:7:mercury:planet:",
+        "actionType": "land",
+        "rocketId": 7,
+        "planetId": "mercury",
+        "landTarget": {
+          "type": "planet",
+          "rocketId": 7
+        }
+      },
+      "payload": {
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": true,
+          "repeat": 1,
+          "cost": {},
+          "source": "card"
+        }
+      },
+      "decision": null,
+      "summary": "登陆水星 - 奖励：首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记（主星，R7，0）"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:bd5bb450",
+      "actorId": "player-white",
+      "stateVersion": 149,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "trace:2:yellow:chong:4",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "yellow",
+        "speciesId": "chong",
+        "position": 4
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:328816c7",
+      "actorId": "player-white",
+      "stateVersion": 149,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "chong:display:8",
+        "source": "display",
+        "cardIndex": 8
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得展示的探测车探索",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "8",
+        "imageSrc": "../assets/aliens/虫/cards/8.webp",
+        "imageAlt": "探测车探索"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 150,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:7be78a55",
+      "actorId": "player-white",
+      "stateVersion": 150,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "data:blueBonus:2",
+        "target": "blueBonus",
+        "blueSlot": 2
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "blue3 下方"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:34227cca",
+      "actorId": "player-white",
+      "stateVersion": 150,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "pick:card-77-0",
+        "cardInstanceId": "card-77-0",
+        "publicSlotIndex": 1
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "dlc_6.png",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-77-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_6.png",
+        "imageAlt": "dlc_6.png"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 151,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:dc72d0b3",
+      "actorId": "player-white",
+      "stateVersion": 151,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "data:blueBonus:3",
+        "target": "blueBonus",
+        "blueSlot": 3
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "blue1 下方"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 152,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "结束回合"
+    }
+  ],
+  "landingMenu": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:9e60de9d",
+      "actorId": "player-white",
+      "stateVersion": 149,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "land:7:mercury:planet:",
+        "actionType": "land",
+        "rocketId": 7,
+        "planetId": "mercury",
+        "landTarget": {
+          "type": "planet",
+          "rocketId": 7
+        }
+      },
+      "payload": {
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": true,
+          "repeat": 1,
+          "cost": {},
+          "source": "card"
+        }
+      },
+      "decision": null,
+      "summary": "登陆水星 - 奖励：首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记（主星，R7，0）"
+    }
+  ],
+  "wallet": {
+    "additionalPublicScan": 0,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 2,
+    "energy": 1,
+    "handSize": 4,
+    "publicity": 3,
+    "score": 182
+  },
+  "hand": [
+    {
+      "blueBonusOwnerId": "player-white",
+      "cardId": "b_16.webp",
+      "cardTypeCode": 0,
+      "discardActionCode": 0,
+      "faceUp": true,
+      "id": "card-64-0",
+      "incomeCode": 0,
+      "price": 1,
+      "scanActionCode": 0,
+      "set": "basic"
+    },
+    {
+      "alienCardId": 3,
+      "cardId": "chong_3.webp",
+      "cardTypeCode": 2,
+      "chongCard": true,
+      "chongTask": {
+        "dataCount": 2,
+        "destinationPlanetId": "earth",
+        "fossilRewardRepeat": 1,
+        "gain": {},
+        "kind": "transport"
+      },
+      "discardActionCode": 3,
+      "faceUp": true,
+      "id": "alien-chong-3-21",
+      "incomeCode": 2,
+      "price": 1,
+      "scanActionCode": 2,
+      "set": "alien:虫"
+    },
+    {
+      "alienCardId": 8,
+      "cardId": "chong_8.webp",
+      "cardTypeCode": 2,
+      "chongCard": true,
+      "chongTask": {
+        "dataCount": 3,
+        "destinationPlanetId": "earth",
+        "fossilRewardRepeat": 1,
+        "gain": {
+          "score": 3
+        },
+        "kind": "transport"
+      },
+      "discardActionCode": 3,
+      "faceUp": true,
+      "id": "alien-chong-8-23",
+      "incomeCode": 1,
+      "price": 2,
+      "scanActionCode": 3,
+      "set": "alien:虫"
+    },
+    {
+      "blueBonusOwnerId": "player-white",
+      "cardId": "dlc_6.png",
+      "cardTypeCode": 0,
+      "discardActionCode": 0,
+      "faceUp": true,
+      "id": "card-77-0",
+      "incomeCode": 2,
+      "price": 2,
+      "scanActionCode": 2,
+      "set": "space-agency"
+    }
+  ],
+  "baselineWallet": {
+    "additionalPublicScan": 0,
+    "aomomoFossils": 0,
+    "availableData": 1,
+    "credits": 1,
+    "energy": 0,
+    "handSize": 3,
+    "publicity": 3,
+    "score": 182
+  },
+  "baselineHand": [
+    {
+      "cardId": "dlc_1.png",
+      "cardTypeCode": 0,
+      "discardActionCode": 0,
+      "faceUp": true,
+      "id": "card-80-0",
+      "incomeCode": 0,
+      "price": 1,
+      "scanActionCode": 1,
+      "set": "space-agency"
+    },
+    {
+      "alienCardId": 8,
+      "cardId": "chong_8.webp",
+      "cardTypeCode": 2,
+      "chongCard": true,
+      "chongTask": {
+        "dataCount": 3,
+        "destinationPlanetId": "earth",
+        "fossilRewardRepeat": 1,
+        "gain": {
+          "score": 3
+        },
+        "kind": "transport"
+      },
+      "discardActionCode": 3,
+      "faceUp": true,
+      "id": "alien-chong-8-23",
+      "incomeCode": 1,
+      "price": 2,
+      "scanActionCode": 3,
+      "set": "alien:虫"
+    },
+    {
+      "blueBonusOwnerId": "player-white",
+      "cardId": "dlc_6.png",
+      "cardTypeCode": 0,
+      "discardActionCode": 0,
+      "faceUp": true,
+      "id": "card-77-0",
+      "incomeCode": 2,
+      "price": 2,
+      "scanActionCode": 2,
+      "set": "space-agency"
+    }
+  ],
+  "modelValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v71",
+    "total": 264,
+    "components": {
+      "realizedScore": 182,
+      "currentEndGameBonus": 73,
+      "resources": 5,
+      "hand": 4,
+      "income": 0,
+      "technologyPotential": 0,
+      "handPotential": 0,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0,
+      "finalMarkPotential": 0
+    },
+    "terminal": false,
+    "purposePreparationDebt": 0
+  },
+  "newPublicIdentitiesUsedForValue": false,
+  "endpoint": "reports/ai-foundation-20261119/autonomous-r4-held-landing-endpoint-20261119-v1.json.gz"
+}

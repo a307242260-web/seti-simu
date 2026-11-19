@@ -1,0 +1,23 @@
+"""Merge only the two bounded expert-inspired trials; preserve historical entries."""
+import copy,hashlib,json,subprocess,tempfile
+from pathlib import Path
+from datetime import datetime,timezone
+ROOT=Path(__file__).resolve().parents[1];paths=['reports/iteration/versions.json','reports/iteration/registry.json','reports/robot-iteration.html'];parent=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip();sha=lambda b:hashlib.sha256(b).hexdigest();before={p:(ROOT/p).read_bytes()for p in paths}
+trials=[('/private/tmp/seti-r4-held-land-20261119.json','v489-held-final-land-teaching-20261119','手牌登陆候选：272分（持平，未采用）','v486-teaching-current-full-20261119',272,'自主第1–4轮，其他三席仅PASS；272分持平，前310输入及前三轮资产一致。356输入15.317秒，最大256次/389.165ms。节省资源未增加扫描和分析，末轮新增无收益发射；不替换基线。')]
+entries=[]
+for manifest,vid,name,baseline,score,summary in trials:
+ m=json.loads(Path(manifest).read_text());s=Path(m['runtime']);entry=copy.deepcopy(next(x for x in json.loads((s/paths[0]).read_text())['versions']if x['id']==vid));row=copy.deepcopy(next(x for x in json.loads((s/paths[1]).read_text())['versions']if x['id']==vid));commit=m['sourceCommit'];info=subprocess.check_output(['git','show','-s','--format=%h%n%ad%n%s','--date=short',commit],cwd=ROOT).decode().splitlines();entry.update(name=name,baseline=baseline,baselineEligible=False,summary=summary,commits=[info[0]]);row.update({k:entry[k]for k in ['name','baseline','baselineEligible','summary']});row.update(isHead=False,commits=[dict(zip(['hash','date','subject'],info))],diffStat=None,diffFiles=[]);assert row['aiGeneration']=='v2'and row['results'][0]['scores']['player-white']==score;assert all(row['completeness'][k]for k in ['record','save','report']);entries.append((entry,row,s))
+base=Path(tempfile.mkdtemp(prefix='seti-expert-trials-registry-',dir='/private/tmp'));result={'parent':parent,'beforeWorkingHashes':{p:sha(b)for p,b in before.items()},'sharedIndexSha256':sha((ROOT/'.git/index').read_bytes()),'versions':[e['id']for e,_,_ in entries],'builds':{}}
+for kind in ['head','working']:
+ source={p:subprocess.check_output(['git','show',parent+':'+p],cwd=ROOT)for p in paths}if kind=='head'else before;catalog=json.loads(source[paths[0]]);registry=json.loads(source[paths[1]]);oldcat=copy.deepcopy(catalog['versions']);oldrows=copy.deepcopy(registry['versions']);oldv1=copy.deepcopy(registry['generations']['v1'])
+ for e,row,_ in entries:
+  assert any(x['id']==e['baseline']for x in catalog['versions']);assert not any(x['id']==e['id']for x in catalog['versions']);catalog['versions'].insert(0,e);registry['versions'].insert(0,row)
+ assert catalog['versions'][1:]==oldcat and registry['versions'][1:]==oldrows and registry['generations']['v1']==oldv1
+ registry['generations']['v2']['versionCount']+=1;registry['generations']['v2']['recordCount']+=1;registry['builtAt']=datetime.now(timezone.utc).isoformat();registry['headCommit']=parent[:9]
+ code="const fs=require('fs'),lib=require('./tools/robot-iteration-lib'),r=JSON.parse(fs.readFileSync(0,'utf8')),v=r.versions.filter(x=>x.aiGeneration==='v2');process.stdout.write(JSON.stringify(lib.computeBestOf(v,Object.fromEntries(v.map(x=>[x.id,x.results])))));";run=subprocess.run(['node','-e',code],cwd=entries[-1][2],input=json.dumps(registry),capture_output=True,text=True,timeout=20);assert run.returncode==0,run.stderr;best=json.loads(run.stdout);registry['generations']['v2']['bestOf']=best;registry['bestOf']=best
+ html=source[paths[2]].decode();start=html.index('const ALL_REGISTRY = ')+len('const ALL_REGISTRY = ');_,count=json.JSONDecoder().raw_decode(html[start:]);encoded=json.dumps(registry,ensure_ascii=False,indent=2).replace('<','\\u003c');updated=html[:start]+encoded+html[start+count:]
+ outputs={paths[0]:(json.dumps(catalog,ensure_ascii=kind=='head',indent=2)+'\n').encode(),paths[1]:(json.dumps(registry,ensure_ascii=kind=='head',indent=2)+'\n').encode(),paths[2]:updated.encode()};dest=base/kind
+ for p,b in outputs.items():(dest/p).parent.mkdir(parents=True,exist_ok=True);(dest/p).write_bytes(b)
+ result['builds'][kind]={'directory':str(dest),'paths':{p:sha(b)for p,b in outputs.items()},'historicalEntriesPreserved':True,'v1Unchanged':True,'HTMLTemplatePreserved':True}
+for p,b in before.items():assert (ROOT/p).read_bytes()==b
+assert sha((ROOT/'.git/index').read_bytes())==result['sharedIndexSha256'];out=Path('/private/tmp/seti-held-land-registry-20261119.json');assert not out.exists();out.write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'prepared':str(out),'versions':result['versions'],'v1AndHistoryPreserved':True}))

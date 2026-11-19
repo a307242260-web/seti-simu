@@ -1,0 +1,137 @@
+{
+  "attempts": 4,
+  "passed": 2,
+  "failed": 2,
+  "results": [
+    {
+      "case": "324",
+      "status": "failed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v489-held-final-landing/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 107,
+      "milliseconds": 290.53154099999995,
+      "value": 261,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 146,
+        "decisionVersion": 2,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2\u4fe1\u7528\u70b9 \u2192 1\u80fd\u91cf"
+      },
+      "failure": {
+        "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'quick_trade'\n- 'move'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'quick_trade'\n- 'move'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-held-final-land-policy-20261119.cjs:15:24)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+      }
+    },
+    {
+      "case": "324",
+      "status": "failed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v489-held-final-landing/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 107,
+      "milliseconds": 297.825583,
+      "value": 261,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 146,
+        "decisionVersion": 2,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2\u4fe1\u7528\u70b9 \u2192 1\u80fd\u91cf"
+      },
+      "failure": {
+        "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'quick_trade'\n- 'move'\n",
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 'quick_trade'\n- 'move'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-held-final-land-policy-20261119.cjs:15:24)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+      }
+    },
+    {
+      "case": "311",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v489-held-final-landing/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 38,
+      "milliseconds": 172.10091699999998,
+      "value": 255,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:8287538e",
+        "actorId": "player-white",
+        "stateVersion": 140,
+        "decisionVersion": 2,
+        "target": {
+          "rocketId": 7,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 2
+        },
+        "decision": null,
+        "summary": "\u79fb\u52a8\u63a2\u6d4b\u5668 7 \u9006\u65f6\u9488"
+      },
+      "failure": null
+    },
+    {
+      "case": "324",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v489-held-final-landing/seti-purpose-capital-state-value-v71",
+      "complete": true,
+      "nativeInputs": 115,
+      "milliseconds": 271.550417,
+      "value": 264,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:90134ba1",
+        "actorId": "player-white",
+        "stateVersion": 146,
+        "decisionVersion": 2,
+        "target": {
+          "rocketId": 7,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "\u79fb\u52a8\u63a2\u6d4b\u5668 7 \u9006\u65f6\u9488"
+      },
+      "failure": null
+    }
+  ]
+}

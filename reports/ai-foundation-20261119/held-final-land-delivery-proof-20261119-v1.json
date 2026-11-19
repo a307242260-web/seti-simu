@@ -1,0 +1,63 @@
+{
+  "status": "phase-complete-no-baseline-upgrade",
+  "previousGoalTurnClassification": "progress: rejected two alternatives with complete autonomous/control evidence; current turn found a distinct missing held landing purpose and terminal/nonterminal resource comparison witness.",
+  "acceptedPolicyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "candidateCommit": "06d5671a850c17deea8c63cc751d6776e55cb7c6",
+  "autonomousScore": 272,
+  "scoreGain": 0,
+  "newAutonomousGames": 1,
+  "newOriginal20Games": 0,
+  "nativeAuditInputs": 93,
+  "fixedWitnessInputs": 19,
+  "independentFullReplayInputs": 356,
+  "candidateRelatedTestsPassed": 2,
+  "restoredBaselineRelatedTestsPassed": 2,
+  "first310ActionsEqual": true,
+  "firstThreeRoundAssetsEqual": true,
+  "maxNative": 256,
+  "maxMilliseconds": 389.1649589999997,
+  "wallMs": 15317,
+  "nextEvidence": "late-launch-resource-value-witness-20261119-v1.json",
+  "nextQuestion": "Correctly compare terminal PASS and nonterminal own-turn leaves without valuing unusable residual resources as actual final points; preserve real funded same-round purposes.",
+  "catalog": {
+    "parent": "06d5671a850c17deea8c63cc751d6776e55cb7c6",
+    "beforeWorkingHashes": {
+      "reports/iteration/versions.json": "14efc69eec8fe3693f48c4f84dc801d0d0bc4527006d076a9d07528df5aa3d54",
+      "reports/iteration/registry.json": "b1cdbbcae833211209d8be72801ac15917e26728a63797b2303c3439df0b7217",
+      "reports/robot-iteration.html": "26bd66736fdeda03629e5716834e8ad107a6812cf7b2d70e8ce62f92d78bb7ad"
+    },
+    "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673",
+    "versions": [
+      "v489-held-final-land-teaching-20261119"
+    ],
+    "builds": {
+      "head": {
+        "directory": "/private/tmp/seti-expert-trials-registry-4qzgfktm/head",
+        "paths": {
+          "reports/iteration/versions.json": "c32ef87ce0be9f28d4223e4d5e7075d6d9a9e0a02393d2c70867843846702c36",
+          "reports/iteration/registry.json": "47af8b24ede3c38209c3f1f74a711754107590949980ee5e528aee74d7c7639f",
+          "reports/robot-iteration.html": "abfdfed8f81139343684628141abb2c531877a6858a6c7ce4471798f6b7a1fc2"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      },
+      "working": {
+        "directory": "/private/tmp/seti-expert-trials-registry-4qzgfktm/working",
+        "paths": {
+          "reports/iteration/versions.json": "1ec6bd297147a1d44c47af62e8347c2685a52821a6d0f2f15cc953d5f5bf7d0c",
+          "reports/iteration/registry.json": "a42d15788f26540fd164268d745d1eac124ef944d0c5a59dc950a9125ffc2aa4",
+          "reports/robot-iteration.html": "2abaffd86ad80702b32cd8f425a67c4cbd744b55fb7d33750bb5b247a765a1c6"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      }
+    }
+  },
+  "sourceIsolation": {
+    "sharedIndexUnchanged": true,
+    "protectedRootProductionUnchanged": true
+  },
+  "report": "reports/expert-learning-20261119/expert-strategy-trials-20261119-v1.html"
+}

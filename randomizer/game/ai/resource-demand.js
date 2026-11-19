@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog,chong){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v29-held-final-landing';
+  const VERSION='seti-goal-resource-preparation-v28';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -28,7 +28,7 @@
   function needs(state,seatId,goal){
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),required={...(goal.required||{})};
-    if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+(c.id===goal.cardId?0:movePoints(c)),0));
+    if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+movePoints(c),0));
     if(goal.kind==='held-landing-route')required.energy=goal.directTransport?0:goal.embeddedMove?(goal.path.length>1&&!goal.movementCardId?1:0):goal.movementPoints;
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
@@ -581,25 +581,6 @@
         add({id:t.planId,kind:'research_tech',tileId:t.tileId,blueSlot:t.blueSlot,required:t.required,
           ...(continuation?{continuationCardId:continuation.beneficiaryCardId,publicityCornerCardId:continuation.cornerCardId}:{})});
       }
-      // A held free landing is a different payment for the same named route.
-      // The conditional return remains Native; no return is priced here.
-      const heldLandings=state.turn.roundNumber===4
-        &&state.turn.activePlayerIds.every(id=>id===seatId||state.turn.passedPlayerIds.includes(id))
-        ?p.hand.filter(card=>{
-          if(!card.id||!card.cardId||card.hidden)return false;
-          const model=effects.getCardModel(card),list=model?.playEffects||[],o=list[0]?.options||{},r=list[1]?.options||{},cost=effects.getCardPlayCost(card);
-          return model?.cardType===0&&!model.triggers?.length&&!model.tasks?.length&&!model.temporaryTasks?.length
-            &&list.length===2&&list[0].type==='card_land'&&o.skipCost&&o.grantRewards
-            &&!o.allowDuplicateLanding&&!o.allowDuplicateSatelliteLanding&&!o.allowSatelliteWithoutTech
-            &&!o.forceFirstLandingReward&&!o.afterLandRewards?.length&&(o.repeat??1)===1
-            &&o.displayLandingSlot==null&&o.referenceOffsetTokenWidths==null
-            &&Object.keys(o).every(k=>['skipCost','grantRewards','allowDuplicateLanding','allowDuplicateSatelliteLanding',
-              'allowSatelliteWithoutTech','forceFirstLandingReward','rememberPreLandingOwnMarker','rememberPreLandingMarker',
-              'displayLandingSlot','referenceOffsetTokenWidths','afterLandRewards'].includes(k))
-            &&list[1].type==='card_return_played_card_to_hand_if'&&Object.keys(r).length===1
-            &&r.condition?.type==='lastLandingHadAnyMarker'&&Object.keys(r.condition).length===1
-            &&Object.keys(cost).length===1&&Number.isSafeInteger(cost.credits)&&cost.credits>0;
-        }):[];
       for(const c of requirements.probeCandidates.filter(c=>!c.launchRequired&&c.rocketId!=null)){
         const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);if(!probe)continue;
         let at=rockets.getRocketSectorCoordinate(probe),path=[],points=0;
@@ -607,12 +588,6 @@
           const cost=rocketAbility.getRequiredMovePointsFromCoordinate({...state,state},p,at);path.push({from:at,to:move.to,deltaX:step.deltaX,deltaY:step.deltaY,requiredMovePoints:cost});points+=cost;at=move.to;}
         add({id:c.requirementId,kind:'route',family:c.endpointFamily,rocketId:c.rocketId,planetId:c.planetId,endpointTarget:c.endpointTarget,
           endpointCost:c.endpointFacts.cost,benefit:c.targetBenefit,coordinate:at,path,movementPoints:points,required:{credits:c.endpointFacts.cost.credits||0}});
-        if(heldLandings.length===1&&c.endpointFamily==='land'&&c.endpointTarget?.type==='planet'){
-          const card=heldLandings[0],cost=effects.getCardPlayCost(card);
-          add({id:c.requirementId+':held-final-land:'+card.id,kind:'route',family:'land',rocketId:c.rocketId,
-            planetId:c.planetId,endpointTarget:c.endpointTarget,cardId:card.id,endpointCost:cost,
-            benefit:c.targetBenefit,coordinate:at,path,movementPoints:points,required:cost});
-        }
       }
       if(placed(p)<6||Object.entries(requirements.analyzeCost).some(([k,v])=>p.resources[k]<v))
         add({id:'data:analyze:6',kind:'analyze',targetComputerSlot:6,required:requirements.analyzeCost});
@@ -679,7 +654,7 @@
     // Future travel has one fixed destination. At-location orbit/landing are
     // distinct main purposes and must survive even when another endpoint wins that estimate.
     const routes=goals.filter(g=>g.kind==='route').map(g=>({goal:g,net:g.benefit.score+g.benefit.dataCount*.5+g.benefit.incomeCount*(4-state.turn.roundNumber)
-      -(g.endpointCost.credits||0)-(g.endpointCost.energy||0)-g.movementPoints-(g.cardId?1:0)})).filter(x=>x.net>0)
+      -(g.endpointCost.credits||0)-(g.endpointCost.energy||0)-g.movementPoints})).filter(x=>x.net>0)
       .sort((a,b)=>b.net-a.net||a.goal.movementPoints-b.goal.movementPoints||a.goal.path.length-b.goal.path.length||(a.goal.id<b.goal.id?-1:1));
     const chosen=routes[0]?.goal;
     return goals.filter(g=>(g.kind!=='route'||g.movementPoints===0||g===chosen)&&!(g.kind==='play_card'&&!g.paidRewardPolicy&&goals.some(p=>p.kind==='effect-purpose'&&p.cardId===g.cardId))).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
@@ -1374,8 +1349,7 @@
     if(status==='decision'){
       if(goal.kind==='route'){
         const payment=actions.filter(a=>a.target?.kind==='move-payment');
-        if(payment.length){const a=payment.filter(a=>!goal.cardId||!a.target.cardIds?.includes(goal.cardId))
-          .filter(a=>p.resources.energy-(a.payload.energyCost||0)>=(goal.endpointCost.energy||0))
+        if(payment.length){const a=payment.filter(a=>p.resources.energy-(a.payload.energyCost||0)>=(goal.endpointCost.energy||0))
           .sort((a,b)=>(a.target.cardIds?.length||0)-(b.target.cardIds?.length||0)||(a.actionId<b.actionId?-1:1))[0];
           return a?{kind:'fixed',actionId:a.actionId,reason:'fixed-route-payment'}:{kind:'infeasible',reason:'route-payment-cannot-preserve-endpoint'};
         }
@@ -1440,8 +1414,7 @@
     if(goal.kind==='route'){
       const next=goal.path[0];
       const a=next?actions.find(a=>a.family==='move'&&a.target?.rocketId===goal.rocketId&&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY)
-        :actions.find(a=>a.family===(goal.cardId?'play_card':goal.family)&&(!goal.cardId||a.target.cardInstanceId===goal.cardId)
-          &&(a.target.rocketId==null||a.target.rocketId===goal.rocketId)&&(a.target.planetId==null||a.target.planetId===goal.planetId));
+        :actions.find(a=>a.family===goal.family&&(a.target.rocketId==null||a.target.rocketId===goal.rocketId)&&(a.target.planetId==null||a.target.planetId===goal.planetId));
       return a?{kind:next?'fixed':'start-target',actionId:a.actionId,reason:next?'fixed-goal-route-step':'funded-route-endpoint'}:{kind:'infeasible',reason:'goal-route-action-unavailable'};
     }
     if(goal.kind==='effect-purpose'){
