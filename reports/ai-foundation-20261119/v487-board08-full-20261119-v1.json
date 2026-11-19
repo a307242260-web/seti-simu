@@ -1,0 +1,39 @@
+{
+  "sourceCommit": "d6e32ba784cc4d831d6fecb00da47ced20759420",
+  "runtime": "/private/tmp/seti-v487-admission-source-rcahypgl",
+  "plannedBoards": 1,
+  "status": "stopped-at-first-failure",
+  "startedEpochSeconds": 1795053629.938708,
+  "attempts": [
+    {
+      "boardNumber": 8,
+      "seed": "seti-analyze-9c11af934643",
+      "name": "v487-board08-full-20261119",
+      "command": [
+        "node",
+        "tools/robot_iterate.js",
+        "run",
+        "--name",
+        "v487-board08-full-20261119",
+        "--full",
+        "--seed",
+        "seti-analyze-9c11af934643",
+        "--config",
+        "agentType=search,scenario=free-analyze-random20-guarded-v1",
+        "--baseline",
+        "formal272-original20-20261119",
+        "--summary",
+        "Committed v487 held-landing and deferred-income policy; one original board08 guarded full game; other three seats PASS.",
+        "--date",
+        "2026-11-19"
+      ],
+      "startedEpochSeconds": 1795053629.938838,
+      "status": "failed",
+      "stdout": "reports/ai-foundation-20261119/v487-board08-full-20261119.stdout.log",
+      "stderr": "reports/ai-foundation-20261119/v487-board08-full-20261119.stderr.log",
+      "exitCode": 1,
+      "endedEpochSeconds": 1795053630.022975
+    }
+  ],
+  "endedEpochSeconds": 1795053630.0237608
+}

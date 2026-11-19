@@ -1,0 +1,12 @@
+{
+  "reason": "Unknown baseline ID caused the CLI to enumerate3266 commits and time out during report generation after the game and version registration completed. No game rerun.",
+  "correctBaseline": "v486-original20-20261119",
+  "sourceCommits": [
+    "d6e32ba784cc4d831d6fecb00da47ced20759420",
+    "2660747a525500f487e7670ff753c14cd2273c88",
+    "ba4c46ad32fc44eb1cf9b77c22565c7e44f75bce",
+    "19af9a137e050fd48d70f8812909874226daccc6",
+    "bf77528d3b61f6557652ab33c29aa35db63cac20"
+  ],
+  "oldVersionsWillBePreserved": true
+}

@@ -1,0 +1,614 @@
+{
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "changedFiles": {
+    "randomizer/game/ai/resource-demand.js": "80429fb7b2dba571bf15c4d7e3a23a702a170f27d44c800b46b0d4419ed67643",
+    "randomizer/game/ai/analysis-port.js": "2d19a2d628b3991263e691a6e8e35ee21a5d50f5fa809d54ca9d4f148a5b24b2",
+    "randomizer/game/ai/decision-search.js": "e701748b15a6643ad3141f3603f01e22ef737f7f090fa451b4c9b6f5cb1bee92",
+    "randomizer/game/ai/resource-demand.test.js": "123a9080541c0cdcc0adb91ab35e801d006676823012bb23b4287ae607779b9e",
+    "randomizer/game/ai/final-income-land-20261119-v1.fixture.json.gz": "03051d65af9856a64a7223c43d8f22b02fb736b0c57df4b48d088ca1d06e668d"
+  },
+  "newAutonomousGames": 0,
+  "newCommittedGameInputs": 0,
+  "complete": true,
+  "actionId": "place_data:8fd12fd3",
+  "value": 128,
+  "milliseconds": 326.586542,
+  "nativeInputs": 238,
+  "diagnostics": {
+    "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+    "valueEvaluations": 98,
+    "valueCacheHits": 196,
+    "finalMarkPlanning": true,
+    "scanPlanning": true,
+    "resourcePlanning": "goal-bound-greedy-preparation",
+    "cardPickPlanning": "purpose-bound-fixed-plan",
+    "movementPlanning": "goal-directed-policy",
+    "movementPolicyNodes": 68,
+    "movementDirectionsExcluded": 276,
+    "routeGeometryNodes": 192,
+    "incomePlanProofs": 0,
+    "provedIncomeInputs": 0,
+    "turnTailProofs": 0,
+    "provedTurnTailInputs": 0,
+    "movementValuePrunes": 0,
+    "dataPrimaryBoundPrunes": 0,
+    "winningIncomePlans": 0,
+    "winningIncomeInputs": 0,
+    "deferredMovementPlans": 0,
+    "nativeExecutions": 238,
+    "logicalResourceInputs": 282,
+    "sharedResourceInputHits": 32,
+    "sharedResourceInternalStates": 163,
+    "localFinalMarkStates": 0,
+    "localFinalMarkExcluded": 0,
+    "fixedDataChoiceStates": 0,
+    "fixedDataChoicesExcluded": 0,
+    "branchingStates": 24,
+    "singleAlternativeStates": 113,
+    "disabledBorrowStarts": 0,
+    "disabledRemoveTechIncomeStarts": 0,
+    "scanPurposePlans": 32,
+    "resourceGoalPlans": 103,
+    "resourcePreparationInputs": 282,
+    "resourceFallbacks": 4,
+    "resourceExcludedActions": 1321,
+    "transitions": 488,
+    "nodes": 467,
+    "graphNodes": 235,
+    "certificateNodes": 232,
+    "postMainOptimalPlans": 0,
+    "postMainOptimalPlanSteps": 0,
+    "equivalents": 38,
+    "selectionMacros": 0,
+    "peakFrontier": 35,
+    "dominancePrunes": 0,
+    "resourceDominance": "disabled-for-movement-policy",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "disabled-for-movement-policy",
+    "postMainValuePrunes": 0,
+    "scanValuePrunes": 0,
+    "scanActionPrunes": 0,
+    "cardTradePrunes": 0,
+    "cardTradePruning": "disabled-for-selection-certificate",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "postMainBorrowProofNodes": 0,
+    "postMainBorrowExcludedChoices": 0,
+    "postMainBorrowMacros": 0,
+    "cardChoiceProofNodes": 0,
+    "cardChoiceExcludedActions": 0,
+    "cardCornerProofNodes": 0,
+    "cardCornerExcludedActions": 0,
+    "preMainDataProofNodes": 0,
+    "preMainDataExcludedActions": 0,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v71\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "not-requested",
+    "milliseconds": 312.2925,
+    "limits": {
+      "transitions": null,
+      "nodes": null,
+      "frontier": null,
+      "milliseconds": null
+    }
+  },
+  "roots": [
+    {
+      "actionId": "launch:c94cda79",
+      "target": 1,
+      "value": 112.5,
+      "realization": -11,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "orbit:44937d1f",
+      "target": 12,
+      "value": 106,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "rocket:3:orbit:mars:planet:",
+        "kind": "route",
+        "family": "orbit",
+        "rocketId": 3,
+        "planetId": "mars",
+        "endpointTarget": {
+          "type": "planet"
+        },
+        "endpointCost": {
+          "credits": 1,
+          "energy": 1
+        },
+        "benefit": {
+          "score": 3,
+          "incomeCount": 1,
+          "dataCount": 0,
+          "grossEquivalentValue": 5.5,
+          "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+          "source": "planetRewards.orbit:mars"
+        },
+        "coordinate": {
+          "x": 0,
+          "y": 2
+        },
+        "path": [],
+        "movementPoints": 0,
+        "required": {
+          "credits": 1
+        }
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    {
+      "actionId": "land:d5ee03a2",
+      "target": 10,
+      "value": 123,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "rocket:3:land:mars:planet:",
+        "kind": "route",
+        "family": "land",
+        "rocketId": 3,
+        "planetId": "mars",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 3
+        },
+        "benefit": {
+          "score": 6,
+          "incomeCount": 0,
+          "dataCount": 2,
+          "grossEquivalentValue": 11.833333333333334,
+          "rewardSummary": "首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记",
+          "source": "planetRewards.land:mars"
+        },
+        "coordinate": {
+          "x": 0,
+          "y": 2
+        },
+        "path": [],
+        "movementPoints": 0,
+        "required": {
+          "credits": 0
+        }
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    {
+      "actionId": "scan:2d21a323",
+      "target": 13,
+      "value": 123,
+      "realization": -9.5,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "scan:sector:sector-2-b",
+        "kind": "scan-flow",
+        "nebulaId": "sector-2-b",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "resourceGoalCount": 4,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:d0ac03c2",
+      "target": 2,
+      "value": 128,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:8a6976ad",
+      "target": 3,
+      "value": 112,
+      "realization": -11,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:e300139a",
+      "target": 9,
+      "value": 111.5,
+      "realization": -9,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "effect:tech:card:card-65-0",
+        "kind": "effect-purpose",
+        "purpose": "tech",
+        "cardId": "card-65-0",
+        "sourceFamily": "play_card",
+        "required": {
+          "credits": 3
+        }
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    {
+      "actionId": "play_card:eea1e173",
+      "target": 4,
+      "value": 112.5,
+      "realization": -11,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "pass:a1f33c73",
+      "target": 5,
+      "value": 89,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "move:e0158279",
+      "target": 11,
+      "value": 127,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "route",
+        "family": "land",
+        "rocketId": 3,
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        },
+        "benefit": {
+          "score": 10,
+          "incomeCount": 0,
+          "dataCount": 3,
+          "grossEquivalentValue": 20.833333333333336,
+          "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+          "source": "planetRewards.land:neptune"
+        },
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "path": [
+          {
+            "from": {
+              "x": 0,
+              "y": 2
+            },
+            "to": {
+              "x": 0,
+              "y": 3
+            },
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          },
+          {
+            "from": {
+              "x": 0,
+              "y": 3
+            },
+            "to": {
+              "x": 1,
+              "y": 3
+            },
+            "deltaX": 1,
+            "deltaY": 0,
+            "requiredMovePoints": 1
+          },
+          {
+            "from": {
+              "x": 1,
+              "y": 3
+            },
+            "to": {
+              "x": 1,
+              "y": 4
+            },
+            "deltaX": 0,
+            "deltaY": 1,
+            "requiredMovePoints": 1
+          }
+        ],
+        "movementPoints": 3,
+        "required": {
+          "credits": 0
+        }
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    },
+    {
+      "actionId": "move:75e0e1ed",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v7",
+      "chosenGoal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "land",
+        "label": "land neptune",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "timing": "current-turn",
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "move:ddf0bb75",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v7",
+      "chosenGoal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "land",
+        "label": "land neptune",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "timing": "current-turn",
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "move:c488b99f",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v7",
+      "chosenGoal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "land",
+        "label": "land neptune",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "timing": "current-turn",
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:f385e2ac",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:49c75492",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": {
+        "kind": "data",
+        "id": "data:analyze:6",
+        "amount": 1,
+        "priority": 4
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:12411a2c",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:a39c1a77",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:37140fcf",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": {
+        "kind": "data",
+        "id": "data:analyze:6",
+        "amount": 1,
+        "priority": 4
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:122c43fc",
+      "target": 6,
+      "value": 110.5,
+      "realization": -8,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "quick_trade:df811f99",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:be9dd0cd",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v7",
+      "chosenGoal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "land",
+        "label": "land neptune",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "timing": "current-turn",
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "industry:e887dc52",
+      "target": 7,
+      "value": 127,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "card_corner:33692f4e",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "card_corner:bd2a936a",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-movement-policy",
+      "policy": "seti-goal-movement-policy-v7",
+      "chosenGoal": {
+        "id": "rocket:3:land:neptune:planet:",
+        "kind": "land",
+        "label": "land neptune",
+        "coordinate": {
+          "x": 1,
+          "y": 4
+        },
+        "timing": "current-turn",
+        "planetId": "neptune",
+        "endpointTarget": {
+          "type": "planet",
+          "rocketId": 3
+        },
+        "endpointCost": {
+          "energy": 2
+        }
+      },
+      "isEquivalence": false
+    },
+    {
+      "actionId": "card_corner:1ec7e726",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "card_corner:b7b4c2e9",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "target": 8,
+      "value": 128,
+      "realization": 0,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "data:blue:1",
+        "kind": "blue-data",
+        "blueSlot": 1,
+        "targetComputerSlot": 1,
+        "required": {}
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    }
+  ],
+  "sameChosenAction": true,
+  "sameValue": true,
+  "sameAllRootValues": true,
+  "fixedRunezuChoices": 22,
+  "rootAndRngUnchanged": true,
+  "gatePassed": true,
+  "passed": true
+}

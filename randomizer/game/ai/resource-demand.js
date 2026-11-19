@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital,incomeOrder,scanIncome,techCatalog,chong){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v29';
+  const VERSION='seti-goal-resource-preparation-v28';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -1215,27 +1215,9 @@
     return options.sort((a,b)=>b.value-a.value||a.id.localeCompare(b.id))[0]||null;
   }
 
-  // Execution-only lower bound: allow the extra satellite-capable card while
-  // planning only ordinary planets. Do not widen the state-value forecast.
-  function executionLandingSupplier(p){
-    let chosen=null;
-    for(const card of p.hand){
-      if(!card.id||!card.cardId||card.hidden)continue;
-      const model=effects.getCardModel(card),list=model?.playEffects,o=list?.[0]?.options||{};
-      if(model?.cardType!==3||list?.length!==1||list[0].type!=='card_land'||model.triggers?.length
-        ||model.tasks?.length||model.temporaryTasks?.length||!o.skipCost||!o.grantRewards
-        ||o.allowDuplicateLanding||o.allowDuplicateSatelliteLanding||o.forceFirstLandingReward
-        ||o.afterLandRewards?.length||o.displayLandingSlot!=null||o.referenceOffsetTokenWidths!=null||(o.repeat??1)!==1)continue;
-      const cost=effects.getCardPlayCost(card);
-      if(Object.keys(cost).length!==1||!Number.isSafeInteger(cost.credits)||cost.credits<=0)continue;
-      if(chosen)return null;chosen={card,cost};
-    }
-    return chosen;
-  }
-  function heldLandingGoal({state,seatId,candidates,compareTiming,executionOnly=false}){
+  function heldLandingGoal({state,seatId,candidates,compareTiming}){
     const p=owner(state,seatId),turn=state.turn,weights=stateValue.DEFAULT_WEIGHTS;
-    const supplier=executionOnly&&turn.roundNumber===4&&!p.passCompletionPending?executionLandingSupplier(p)
-      :probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber,passing:p.passCompletionPending},weights);
+    const supplier=probeCapital.heldLandingCard({hand:p.hand,round:turn.roundNumber,passing:p.passCompletionPending},weights);
     if(!supplier||p.resources.credits<supplier.cost.credits)return heldTransportGoal({state,seatId,p,candidates});
     if(p.mainActionCompleted&&turn.activePlayerIds.every(id=>id===seatId||turn.passedPlayerIds.includes(id)))return null;
     const options=[];
@@ -1243,12 +1225,11 @@
       if(c.endpointFamily!=='land'||c.endpointTarget?.type!=='planet'||!c.path.length)continue;
       const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);if(!probe)continue;
       const cost=c.endpointFacts.cost,energy=c.required.paidMovementPoints;
-      const ordinary=probeCapital.funding(p.resources,{...cost,energy:(cost.energy||0)+energy},weights);
-      if(ordinary&&!executionOnly)continue;
+      if(probeCapital.funding(p.resources,{...cost,energy:(cost.energy||0)+energy},weights))continue;
       // Timing is comparatively expensive. Only compare candidates payable
       // today; a route which gets cheaper by waiting needs no advance macro.
       const payment=probeCapital.funding(p.resources,{...supplier.cost,energy},weights);
-      if(!payment||payment.creditPurchases||ordinary&&payment.value+weights.handSize>=ordinary.value)continue;
+      if(!payment||payment.creditPurchases)continue;
       let at=rockets.getRocketSectorCoordinate(probe),points=0;
       const full=c.path.map(s=>{
         const move=rockets.canMoveFromCoordinate(state.pieces,at,s.deltaX,s.deltaY,c.rocketId);

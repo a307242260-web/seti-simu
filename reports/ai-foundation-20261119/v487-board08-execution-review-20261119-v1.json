@@ -1,0 +1,239 @@
+{
+  "sourceCommit": "d6e32ba784cc4d831d6fecb00da47ced20759420",
+  "firstDifferentInput": 142,
+  "prefixInputsBeforeDifferenceEqual": 141,
+  "oldSteps": 203,
+  "newSteps": 204,
+  "selectedDecisionEvidence": [
+    {
+      "trace": 129,
+      "sv": 63,
+      "turn": 2,
+      "a": "\u5b8c\u6210 b_103.webp",
+      "id": "complete_task:49cd31fd",
+      "value": 107.5,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-29",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 17,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 80,
+          "graphNodeCount": 30,
+          "certificateNodeCount": 50,
+          "boundaryWitness": {
+            "node": 22,
+            "value": 107.5,
+            "distance": 12,
+            "scope": "local"
+          },
+          "rootValue": 107.5
+        },
+        "distance": 4
+      },
+      "hand": [
+        "b_34.webp"
+      ]
+    },
+    {
+      "trace": 130,
+      "sv": 63,
+      "turn": 2,
+      "a": "\u63d2\u5165 b_34.webp \u4f5c\u4e3a\u6536\u5165",
+      "id": "choose_card:e3096b03",
+      "value": 107.5,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-29",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 18,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 80,
+          "graphNodeCount": 30,
+          "certificateNodeCount": 50,
+          "boundaryWitness": {
+            "node": 22,
+            "value": 107.5,
+            "distance": 12,
+            "scope": "local"
+          },
+          "rootValue": 107.5
+        },
+        "distance": 3
+      },
+      "hand": [
+        "b_34.webp"
+      ]
+    },
+    {
+      "trace": 131,
+      "sv": 64,
+      "turn": 2,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 107.5,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-29",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 23,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 80,
+          "graphNodeCount": 30,
+          "certificateNodeCount": 50,
+          "boundaryWitness": {
+            "node": 22,
+            "value": 107.5,
+            "distance": 12,
+            "scope": "local"
+          },
+          "rootValue": 107.5
+        },
+        "distance": 2
+      },
+      "hand": []
+    },
+    {
+      "trace": 138,
+      "sv": 68,
+      "turn": 5,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 109,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-30",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 1,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 107,
+          "graphNodeCount": 52,
+          "certificateNodeCount": 55,
+          "boundaryWitness": {
+            "node": 51,
+            "value": 109,
+            "distance": 2,
+            "scope": "local"
+          },
+          "rootValue": 109
+        },
+        "distance": 1
+      },
+      "hand": []
+    },
+    {
+      "trace": 148,
+      "sv": 75,
+      "turn": 6,
+      "a": "\u5b8c\u6210 b_67.webp",
+      "id": "complete_task:e9fa96e1",
+      "value": 116,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-31",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 27,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 96,
+          "graphNodeCount": 49,
+          "certificateNodeCount": 47,
+          "boundaryWitness": {
+            "node": 42,
+            "value": 116,
+            "distance": 15,
+            "scope": "local"
+          },
+          "rootValue": 116
+        },
+        "distance": 6
+      },
+      "hand": []
+    },
+    {
+      "trace": 153,
+      "sv": 77,
+      "turn": 6,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 116,
+      "native": 1,
+      "reused": null,
+      "hand": [
+        "b_80.webp"
+      ]
+    },
+    {
+      "trace": 162,
+      "sv": 82,
+      "turn": 7,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 119.5,
+      "native": 0,
+      "reused": null,
+      "hand": [
+        "b_80.webp",
+        "aomomo_8.webp",
+        "aomomo_9.webp",
+        "aomomo_7.webp"
+      ]
+    },
+    {
+      "trace": 176,
+      "sv": 87,
+      "turn": 8,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 132.5,
+      "native": 0,
+      "reused": {
+        "evidenceId": "plan-evidence-36",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": 2,
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v487-income-landing-purpose",
+          "rootNode": 0,
+          "nodeCount": 9,
+          "graphNodeCount": 4,
+          "certificateNodeCount": 5,
+          "boundaryWitness": {
+            "node": 3,
+            "value": 132.5,
+            "distance": 6,
+            "scope": "local"
+          },
+          "rootValue": 132.5
+        },
+        "distance": 2
+      },
+      "hand": [
+        "aomomo_8.webp"
+      ]
+    },
+    {
+      "trace": 180,
+      "sv": 89,
+      "turn": 9,
+      "a": "\u7ed3\u675f\u56de\u5408",
+      "id": "end_turn:b2f9b29d",
+      "value": 134.5,
+      "native": 0,
+      "reused": null,
+      "hand": [
+        "aomomo_8.webp"
+      ]
+    }
+  ],
+  "formalNewGameScore": 132,
+  "oldGameScore": 132
+}

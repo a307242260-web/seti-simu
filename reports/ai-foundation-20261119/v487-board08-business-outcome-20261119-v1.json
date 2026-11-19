@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "d6e32ba784cc4d831d6fecb00da47ced20759420",
+  "record": "reports/research/29d304cd.d6e32ba7.full.json",
+  "newFullGames": 1,
+  "complete": true,
+  "score": 132,
+  "baselineScore": 132,
+  "scoreDelta": 0,
+  "gameMilliseconds": 7374,
+  "maxNativeInputs": 249,
+  "maxDecisionMilliseconds": 168.84395800000038,
+  "allSearchesComplete": true,
+  "firstThreeRoundNativeParity": [
+    {
+      "round": 1,
+      "nativeEnvelopeAndRngExact": true,
+      "score": 14
+    },
+    {
+      "round": 2,
+      "nativeEnvelopeAndRngExact": true,
+      "score": 23
+    },
+    {
+      "round": 3,
+      "nativeEnvelopeAndRngExact": true,
+      "score": 41
+    }
+  ],
+  "coldActualStateActionMatchesWarm": true,
+  "registryCommandTimedOutAfterGameAndRegistration": true,
+  "registryBaselineMetadataRepairedWithoutGameRerun": true,
+  "oldVersionsPreserved": 371,
+  "decision": "Do not promote this strategy as an improvement; restore the7 source paths from2660747. Preserve candidate commit d6e32ba and all results. No additional patch or game in this unit."
+}

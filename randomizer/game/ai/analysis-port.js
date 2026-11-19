@@ -3042,47 +3042,11 @@
       }
       incomePaymentAlternatives.set(node,result);return result;
     }
-    const deferredLandingIncomeCache=new WeakMap();
-    function deferredLandingIncome(state){
-      if(deferredLandingIncomeCache.has(state))return deferredLandingIncomeCache.get(state);
-      const p=state.players.players.find(p=>p.id===seatId),t=state.turn;
-      let result=null;
-      if(t.roundNumber===4&&t.currentPlayerId===seatId&&p?.mainActionCompleted&&!p.passCompletionPending
-        &&!t.gameEnded&&!t.passedPlayerIds.includes(seatId)&&p.hand.length===1&&knownRootCardIds.has(p.hand[0].id)){
-        const tasks=p.reservedCards.flatMap(card=>{
-          if(!knownRootCardIds.has(card.id)||card.hidden)return[];
-          const model=cardEffects.getCardModel(card);
-          return (model?.tasks||[]).filter(task=>task.condition?.type==='resourceThreshold'&&task.condition.resource==='score'
-            &&task.rewards?.length===1&&task.rewards[0].type==='card_income'&&(task.rewards[0].options?.repeat??1)===1
-            &&p.resources.score>=task.condition.count&&residualSession.queryCardSettlement(state,seatId,{kind:'task',cardInstanceId:card.id,ruleId:task.id}))
-            .map(task=>({cardId:card.id,ruleId:task.id}));
-        });
-        if(tasks.length){
-          const future={...state,players:{...state.players,players:state.players.players.map(q=>q===p?{...q,mainActionCompleted:false}:q)}};
-          const native=productionKernel||globalThis.SetiProductionKernel;
-          const goal=resourceDemand.heldLandingGoal({state:future,seatId,executionOnly:true,
-            candidates:()=>native.getProbeRouteRequirements(future,seatId)?.candidates||[],compareTiming:()=>{throw new Error('DEFERRED_LANDING_TIMING_UNEXPECTED');}});
-          const gain=cards.getIncomeGainForCard(p.hand[0]);
-          const income=Object.entries(gain||{}).reduce((n,[k,v])=>n+v*(stateValue.DEFAULT_WEIGHTS[k]||0),0);
-          if(goal?.kind==='held-landing-route'&&goal.cardId===p.hand[0].id&&goal.value>income)result={...tasks[0],goal,income};
-        }
-      }
-      deferredLandingIncomeCache.set(state,result);return result;
-    }
     function localDecisionSpec(node){
       if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
       if(localSpecs.has(node))return localSpecs.get(node);
       const stored=nodes.get(node),state=readPlanningState(stored);
       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
-      if(!result&&resourcePlanning){
-        const session=stored.envelope.session?.session,head=session?.queue?.[0],d=deferredLandingIncome(state);
-        const skip=d&&head?.type==='residual_card_decision'&&head.ownerId===seatId&&head.payload?.kind==='task'
-          &&head.payload.cardInstanceId===d.cardId&&head.payload.ruleId===d.ruleId&&!head.allowQuickActions&&!session.interruptContext
-          &&session.queue[1]?.type==='probe_turn_advance'&&session.queue[1].payload?.didPass===false
-          &&node.legalActions.find(a=>a.target?.choiceId==='skip:task:'+d.cardId+':'+d.ruleId);
-        if(skip)result={policy:resourceDemand.VERSION,kind:'fixed-defer-income-for-held-landing',fixed:true,isEquivalence:false,
-          selectedActionId:skip.actionId,retainedActionIds:[skip.actionId],excludedActionIds:node.legalActions.filter(a=>a!==skip).map(a=>a.actionId),goal:d.goal};
-      }
       if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope)});
       if(!result&&resourcePlanning&&cardPickPlanning)result=localPlans.pinkScoreBeforeUnknownFossil({
         state,seatId,actions:node.legalActions,session:stored.envelope.session?.session,knownCards:knownCards(stored.envelope),
@@ -4133,7 +4097,7 @@
         }
         const native=productionKernel||globalThis.SetiProductionKernel;
         if(node.legalActions.some(a=>goalMovement.isDirection(a))){
-          const landing=resourceDemand.heldLandingGoal({state,seatId,executionOnly:state.turn.roundNumber===4,compareTiming:timingForOneGoalQuery(state),
+          const landing=resourceDemand.heldLandingGoal({state,seatId,compareTiming:timingForOneGoalQuery(state),
             candidates:()=>native.getProbeRouteRequirements(state,seatId)?.candidates||[]});
           if(landing)goals=[...goals,landing];
         }
@@ -4378,10 +4342,8 @@
         &&state.cards.removedFromGameCardIds.includes(rootCargoCard.cardId)
         &&node.legalActions.some(a=>a.family==="end_turn")&&!node.legalActions.some(a=>a.family==="complete_task")
         ?localPlans.scoredEndCorner({state,seatId,actions:node.legalActions,knownCards:knownCards(stored.envelope)}):null;
-      const heldIncome=node.status==='stable'&&deferredLandingIncome(state);
-      const deferredIncomeTask=heldIncome&&node.legalActions.find(a=>a.family==='complete_task'&&a.target?.cardInstanceId===heldIncome.cardId&&a.target.ruleId===heldIncome.ruleId);
       const deferredCappedTask=cappedSectorTaskToKeep(state,owner,node);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.actionId===deferredCappedTask?.actionId||a.actionId===deferredIncomeTask?.actionId||scoredCorner&&a.family==="end_turn"||a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)&&a.actionId!==scoredCorner?.actionId||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):adjacentCargo?.paid||plans.some(p=>p.goal.kind!=="cargo-research-corner")?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.actionId===deferredCappedTask?.actionId||scoredCorner&&a.family==="end_turn"||a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)&&a.actionId!==scoredCorner?.actionId||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):adjacentCargo?.paid||plans.some(p=>p.goal.kind!=="cargo-research-corner")?node.legalActions:[];
       const company=industryCatalog.getPlayerIndustryDefinition(owner),bluePlan=plans.find(p=>p.goal.kind==="blue-data");
       let recoveredDataOrder=null;
       // A cold snapshot can be taken between the shared place-data action

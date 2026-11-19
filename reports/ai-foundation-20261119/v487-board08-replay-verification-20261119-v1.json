@@ -1,0 +1,14 @@
+{
+  "sourceCommit": "d6e32ba784cc4d831d6fecb00da47ced20759420",
+  "inputs": 204,
+  "score": 132,
+  "verified": true,
+  "expected": {
+    "nativeStateSha256": "da6c396768212cf764b16e1eadb32421fc27e6059fb083029416a77cd9aa5b06",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 512613998
+    }
+  }
+}

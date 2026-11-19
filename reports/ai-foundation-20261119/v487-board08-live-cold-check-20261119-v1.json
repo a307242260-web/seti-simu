@@ -1,0 +1,98 @@
+{
+  "sourceCommit": "d6e32ba784cc4d831d6fecb00da47ced20759420",
+  "prefixInputs": 16,
+  "newFullGames": 0,
+  "warmAction": "complete_task:49cd31fd",
+  "warmValue": 107.5,
+  "coldAction": "complete_task:49cd31fd",
+  "coldValue": 107.5,
+  "nativeInputs": 9,
+  "milliseconds": 31.415208000000007,
+  "complete": true,
+  "sameAction": true,
+  "roots": [
+    {
+      "actionId": "quick_trade:f385e2ac",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:49c75492",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": null,
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:122c43fc",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": null,
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:df811f99",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "quick_trade:71814d67",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": null,
+      "isEquivalence": false
+    },
+    {
+      "actionId": "industry:e887dc52",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-card-pick-policy",
+      "policy": "seti-purpose-card-pick-policy-v18",
+      "goal": null,
+      "isEquivalence": false
+    },
+    {
+      "actionId": "card_corner:fe8de6ec",
+      "target": null,
+      "value": null,
+      "valueType": "not-executed",
+      "completion": "excluded-by-resource-policy",
+      "policy": "seti-goal-resource-preparation-v29",
+      "isEquivalence": false
+    },
+    {
+      "actionId": "complete_task:49cd31fd",
+      "target": 1,
+      "value": 107.5,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    },
+    {
+      "actionId": "end_turn:b2f9b29d",
+      "target": 2,
+      "value": 107.5,
+      "realization": 0,
+      "preparationDebt": 0,
+      "completion": "complete"
+    }
+  ]
+}

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "terminal-choice-admission-route-20261119-v1.json",
+  "startedEpochSeconds": 1795052998.743273,
+  "deadlineEpochSeconds": 1795054198.743273,
+  "status": "closed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795052999.089771,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 7094,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053012.9598432
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053113.1204429,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 8476,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053127.331267
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053200.624973,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 9481,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053215.129216
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053261.983861,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 10109,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053262.547136
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053352.69967,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 10934,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795053352.723895
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053464.123918,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 11889,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053464.634867
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053616.477408,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 13663,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053619.8942049
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/run-v487-board08-full-20261119.py"
+      ],
+      "startedEpochSeconds": 1795053629.914845,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 14488,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053630.066271
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053727.486814,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 15554,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053727.577652
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/run-v487-board08-full-20261119-v2.py"
+      ],
+      "startedEpochSeconds": 1795053728.218695,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 15756,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053923.287851
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795053998.675474,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 88469,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795053998.88624
+    },
+    {
+      "command": [
+        "node",
+        "-"
+      ],
+      "startedEpochSeconds": 1795054095.811392,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795054198.743273,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 89557,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795054096.187896
+    }
+  ],
+  "scope": "Second cumulative admission unit justified by newly verified Git fixture availability; source policy remains frozen.",
+  "recoveryEvents": [
+    {
+      "epochSeconds": 1795053429.110534,
+      "reason": "Packaging script parse failure before any statements executed; candidate hashes verified unchanged. Reopen the same unit solely within its original deadline; retain the failed attempt and original route start.",
+      "originalStatus": "failed",
+      "deadlineUnchanged": true,
+      "sourceChanged": false
+    }
+  ],
+  "closedEpochSeconds": 1795054377.7977788,
+  "outcome": "v487-board08-business-outcome-20261119-v1.json",
+  "baselinePromotion": false
+}

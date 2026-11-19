@@ -1,0 +1,579 @@
+{
+  "sourceRegistry": "committed reports/iteration/registry.json",
+  "privateGenerationBackfill": [
+    {
+      "id": "v486-original20-20261119",
+      "aiGeneration": "v2"
+    },
+    {
+      "id": "formal272-original20-20261119",
+      "aiGeneration": "v2"
+    },
+    {
+      "id": "budget-ladder-03-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "budget-clone-01-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "card-terminal-value-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "income-choice-greedy-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-corner-greedy-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "scan-free-cost-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "secondary-probe-greedy-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "fixed-world-405-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "runezu-panel-node-projection-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "final-income-input-fix-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-trade-greedy-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "public-card-runezu-greedy-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "runezu-effect-fix-20260913",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-owner-cache-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-trade-greedy-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "income-target-fix-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-move-greedy-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-pick-greedy-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "chong-trace-reward-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "overflow-trace-greedy-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "trace-score-greedy-input-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "trace-sequence-rejected-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "frontier-materialization-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "quick-timing-corner-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "quick-timing-20260912",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "turn-boundary-20260911",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-card12-20260911",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-expectation-superseded-20260911",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-facts-20260911",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "round5-correctness-base-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "browser-smoke-read-path-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "counted-card-reveal-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "counted-card-move-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "round5-card-value-design-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "route-leaf-eligibility-20260909",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "route-suffix-facts-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-pick-disabled-tech-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "disabled-tech-value-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-card-pick-greedy-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-demand-pair-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "route-selection-error-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "counterfactual-identity-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "quick-turn-order-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "grant-data-route-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "income-boundary-company-base-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "income-blind-boundary-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "rules-baseline-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "quick-move-events-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "fangzhou-major-reward-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "turing-immediate-expiry-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "turing-active-tech-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "borrowed-probe-cache-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "company-base-income-scoring-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "chong-blue-card-order-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "expired-sector-goal-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "route-reward-dependency-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "aomomo-reward-ordinal-20260908",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "reward-plan-dependency-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "analysis-plan-dependency-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-slot-order-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-demand-fusion-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "trigger-scan-mapping-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "hidden-reward-boundary-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-trace-greedy-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "reorganization-resources-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "resource-preparation-cache-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "company-movement-finish-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "card-movement-finish-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "ordinary-movement-demand-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "company-delayed-allowance-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "main-goal-movement-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "asteroid-movement-modifier-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "input-classification-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "visit-progress-read-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-event-contract-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "any-alien-contract-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-scan-scope-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-scan-contract-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "trade-confirm-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "orbit-visit-trigger-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-location-data-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "final-probe-location-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-location-read-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "card-launch-limit-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "projection-isolation-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "alien-card-cancel-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "shared-leaf-observation-20260907",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "policy-plan-evidence-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "amiba-data-overflow-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "company-free-move-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "card-trace-owner-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "linguistic-trace-set-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-scan-dependency-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "amiba-region-rule-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "search-statistics-p1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "observe-decision-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "round-data-income-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "score-corner-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "search-deadline-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "policy-copy-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "search-budget-r4-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "probe-source-r3p1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "card-income-id-r3c1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "income-reserve-r3i1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "scan-earth-r3s1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "sector-directory-s2-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "tile-dependency-r3t1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "planet-read-r3p2-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "copy-cost-r3p1-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "plan-steps-r3-20260906",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "blue-future-r2e-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "search-result-retention-s1-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "conditional-progress-r2c-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "resource-realization-r2b-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "resource-attribution-r2-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "terminal-value-r1-20260905",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "fold-rollback",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "fold-chain-real",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "elig-sum4",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "elig-threshold4",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "elig-aligned",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "completes-v4-placement",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "placement-full",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "pure-profit",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "data-chain-fix",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "place-chain",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "unified-restore",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "no-overflow",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "overflow-fixed",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "overflow-target",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "place-trigger-final",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "place-data-unified",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "blue-unified",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "blue-analyze-pre",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "design-completion-fix",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "budget-4096-fixed",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "v4-need-placement",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "v3-income-value",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "v2-countsgoal-removal",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "v1-simplify",
+      "aiGeneration": "v1"
+    },
+    {
+      "id": "v0",
+      "aiGeneration": "v1"
+    }
+  ],
+  "publishedOldVersionsUnchanged": true,
+  "reason": "Missing historical records in the isolated package must not cause V2 versions to be inferred as V1."
+}

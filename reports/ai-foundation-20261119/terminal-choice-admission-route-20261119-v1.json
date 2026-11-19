@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "original20-terminal-card-decision-audit",
+  "startedEpochSeconds": 1795051458.059864,
+  "deadlineEpochSeconds": 1795058658.059864,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/terminal-choice-admission-20261119-v1.window.json"
+  ],
+  "predecessorFrozenRoute": "terminal-choice-route-20261119-v1.json",
+  "reassessment": {
+    "oldFrozenDeadline": 1795052658.059864,
+    "reviewEpochSeconds": 1795052998.743273,
+    "previousWindowLimitBreached": true,
+    "reason": "Read-only Git evidence proves the remaining audit fixture exists in the current commit; the reported blocker is isolation packaging, not unavailable data. Resume a second admission unit with unchanged strategy bytes; preserve elapsed time from the first audit and do not reopen the first window.",
+    "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+    "sourceCommit": "2660747a525500f487e7670ff753c14cd2273c88",
+    "sha256": "0b3f35ebc045aac1b4ae86131ab8f7cb8dba3c1898f9a7272082282c85452768"
+  },
+  "scope": "Unchanged v487 patch admission, then at most one registered original-board08 full game if all prerequisites pass. No new strategy patch.",
+  "success": "All required input checks, exact source reconstruction, related unit/full-flow and known decision gates, followed by one complete terminal result or an explicit failure stop.",
+  "stop": "Second unit ends at its fixed deadline. No third unit, no patch-on-failure, no20-board rerun.",
+  "closedEpochSeconds": 1795054377.797024,
+  "outcome": "v487-board08-business-outcome-20261119-v1.json",
+  "baselinePromotion": false
+}
