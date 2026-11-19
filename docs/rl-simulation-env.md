@@ -495,3 +495,5 @@ effect drain、observation、serialization 与 inference idle；不得通过省�
 教学盘蓝科技第2槽对照使用 `human405-white-blue1-slot2-control-v1` 与 `human405-white-blue3-slot2-control-v1`：保留实际前103条AI输入及第104步研究，只改变第105步科技选择。蓝3尚未完成的原生奖励选择直接交回V72；两分支均清空临时AI状态。入口校验完整策略、固定前缀和原生档指纹，保留待处理session，从第二轮继续记账，终局按受控成绩登记。
 
 第二轮探测器预投入对照使用 `human405-white-r2-original-route-control-v1`（原AI路线至127输入）与 `human405-white-r2-retain-probe-control-v1`（从同一实际AI前83输入接已知教师路线至104输入）。两者均保留原其他席状态、清空临时AI状态，第三轮起的牌和行动不固定；完整原生路线与待续存档须先核对来源、状态和RNG。控制分支从第二轮继续记账，终局不能计作自主AI成绩。
+
+Amiba deployment controlled continuations `human405-white-r2-amiba0-first-control-v1` and `human405-white-r2-amiba1-first-control-v1` share the exact actual112-input prefix of the retained-probe continuation. Only input113 deploys a different already-known Amiba card; all subsequent choices remain current-policy autonomous. Provenance separates83 original inputs,22 fixed-purpose inputs and8 inherited autonomous inputs. These scores are controlled continuations, not autonomous baseline performance.
