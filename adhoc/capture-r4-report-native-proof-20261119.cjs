@@ -8,7 +8,7 @@ if(process.argv[1]?.endsWith('robot_iterate.js')){
   const kernel=api.createSimulationRuleComposition(options),core=kernel.composition;let reporting=false,inputs=0;
   const port=new Proxy(core.inputPort,{get(target,key){
    const fn=target[key];if(key==='beginDrain')return arg=>{reporting=arg?.metadata?.source==='report-enrich';return fn(arg)};
-   if(['submitAction','submitQuickAction','submitDecision'].includes(key))return(...args)=>{const result=fn(...args);if(reporting&&result.ok)inputs++;return result};
+   if(['submitAction','submitQuickAction','submitDecision'].includes(key))return(...args)=>{if(reporting)assert(inputs+9<400,'Report Native verification budget exhausted before input');const result=fn(...args);if(reporting&&result.ok)inputs++;return result};
    return fn;
   }});
   return{...kernel,composition:new Proxy(core,{get(target,key){return key==='inputPort'?port:target[key]}}),dispose(){
