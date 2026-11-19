@@ -1,0 +1,26 @@
+{
+  "routeId": "r4-resource-landing-versus-immediate-neptune-score",
+  "status": "preparing",
+  "startedEpochSeconds": 1795076522.963957,
+  "deadlineEpochSeconds": 1795078922.963957,
+  "hypothesis": "The same before263 public state can choose known analysis then a held-card Io landing, retaining hand and energy for later scans; determine completed continuation before changing mission utility.",
+  "limits": {
+    "newRegisteredControlledContinuations": 1,
+    "nativePreparationInputs": 30,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000,
+    "productionPolicyChanges": 0
+  },
+  "searchContract": {
+    "stateEquivalence": "No new search. Same Native before263 and RNG, fixed accepted262-prefix. Native21-input alternative validated against earlier endpoint. All subsequent AI untouched.",
+    "reachable": "Existing legal6-input analysis plus15-input card-funded Io route; reuse already verified20-Native/116.53ms complete cold gate at exact endpoint.",
+    "dedup": "One distinct declared scenario through robot_iterate; refuse existing success/failure fingerprint; no alternate names or additional moons.",
+    "uncertainty": "The route contains one originally selected unobserved fossil by fixed action order, not a policy that reads hidden fossil identity. Result proves this seeded purpose continuation only; card/market divergence is preserved."
+  },
+  "originalScoreEvidence": {
+    "teacherStartControlledAI": 267,
+    "autonomousTeaching": 272,
+    "original20Mean": 134.35
+  }
+}

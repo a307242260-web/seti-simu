@@ -1,0 +1,15 @@
+{
+  "status": "verified",
+  "productionPolicyChanged": false,
+  "sourcePolicy": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "reusedIdenticalNativeEndpointColdGate": "teacher-r4-held-pickup-io-cold-20261119-v1.json",
+  "decisionNativeInputs": 20,
+  "decisionMilliseconds": 116.52562500000002,
+  "rootAndRngUnchanged": true,
+  "actualPrefixPreparationInputs": 21,
+  "exactNative283InputRestore": true,
+  "relatedNodeUnitsPassed": 3,
+  "overLimit257RejectedBeforeInput": true,
+  "duplicateFailureFingerprintRejected": true,
+  "syntaxPassed": true
+}

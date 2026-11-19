@@ -1,0 +1,35 @@
+{
+  "status": "verified",
+  "newAISearches": 0,
+  "newGames": 0,
+  "nativeInputs": 21,
+  "sourcePolicy": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "originalInputs": 23,
+  "teacherInputs": 245,
+  "actualAIPrefixInputs": 17,
+  "fixedPurposeInputs": 21,
+  "prefixInputs": 283,
+  "savePath": "seti-saves/seti-save-r4-resource-cycle-io-control-20261119-v1.json",
+  "saveSha256": "f332e83ad83b419f102c961131495675c00f5e22c1e29083cdcd75e1e75375b8",
+  "fullNativeStateSessionAndRngExact": true,
+  "reusedColdGate": "reports/ai-foundation-20261119/teacher-r4-held-pickup-io-cold-20261119-v1.json",
+  "endpoint": "reports/ai-foundation-20261119/teacher-r4-held-pickup-io-20261119-v1.json.gz",
+  "wallet": {
+    "additionalPublicScan": 1,
+    "aomomoFossils": 0,
+    "availableData": 0,
+    "credits": 3,
+    "energy": 5,
+    "handSize": 4,
+    "publicity": 7,
+    "score": 129
+  },
+  "income": {
+    "additionalPublicScan": 1,
+    "availableData": 0,
+    "credits": 7,
+    "energy": 4,
+    "handSize": 1,
+    "publicity": 0
+  }
+}

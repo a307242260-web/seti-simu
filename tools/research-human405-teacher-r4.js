@@ -2,7 +2,8 @@
 // Exact teacher R4 control. Only the fourth round is autonomous.
 const fs=require("node:fs"),path=require("node:path"),crypto=require("node:crypto"),assert=require("node:assert/strict");
 const first=require("./research-human405-round1"),freePick=require("./research-human405-free-pick-control");
-const ID="human405-white-teacher-r4-v1",IDS=Object.freeze([ID,freePick.ID]),ROOT=path.resolve(__dirname,"..");
+const resourceIo=require("./research-human405-resource-io-control");
+const ID="human405-white-teacher-r4-v1",IDS=Object.freeze([ID,freePick.ID,resourceIo.ID]),ROOT=path.resolve(__dirname,"..");
 const PINS={
   "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.json": "9ba1ecef66185351b6cbb0e462d640ca2000f231fe86fb54c11c8451f29c3bac",
   "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.checkpoint.json": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
@@ -30,6 +31,7 @@ function source(){
  return{save,provenance:{sourcePolicyCommit:pre.sourceCommit,savePath:SAVE,saveSha256:PINS[SAVE],preparationPath:PREPARATION,preparationSha256:PINS[PREPARATION],gatePath:GATE,gateSha256:PINS[GATE],controlledPrefixInputs:245}};
 }
 function describe(identity,options={}){
+ if(identity.flags?.scenario===resourceIo.ID)return resourceIo.describe(identity,options);
  if(identity.flags?.scenario===freePick.ID)return freePick.describe(identity,options);
  assert.equal(identity.flags?.scenario,ID,"RESEARCH_SCENARIO_UNKNOWN");
  if(!options.full)throw Error("TEACHER_R4_REQUIRES_FULL_MODE");
@@ -41,6 +43,7 @@ function describe(identity,options={}){
   decisionGate:{nativeInputs:256,milliseconds:600,enforcement:"reject-before-input"},gameMillisecondsTarget:180000};
 }
 function initialize(env,config,metadata,{checkpointFromSave}={}){
+ if(metadata.id===resourceIo.ID)return resourceIo.initialize(env,config,metadata,{checkpointFromSave});
  if(metadata.id===freePick.ID)return freePick.initialize(env,config,metadata,{checkpointFromSave});
  assert.equal(metadata.id,ID);const prepared=source();assert.deepEqual(metadata.controlledTeacherPrefix,prepared.provenance);
  const save=prepared.save;env.loadCheckpoint(checkpointFromSave(save,{...config,agentType:"custom",seat:"player-white",opponentIdentity:metadata.opponentPolicyVersion}));
