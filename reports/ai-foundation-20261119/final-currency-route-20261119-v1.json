@@ -1,0 +1,27 @@
+{
+  "status": "accepted-correctness-fix",
+  "startedEpochSeconds": 1795080651.271281,
+  "deadlineEpochSeconds": 1795082451.271281,
+  "maxColdSearches": 4,
+  "maxAutonomousGames": 1,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "scope": "V72: remove final resource utility only under a conservative proof of no spendable scoring continuation; retain existing purpose values and all other states.",
+  "stateIdentity": "Existing full Native/RNG/knowledge keys, no new state merging.",
+  "reachability": "Existing public route requirements and Native fees; no endpoint or earning source under the small-wallet closure.",
+  "searchBudget": "Existing global node/time/frontier controls and reject-before-input gates, no turn-horizon expansion.",
+  "coldSearches": 4,
+  "coldPassed": 4,
+  "relatedTestsPassed": 6,
+  "inputAuditPassed": true,
+  "criterion": "Correctness fix may be accepted with unchanged score only if exact counterexample is fixed, usable-wallet guards pass, and the autonomous game has no score or early-asset regression. Overall200-average goal remains unmet.",
+  "autonomousGames": 1,
+  "score": 272,
+  "scoreGain": 0,
+  "full354NativeReplayVerified": true,
+  "all354ActualActionsAndRoundAssetsUnchanged": true,
+  "original20Rerun": false,
+  "next": "Board18 known fusion-reactor acquisition/use resource ledger, before any further source changes or games."
+}

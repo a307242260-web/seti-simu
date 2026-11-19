@@ -1,0 +1,52 @@
+{
+  "status": "evidence-selected-not-yet-counterfactually-verified",
+  "sourceAudit": "reports/expert-learning-20261119/accepted20-expert-card-opportunities-20261119-v2.json",
+  "acceptedCurrentPolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "record": {
+    "board": 18,
+    "record": "reports/research/52db641e.94299f38.full.json",
+    "recordSha256": "2d0352ee98dede0bf2536e9a29a65cfc04bc23c577518e3cbed16d40a4d68dc3",
+    "traceSha256": "ba7b1fd3f2b9b557b976fbbd81b2c04506b1a903e6cbe1fb30b70e945b7447f0",
+    "ownActionCounts": {
+      "scan": 5,
+      "analyze": 3,
+      "research_tech": 4,
+      "play_card": 3
+    }
+  },
+  "opportunity": {
+    "board": 18,
+    "traceLine": 131,
+    "round": 3,
+    "turn": 8,
+    "instanceId": "card-55-0",
+    "knownEnergyIncomeCardsInHand": 0,
+    "credits": 0,
+    "energy": 0,
+    "publicity": 6,
+    "availableData": 5,
+    "legalAcquisitionSources": [
+      {
+        "tradeId": "publicity-for-card"
+      }
+    ],
+    "chosen": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "end_turn",
+      "phase": "turn_control",
+      "actionId": "end_turn:b2f9b29d",
+      "actorId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 6,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "summary": "\u7ed3\u675f\u56de\u5408"
+    }
+  },
+  "question": "Can the known public fusion reactor be acquired and played with disjoint resource/data funding, and does its energy enable a higher-value real continuation?",
+  "notAssumed": "A legal publicity acquisition action does not prove the play fee or the downstream chain is fundable.",
+  "newGames": 0,
+  "newAISearches": 0
+}

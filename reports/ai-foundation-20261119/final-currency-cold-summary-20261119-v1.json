@@ -1,0 +1,116 @@
+{
+  "attempts": 4,
+  "passed": 4,
+  "cases": [
+    {
+      "case": "late",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+      "complete": true,
+      "nativeInputs": 2,
+      "milliseconds": 35.274417,
+      "value": 272,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 161,
+        "decisionVersion": 3,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "rootAndRngUnchanged": true
+    },
+    {
+      "case": "344",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+      "complete": true,
+      "nativeInputs": 12,
+      "milliseconds": 75.737792,
+      "value": 269.5,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:3da0ac4f",
+        "actorId": "player-white",
+        "stateVersion": 155,
+        "decisionVersion": 4,
+        "target": {
+          "cardInstanceId": "alien-chong-8-23"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "chong_8.webp\uff1a\u5f03\u724c\u89d2\u6807"
+      },
+      "rootAndRngUnchanged": true
+    },
+    {
+      "case": "324",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+      "complete": true,
+      "nativeInputs": 107,
+      "milliseconds": 279.055458,
+      "value": 261,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 146,
+        "decisionVersion": 2,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2\u4fe1\u7528\u70b9 \u2192 1\u80fd\u91cf"
+      },
+      "rootAndRngUnchanged": true
+    },
+    {
+      "case": "311",
+      "status": "passed",
+      "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+      "complete": true,
+      "nativeInputs": 23,
+      "milliseconds": 158.61475000000002,
+      "value": 239.5,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 140,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "\u626b\u63cf"
+      },
+      "rootAndRngUnchanged": true
+    }
+  ]
+}

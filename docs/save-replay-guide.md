@@ -98,3 +98,9 @@ node tools/migrate_537_full_chain.js
 - 2026-08-17：`tools/migrate_537_full_chain.js` 三档拼接迁移工具。
 
 搜索v38可选保存`machineAI`算法证据旁车：Browser存读档和Simulation checkpoint经同一runtime恢复已完成固定计划；不属于committed规则状态。模型或精确依赖变化时重搜，旧档无旁车仍可冷算，详见[恢复契约](ai-search-buffer-20261029.md)。
+
+## 历史实验的精简原生复盘
+
+`node tools/archive_research_replay.js <正式记录.json> <归档.json>` 从完整终局记录生成种子、逐输入原生行动、精简决策及终态校验信息，并先执行完整原生重放。`node tools/archive_research_replay.js --verify <归档.json>` 复核同一份归档，不调用AI搜索。报告交付的 `.json.gz` 是该JSON的无损压缩，使用此命令前先解压。
+
+归档核对完整正式状态、未完Session与RNG，不以分数一致代替状态一致。`tools/research-record-retention.js` 统一精简决策与预算字段；历史报告可保留逐轮资产摘要，省去重复的整轮checkpoint及完整搜索图。没有中途检查点时，可从种子和逐输入行动重建原生状态；完整终局保存文件仍可另行保留。

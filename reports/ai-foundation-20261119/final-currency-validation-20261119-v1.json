@@ -1,0 +1,38 @@
+{
+  "runtime": "/private/tmp/seti-final-currency-20261119-dx3v3yej",
+  "model": "V72-final-currency",
+  "relatedTestsPassed": [
+    "state-value",
+    "final-round-proof-guard",
+    "post-main-value-bound",
+    "quiet-end-visit-value",
+    "probe-capital-value",
+    "income-plan-value"
+  ],
+  "inputAudit": {
+    "command": "node tools/audit_v_state_inputs.js",
+    "exitCode": 0,
+    "allInputsPassed": true
+  },
+  "developmentFixtureFailure": "One tracked historic probe fixture absent in the working reports; exact HEAD blob restored only in isolated runtime, failed test then passed.",
+  "coldCases": [
+    "late",
+    "311",
+    "324",
+    "344"
+  ],
+  "coldPassed": 4,
+  "maxNative": 107,
+  "maxMilliseconds": 279.055458,
+  "nativeRootAndRngUnchanged": true,
+  "newAutonomousGames": 0,
+  "acceptance": "Correct the verified empty-launch comparison, retain useful wallets, and require no autonomous score/early-asset regression; no claim of score gain.",
+  "archiveExportPreflight": {
+    "failure": "Existing archive helper was untracked and absent from git-archive runtime; failed before Native replay.",
+    "resolution": "Copied exact inspected helper into isolated runtime; preserve and commit this reproducibility dependency.",
+    "helperSha256": "1d50dee6316c5ab03ec169c2632a08f6ae00a4ebabb077770c50de78cb0bbcf9",
+    "newAISearches": 0,
+    "retentionHelperAlsoUntracked": true,
+    "retentionHelperSha256": "c9f239d2c439e6acf5e4bc862caab79c0bee272f0b7b7e27806d6634a3f9e866"
+  }
+}

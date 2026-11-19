@@ -1,0 +1,72 @@
+{
+  "status": "accepted-correctness-fix",
+  "previousGoalTurn": "progress: a real held-card landing counterexample was executed, the no-score-gain continuation rejected, and the entire late-launch false advantage isolated to one unusable energy.",
+  "acceptedPolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "acceptedModel": "V72-final-currency",
+  "score": 272,
+  "scoreGain": 0,
+  "original20Reference": {
+    "policyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+    "mean": 134.35,
+    "retestedForV72": false
+  },
+  "coldSearches": 4,
+  "coldPassed": 4,
+  "relatedTestsPassed": 6,
+  "inputAuditPassed": true,
+  "newAutonomousGames": 1,
+  "independentNativeReplayInputs": 354,
+  "all354ActualActionsAndRoundAssetsIdentical": true,
+  "sourceModelHashes": {
+    "randomizer/game/ai/probe-capital.js": "6a3c00a2d8429af364ee5bc4f114f9b6e1fefe2c4808f798dd3d9efc013be750",
+    "randomizer/game/ai/state-value.js": "f78cae07891dcdde2ef80e152143d902a7dfe377c738eab926c0db3d3ed4722b",
+    "randomizer/game/ai/decision-search.js": "23210cbdca08616f6e64d8ded224c009df26499d65ad61e62052632e98b525f1"
+  },
+  "archiveHelperHashes": {
+    "tools/archive_research_replay.js": "1d50dee6316c5ab03ec169c2632a08f6ae00a4ebabb077770c50de78cb0bbcf9",
+    "tools/research-record-retention.js": "c9f239d2c439e6acf5e4bc862caab79c0bee272f0b7b7e27806d6634a3f9e866"
+  },
+  "sourceIsolation": {
+    "sharedIndexUnchanged": true,
+    "protectedRootProductionUnchanged": true
+  },
+  "duplicateRoundCheckpointsOmitted": true,
+  "catalog": {
+    "parent": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+    "beforeWorkingHashes": {
+      "reports/iteration/versions.json": "1ec6bd297147a1d44c47af62e8347c2685a52821a6d0f2f15cc953d5f5bf7d0c",
+      "reports/iteration/registry.json": "a42d15788f26540fd164268d745d1eac124ef944d0c5a59dc950a9125ffc2aa4",
+      "reports/robot-iteration.html": "2abaffd86ad80702b32cd8f425a67c4cbd744b55fb7d33750bb5b247a765a1c6"
+    },
+    "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673",
+    "versions": [
+      "v490-final-currency-teaching-20261119"
+    ],
+    "builds": {
+      "head": {
+        "directory": "/private/tmp/seti-expert-trials-registry-o2qj2hl1/head",
+        "paths": {
+          "reports/iteration/versions.json": "bedaac79ec9143550fc6bec415768dbfae6bf4b395a06b39801e91dc0ee14679",
+          "reports/iteration/registry.json": "13022c429c739c776d5b97700400cd05ef821310490e2b73bc2ff51abf751982",
+          "reports/robot-iteration.html": "1ce1fe13bc1a2e21e990048ef599ad35442b1b656589247cdbf5dcd14512c922"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      },
+      "working": {
+        "directory": "/private/tmp/seti-expert-trials-registry-o2qj2hl1/working",
+        "paths": {
+          "reports/iteration/versions.json": "a3d8a1434c779cbb2ba4abed4b8c1a23798d93b869c27f49cce5ac99074ffb5a",
+          "reports/iteration/registry.json": "0723943859e74f52674451afd45e80f7b08839feca4a96cdfe623296f93082ff",
+          "reports/robot-iteration.html": "05d5295f51fcb94478465f906f3f7450288bde85d58cab0272377046864c4ae0"
+        },
+        "historicalEntriesPreserved": true,
+        "v1Unchanged": true,
+        "HTMLTemplatePreserved": true
+      }
+    }
+  },
+  "report": "reports/expert-learning-20261119/expert-strategy-trials-20261119-v1.html",
+  "remaining": "Overall learning/score goal is incomplete. Next verify an acquisition/payment/use chain for the known public fusion reactor in original board18 before further policy work."
+}
