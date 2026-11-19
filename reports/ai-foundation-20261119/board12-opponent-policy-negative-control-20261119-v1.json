@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "expectedRejectedAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "quick_trade",
+    "phase": "quick",
+    "actionId": "quick_trade:5efaa113",
+    "actorId": "player-green",
+    "stateVersion": 51,
+    "decisionVersion": 1,
+    "target": {
+      "tradeId": "energy-for-credit"
+    },
+    "payload": {
+      "cost": {
+        "energy": 2
+      },
+      "gain": {
+        "credits": 1
+      }
+    },
+    "decision": null,
+    "summary": "2能量 → 1信用点"
+  },
+  "childExitCode": 1,
+  "rejectedBeforeNative": true,
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "error": "FROZEN_OPPONENT_ACTION_FORBIDDEN",
+  "verifierSha256": "ed2c94b5e99c8b4608dc7ebeaf42ba4cb684e8662b41727f324f40f5bc76e466"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-board12-held-research-delivery-verification-v1",
+  "verified": true,
+  "reportRows": 14,
+  "reportLinks": 8,
+  "independentReplayBranches": 8,
+  "literalNativeInputsIncludingFailuresAndReplay": 167,
+  "invalidOpponentInputsExcluded": 2,
+  "wrongOpponentQuickActionNegativeControlPassed": true,
+  "coldSearchNativeInputsSeparate": 94,
+  "coldSearchMilliseconds": 135.55645800000002,
+  "AIChanged": false,
+  "newFullGames": 0,
+  "files": {
+    "reports/iteration/seti-ai-method-review-20261119-v1.html": "3741dfd8de6c93981b1f638b7879d15e52f85a5b00f44e07bea94bcc6ee91d67",
+    "reports/ai-foundation-20261119/board12-held-research-outcome-20261119-v1.json": "67636eef5b1643b6851c1ca6f33bea7a6f921ac07ef7834ebcafbe16785252cc",
+    "reports/ai-foundation-20261119/board12-purpose-replay-20261119-v1.json.gz": "46f98978bc0d8994c3d80a53946221564c8b3b151f232c57bd6483b325d1760f",
+    "reports/ai-foundation-20261119/board12-held-research-diagnostics-20261119-v1.json.gz": "a487aacc571ba572f96311404b740508c8c28b2842421142cde27b592e5abd3b",
+    "reports/ai-foundation-20261119/board12-opponent-policy-negative-control-20261119-v1.json": "17bfdd4b9ae832ac7da0ed11de19544962245963a8ba9488f475fe23e032a314",
+    "adhoc/verify-board19-income-replay-20261119.cjs": "ed2c94b5e99c8b4608dc7ebeaf42ba4cb684e8662b41727f324f40f5bc76e466"
+  }
+}

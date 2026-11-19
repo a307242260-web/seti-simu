@@ -1,13 +1,13 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const repo=path.resolve(__dirname,'..'),dir=path.join(repo,'reports/ai-foundation-20261119');
-const file=path.join(dir,'board19-income-replay-20261119-v1.json.gz'),archive=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
+const file=path.join(dir,process.argv[2]||'board19-income-replay-20261119-v1.json.gz'),archive=JSON.parse(zlib.gunzipSync(fs.readFileSync(file)));
 const pre=JSON.parse(fs.readFileSync(path.join(repo,archive.sourceRuntimePreflight))),rt=pre.runtime;
 const ordered=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(ordered):Object.fromEntries(Object.keys(x).sort().map(k=>[k,ordered(x[k])])):x;
 const hash=x=>crypto.createHash('sha256').update(Buffer.isBuffer(x)?x:JSON.stringify(ordered(x))).digest('hex');
 assert.equal(archive.sourceCommit,pre.sourceCommit);
 for(const [p,h]of Object.entries(pre.sourceFiles))assert.equal(hash(fs.readFileSync(path.join(rt,p))),h,p);
-const output=path.join(dir,'board19-income-replay-verification-20261119-v1.json');assert(!fs.existsSync(output));
+const output=path.join(dir,process.argv[3]||'board19-income-replay-verification-20261119-v1.json');assert(!fs.existsSync(output));
 const report={schemaVersion:'seti-native-income-replay-verification-v1',sourceCommit:pre.sourceCommit,archiveSha256:hash(fs.readFileSync(file)),
  sourceFilesVerified:Object.keys(pre.sourceFiles).length,status:'running',verifiedInputs:0,newAISearches:0,newFullGames:0,branches:[]};
 const persist=()=>fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');persist();
@@ -22,6 +22,7 @@ try{
   const result={name:branch.name,inputs:0,verified:false};report.branches.push(result);persist();
   for(const desired of branch.actions){
    assert(archive.nativeInputsAlreadyExecuted+report.verifiedInputs<200);
+   if(archive.frozenOpponentPolicy==='pass-only'&&desired.actorId!=='player-white')assert(desired.family==='pass'||desired.phase==='conditional','FROZEN_OPPONENT_ACTION_FORBIDDEN');
    const x=c.inspect(),d=x.phase==='awaiting_input'?x.session.decision:null;
    const actions=d?d.choices:c.inputPort.enumerateActions({});
    const action=actions.find(a=>a.family===desired.family&&a.actorId===desired.actorId&&hash(a.target||{})===hash(desired.target||{}));

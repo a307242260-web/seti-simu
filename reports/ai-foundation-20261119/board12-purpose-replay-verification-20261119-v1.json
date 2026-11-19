@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seti-native-income-replay-verification-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "archiveSha256": "46f98978bc0d8994c3d80a53946221564c8b3b151f232c57bd6483b325d1760f",
+  "sourceFilesVerified": 536,
+  "status": "complete",
+  "verifiedInputs": 38,
+  "newAISearches": 0,
+  "newFullGames": 0,
+  "branches": [
+    {
+      "name": "income38-actual-energy",
+      "inputs": 1,
+      "verified": true,
+      "nativeEnvelopeSha256": "2b66eac63ed4c29a43eb5f352610f4aff268f47c8f9a5339c2900eb17a3496f9"
+    },
+    {
+      "name": "income38-money",
+      "inputs": 1,
+      "verified": true,
+      "nativeEnvelopeSha256": "174920d87fbb17bcb6372fd3025ff369f74ac13fa074d1a07d191805df30be7a"
+    },
+    {
+      "name": "income108-actual-energy",
+      "inputs": 1,
+      "verified": true,
+      "nativeEnvelopeSha256": "40810cd1f8db0e3a74ff5adec3c083c11f75b924a055a81138bc8d6dcb33b395"
+    },
+    {
+      "name": "income108-money",
+      "inputs": 1,
+      "verified": true,
+      "nativeEnvelopeSha256": "5996107731daeb4356eb7f2e486d89950d373be9e28bdaee543161c9ed4da64d"
+    },
+    {
+      "name": "funded-purple4-at78",
+      "inputs": 4,
+      "verified": true,
+      "nativeEnvelopeSha256": "50561cbd1ed2e1109f0648493001c2647faf7bbd33b3d34e2fcedaeb9a38d4da"
+    },
+    {
+      "name": "funded-purple4-at88",
+      "inputs": 3,
+      "verified": true,
+      "nativeEnvelopeSha256": "dab2ea6f1b93184d0a2a80dee77dd6ac0f8e47c0ec8913e693f6a334795b1b50"
+    },
+    {
+      "name": "salary-energy",
+      "inputs": 10,
+      "verified": true,
+      "nativeEnvelopeSha256": "281721c371a6892d84575d51c27604fdc9ff7bd5e8975564db023363b904072a"
+    },
+    {
+      "name": "salary-money",
+      "inputs": 17,
+      "verified": true,
+      "nativeEnvelopeSha256": "5ee01307494b83a5f1c97cd01e05ffa46d1cbf919c3643aba8d2b749fc8631ae"
+    }
+  ],
+  "verified": true,
+  "totalNativeIncludingControls": 167
+}

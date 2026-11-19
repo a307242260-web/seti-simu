@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "board12-held-purple-research-realization",
+  "startedEpochSeconds": 1795056402.0,
+  "deadlineEpochSeconds": 1795058202.0,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board12-held-research-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/board12-held-research-20261119-v2.window.json"
+  ],
+  "businessQuestion": "Why does board12 preserve b86 purple research at income menus38/108, but spend it as a data corner153? Determine whether this is funded purpose realization, reasonable replanning, or mismatched valuation/execution.",
+  "hypotheses": [
+    "The held purple card is not currently funded or would sacrifice a more valuable real plan; nonexecution is justified.",
+    "A funded known purple-research purpose counted at income ranking is missing or underpriced at a later actual root."
+  ],
+  "limits": {
+    "wallSeconds": 1800,
+    "maximumWorkUnits": 2,
+    "maximumNativeControlInputs": 240,
+    "maximumAIColdSearches": 2,
+    "newFullGames": 0,
+    "productionEditsBeforeCausalProof": 0
+  },
+  "searchContract": {
+    "stateEquivalence": "Same Native envelope and RNG per pair; existing production identity and dedup untouched.",
+    "reachableBranches": "Only known b86 purpose and actual selected alternative; no movement/card combination enumeration or unseen identities.",
+    "budget": "Production four runtime budgets unchanged; reject any cold decision not complete within256Native/600ms. Native literal control safety cap240 does not truncate a search.",
+    "boundary": "Common same-turn endpoint first, next-round asset boundary only if needed; no full games.",
+    "stop": "Keep a justified choice; if causal superiority cannot be established, record uncertainty without tuning weights or starting another patch."
+  },
+  "recoveryEvents": [
+    {
+      "atEpochSeconds": 1795057091.402831,
+      "reason": "The next-income Native witness saved11 inputs through the first White launch/end. R3 opponents had not yet passed; the diagnostic incorrectly tried a White trade under Green ownership. Resume from this saved envelope and consume the literal already-recorded frozen-opponent PASS choices, with no repeated income or opening inputs.",
+      "noNativeRuleFailure": true,
+      "originalDeadlineUnchanged": 1795058202.0
+    },
+    {
+      "atEpochSeconds": 1795057218.464479,
+      "reason": "Read-only inspection corrected the failed host assumption:13 actual inputs, including two invalid frozen-opponent Green quick trades, were saved. Those Green-altered states are rejected. Restore the verified R3-start checkpoint, replay only the two White launch/end inputs, then use recorded Green PASS/forced choices126..128. Driver will refuse nonWhite quick actions before Native submission.",
+      "invalidNativeControlInputs": 2,
+      "discardInvalidGreenAlteredBranch": true,
+      "manualResumeOfExistingSecondUnit": true,
+      "originalDeadlineUnchanged": 1795058202.0
+    }
+  ],
+  "allowedFrozenOpponentActions": {
+    "126": "Green PASS",
+    "127": "Green mandatory hand-limit",
+    "128": "Green mandatory PASS card"
+  },
+  "closedEpochSeconds": 1795057762.6358368,
+  "outcome": "board12-held-research-outcome-20261119-v1.json",
+  "verdict": "no-strategy-change-justified",
+  "literalNativeInputsIncludingFailuresAndReplay": 167,
+  "coldSearchSimulatedNativeInputsSeparate": 94,
+  "closedBeforeDeadline": true,
+  "wholeGoalComplete": false
+}

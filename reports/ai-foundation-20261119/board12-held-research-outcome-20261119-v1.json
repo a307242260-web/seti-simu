@@ -1,0 +1,304 @@
+{
+  "schemaVersion": "seti-board12-held-research-causal-outcome-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "seed": "seti-analyze-bd83842179ca",
+  "decision": "keep-current-policy; no strategy patch justified",
+  "findings": {
+    "fundedCardPresentInCompleteSearchInputs": [
+      27,
+      78,
+      88,
+      118
+    ],
+    "nativeFundedPurpleEndpointsMatchRecordedSearchValues": {
+      "78": 78.5,
+      "88": 82.5
+    },
+    "firstIncomeInput38": {
+      "energyRank": 33.66666666666667,
+      "moneyRank": 30.166666666666668,
+      "energyNativeValue": 70.16666666666667,
+      "moneyNativeValue": 66.66666666666667
+    },
+    "secondIncomeInput108": {
+      "allThreeRanks": 9,
+      "energyNativeValue": 91.5,
+      "moneyNativeValue": 91.5,
+      "actualTieBreak": "Lowest printed play price consumes b10 price0 before b86/dlc9 price3; this is a preservation policy, not a higher numerical value for keeping b86.",
+      "remainingResearchSubstitute": "dlc9 is another known3-credit purple-research card"
+    },
+    "salaryPurposeWitness": {
+      "energy": {
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 83.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 11,
+            "resources": 2,
+            "hand": 4,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 2,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "player": {
+          "playerId": "player-white",
+          "industryAbilityId": "deepspace_swap_cards",
+          "color": "white",
+          "playerLabel": "白色玩家",
+          "score": 46,
+          "finalScore": 57,
+          "scoreBreakdown": null,
+          "scoreSources": null,
+          "credits": 0,
+          "energy": 1,
+          "publicity": 1,
+          "researchPublicityCost": 6,
+          "availableData": 0,
+          "additionalPublicScan": 1,
+          "handCount": 4,
+          "reservedCount": 1,
+          "completedTaskCount": 0,
+          "dataProgress": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "techState": {
+            "blueBoardSlots": {
+              "blue2": 1,
+              "blue3": 2
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue2": true,
+              "blue3": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 4,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "blueBonusAssets": {
+            "credits": 0,
+            "energy": 0,
+            "ordinaryCards": 0
+          },
+          "passed": false,
+          "mainActionCompleted": false,
+          "companyBaseIncome": {
+            "credits": 2,
+            "energy": 2,
+            "handSize": 1,
+            "additionalPublicScan": 1
+          },
+          "securedEndGameBonus": 11
+        },
+        "hand": [
+          "b_86.webp",
+          "b_76.webp",
+          "dlc_19.png",
+          "b_95.webp"
+        ]
+      },
+      "money": {
+        "value": {
+          "modelVersion": "seti-purpose-capital-state-value-v71",
+          "total": 85.5,
+          "components": {
+            "realizedScore": 46,
+            "currentEndGameBonus": 11,
+            "resources": 4,
+            "hand": 4,
+            "income": 9.5,
+            "technologyPotential": 9,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 2,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "terminal": false,
+          "purposePreparationDebt": 0
+        },
+        "player": {
+          "playerId": "player-white",
+          "industryAbilityId": "deepspace_swap_cards",
+          "color": "white",
+          "playerLabel": "白色玩家",
+          "score": 46,
+          "finalScore": 57,
+          "scoreBreakdown": null,
+          "scoreSources": null,
+          "credits": 0,
+          "energy": 3,
+          "publicity": 1,
+          "researchPublicityCost": 6,
+          "availableData": 0,
+          "additionalPublicScan": 1,
+          "handCount": 4,
+          "reservedCount": 1,
+          "completedTaskCount": 0,
+          "dataProgress": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "techState": {
+            "blueBoardSlots": {
+              "blue2": 1,
+              "blue3": 2
+            },
+            "disabledTiles": {},
+            "ownedTiles": {
+              "blue2": true,
+              "blue3": true,
+              "purple4": true
+            }
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 4,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "blueBonusAssets": {
+            "credits": 0,
+            "energy": 0,
+            "ordinaryCards": 0
+          },
+          "passed": false,
+          "mainActionCompleted": false,
+          "companyBaseIncome": {
+            "credits": 2,
+            "energy": 2,
+            "handSize": 1,
+            "additionalPublicScan": 1
+          },
+          "securedEndGameBonus": 11
+        },
+        "hand": [
+          "b_10.webp",
+          "b_76.webp",
+          "dlc_19.png",
+          "b_95.webp"
+        ]
+      },
+      "energyConversions": 2,
+      "moneyConversions": 0,
+      "purpose": "Same known launch and dlc9 Purple4 research; explicit witness, not optimized continuations"
+    },
+    "actualNextRoot": {
+      "originalEnergySearchValue": 89,
+      "moneyColdSearchValue": 88.5,
+      "moneyColdNativeInputs": 94,
+      "moneyColdMilliseconds": 135.55645800000002,
+      "complete": true,
+      "nativeRootAndRngUnchanged": true
+    }
+  },
+  "literalNativeInputsIncludingFailuresAndVerification": 167,
+  "invalidDiagnosticOpponentInputs": 2,
+  "invalidInputsExcludedFromCausalReplay": true,
+  "independentReplayNativeInputs": 38,
+  "replayedCompleteEndpoints": 8,
+  "coldAISearches": 1,
+  "coldSearchSimulatedNativeInputsSeparate": 94,
+  "newFullGames": 0,
+  "AIChanged": false,
+  "formalOriginal20MeanUnchanged": 134.35,
+  "formalTeachingScoreUnchanged": 272,
+  "limits": [
+    "No full counterfactual R3 or full-game score measured.",
+    "Two saved energy conversions for a specified two-action witness do not establish general money superiority.",
+    "Recorded full search values are model values, not observed final points.",
+    "The diagnostic mistakenly submitted two quick trades under Green ownership; that branch is rejected and the strict paired driver refuses nonWhite quick actions before Native submission.",
+    "One pre-execution recovery attempt assumed11 rather than13 inputs; it failed before Native execution and is retained.",
+    "The second window was manually reopened for checkpoint recovery without extending the parent deadline; automatic recovery or platform-enforced research time is not claimed."
+  ],
+  "nextBusinessQuestion": {
+    "formalAI": {
+      "recordGitCommit": "aad43e42ab5be10e8c645a8001eb2c9ede0579d0",
+      "path": "reports/research/2170d824.5fabd621.full.json",
+      "sha256": "81b86fed3857ccdd22e968ce00e59cfa4b9781ade5b71b69d65b79038d72d428",
+      "policySourceCommit": "5fabd6213",
+      "terminalScore": 272,
+      "boardScoreBeforeFinalSettlement": 192,
+      "difference": 80
+    },
+    "teacherReference": {
+      "path": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json",
+      "sha256": "79174b6ff5e975a1b96c1fc9f29a2c2c52ec594b24a404ea234538709fcfd099",
+      "ruleCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+      "terminalScore": 384,
+      "reportedBaseScore": 239,
+      "difference": 145
+    },
+    "recordedScoreDifference": 112,
+    "boardScoreDifference": 47,
+    "otherScoreDifference": 65,
+    "sameRuleIdentityVerified": false,
+    "sameStartCausalDifferenceProven": false,
+    "nextAction": "Verify Native rule identity and decompose the65-point non-board difference into actual scoring ledger entries and pre-investments; do not treat it as already proven recoverable loss. Preserve the fixed23 opening and R3/R4 asset comparisons."
+  },
+  "replayArchive": "reports/ai-foundation-20261119/board12-purpose-replay-20261119-v1.json.gz",
+  "verification": "reports/ai-foundation-20261119/board12-purpose-replay-verification-20261119-v1.json"
+}

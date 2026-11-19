@@ -1,0 +1,375 @@
+{
+  "sourceCommit": "94299f385",
+  "seed": "seti-analyze-bd83842179ca",
+  "sourceRecord": "reports/research/9ae5f22e.94299f38.full.json",
+  "recordSha256": "05632beaceb2dc78e14042f3e5fd3baceb3f70cda51bf83e3a9130d43fc61d12",
+  "newAISearches": 0,
+  "newNativeInputs": 0,
+  "rows": [
+    {
+      "step": 27,
+      "round": 1,
+      "wallet": {
+        "credits": 4,
+        "energy": 2,
+        "publicity": 3,
+        "availableData": 5
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 2,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "summary": "发射"
+      },
+      "searchValue": 70.16666666666667,
+      "b86Roots": [
+        {
+          "actionId": "play_card:437f4432",
+          "target": 8,
+          "value": 55,
+          "realization": 0,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        }
+      ],
+      "reused": null
+    },
+    {
+      "step": 38,
+      "round": 1,
+      "wallet": {
+        "credits": 2,
+        "energy": 1,
+        "publicity": 5,
+        "availableData": 1
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6ddc2a28",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-40-0",
+          "cardInstanceId": "card-40-0"
+        },
+        "payload": {},
+        "summary": "收入 dlc_25.png"
+      },
+      "searchValue": 57.166666666666664,
+      "b86Roots": [],
+      "reused": {
+        "evidenceId": "plan-evidence-2",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": "resource:0:7",
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v486-runezu-free-pick",
+          "rootNode": 0,
+          "nodeCount": 16,
+          "graphNodeCount": 5,
+          "certificateNodeCount": 11,
+          "boundaryWitness": {
+            "node": 4,
+            "value": 57.166666666666664,
+            "kind": "reachable-plan-value-proof",
+            "planSummary": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "end-turn",
+              "firstActionId": "end_turn:b2f9b29d",
+              "netGain": 0,
+              "requiredNativeInputs": 1,
+              "markedTiles": [],
+              "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "distance": 15,
+            "scope": "local"
+          },
+          "rootValue": 57.166666666666664
+        },
+        "distance": 8
+      }
+    },
+    {
+      "step": 78,
+      "round": 2,
+      "wallet": {
+        "credits": 5,
+        "energy": 3,
+        "publicity": 2,
+        "availableData": 0
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:27d01782",
+        "actorId": "player-white",
+        "stateVersion": 28,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-21-pass-1-2"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 1
+        },
+        "summary": "b_132.webp"
+      },
+      "searchValue": 82,
+      "b86Roots": [
+        {
+          "actionId": "play_card:8faf8ead",
+          "target": 5,
+          "value": 78.5,
+          "realization": -12,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        }
+      ],
+      "reused": null
+    },
+    {
+      "step": 88,
+      "round": 2,
+      "wallet": {
+        "credits": 3,
+        "energy": 4,
+        "publicity": 2,
+        "availableData": 1
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:a30e4d7b",
+        "actorId": "player-white",
+        "stateVersion": 32,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-44-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 2
+        },
+        "summary": "b_99.webp"
+      },
+      "searchValue": 86,
+      "b86Roots": [
+        {
+          "actionId": "play_card:8faf8ead",
+          "target": 4,
+          "value": 82.5,
+          "realization": -1,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        }
+      ],
+      "reused": null
+    },
+    {
+      "step": 108,
+      "round": 2,
+      "wallet": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 0
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b27d2a0c",
+        "actorId": "player-white",
+        "stateVersion": 43,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-18-0",
+          "cardInstanceId": "card-18-0"
+        },
+        "payload": {},
+        "summary": "收入 b_10.webp"
+      },
+      "searchValue": 91.5,
+      "b86Roots": [],
+      "reused": {
+        "evidenceId": "plan-evidence-16",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": "resource:0:4",
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v486-runezu-free-pick",
+          "rootNode": 0,
+          "nodeCount": 12,
+          "graphNodeCount": 5,
+          "certificateNodeCount": 7,
+          "boundaryWitness": {
+            "node": 2,
+            "value": 91.5,
+            "kind": "reachable-plan-value-proof",
+            "planSummary": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "end-turn",
+              "firstActionId": "end_turn:b2f9b29d",
+              "netGain": 0,
+              "requiredNativeInputs": 1,
+              "markedTiles": [],
+              "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "distance": 6,
+            "scope": "local"
+          },
+          "rootValue": 91.5
+        },
+        "distance": 2
+      }
+    },
+    {
+      "step": 118,
+      "round": 3,
+      "wallet": {
+        "credits": 3,
+        "energy": 5,
+        "publicity": 1,
+        "availableData": 0
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 48,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "summary": "发射"
+      },
+      "searchValue": 89,
+      "b86Roots": [
+        {
+          "actionId": "play_card:8faf8ead",
+          "target": 7,
+          "value": 85.5,
+          "realization": 0,
+          "preparationDebt": 0,
+          "kind": "resource-goal-plan",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "resourceGoalCount": 1,
+          "completion": "complete"
+        }
+      ],
+      "reused": null
+    },
+    {
+      "step": 153,
+      "round": 3,
+      "wallet": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 6,
+        "availableData": 1
+      },
+      "actualAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:f9d602d7",
+        "actorId": "player-white",
+        "stateVersion": 66,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "summary": "b_86.webp：弃牌角标"
+      },
+      "searchValue": 119,
+      "b86Roots": [],
+      "reused": {
+        "evidenceId": "plan-evidence-25",
+        "proof": "seti-complete-window-best-prefix-reuse-v1",
+        "sourceNode": "resource:0:1",
+        "source": {
+          "searchVersion": "seti-complete-decision-search-v486-runezu-free-pick",
+          "rootNode": 0,
+          "nodeCount": 427,
+          "graphNodeCount": 161,
+          "certificateNodeCount": 266,
+          "boundaryWitness": {
+            "node": 48,
+            "value": 119,
+            "distance": 19,
+            "scope": "local"
+          },
+          "rootValue": 119
+        },
+        "distance": 18
+      }
+    }
+  ]
+}
