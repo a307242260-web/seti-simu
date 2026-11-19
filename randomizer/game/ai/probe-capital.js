@@ -831,6 +831,32 @@
     return Math.max(0,pendingFinalMarkOption(facts)?.currentValue||0);
   }
 
+  // In this closed last-round wallet, a move can earn publicity but cannot
+  // unlock a main action. Keep every state with an earning source or a
+  // payable endpoint on the ordinary evaluator instead.
+  function hasUnspendableFinalCurrency(facts,weights) {
+    const p=facts.player;
+    if(weights!==arithmetic.DEFAULT_WEIGHTS||facts.round!==4||!facts.uncontestedRound||facts.terminal||facts.passing
+      ||facts.pendingNativeEffects!==false||facts.turnCardBonusCount!==0
+      ||!Array.isArray(facts.pendingCardTriggers)||facts.pendingCardTriggers.length
+      ||!Array.isArray(facts.pendingHandCardTriggers)||facts.pendingHandCardTriggers.length
+      ||p.credits!==0||![0,1].includes(p.energy)||p.publicity!==0||p.availableData!==0
+      ||facts.hand.length||facts.extraUnknownCount||facts.computerSlots?.length!==0
+      ||facts.companyState?.abilityId!=='deepspace_swap_cards'||pendingFinalMarkCapital(facts)>0
+      ||!Array.isArray(facts.board?.aliens?.slots)
+      ||facts.board.aliens.slots.some(s=>s.revealed&&!['阿米巴','虫'].includes(s.alienId))
+      ||facts.board.rockets.some(r=>r.playerId===p.id&&!isOwnedProbe(r,p.id)))return false;
+    const fixedScores=new Set(['planetLandingPairs','amibaTraceCount','traceCount','sectorWinsByColor',
+      'techCount','distinctSignalSectors','planetOrbitOrLand','allOrbitOrLand','unmarkedFinalRightmost']);
+    if(!Array.isArray(facts.reservedCards)||facts.reservedCards.some(c=>{
+      const model=c.id&&c.cardId&&!c.hidden&&cardEffects.getCardModel(c),rule=model&&endScoring.resolveCardEndGameRule(c,cardEffects);
+      return !model||model.cardType!==3||model.triggers?.length||model.tasks?.length||model.temporaryTasks?.length
+        ||!rule||!fixedScores.has(rule.kind);
+    }))return false;
+    return !requirements(facts).some(g=>(g.endpointFacts.cost.credits||0)<=p.credits
+      &&(g.endpointFacts.cost.energy||0)+g.route.cost<=p.energy);
+  }
+
   function factsFromObservation(observation, seatId) {
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
@@ -879,5 +905,5 @@
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}
   function fromState(state,player,weights,investment){return quote({...factsFromState(state,player),investment},weights);}
-  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, quoteFinalRoundValue, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
+  return Object.freeze({ diagnosticRequirementRefs:()=>({...__requirementRefs}), pendingFinalMarkOption,pendingFinalMarkCapital,hasUnspendableFinalCurrency,ownedProbes, requirements, funding, heldLandingCard, heldLandingCost, nextIncomeLaunchReplacement, knownScanData, quote, quoteValue, quoteReadOnlyPortfolio, quoteFinalRoundValue, prepareFinalRoundSwapMission, factsFromObservation, factsFromState, researchFactsFromState, fromObservation, fromState });
 });

@@ -93,3 +93,29 @@ const real = env.runAgentDecision().agentTrace.context;
 assert(Number.isFinite(evaluateStateValue(real.observation, real.seatId).total));
 env.dispose();
 console.log("independent state value accounting and strict inputs passed");
+
+// A real final-round counterexample: one unusable energy must not make an
+// empty launch beat terminal PASS. Preserve all funded or uncertain wallets.
+{
+ const fs=require('node:fs'),path=require('node:path'),z=require('node:zlib'),capital=require('./probe-capital');
+ const f=JSON.parse(z.gunzipSync(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261119/held-final-land-before-empty-launch-20261119-v1.json.gz')))),seat='player-white',seed=f.observation.seed;
+ const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation');
+ const k=createSimulationRuleComposition({seed,activePlayerCount:4,random:createSeededRandom(seed)});k.newGame({seed});const c=k.composition;
+ try{assert(c.lifecycle.restore(f.envelope).ok);
+  for(const family of ['launch','end_turn']){const a=c.inputPort.enumerateActions({}).find(a=>a.family===family);assert(a);assert(c.inputPort.submitAction(a).ok);}
+  const before=c.lifecycle.save().envelope,obs=buildRuleObservation(JSON.parse(before.committedState),seed,seat),p=o=>o.publicState.players.find(p=>p.playerId===seat),facts=capital.factsFromObservation(obs,seat),weights=require('./state-value').DEFAULT_WEIGHTS;
+  assert(capital.hasUnspendableFinalCurrency(facts,weights));const v=evaluateStateValue(obs,seat);assert.equal(v.total,272);assert.equal(v.components.resources,0);assert.equal(createStateValueEvaluator(seat)(obs),272);
+  const unchanged=structuredClone(obs);
+  for(const patch of [{energy:2},{credits:1},{publicity:1},{availableData:1}]){const o=structuredClone(obs);Object.assign(p(o),patch);assert(!capital.hasUnspendableFinalCurrency(capital.factsFromObservation(o,seat),weights));assert(evaluateStateValue(o,seat).components.resources>0);}
+  for(const key of ['pendingCardTriggers','pendingHandCardTriggers']){const o=structuredClone(obs);o.selfState[key]=['unsettled'];assert(!capital.hasUnspendableFinalCurrency(capital.factsFromObservation(o,seat),weights));}
+  for(const change of [o=>{o.selfState.pendingNativeEffects=true;},o=>{o.publicState.roundNumber=3;},o=>{o.selfState.hand=[{hidden:true}];},o=>{p(o).dataProgress.computerSlots=[1];},o=>{o.publicState.passingPlayerIds=[];}]){const o=structuredClone(obs);change(o);assert(!capital.hasUnspendableFinalCurrency(capital.factsFromObservation(o,seat),weights));}
+  const payable=structuredClone(facts),jupiter=require('../../solar-system/core').collectPlanetLocations(payable.board.solarSystem).find(p=>p.planetId==='jupiter'),ship=payable.board.rockets.find(r=>r.playerId===seat);
+  ship.sectorX=jupiter.x;ship.sectorY=jupiter.y;
+  assert(capital.requirements(payable).some(g=>g.route.cost===0&&(g.endpointFacts.cost.energy||0)<=1),'one energy can still pay the native own-orbit/technology landing discount');
+  assert(!capital.hasUnspendableFinalCurrency(payable,weights),'an affordable endpoint keeps its currency value');
+  assert.equal(evaluateStateValue(obs,seat,{weights:{energy:2}}).components.resources,2,'custom evaluators retain their separate contract');
+  assert.deepEqual(obs,unchanged);assert.deepEqual(c.lifecycle.save().envelope,before,'value and requirement quotes preserve Native/RNG');
+  const pass=c.inputPort.enumerateActions({}).find(a=>a.family==='pass');assert(c.inputPort.submitAction(pass).ok);assert.equal(evaluateStateValue(buildRuleObservation(JSON.parse(c.lifecycle.save().envelope.committedState),seed,seat),seat).total,272);
+ }finally{c.dispose();}
+ console.log(JSON.stringify({strandedFinalCurrency:'passed',actualTerminalScore:272,nativeInputs:3,fundedWalletAndPendingEffectsPreserved:true}));
+}

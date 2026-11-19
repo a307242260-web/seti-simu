@@ -23,7 +23,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital, readyAnalysis, researchIncome, sectorCard, arithmetic, movementTool, endScoring, researchTriggers, symbolCard, cards, researchSymbol, publicityPreparation) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v71";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v72-final-currency";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = arithmetic.DEFAULT_WEIGHTS;
   const evaluatorWeights = new WeakMap(), trustedWeights = new WeakSet([DEFAULT_WEIGHTS]);
@@ -805,6 +805,10 @@
       income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
     }
     const hand = observation.selfState.hand.length * weights.handSize;
+    if(round===4&&player.credits===0&&player.energy<=1&&player.publicity===0&&player.availableData===0&&!observation.selfState.hand.length){
+      const facts=probeCapital.factsFromObservation(observation,seatId);
+      if(probeCapital.hasUnspendableFinalCurrency(facts,weights))resources=0;
+    }
     let capital;
     if(round===4&&!probeCapital.ownedProbes(observation.publicState.board?.rockets,{id:seatId}).length){
       // In the last round, all salary, research, analysis and other future
