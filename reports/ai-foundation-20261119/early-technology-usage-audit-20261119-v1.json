@@ -1,0 +1,4649 @@
+{
+  "status": "complete",
+  "newAISearches": 0,
+  "newGames": 0,
+  "sourcePolicy": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "forecast": {
+    "computerCyclesPerLaterRound": 1,
+    "usefulScansPerLaterRound": 4
+  },
+  "boards": [
+    {
+      "board": 1,
+      "record": "reports/research/1ed71131.94299f38.full.json",
+      "score": 135,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        }
+      ],
+      "research": [
+        {
+          "line": 32,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 10,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 49,
+          "round": 2,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 4,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_30.webp"
+          ]
+        },
+        {
+          "line": 60,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_30.webp"
+          ]
+        },
+        {
+          "line": 84,
+          "round": 3,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 6,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_30.webp",
+            "b_54.webp"
+          ]
+        },
+        {
+          "line": 116,
+          "round": 3,
+          "tileId": "blue3",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_30.webp",
+            "b_66.webp"
+          ]
+        },
+        {
+          "line": 129,
+          "round": 4,
+          "tileId": "blue1",
+          "blueSlot": 4,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 0,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "blueBonusCount": 3,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_66.webp",
+            "b_136.webp",
+            "b_114.webp",
+            "b_117.webp",
+            "b_19.webp"
+          ]
+        },
+        {
+          "line": 169,
+          "round": 4,
+          "tileId": "purple2",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              },
+              {
+                "tileId": "blue1",
+                "slot": 4,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_117.webp"
+          ]
+        }
+      ],
+      "traceLines": 171,
+      "traceSha256": "91a1f23dd482c40b990b1614e61a2f9ecd526405fba3f65f6192303640535237"
+    },
+    {
+      "board": 2,
+      "record": "reports/research/591a90af.94299f38.full.json",
+      "score": 140,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 2,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 3,
+          "scanActions": 2,
+          "scan4Menus": 2,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 2
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 5,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 2,
+            "publicity": 3,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_132.webp",
+            "b_57.webp"
+          ]
+        },
+        {
+          "line": 28,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_57.webp",
+            "b_38.webp"
+          ]
+        },
+        {
+          "line": 44,
+          "round": 2,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 4,
+            "publicity": 1,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_57.webp",
+            "b_59.webp",
+            "b_64.webp",
+            "b_79.webp"
+          ]
+        },
+        {
+          "line": 93,
+          "round": 2,
+          "tileId": "blue1",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 10,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 104,
+          "round": 2,
+          "tileId": "blue3",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue1",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_85.webp"
+          ]
+        },
+        {
+          "line": 129,
+          "round": 3,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 3,
+            "publicity": 0,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue1",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_91.webp"
+          ]
+        },
+        {
+          "line": 184,
+          "round": 4,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 7,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue1",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_54.webp",
+            "b_50.webp",
+            "b_7.webp"
+          ]
+        }
+      ],
+      "traceLines": 209,
+      "traceSha256": "ad76f41951c7c7ac681bf2969cb6c319d1058733de8431c50b8d5d63a6f87bc7"
+    },
+    {
+      "board": 3,
+      "record": "reports/research/397394cb.94299f38.full.json",
+      "score": 138,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 0,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 19,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 8,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp",
+            "dlc_20.png"
+          ]
+        },
+        {
+          "line": 61,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 3,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_20.png",
+            "b_134.webp",
+            "b_102.webp"
+          ]
+        },
+        {
+          "line": 106,
+          "round": 3,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_102.webp",
+            "dlc_27.png",
+            "b_140.webp"
+          ]
+        },
+        {
+          "line": 131,
+          "round": 4,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 3,
+            "publicity": 0,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_102.webp",
+            "dlc_18.png",
+            "b_44.webp",
+            "b_34.webp"
+          ]
+        }
+      ],
+      "traceLines": 157,
+      "traceSha256": "1d16ba4ce9abfb216d0c76fa864d0fa6de729a3a623f321d13fee0e75b9d9173"
+    },
+    {
+      "board": 4,
+      "record": "reports/research/279e3c0e.94299f38.full.json",
+      "score": 145,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 2,
+          "scan4Menus": 2,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 2
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 5,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 4,
+            "publicity": 6,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_124.webp",
+            "b_8.webp",
+            "b_94.webp",
+            "b_128.webp"
+          ]
+        },
+        {
+          "line": 52,
+          "round": 2,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 4,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_8.webp",
+            "b_37.webp",
+            "b_27.webp"
+          ]
+        },
+        {
+          "line": 55,
+          "round": 2,
+          "tileId": "orange2",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 0,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_37.webp",
+            "b_27.webp"
+          ]
+        },
+        {
+          "line": 126,
+          "round": 4,
+          "tileId": "blue1",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 2,
+            "energy": 5,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_37.webp",
+            "b_135.webp",
+            "b_67.webp",
+            "dlc_2.png",
+            "b_3.webp"
+          ]
+        },
+        {
+          "line": 159,
+          "round": 4,
+          "tileId": "blue3",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_37.webp",
+            "b_3.webp",
+            "aomomo_4.webp",
+            "aomomo_1.webp",
+            "dlc_1.png"
+          ]
+        },
+        {
+          "line": 178,
+          "round": 4,
+          "tileId": "blue4",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_40.png",
+            "b_81.webp"
+          ]
+        }
+      ],
+      "traceLines": 180,
+      "traceSha256": "fdbc2c1185bc3c24e367a95980d1928a8026d8e805b2c37bca6cdf9223db4410"
+    },
+    {
+      "board": 5,
+      "record": "reports/research/8d68c835.94299f38.full.json",
+      "score": 135,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 0,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 30,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 8,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_113.webp"
+          ]
+        },
+        {
+          "line": 51,
+          "round": 2,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 3,
+            "publicity": 3,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_8.webp",
+            "b_123.webp",
+            "b_84.webp"
+          ]
+        },
+        {
+          "line": 63,
+          "round": 3,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 6,
+            "publicity": 3,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_123.webp",
+            "b_84.webp",
+            "b_27.webp",
+            "b_106.webp",
+            "dlc_23.png",
+            "b_88.webp"
+          ]
+        },
+        {
+          "line": 93,
+          "round": 3,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_123.webp",
+            "b_84.webp",
+            "dlc_23.png",
+            "b_88.webp",
+            "b_98.webp",
+            "dlc_20.png"
+          ]
+        },
+        {
+          "line": 127,
+          "round": 4,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 6,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_75.webp",
+            "b_3.webp"
+          ]
+        }
+      ],
+      "traceLines": 176,
+      "traceSha256": "3bbcf8e5862e5adb95aad202c71174d2926f73046ea1cc8f82adc12afbabaffb"
+    },
+    {
+      "board": 6,
+      "record": "reports/research/e590f148.94299f38.full.json",
+      "score": 138,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        }
+      ],
+      "research": [
+        {
+          "line": 8,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 4,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 89,
+          "round": 3,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 4,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_77.webp",
+            "b_73.webp",
+            "b_82.webp",
+            "b_4.webp"
+          ]
+        },
+        {
+          "line": 135,
+          "round": 3,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 154,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 5,
+            "publicity": 2,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_50.webp",
+            "b_107.webp"
+          ]
+        },
+        {
+          "line": 184,
+          "round": 4,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_50.webp",
+            "dlc_18.png"
+          ]
+        }
+      ],
+      "traceLines": 213,
+      "traceSha256": "761788fdbeb3d01676c3e0e952c3bff0800ce2f254a965fd2eec08f457f6ec18"
+    },
+    {
+      "board": 7,
+      "record": "reports/research/33eaf9f6.94299f38.full.json",
+      "score": 135,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 25,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 3,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 72,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_30.webp"
+          ]
+        },
+        {
+          "line": 108,
+          "round": 3,
+          "tileId": "blue4",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 5,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp"
+          ]
+        },
+        {
+          "line": 113,
+          "round": 3,
+          "tileId": "blue3",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 8,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp"
+          ]
+        },
+        {
+          "line": 120,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 7,
+            "publicity": 2,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp",
+            "b_95.webp",
+            "dlc_18.png"
+          ]
+        },
+        {
+          "line": 144,
+          "round": 4,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_18.png"
+          ]
+        }
+      ],
+      "traceLines": 157,
+      "traceSha256": "d28684ee0a71e4f1d7fca4f09169cb08239490c8ae26dae4a49eb315651b374c"
+    },
+    {
+      "board": 8,
+      "record": "reports/research/bb435792.94299f38.full.json",
+      "score": 132,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 11,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_122.webp"
+          ]
+        },
+        {
+          "line": 82,
+          "round": 3,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 6,
+            "energy": 0,
+            "publicity": 4,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_6.webp",
+            "b_3.webp",
+            "b_80.webp"
+          ]
+        },
+        {
+          "line": 92,
+          "round": 3,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 4,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_80.webp"
+          ]
+        },
+        {
+          "line": 110,
+          "round": 3,
+          "tileId": "blue3",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 4,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 179,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "aomomo_8.webp"
+          ]
+        }
+      ],
+      "traceLines": 181,
+      "traceSha256": "330eb4b68429dcc9bf212ca6efa2c00b41c5225760750285eabbdfd6584600a2"
+    },
+    {
+      "board": 9,
+      "record": "reports/research/b359964f.94299f38.full.json",
+      "score": 113,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 2,
+          "scan4Menus": 2,
+          "scan4Launch": 1,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 2,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 4,
+            "availableData": 4
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_46.webp"
+          ]
+        },
+        {
+          "line": 16,
+          "round": 1,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_46.webp"
+          ]
+        },
+        {
+          "line": 26,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 0,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 68,
+          "round": 2,
+          "tileId": "blue3",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 133,
+          "round": 4,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              },
+              {
+                "tileId": "blue3",
+                "slot": 3,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_98.webp",
+            "b_58.webp"
+          ]
+        }
+      ],
+      "traceLines": 148,
+      "traceSha256": "dcf3171baba8965c792d1b6dfc6e7b43068d7a7c9ee2a587243bbf6131ad54e2"
+    },
+    {
+      "board": 10,
+      "record": "reports/research/7f76680a.94299f38.full.json",
+      "score": 129,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 44,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 9,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_107.webp"
+          ]
+        },
+        {
+          "line": 61,
+          "round": 2,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 7,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 96,
+          "round": 3,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 3,
+            "publicity": 3,
+            "availableData": 4
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_136.webp"
+          ]
+        },
+        {
+          "line": 125,
+          "round": 3,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 161,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_37.png"
+          ]
+        }
+      ],
+      "traceLines": 170,
+      "traceSha256": "b0ac7409db563dc5fada4441f8fea4ec3c01269b53de0aa4a72fac694564210b"
+    },
+    {
+      "board": 11,
+      "record": "reports/research/7b88b4d4.94299f38.full.json",
+      "score": 141,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 2,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 2,
+          "scan4Menus": 2,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 2
+        }
+      ],
+      "research": [
+        {
+          "line": 28,
+          "round": 1,
+          "tileId": "blue1",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 67,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 3,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp"
+          ]
+        },
+        {
+          "line": 96,
+          "round": 3,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 6
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp"
+          ]
+        },
+        {
+          "line": 157,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 4,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_114.webp",
+            "aomomo_5.webp",
+            "dlc_33.png",
+            "b_43.webp",
+            "dlc_2.png",
+            "amiba_7.webp"
+          ]
+        }
+      ],
+      "traceLines": 206,
+      "traceSha256": "a4c5b2ccf0bce54fa51ed582392b53b4d60bb90c23e69671c214f6d8263e39bb"
+    },
+    {
+      "board": 12,
+      "record": "reports/research/9ae5f22e.94299f38.full.json",
+      "score": 144,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        }
+      ],
+      "research": [
+        {
+          "line": 27,
+          "round": 1,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_86.webp"
+          ]
+        },
+        {
+          "line": 76,
+          "round": 2,
+          "tileId": "blue3",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_86.webp",
+            "dlc_9.png"
+          ]
+        },
+        {
+          "line": 153,
+          "round": 3,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_76.webp",
+            "b_95.webp",
+            "b_56.webp"
+          ]
+        },
+        {
+          "line": 185,
+          "round": 4,
+          "tileId": "purple3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_95.webp",
+            "b_56.webp",
+            "b_110.webp",
+            "dlc_17.png"
+          ]
+        }
+      ],
+      "traceLines": 216,
+      "traceSha256": "22c457969e21dc9c9a64e6c0b54c793ccf4d4a013239e333a9c46c0bc0aa645d"
+    },
+    {
+      "board": 13,
+      "record": "reports/research/1e0b44d2.94299f38.full.json",
+      "score": 114,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        }
+      ],
+      "research": [
+        {
+          "line": 34,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 101,
+          "round": 3,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 4,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_4.webp",
+            "b_102.webp"
+          ]
+        },
+        {
+          "line": 148,
+          "round": 4,
+          "tileId": "purple3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 4,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_108.webp",
+            "b_6.webp"
+          ]
+        }
+      ],
+      "traceLines": 170,
+      "traceSha256": "280b0d35c778b108044408acec19e90b9f3e3be4b9290fd15084cd03f71fce6f"
+    },
+    {
+      "board": 14,
+      "record": "reports/research/5ca133e7.94299f38.full.json",
+      "score": 116,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 5,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 2,
+            "energy": 5,
+            "publicity": 4,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_8.png"
+          ]
+        },
+        {
+          "line": 31,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_8.png",
+            "dlc_2.png"
+          ]
+        },
+        {
+          "line": 75,
+          "round": 2,
+          "tileId": "blue3",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 4
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_8.png",
+            "b_95.webp",
+            "b_32.webp"
+          ]
+        },
+        {
+          "line": 92,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 154,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "blueBonusCount": 3,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue3",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue2",
+                "slot": 3,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_117.webp",
+            "b_1.webp",
+            "b_88.webp",
+            "yichangdian_7.webp",
+            "yichangdian_0.webp"
+          ]
+        }
+      ],
+      "traceLines": 179,
+      "traceSha256": "0abbd769bb2d43e44a2725e4d9e08d369cc1d62ab7716c097b36592392257efd"
+    },
+    {
+      "board": 15,
+      "record": "reports/research/f68952fa.94299f38.full.json",
+      "score": 158,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 2,
+          "scan4Menus": 2,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 2
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 33,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 8,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_5.webp"
+          ]
+        },
+        {
+          "line": 39,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 78,
+          "round": 2,
+          "tileId": "orange2",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_38.png",
+            "dlc_41.png"
+          ]
+        },
+        {
+          "line": 128,
+          "round": 3,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_41.png",
+            "b_19.webp",
+            "b_77.webp",
+            "b_133.webp",
+            "chong_8.webp",
+            "chong_0.webp",
+            "chong_7.webp"
+          ]
+        },
+        {
+          "line": 173,
+          "round": 4,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 6,
+            "publicity": 3,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_41.webp"
+          ]
+        },
+        {
+          "line": 192,
+          "round": 4,
+          "tileId": "blue2",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_41.webp",
+            "chong_4.webp"
+          ]
+        }
+      ],
+      "traceLines": 219,
+      "traceSha256": "1aec7625bf5137130aaf6816b6ece8f90d01b54f98c4b5551a8d0a2672ec9b23"
+    },
+    {
+      "board": 16,
+      "record": "reports/research/f5fda3f0.94299f38.full.json",
+      "score": 121,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 2,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 2,
+            "energy": 3,
+            "publicity": 4,
+            "availableData": 2
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_18.png",
+            "b_128.webp",
+            "b_50.webp"
+          ]
+        },
+        {
+          "line": 24,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 3,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_18.png"
+          ]
+        },
+        {
+          "line": 57,
+          "round": 2,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 3,
+            "energy": 4,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_17.webp"
+          ]
+        },
+        {
+          "line": 140,
+          "round": 3,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        }
+      ],
+      "traceLines": 169,
+      "traceSha256": "bc0630682505068f2766ebce70034ab36add61cebb33e7a517f0650baeb7944e"
+    },
+    {
+      "board": 17,
+      "record": "reports/research/7072468f.94299f38.full.json",
+      "score": 157,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 1,
+          "scan4Menus": 2,
+          "scan4Launch": 1,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 1,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 26,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_139.webp"
+          ]
+        },
+        {
+          "line": 71,
+          "round": 2,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_139.webp",
+            "dlc_30.png"
+          ]
+        },
+        {
+          "line": 118,
+          "round": 3,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_109.webp",
+            "dlc_28.png",
+            "yichangdian_2.webp",
+            "yichangdian_0.webp"
+          ]
+        },
+        {
+          "line": 137,
+          "round": 3,
+          "tileId": "blue4",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_109.webp",
+            "dlc_28.png"
+          ]
+        },
+        {
+          "line": 186,
+          "round": 4,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_1.png",
+            "b_117.webp",
+            "banrenma_7.webp",
+            "banrenma_0.webp"
+          ]
+        }
+      ],
+      "traceLines": 203,
+      "traceSha256": "e7ae5cee3590d3135e5ab87aadb884f9052dd312ee0555105ee87c8e0bbecdfd"
+    },
+    {
+      "board": 18,
+      "record": "reports/research/52db641e.94299f38.full.json",
+      "score": 122,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 3,
+          "scan4Menus": 1,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 2,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 28,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 2,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 57,
+          "round": 2,
+          "tileId": "blue1",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 3
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 133,
+          "round": 3,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 5
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 173,
+          "round": 4,
+          "tileId": "purple3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 5,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue1",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        }
+      ],
+      "traceLines": 191,
+      "traceSha256": "ba7b1fd3f2b9b557b976fbbd81b2c04506b1a903e6cbe1fb30b70e945b7447f0"
+    },
+    {
+      "board": 19,
+      "record": "reports/research/0abcb0bd.94299f38.full.json",
+      "score": 161,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 3,
+          "scan4Menus": 3,
+          "scan4Launch": 1,
+          "scan4Move": 1,
+          "scan4Skip": 1
+        },
+        {
+          "round": 4,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        }
+      ],
+      "research": [
+        {
+          "line": 33,
+          "round": 1,
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 36,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 2,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 53,
+          "round": 2,
+          "tileId": "orange1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 6,
+            "publicity": 1,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_38.png"
+          ]
+        },
+        {
+          "line": 74,
+          "round": 2,
+          "tileId": "blue4",
+          "blueSlot": 2,
+          "wallet": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "dlc_38.png"
+          ]
+        },
+        {
+          "line": 130,
+          "round": 3,
+          "tileId": "purple1",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_20.webp",
+            "amiba_1.webp",
+            "amiba_9.webp",
+            "amiba_4.webp"
+          ]
+        },
+        {
+          "line": 146,
+          "round": 3,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 7,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 154,
+          "round": 4,
+          "tileId": "orange4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 5,
+            "publicity": 1,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 2,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_137.webp",
+            "b_21.webp"
+          ]
+        },
+        {
+          "line": 188,
+          "round": 4,
+          "tileId": "blue1",
+          "blueSlot": 3,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [],
+            "blueBonusCount": 0,
+            "blueSlots": [
+              {
+                "tileId": "blue2",
+                "slot": 1,
+                "occupied": false,
+                "unlocked": false
+              },
+              {
+                "tileId": "blue4",
+                "slot": 2,
+                "occupied": false,
+                "unlocked": false
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_26.webp"
+          ]
+        }
+      ],
+      "traceLines": 190,
+      "traceSha256": "f04844f7802a2fb5d52916a65b8e0ce34763306e0d604932a43c2980b4dc8c38"
+    },
+    {
+      "board": 20,
+      "record": "reports/research/3a4edb37.94299f38.full.json",
+      "score": 113,
+      "rounds": [
+        {
+          "round": 1,
+          "scanActions": 1,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 2,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 3,
+          "scanActions": 0,
+          "scan4Menus": 0,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 0
+        },
+        {
+          "round": 4,
+          "scanActions": 3,
+          "scan4Menus": 2,
+          "scan4Launch": 0,
+          "scan4Move": 0,
+          "scan4Skip": 2
+        }
+      ],
+      "research": [
+        {
+          "line": 27,
+          "round": 1,
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 9,
+            "availableData": 1
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 0,
+            "blueSlots": [],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_54.webp"
+          ]
+        },
+        {
+          "line": 33,
+          "round": 1,
+          "tileId": "purple4",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": []
+        },
+        {
+          "line": 77,
+          "round": 2,
+          "tileId": "orange3",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1,
+              2
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_16.webp"
+          ]
+        },
+        {
+          "line": 142,
+          "round": 4,
+          "tileId": "purple2",
+          "blueSlot": null,
+          "wallet": {
+            "credits": 1,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0
+          },
+          "computer": {
+            "discardedCount": 0,
+            "computerSlots": [
+              1
+            ],
+            "blueBonusCount": 1,
+            "blueSlots": [
+              {
+                "tileId": "blue4",
+                "slot": 1,
+                "occupied": true,
+                "unlocked": true
+              }
+            ],
+            "analyzeReady": false
+          },
+          "hand": [
+            "b_29.webp",
+            "b_68.webp",
+            "dlc_36.png"
+          ]
+        }
+      ],
+      "traceLines": 185,
+      "traceSha256": "1bbe2aa4a36095e5fbe8fb627e4fef4f6c07d9d4a6b791b4547f81309b13ab2a"
+    }
+  ],
+  "selectedCase": {
+    "board": 6,
+    "record": "reports/research/e590f148.94299f38.full.json",
+    "traceLine": 1,
+    "traceSha256": "761788fdbeb3d01676c3e0e952c3bff0800ce2f254a965fd2eec08f457f6ec18",
+    "sourceValue": 54.166666666666664,
+    "sourceAction": "card_corner:17a0f8a8",
+    "researchValues": [
+      {
+        "tileId": "blue1",
+        "blueSlot": 1,
+        "value": 51.166666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "blue2",
+        "blueSlot": 1,
+        "value": 51.166666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "blue3",
+        "blueSlot": 1,
+        "value": 51.166666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "blue4",
+        "blueSlot": 1,
+        "value": 51.166666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "orange1",
+        "blueSlot": null,
+        "value": 51.666666666666664,
+        "completion": "reachable",
+        "boundary": "tech_bonus_reveal"
+      },
+      {
+        "tileId": "orange2",
+        "blueSlot": null,
+        "value": 42.166666666666664,
+        "completion": "reachable",
+        "boundary": "tech_bonus_reveal"
+      },
+      {
+        "tileId": "orange3",
+        "blueSlot": null,
+        "value": 45.166666666666664,
+        "completion": "reachable",
+        "boundary": "tech_bonus_reveal"
+      },
+      {
+        "tileId": "orange4",
+        "blueSlot": null,
+        "value": 43.666666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "purple1",
+        "blueSlot": null,
+        "value": 44.5,
+        "completion": "reachable",
+        "boundary": "tech_bonus_reveal"
+      },
+      {
+        "tileId": "purple2",
+        "blueSlot": null,
+        "value": 43.666666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "purple3",
+        "blueSlot": null,
+        "value": 43.666666666666664,
+        "completion": "reachable",
+        "boundary": "hidden_card_reveal"
+      },
+      {
+        "tileId": "purple4",
+        "blueSlot": null,
+        "value": 54.166666666666664,
+        "completion": "reachable",
+        "boundary": "tech_bonus_reveal"
+      }
+    ],
+    "actualOpeningInputs": 27
+  },
+  "teachingReference": {
+    "record": "reports/research/327c52b2.e08665e6.full.json",
+    "scope": "autonomous272, not the human405",
+    "rounds": [
+      {
+        "round": 1,
+        "scanActions": 0,
+        "scan4Menus": 0,
+        "scan4Launch": 0,
+        "scan4Move": 0,
+        "scan4Skip": 0
+      },
+      {
+        "round": 2,
+        "scanActions": 1,
+        "scan4Menus": 1,
+        "scan4Launch": 1,
+        "scan4Move": 0,
+        "scan4Skip": 0
+      },
+      {
+        "round": 3,
+        "scanActions": 2,
+        "scan4Menus": 1,
+        "scan4Launch": 1,
+        "scan4Move": 0,
+        "scan4Skip": 0
+      },
+      {
+        "round": 4,
+        "scanActions": 1,
+        "scan4Menus": 1,
+        "scan4Launch": 0,
+        "scan4Move": 1,
+        "scan4Skip": 0
+      }
+    ],
+    "research": [
+      {
+        "line": 13,
+        "round": 1,
+        "tileId": "blue2",
+        "blueSlot": 1,
+        "wallet": {
+          "credits": 2,
+          "energy": 1,
+          "publicity": 7,
+          "availableData": 4
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "hand": [
+          "dlc_9.png"
+        ]
+      },
+      {
+        "line": 36,
+        "round": 1,
+        "tileId": "purple4",
+        "blueSlot": null,
+        "wallet": {
+          "credits": 0,
+          "energy": 1,
+          "publicity": 2,
+          "availableData": 0
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": []
+      },
+      {
+        "line": 82,
+        "round": 2,
+        "tileId": "blue3",
+        "blueSlot": 2,
+        "wallet": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 7,
+          "availableData": 5
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "dlc_37.png"
+        ]
+      },
+      {
+        "line": 171,
+        "round": 3,
+        "tileId": "purple1",
+        "blueSlot": null,
+        "wallet": {
+          "credits": 0,
+          "energy": 1,
+          "publicity": 9,
+          "availableData": 3
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": false
+            },
+            {
+              "tileId": "blue3",
+              "slot": 2,
+              "occupied": false,
+              "unlocked": false
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "amiba_1.webp",
+          "amiba_9.webp",
+          "b_16.webp",
+          "amiba_7.webp"
+        ]
+      },
+      {
+        "line": 197,
+        "round": 3,
+        "tileId": "orange1",
+        "blueSlot": null,
+        "wallet": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 9,
+          "availableData": 3
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 2,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue3",
+              "slot": 2,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "amiba_9.webp",
+          "b_16.webp",
+          "dlc_25.png",
+          "amiba_5.webp"
+        ]
+      },
+      {
+        "line": 204,
+        "round": 3,
+        "tileId": "blue1",
+        "blueSlot": 3,
+        "wallet": {
+          "credits": 0,
+          "energy": 0,
+          "publicity": 6,
+          "availableData": 3
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "blueBonusCount": 2,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue3",
+              "slot": 2,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "b_16.webp",
+          "dlc_25.png",
+          "amiba_5.webp"
+        ]
+      },
+      {
+        "line": 299,
+        "round": 4,
+        "tileId": "orange2",
+        "blueSlot": null,
+        "wallet": {
+          "credits": 2,
+          "energy": 1,
+          "publicity": 7,
+          "availableData": 0
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 1,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue3",
+              "slot": 2,
+              "occupied": false,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue1",
+              "slot": 3,
+              "occupied": false,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "b_16.webp",
+          "chong_7.webp",
+          "chong_9.webp",
+          "dlc_1.png",
+          "chong_3.webp"
+        ]
+      },
+      {
+        "line": 324,
+        "round": 4,
+        "tileId": "orange3",
+        "blueSlot": null,
+        "wallet": {
+          "credits": 1,
+          "energy": 0,
+          "publicity": 6,
+          "availableData": 1
+        },
+        "computer": {
+          "discardedCount": 0,
+          "computerSlots": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "blueBonusCount": 3,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue3",
+              "slot": 2,
+              "occupied": true,
+              "unlocked": true
+            },
+            {
+              "tileId": "blue1",
+              "slot": 3,
+              "occupied": true,
+              "unlocked": true
+            }
+          ],
+          "analyzeReady": false
+        },
+        "hand": [
+          "dlc_6.png"
+        ]
+      }
+    ],
+    "traceLines": 331,
+    "traceSha256": "3323edcb3362d20715c7227b163dab00e0d45c264e5fb2bc2a31c03474c73d4d"
+  },
+  "summary": {
+    "meanScansByRound": [
+      0.35,
+      0.45,
+      1.2,
+      0.9
+    ],
+    "meanScan4SelectionsByRound": [
+      0,
+      0.2,
+      0.4,
+      0.25
+    ],
+    "meanScan4SkipsByRound": [
+      0.05,
+      0.1,
+      0.6,
+      0.4
+    ],
+    "earlyPurple4Boards": 18,
+    "limitations": [
+      "Selected scan4 launch/move counts are observed use, not a causal value or resource-saving estimate.",
+      "Observed low activity can itself be a result of policy; this audit alone does not justify lowering a forecast.",
+      "Original20 use old v486; no V72 cohort retest."
+    ]
+  }
+}

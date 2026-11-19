@@ -1,0 +1,12 @@
+{
+  "status": "failed",
+  "mode": "candidate",
+  "sourceInput": 35,
+  "sourcePolicy": "seti-search-agent-v2/seti-complete-decision-search-v491-scan-forecast/seti-purpose-capital-state-value-v73-scan-forecast",
+  "newGames": 0,
+  "newAISearches": 1,
+  "failure": {
+    "message": "VALUE_ARITHMETIC_NONFINITE",
+    "stack": "TypeError: VALUE_ARITHMETIC_NONFINITE\n    at units (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/value-arithmetic.js:26:57)\n    at Object.sum (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/value-arithmetic.js:28:133)\n    at /private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/state-value.js:512:25\n    at Object.incomeAllocationCapital (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/state-value.js:520:53)\n    at Object.incomeSwapPlan (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/resource-demand.js:331:23)\n    at swapIntent (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/card-pick-planning.js:282:28)\n    at Object.plan (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/card-pick-planning.js:395:59)\n    at describeCardPick (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/analysis-port.js:2751:36)\n    at cardPickSpec (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/analysis-port.js:2763:20)\n    at Object.expandWithCardPick (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/analysis-port.js:2787:25)"
+  }
+}

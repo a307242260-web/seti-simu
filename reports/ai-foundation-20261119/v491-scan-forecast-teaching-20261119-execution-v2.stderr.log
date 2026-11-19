@@ -1,0 +1,15 @@
+[full进度] 第 1 轮 · 第 1 回合 · 决策#24 · 席位=player-white · 动作=play_card:124d76d3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=0.214s · 112.1步/s
+[full进度] 第 1 轮 · 第 6 回合 · 决策#52 · 席位=player-white · 动作=choose_target:1035d792 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=21 · 用时=1.216s · 42.8步/s
+[full进度] 第 2 轮 · 第 5 回合 · 决策#82 · 席位=player-white · 动作=play_card:5f13e87a · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=28 · 用时=2.257s · 36.3步/s
+[full进度] 第 3 轮 · 第 1 回合 · 决策#111 · 席位=player-white · 动作=choose_card:c3064b92 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=45 · 用时=3.271s · 33.9步/s
+[full进度] 第 3 轮 · 第 7 回合 · 决策#132 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=56 · 用时=4.304s · 30.7步/s
+[full进度] 第 3 轮 · 第 9 回合 · 决策#152 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=64 · 用时=5.319s · 28.6步/s
+[full进度] 第 3 轮 · 第 11 回合 · 决策#178 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=75 · 用时=6.347s · 28.0步/s
+[full进度] 第 4 轮 · 第 6 回合 · 决策#199 · 席位=player-white · 动作=industry:e887dc52 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=96 · 用时=7.405s · 26.9步/s
+[full进度] 第 4 轮 · 第 8 回合 · 决策#226 · 席位=player-white · 动作=choose_target:dc367eeb · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=113 · 用时=8.435s · 26.8步/s
+Error: 页面模板缺失: /private/tmp/seti-scan-forecast-20261119-26dwfnar/reports/iteration/page-template.html
+    at renderPage (/private/tmp/seti-scan-forecast-20261119-26dwfnar/tools/robot-iteration-lib.js:1312:11)
+    at buildRegistry (/private/tmp/seti-scan-forecast-20261119-26dwfnar/tools/robot-iteration-lib.js:1465:20)
+    at cmdRun (/private/tmp/seti-scan-forecast-20261119-26dwfnar/tools/robot_iterate.js:220:45)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async main (/private/tmp/seti-scan-forecast-20261119-26dwfnar/tools/robot_iterate.js:424:17)

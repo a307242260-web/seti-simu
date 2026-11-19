@@ -1,0 +1,342 @@
+{
+  "status": "passed",
+  "mode": "baseline",
+  "sourceInput": 35,
+  "sourcePolicy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 35,
+  "milliseconds": 102.928167,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_target",
+    "phase": "conditional",
+    "actionId": "choose_target:d0b75b83",
+    "actorId": "player-white",
+    "stateVersion": 6,
+    "decisionVersion": 0,
+    "target": {
+      "choiceId": "tech:purple4",
+      "tileId": "purple4",
+      "blueSlot": null
+    },
+    "payload": {
+      "skipCost": false,
+      "skipRotate": false,
+      "skipBonus": false
+    },
+    "decision": null,
+    "summary": "\u7814\u7a76 purple4"
+  },
+  "value": 54.166666666666664,
+  "result": {
+    "schemaVersion": "seti-complete-decision-search-v490-final-currency",
+    "complete": true,
+    "actionId": "choose_target:d0b75b83",
+    "value": 54.166666666666664,
+    "realization": -1.8333333333333333,
+    "preparationDebt": 0,
+    "stopReason": null,
+    "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+    "roots": [
+      {
+        "actionId": "choose_target:509236e8",
+        "target": 1,
+        "value": 51.166666666666664,
+        "realization": -5.666666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:0cbf059c",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:bdea2e94",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:36a6b668",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:3fcecb14",
+        "target": 2,
+        "value": 51.166666666666664,
+        "realization": -5.666666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:9b661234",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:2b1149ac",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:e55cdd44",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:ad894514",
+        "target": 3,
+        "value": 51.166666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:c86683cc",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:c737d1d0",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:2fa94938",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:d9ba91f0",
+        "target": 4,
+        "value": 51.166666666666664,
+        "realization": -5.666666666666667,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:d4a9f494",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:89054c28",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:7b13c554",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-local-decision-policy",
+        "policy": "seti-greedy-blue-placement-v1",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "choose_target:03fdb62d",
+        "target": 5,
+        "value": 51.666666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:70b9a53f",
+        "target": 6,
+        "value": 42.166666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:22eefebd",
+        "target": 7,
+        "value": 45.166666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:a16882e3",
+        "target": 8,
+        "value": 43.666666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:405d1e5d",
+        "target": 9,
+        "value": 44.5,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:66c1a4bb",
+        "target": 10,
+        "value": 43.666666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:d57e0409",
+        "target": 11,
+        "value": 43.666666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_target:d0b75b83",
+        "target": 12,
+        "value": 54.166666666666664,
+        "realization": -1.8333333333333333,
+        "preparationDebt": 0,
+        "completion": "complete"
+      }
+    ],
+    "unresolved": [],
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 17,
+      "valueCacheHits": 57,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 3,
+      "movementDirectionsExcluded": 10,
+      "routeGeometryNodes": 32,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 17,
+      "provedTurnTailInputs": 77,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 35,
+      "logicalResourceInputs": 0,
+      "sharedResourceInputHits": 0,
+      "sharedResourceInternalStates": 0,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 6,
+      "singleAlternativeStates": 13,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 0,
+      "resourceGoalPlans": 0,
+      "resourcePreparationInputs": 0,
+      "resourceFallbacks": 0,
+      "resourceExcludedActions": 110,
+      "transitions": 35,
+      "nodes": 53,
+      "graphNodes": 36,
+      "certificateNodes": 17,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 0,
+      "selectionMacros": 0,
+      "peakFrontier": 13,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v72-final-currency\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 89.65325,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    }
+  },
+  "rootAndRngUnchanged": true,
+  "retention": {
+    "mode": "decision-and-budgets",
+    "rawSha256": "6fd1f883a281bee82868a23d70b726afe35a2b1123669629dd41945ef744587d",
+    "fullSearchGraphOmitted": true,
+    "seed": "seti-analyze-421f46598209",
+    "sourceCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e"
+  }
+}

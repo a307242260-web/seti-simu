@@ -1,0 +1,28 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=1 failed=1 total=2 time=0.90s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/private/tmp/seti-scan-forecast-20261119-26dwfnar/reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz'
+    at Object.openSync (node:fs:560:18)
+    at Object.readFileSync (node:fs:444:35)
+    at Object.<anonymous> (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/decision-search.test.js:581:74)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/private/tmp/seti-scan-forecast-20261119-26dwfnar/reports/ai-foundation-20261113/prepass-funded-landing/r3-stock-teacher-funded-scan-one-20261113-v1.json.gz'
+}
+
+Node.js v22.22.0
+FAIL randomizer/game/ai/decision-search.test.js status=1 signal=none

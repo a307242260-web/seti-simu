@@ -1,0 +1,14 @@
+{
+  "status": "failed",
+  "mode": "teaching-r3",
+  "sourceInput": 130,
+  "sourcePolicy": "seti-search-agent-v2/seti-complete-decision-search-v491-scan-forecast/seti-purpose-capital-state-value-v73-scan-forecast",
+  "newGames": 0,
+  "newAISearches": 1,
+  "failure": {
+    "message": "ANALYSIS_ROOT_OWNER_MISMATCH",
+    "stack": "Error: ANALYSIS_ROOT_OWNER_MISMATCH\n    at Object.openRoot (/private/tmp/seti-scan-forecast-20261119-26dwfnar/randomizer/game/ai/analysis-port.js:696:15)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-teaching-scan-forecast-20261119.cjs:6:216)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  },
+  "actualAISearches": 0,
+  "failureBeforeSearchDecision": true
+}

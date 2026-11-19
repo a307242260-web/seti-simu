@@ -1,0 +1,50 @@
+{
+  "status": "verified",
+  "independentReplayInputs": 127,
+  "newGames": 0,
+  "newAISearches": 0,
+  "results": [
+    {
+      "branch": "baseline",
+      "inputs": 61,
+      "archive": "reports/ai-foundation-20261119/early-blue-baseline-native-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "ae3b0e2e9e9eb88247f9b93986dd0fa4a45fe028ce9bc4d13c8f3f6f4d8c938d",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 340499784
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "ae3b0e2e9e9eb88247f9b93986dd0fa4a45fe028ce9bc4d13c8f3f6f4d8c938d",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 340499784
+        }
+      }
+    },
+    {
+      "branch": "alternative",
+      "inputs": 66,
+      "archive": "reports/ai-foundation-20261119/early-blue-alternative-native-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "5863f1603b19084063f037bc75bdc2d133bf271fe8749b25393fbe6f9a61a4ba",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 340499784
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "5863f1603b19084063f037bc75bdc2d133bf271fe8749b25393fbe6f9a61a4ba",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 340499784
+        }
+      }
+    }
+  ]
+}

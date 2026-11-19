@@ -1,0 +1,2171 @@
+{
+  "status": "verified-controlled-prefix",
+  "sourceInput": 35,
+  "baselineInputs": 27,
+  "alternativeInputs": 32,
+  "combinedNativeBudget": 79,
+  "newAISearches": 0,
+  "newGames": 0,
+  "actions": {
+    "baseline": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d0b75b83",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:122c43fc",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-card"
+        },
+        "payload": {
+          "cost": {
+            "energy": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2能量 → 1张牌"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:53a67c0a",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "trade-card-selection",
+          "choiceId": "public:0",
+          "source": "public",
+          "slotIndex": 0,
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {
+          "slotIndex": 0
+        },
+        "decision": null,
+        "summary": "b_3.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_3.webp",
+          "imageAlt": "b_3.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b01f5028",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "income:card-17-0",
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_3.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_3.webp",
+          "imageAlt": "b_3.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 10,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:c858282e",
+        "actorId": "player-blue",
+        "stateVersion": 11,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0f35e0c0",
+        "actorId": "player-blue",
+        "stateVersion": 11,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-36-0|card-40-0",
+          "cardIds": [
+            "card-36-0",
+            "card-40-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 2
+        },
+        "decision": null,
+        "summary": "弃置 b_131.webp、b_16.webp"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:4837ac1d",
+        "actorId": "player-blue",
+        "stateVersion": 11,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-22-pass-1-3",
+          "cardId": "b_42.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-22-pass-1-3"
+        },
+        "decision": null,
+        "summary": "b_42.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-22-pass-1-3",
+          "imageSrc": "../assets/cards/basic/split/b_42.webp",
+          "imageAlt": "b_42.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ff716055",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:37225bf5",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-20-pass-1-1",
+          "cardId": "b_108.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "decision": null,
+        "summary": "b_108.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-20-pass-1-1",
+          "imageSrc": "../assets/cards/basic/split/b_108.webp",
+          "imageAlt": "b_108.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ac4b4ab2",
+        "actorId": "player-brown",
+        "stateVersion": 13,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:710582fd",
+        "actorId": "player-brown",
+        "stateVersion": 13,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-23-pass-1-4",
+          "cardId": "dlc_4.png"
+        },
+        "payload": {
+          "cardInstanceId": "card-23-pass-1-4"
+        },
+        "decision": null,
+        "summary": "dlc_4.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-23-pass-1-4",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_4.png",
+          "imageAlt": "dlc_4.png"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:90dbe252",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "nebula:sector-1-b",
+          "nebulaId": "sector-1-b",
+          "sectorX": 4
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 织女一"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:5b10efe6",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "public:card-19-0:sector-2-b",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2,
+          "nebulaId": "sector-2-b"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_66.webp → 巴纳德",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/basic/split/b_66.webp",
+          "imageAlt": "b_66.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8f2f1c72",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 1,
+        "target": {
+          "choiceId": "trace:1:blue",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 蓝色痕迹"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    ],
+    "alternative": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:3fcecb14",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:blue2:slot:1",
+          "tileId": "blue2",
+          "blueSlot": 1
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 blue2（蓝槽 1）"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:bac8ef0b",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "pick:card-19-0",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_66.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/basic/split/b_66.webp",
+          "imageAlt": "b_66.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:fec02f70",
+        "actorId": "player-white",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-19-0",
+          "cardInstanceId": "card-19-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_66.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/basic/split/b_66.webp",
+          "imageAlt": "b_66.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:c858282e",
+        "actorId": "player-blue",
+        "stateVersion": 10,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0f35e0c0",
+        "actorId": "player-blue",
+        "stateVersion": 10,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-hand-limit",
+          "choiceId": "card-36-0|card-40-0",
+          "cardIds": [
+            "card-36-0",
+            "card-40-0"
+          ]
+        },
+        "payload": {
+          "discardCount": 2
+        },
+        "decision": null,
+        "summary": "弃置 b_131.webp、b_16.webp"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:4837ac1d",
+        "actorId": "player-blue",
+        "stateVersion": 10,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-22-pass-1-3",
+          "cardId": "b_42.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-22-pass-1-3"
+        },
+        "decision": null,
+        "summary": "b_42.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-22-pass-1-3",
+          "imageSrc": "../assets/cards/basic/split/b_42.webp",
+          "imageAlt": "b_42.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ff716055",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:37225bf5",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-20-pass-1-1",
+          "cardId": "b_108.webp"
+        },
+        "payload": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "decision": null,
+        "summary": "b_108.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-20-pass-1-1",
+          "imageSrc": "../assets/cards/basic/split/b_108.webp",
+          "imageAlt": "b_108.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:ac4b4ab2",
+        "actorId": "player-brown",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:710582fd",
+        "actorId": "player-brown",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass-reserve-card",
+          "choiceId": "card-23-pass-1-4",
+          "cardId": "dlc_4.png"
+        },
+        "payload": {
+          "cardInstanceId": "card-23-pass-1-4"
+        },
+        "decision": null,
+        "summary": "dlc_4.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-23-pass-1-4",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_4.png",
+          "imageAlt": "dlc_4.png"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 13,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:90dbe252",
+        "actorId": "player-white",
+        "stateVersion": 13,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "nebula:sector-1-b",
+          "nebulaId": "sector-1-b",
+          "sectorX": 4
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 织女一"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:07848c6c",
+        "actorId": "player-white",
+        "stateVersion": 13,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "public:card-17-0:sector-2-b",
+          "cardInstanceId": "card-17-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-2-b"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_3.webp → 巴纳德",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_3.webp",
+          "imageAlt": "b_3.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 14,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue2 下方"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:90dbe252",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "nebula:sector-1-b",
+          "nebulaId": "sector-1-b",
+          "sectorX": 4
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 织女一"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:91011bcf",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "public:card-18-0:sector-2-a",
+          "cardInstanceId": "card-18-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-2-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_91.webp → 天狼星A",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-18-0",
+          "imageSrc": "../assets/cards/basic/split/b_91.webp",
+          "imageAlt": "b_91.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8f2f1c72",
+        "actorId": "player-white",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "trace:1:blue",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 蓝色痕迹"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "name": "baseline-before-pass",
+      "round": 1,
+      "turn": 7,
+      "wallet": {
+        "credits": 3,
+        "energy": 0,
+        "publicity": 2,
+        "availableData": 0,
+        "score": 12
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 3,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {
+          "purple4": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [],
+        "blueBonusCount": 0,
+        "blueSlots": [],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": false,
+      "formalProjectedScore": 12,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 55,
+        "components": {
+          "realizedScore": 12,
+          "currentEndGameBonus": 0,
+          "resources": 4,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 12,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:c94cda79",
+          "actorId": "player-white",
+          "stateVersion": 20,
+          "decisionVersion": 1,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:a1f33c73",
+          "actorId": "player-white",
+          "stateVersion": 20,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 20,
+          "decisionVersion": 1,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 20,
+          "decisionVersion": 1,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        }
+      ]
+    },
+    {
+      "name": "blue-cash-income",
+      "round": 1,
+      "turn": 1,
+      "wallet": {
+        "credits": 5,
+        "energy": 3,
+        "publicity": 0,
+        "availableData": 0,
+        "score": 5
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": true,
+      "formalProjectedScore": 5,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 51.166666666666664,
+        "components": {
+          "realizedScore": 5,
+          "currentEndGameBonus": 0,
+          "resources": 8,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 3.6666666666666665,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 9,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 9,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:122c43fc",
+          "actorId": "player-white",
+          "stateVersion": 9,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-card"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:df811f99",
+          "actorId": "player-white",
+          "stateVersion": 9,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 9,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ]
+    },
+    {
+      "name": "scan-pending-16",
+      "round": 1,
+      "turn": 5,
+      "wallet": {
+        "credits": 4,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "score": 5
+      },
+      "income": {
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "technology": {
+        "ownedTiles": {
+          "blue2": true
+        },
+        "disabledTiles": {},
+        "blueBoardSlots": {
+          "blue2": 1
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": true,
+      "formalProjectedScore": 5,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 48.166666666666664,
+        "components": {
+          "realizedScore": 5,
+          "currentEndGameBonus": 0,
+          "resources": 5,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 3.6666666666666665,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:90dbe252",
+          "actorId": "player-white",
+          "stateVersion": 13,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "nebula:sector-1-b",
+            "nebulaId": "sector-1-b",
+            "sectorX": 4
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 织女一"
+        }
+      ]
+    },
+    {
+      "name": "after-first-scan",
+      "round": 1,
+      "turn": 5,
+      "wallet": {
+        "credits": 4,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 2,
+        "score": 7
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": true,
+      "formalProjectedScore": 7,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 52,
+        "components": {
+          "realizedScore": 7,
+          "currentEndGameBonus": 0,
+          "resources": 6,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ]
+    },
+    {
+      "name": "blue-refund-and-computer5",
+      "round": 1,
+      "turn": 5,
+      "wallet": {
+        "credits": 4,
+        "energy": 2,
+        "publicity": 0,
+        "availableData": 0,
+        "score": 7
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blueBonusCount": 1,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": true,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": true,
+      "formalProjectedScore": 7,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 52.083333333333336,
+        "components": {
+          "realizedScore": 7,
+          "currentEndGameBonus": 0,
+          "resources": 6,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 4.583333333333333,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 16,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 16,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:122c43fc",
+          "actorId": "player-white",
+          "stateVersion": 16,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-card"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:df811f99",
+          "actorId": "player-white",
+          "stateVersion": 16,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 16,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ]
+    },
+    {
+      "name": "after-second-scan",
+      "round": 1,
+      "turn": 6,
+      "wallet": {
+        "credits": 3,
+        "energy": 0,
+        "publicity": 0,
+        "availableData": 2,
+        "score": 7
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "blueBonusCount": 1,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": true,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": true,
+      "formalProjectedScore": 7,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 50.5,
+        "components": {
+          "realizedScore": 7,
+          "currentEndGameBonus": 0,
+          "resources": 4,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 5,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 18,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 18,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 18,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 18,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      ]
+    },
+    {
+      "name": "alternative-after-analysis",
+      "round": 1,
+      "turn": 8,
+      "wallet": {
+        "credits": 3,
+        "energy": 0,
+        "publicity": 1,
+        "availableData": 1,
+        "score": 12
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 1,
+        "credits": 4,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": false
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "mainActionCompleted": false,
+      "formalProjectedScore": 12,
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 50.5,
+        "components": {
+          "realizedScore": 12,
+          "currentEndGameBonus": 0,
+          "resources": 4,
+          "hand": 0,
+          "income": 27,
+          "technologyPotential": 7.5,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:c94cda79",
+          "actorId": "player-white",
+          "stateVersion": 22,
+          "decisionVersion": 0,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:a1f33c73",
+          "actorId": "player-white",
+          "stateVersion": 22,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 22,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:49c75492",
+          "actorId": "player-white",
+          "stateVersion": 22,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 22,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      ]
+    }
+  ],
+  "continuedFrom": "early-blue-native-comparison-20261119-v2.json",
+  "additionalInputs": 10,
+  "secondPublicScanPolicy": {
+    "knownCardId": "card-18-0",
+    "selection": "first legal target in canonical menu; no new card identities",
+    "action": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:91011bcf",
+      "actorId": "player-white",
+      "stateVersion": 17,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "public:card-18-0:sector-2-a",
+        "cardInstanceId": "card-18-0",
+        "publicSlotIndex": 1,
+        "nebulaId": "sector-2-a"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "b_91.webp → 天狼星A",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-18-0",
+        "imageSrc": "../assets/cards/basic/split/b_91.webp",
+        "imageAlt": "b_91.webp"
+      }
+    }
+  },
+  "disposition": "Different tech portfolio, newly revealed research bonus and fixed scan targets; no global dominance or autonomous score claim.",
+  "states": "reports/ai-foundation-20261119/early-blue-native-comparison-states-20261119-v3.json.gz"
+}

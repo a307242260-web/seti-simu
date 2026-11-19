@@ -1,0 +1,694 @@
+{
+  "status": "prepared",
+  "preparationInputs": 34,
+  "counterfactualInputs": 1,
+  "newAISearches": 0,
+  "newGames": 0,
+  "previousFailedPreparation": "early-technology-native-preparation-20261119-v1.json",
+  "sourceRecord": "reports/research/e590f148.94299f38.full.json",
+  "stages": [
+    {
+      "name": "before-input35",
+      "round": 1,
+      "wallet": {
+        "credits": 4,
+        "energy": 3,
+        "publicity": 6,
+        "availableData": 2,
+        "score": 3
+      },
+      "income": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "tech": {
+        "ownedTiles": {},
+        "disabledTiles": {},
+        "blueBoardSlots": {}
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:509236e8",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue1:slot:1",
+            "tileId": "blue1",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue1（蓝槽 1）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0cbf059c",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue1:slot:2",
+            "tileId": "blue1",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue1（蓝槽 2）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:bdea2e94",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue1:slot:3",
+            "tileId": "blue1",
+            "blueSlot": 3
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue1（蓝槽 3）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:36a6b668",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue1:slot:4",
+            "tileId": "blue1",
+            "blueSlot": 4
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue1（蓝槽 4）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:3fcecb14",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue2:slot:1",
+            "tileId": "blue2",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue2（蓝槽 1）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:9b661234",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue2:slot:2",
+            "tileId": "blue2",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue2（蓝槽 2）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2b1149ac",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue2:slot:3",
+            "tileId": "blue2",
+            "blueSlot": 3
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue2（蓝槽 3）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e55cdd44",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue2:slot:4",
+            "tileId": "blue2",
+            "blueSlot": 4
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue2（蓝槽 4）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:ad894514",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue3:slot:1",
+            "tileId": "blue3",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue3（蓝槽 1）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c86683cc",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue3:slot:2",
+            "tileId": "blue3",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue3（蓝槽 2）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c737d1d0",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue3:slot:3",
+            "tileId": "blue3",
+            "blueSlot": 3
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue3（蓝槽 3）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2fa94938",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue3:slot:4",
+            "tileId": "blue3",
+            "blueSlot": 4
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue3（蓝槽 4）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d9ba91f0",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue4:slot:1",
+            "tileId": "blue4",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue4（蓝槽 1）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d4a9f494",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue4:slot:2",
+            "tileId": "blue4",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue4（蓝槽 2）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:89054c28",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue4:slot:3",
+            "tileId": "blue4",
+            "blueSlot": 3
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue4（蓝槽 3）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:7b13c554",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue4:slot:4",
+            "tileId": "blue4",
+            "blueSlot": 4
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue4（蓝槽 4）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:03fdb62d",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:orange1",
+            "tileId": "orange1",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange1"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:70b9a53f",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:22eefebd",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange3"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:a16882e3",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:orange4",
+            "tileId": "orange4",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange4"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:405d1e5d",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:purple1",
+            "tileId": "purple1",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple1"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:66c1a4bb",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d57e0409",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:purple3",
+            "tileId": "purple3",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple3"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d0b75b83",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:purple4",
+            "tileId": "purple4",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple4"
+        }
+      ]
+    },
+    {
+      "name": "after-blue2",
+      "round": 1,
+      "wallet": {
+        "credits": 4,
+        "energy": 3,
+        "publicity": 0,
+        "availableData": 2,
+        "score": 5
+      },
+      "income": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 1,
+        "additionalPublicScan": 1
+      },
+      "tech": {
+        "ownedTiles": {
+          "blue2": true
+        },
+        "disabledTiles": {},
+        "blueBoardSlots": {
+          "blue2": 1
+        }
+      },
+      "computer": {
+        "discardedCount": 0,
+        "computerSlots": [
+          1,
+          2
+        ],
+        "blueBonusCount": 0,
+        "blueSlots": [
+          {
+            "tileId": "blue2",
+            "slot": 1,
+            "occupied": false,
+            "unlocked": true
+          }
+        ],
+        "analyzeReady": false
+      },
+      "hand": [],
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:ecb525ad",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "b_3.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-17-0",
+            "imageSrc": "../assets/cards/basic/split/b_3.webp",
+            "imageAlt": "b_3.webp"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:56497dc2",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "pick:card-18-0",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "b_91.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-18-0",
+            "imageSrc": "../assets/cards/basic/split/b_91.webp",
+            "imageAlt": "b_91.webp"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:bac8ef0b",
+          "actorId": "player-white",
+          "stateVersion": 6,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "b_66.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-19-0",
+            "imageSrc": "../assets/cards/basic/split/b_66.webp",
+            "imageAlt": "b_66.webp"
+          }
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:3fcecb14",
+      "actorId": "player-white",
+      "stateVersion": 6,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "tech:blue2:slot:1",
+        "tileId": "blue2",
+        "blueSlot": 1
+      },
+      "payload": {
+        "skipCost": false,
+        "skipRotate": false,
+        "skipBonus": false
+      },
+      "decision": null,
+      "summary": "研究 blue2（蓝槽 1）"
+    }
+  ],
+  "states": "reports/ai-foundation-20261119/early-technology-native-preparation-states-20261119-v2.json.gz",
+  "sourceSaveSha256": "4881fcdae2eb9492cc09922afb1863ff505104c83eee6b219f7b9de773d9b2ea"
+}

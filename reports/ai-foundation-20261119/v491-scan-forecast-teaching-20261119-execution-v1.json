@@ -1,0 +1,10 @@
+{
+  "status": "failed",
+  "runtime": "/private/tmp/seti-scan-forecast-20261119-26dwfnar",
+  "sourceCommit": "1567cae18a14cba565403b5f27e40b318a109138",
+  "acceptedPolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "hypothesis": "Only later-round purple4 use forecast4->1",
+  "newRegisteredAutonomousGames": 0,
+  "startedEpochSeconds": 1795085328.183669,
+  "collectionFailure": "AssertionError(\"node:fs:560\\n  return binding.open(\\n                 ^\\n\\nError: ENOENT: no such file or directory, open '/private/tmp/seti-scan-forecast-20261119-26dwfnar/reports/fixed-boards/free-analyze-random20-20261104-v1.json'\\n    at Object.openSync (node:fs:560:18)\\n    at Object.readFileSync (node:fs:444:35)\\n    at Object.<anonymous> (/private/tmp/seti-scan-forecast-20261119-26dwfnar/tools/research-free-analyze-random20.js:5:14)\\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\\n    at Module.require (node:internal/modules/cjs/loader:1463:12) {\\n  errno: -2,\\n  code: 'ENOENT',\\n  syscall: 'open',\\n  path: '/private/tmp/seti-scan-forecast-20261119-26dwfnar/reports/fixed-boards/free-analyze-random20-20261104-v1.json'\\n}\\n\\nNode.js v22.22.0\\n\")"
+}

@@ -1,0 +1,53 @@
+{
+  "status": "closed-candidate-rejected",
+  "sourceRecord": "reports/research/e590f148.94299f38.full.json",
+  "sourceInput": 35,
+  "sourceTraceLine": 8,
+  "sourcePolicy": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "hypothesis": "An early blue2/slot1 resource return may fund an extra productive action; do not change a forecast without Native evidence and independent budget gates.",
+  "stateIdentity": "Exact Native envelope, session, wallet, card instances, data slots, technology, geometry, known information and RNG; branches restored to the same source.",
+  "preparationBudget": 40,
+  "counterfactualInputBudget": 80,
+  "coldSearchBudget": 2,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "newFullGames": 1,
+  "newAISearches": 0,
+  "createdEpochSeconds": 1795084487.271252,
+  "diagnosticSearchBudget": 1,
+  "diagnosticReason": "The changed forecast exposed VALUE_ARITHMETIC_NONFINITE before completion; instrument the actual operands rather than rerun unchanged policy.",
+  "additionalPhase": {
+    "hypothesis": "Isolated forecast usefulScansPerLaterRound4->1, neither a rule change nor a proven general improvement.",
+    "maxNewAutonomousGames": 1,
+    "scenario": "human405-white-current-full-v1",
+    "singlePointEvidence": [
+      "early-technology-candidate-cold-20261119-v2.json",
+      "early-technology-teaching-r2-cold-20261119-v2.json",
+      "early-technology-teaching-r3-cold-20261119-v2.json"
+    ],
+    "relatedTestPasses": 5,
+    "environmentFailuresPreserved": true,
+    "sourceOwnerPreparationFailuresPreserved": true,
+    "teachingSourcePreparationInputs": 15,
+    "performanceGate": {
+      "nativeInputs": 256,
+      "milliseconds": 600
+    },
+    "fullGameGateMilliseconds": 180000,
+    "policyAdoption": "Only after comparing complete round-end assets and autonomous result; do not claim future income improvements from local values."
+  },
+  "closedEpochSeconds": 1795085673.634461,
+  "policyAdopted": false,
+  "acceptedPolicyUnchanged": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "outcome": "scan-forecast-outcome-20261119-v1.json",
+  "nativePreparationInputs": 50,
+  "nativeCounterfactualInputs": 71,
+  "independentReplayInputs": 359,
+  "validColdSearches": 4,
+  "failedAssetEmptySearches": 2,
+  "ownerPreflightFailures": 2,
+  "nextCommonRootInput": 38,
+  "stop": "Reject forecast4->1 globally; no automatic forecast2/3 sweep or20-board experiment. Study a funded common-state development chain at input38 before another valuation revision."
+}

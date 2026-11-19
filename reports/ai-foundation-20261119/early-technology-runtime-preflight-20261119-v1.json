@@ -1,0 +1,22 @@
+{
+  "runtime": "/private/tmp/seti-scan-forecast-20261119-26dwfnar",
+  "acceptedSource": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "parent": "d8d913a208c8d010c53d3144dfba09096fadf37d",
+  "strategyHypothesis": "Only usefulScansPerLaterRound4->1; no global income/technology priorities",
+  "productionAdopted": false,
+  "preparationFailure": "Prior Python tarfile.extractall(filter=...) unsupported; failed before extraction or AI execution.",
+  "changes": [
+    "randomizer/game/ai/state-value.js",
+    "randomizer/game/ai/decision-search.js"
+  ],
+  "sourceHashes": {
+    "randomizer/game/ai/state-value.js": "2be5184d9aa013f79f023f784594dcc7d979153681f5e386a9c25114dc2cbb8b",
+    "randomizer/game/ai/decision-search.js": "e3b0ff7f116b915118ce2fad6c7d490414dbad673d2bdd9e881bd5e014181059"
+  },
+  "environmentCorrection": {
+    "symptom": "VALUE_ARITHMETIC_NONFINITE",
+    "cause": "Isolated archive omitted assets; CARD_CATALOG length0 caused integer value scale0. Same facts reproduce NaN without search.",
+    "fix": "Reuse the accepted runtime assets source; require catalog182 and scale2184 before any subsequent search.",
+    "policyCodeChangedToFix": false
+  }
+}
