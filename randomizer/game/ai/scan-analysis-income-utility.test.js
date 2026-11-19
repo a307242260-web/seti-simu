@@ -25,3 +25,52 @@ try{
  const after=values.evaluateStateValue(c.projection({role:'player',playerId:seat}).state,seat);assert.equal(after.total,values.sumValueParts([beforeValue,q.value]),'one exact Native route realizes the quoted wallet/hand/data/score increment; new public replacement identities do not fund it');assert.equal(after.total,141.5);assert.equal(inputs,16);assert(c.lifecycle.restore(electric).ok);assert.deepEqual(c.lifecycle.save().envelope,electric);
 }finally{c.dispose();}
 console.log(JSON.stringify({scanAnalysisIncomeUtility:'passed',nativeInputs:inputs,nativeExactGain:3,quotedFloorAfter:141.5,initialAndPendingSame:true,unknownPairExcluded:true,noNewSearchBranches:true,rootAndRngRestored:true}));
+
+// Native board5: equal income utilities must preserve the cheaper funding
+// of a known full scan that supplies the remaining free-analysis data.
+{
+ const f=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261119/paid-scan-income5-fixture-20261119-v1.json.gz')))),seed=f.seed,seat=f.seat;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,v)=>buildRuleObservation(state,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+ try{
+  assert(c.lifecycle.restore(f.rootBeforeData).ok);let s=JSON.parse(c.lifecycle.save().envelope.committedState),p=s.players.players.find(p=>p.id===seat),before=structuredClone(s);
+  const port=require('./analysis-port').createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);const spec=port.resourceSpec(port.openRoot()),income=spec.plans.find(plan=>plan.goal.kind==='income')?.goal;port.close();assert(income);assert.equal(income.incomeCardId,f.knownCreditCardId,'select the supplier before binding the Native data plan');assert.deepEqual(s,before);
+  assert(c.lifecycle.restore(f.rootIncome).ok);const menu=c.inspect().session.decision,actions=menu.choices;s=c.lifecycle.save().envelope.session.session.workingState;p=s.players.players.find(p=>p.id===seat);before=structuredClone(s);
+  for(const list of [actions,[...actions].reverse()]){
+   const chosen=demand.incomeChoice({state:s,seatId:seat,goal:{kind:'income',required:{}},actions:list});assert(chosen);assert.equal(list.find(a=>a.actionId===chosen.actionId).target.cardInstanceId,f.knownCreditCardId,'cash saves a real two-card currency exchange; menu order cannot decide the tie');
+  }
+  assert.deepEqual(s,before,'funding quote cannot mutate Native facts or counters');
+  const rows=p.hand.map(card=>({card,value:demand.incomeCardValue(s,seat,card)})).sort((a,b)=>b.value-a.value||require('./income-card-order').compare(a.card,b.card));
+  const preferred=utility.preferPaidCardFunding({state:s,player:p,rows});assert.equal(preferred.card.id,f.knownCreditCardId);assert.equal(preferred.knownScanFunding.currencyPairCount,1);assert.equal(preferred.knownScanFunding.consumedSpareCards,2);
+  const strict=rows.map((row,i)=>({...row,value:row.value+(i===0?1:0)}));assert.equal(utility.preferPaidCardFunding({state:s,player:p,rows:strict}),null,'funding cannot override strictly better primary utility');
+  for(const change of [(s,p)=>{p.mainActionCompleted=true;},(s,p)=>{p.resources.availableData++;},(s,p)=>{p.hand.find(c=>c.cardId==='dlc_20.png').hidden=true;},(s,p)=>{p.hand=p.hand.filter(c=>c.id!==f.scanCardId);p.resources.handSize=p.hand.length;}]){
+   const altered=structuredClone(s),player=altered.players.players.find(p=>p.id===seat);change(altered,player);const unchanged=structuredClone(altered);assert.equal(utility.preferPaidCardFunding({state:altered,player,rows}),null,'no forecast from a spent main action, unnecessary data, unknown hand or missing beneficiary');assert.deepEqual(altered,unchanged);
+  }
+
+  const committed=demand.incomeChoice({state:s,seatId:seat,goal:{kind:'income',incomeCardId:f.oldEnergyCardId,required:{}},actions});assert.equal(actions.find(a=>a.actionId===committed.actionId).target.cardInstanceId,f.oldEnergyCardId,'an already bound income plan remains fixed');
+  const frozen=freeze(structuredClone(s)),again=demand.incomeChoice({state:frozen,seatId:seat,goal:{kind:'income',required:{}},actions});assert.equal(actions.find(a=>a.actionId===again.actionId).target.cardInstanceId,f.knownCreditCardId);
+  let inputs=0;
+  for(const [i,old]of f.alternativeActions.entries()){
+   const inspect=c.inspect(),d=inspect.phase==='awaiting_input'?inspect.session.decision:null,legal=d?.choices||c.inputPort.enumerateActions({});
+   const a=old.target?.confirm?legal.find(a=>a.target?.confirm):legal.find(a=>a.family===old.family&&JSON.stringify(a.target)===JSON.stringify(old.target));assert(a,'known funded Native input'+i);const result=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(result.ok);inputs++;
+  }
+  s=JSON.parse(c.lifecycle.save().envelope.committedState);p=s.players.players.find(p=>p.id===seat);assert.equal(p.resources.score,f.expectedAfter.score);assert.equal(p.resources.credits,f.expectedAfter.credits);assert.equal(p.resources.energy,f.expectedAfter.energy);assert.equal(p.income.credits,f.expectedAfter.incomeCredits);assert.equal(p.income.energy,f.expectedAfter.incomeEnergy);assert.equal(p.hand.length,f.expectedAfter.handCount);for(const id of f.expectedAfter.retained)assert(p.hand.some(c=>c.cardId===id));assert.equal(inputs,23);
+  console.log(JSON.stringify({knownScanIncomeFunding:'passed',nativeInputs:inputs,retainedExtraCards:2,noNewSearchNodes:true}));
+ }finally{c.dispose();}
+}
+
+// The live plan binds before its known data corner, not at the later menu.
+{
+ const f=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.resolve(__dirname,'../../../reports/ai-foundation-20261119/income-binding-root110-fixture-20261119-v1.json.gz')))),seed=f.seed,seat=f.seat;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,v)=>buildRuleObservation(state,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+ try{
+  assert(c.lifecycle.restore(f.rootBinding).ok);const before=c.lifecycle.save().envelope,port=require('./analysis-port').createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});port.setResourcePlanning(true);
+  try{const spec=port.resourceSpec(port.openRoot()),plan=spec.plans.find(plan=>plan.goal.kind==='income');assert(plan);assert.equal(plan.goal.incomeCardId,f.knownCreditCardId,'bind the cheaper known scan supplier before discarding for its data');assert.equal(plan.firstActionId,f.bindingPreparationActions[0].actionId,'same unique greedy data corner, no extra preparation branch');}finally{port.close();}
+  assert.deepEqual(c.lifecycle.save().envelope,before,'binding quote preserves authoritative state and RNG');
+  const s=JSON.parse(before.committedState),p=s.players.players.find(p=>p.id===seat),rows=p.hand.filter(card=>demand.capacity(s,seat,{kind:'income',targetComputerSlot:4,incomeCardId:card.id,required:{}})).map(card=>({card,value:demand.incomeCardValue(s,seat,card)})).sort((a,b)=>b.value-a.value||require('./income-card-order').compare(a.card,b.card));
+  const q=utility.preferPaidCardFunding({state:s,player:p,rows});assert(q);assert.equal(q.card.id,f.knownCreditCardId);assert.deepEqual(q.knownScanFunding.dataCornerCardIds,[f.dataCornerCardId]);assert.equal(q.knownScanFunding.currencyPairCount,1);
+  for(const change of [(s,p)=>{p.resources.availableData=0;},(s,p)=>{p.hand=p.hand.filter(c=>c.id!==f.dataCornerCardId);p.resources.handSize=p.hand.length;},(s,p)=>{const copy={...p.hand.find(c=>c.id===f.dataCornerCardId),id:'second-data-source'};p.hand.push(copy);p.resources.handSize++;}]){
+   const altered=structuredClone(s),player=altered.players.players.find(p=>p.id===seat);change(altered,player);assert.equal(utility.preferPaidCardFunding({state:altered,player,rows}),null,'missing or ambiguous known data cannot finance a scan');
+  }
+  console.log(JSON.stringify({incomeBindingSource:'passed',beforeInput:110,uniqueKnownCorner:f.dataCornerCardId,noNewSearchBranch:true,rootAndRngUnchanged:true}));
+ }finally{c.dispose();}
+}

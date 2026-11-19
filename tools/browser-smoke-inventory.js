@@ -2125,4 +2125,23 @@ Object.freeze({
   successExpression:'window.__scanAnalysisIncomeSmoke?.ok === true',
   obligation:'Browser fixed income selects a currently funded known scan-analysis purpose and realizes its3 utility through the same16 formal inputs with source/RNG restored',
   counterexample:'Lexical tie replaces electricity, hidden cards or exhausted tokens fund the plan, currency is spent twice, or Browser uses a different policy',
+}), Object.freeze({
+  id:'production-known-scan-income-binding',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiScanAnalysisIncomeUtility?.preferPaidCardFunding && window.SetiResourceDemand && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const response=await fetch('/reports/ai-foundation-20261119/income-binding-root110-fixture-20261119-v1.json.gz');if(!response.ok)throw Error('funding fixture missing');
+    const f=await new Response(response.body.pipeThrough(new DecompressionStream('gzip'))).json(),seed=f.seed,seat=f.seat;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    try{
+      if(!c.lifecycle.restore(f.rootBinding).ok)throw Error('funding plan restore');const original=JSON.stringify(c.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+      try{port.setResourcePlanning(true);const goal=port.resourceSpec(port.openRoot()).plans.find(p=>p.goal.kind==='income')?.goal;if(goal?.incomeCardId!==f.knownCreditCardId)throw Error('Browser plan bound to the more expensive currency supplier');}finally{port.close();}
+      if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('funding plan mutated Native root/RNG');
+      if(!c.lifecycle.restore(f.rootIncome).ok)throw Error('funding menu restore');const before=JSON.stringify(c.lifecycle.save().envelope),state=c.lifecycle.save().envelope.session.session.workingState,actions=c.inspect().session.decision.choices;
+      for(const list of[actions,[...actions].reverse()]){const pick=window.SetiResourceDemand.incomeChoice({state,seatId:seat,goal:{kind:'income',required:{}},actions:list});if(list.find(a=>a.actionId===pick.actionId)?.target.cardInstanceId!==f.knownCreditCardId)throw Error('Browser funding tie differs from Native policy');}
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('funding menu mutated Native root/RNG');window.__knownScanIncomeFundingSmoke={ok:true,wholeGames:0};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__knownScanIncomeFundingSmoke?.ok === true',
+  obligation:'Browser uses the same known paid-scan funding tie before its known data corner and at the pending income menu, preserving authoritative state and RNG',
+  counterexample:'Stale browser dependency, lexical supplier tie, or plan binding overrides the cheaper known payment',
 })]);
