@@ -1928,7 +1928,7 @@
     "All354 replay entries, final Native state/session and all4 round-end Native envelopes/RNG exactly match the historical272 game. There is no observed trajectory or strategy improvement on this board.",
     "The fourth-round board-score increment is74 for AI versus134 for the legal teacher reference, but the round3 ending assets differ. The112 terminal gap cannot be assigned to a technology/card rule without controlling those starts."
   ],
-  "nextControlledCheck": "Establish and independently verify the exact legal teacher checkpoint before input251 (White first R4 decision, all passive seats settled), using existing teacher actions and no injected assets. Benchmark the unchanged AI at that checkpoint before deciding whether to run a registered same-start R4 continuation. Do not reopen frozen cargo/income candidates or tune weights from the local2-point scan witness.",
+  "nextControlledCheck": "Completed the exact legal teacher checkpoint before input246, the first White R4 decision; Brown passed, Green/Blue still follow their actual PASS-only turns. Unchanged AI reached Native terminal267 versus teacher384. See reports/ai-foundation-20261119/teacher-r4-same-start-outcome-20261119-v1.json. No strategy change or complete autonomous baseline promotion.",
   "evidence": {
     "record": "reports/research/a9ba4051.94299f38.full.json",
     "actionReport": "reports/iteration/v486-teaching-current-full-20261119/a9ba4051.94299f38.full.action-log.html",

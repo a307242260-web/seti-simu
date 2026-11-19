@@ -28,6 +28,17 @@ try{
  const checkpoint=JSON.parse(fs.readFileSync(path.resolve(root,record.failure.checkpointPath)));assert.deepEqual(checkpoint.coreState.compositionEnvelope,before.coreState.compositionEnvelope);
  assert.equal(run().status,2);assert.deepEqual(fs.readFileSync(file),bytes);
 }finally{fs.rmSync(dir,{recursive:true,force:true})}
+// A settled checkpoint needs no autonomous decisions; terminal finalization
+// must not assume the historical AI-continuation metadata exists.
+const terminalDir=fs.mkdtempSync(path.join(os.tmpdir(),"seti-teacher-r4-terminal-"));
+try{
+ const preload=path.join(terminalDir,"terminal.cjs"),modulePath=path.join(root,"tools/research-human405-teacher-r4.js"),savePath=path.join(root,"seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json");
+ fs.writeFileSync(preload,`const fs=require("fs"),api=require(${JSON.stringify(modulePath)});api.initialize=(env,config,metadata,{checkpointFromSave})=>{const save=JSON.parse(fs.readFileSync(${JSON.stringify(savePath)}));env.loadCheckpoint(checkpointFromSave(save,{...config,agentType:"custom",seat:"player-white"}));return save.replaySteps;};`);
+ const args=["tools/run_research_validation.js","--name","teacher-r4-terminal-unit","--full","--config",`agentType=search,scenario=${scenario.ID},compactReplay=true`,"--no-save","--records-dir",terminalDir];
+ const child=spawnSync(process.execPath,args,{cwd:root,env:{...process.env,NODE_OPTIONS:`${process.env.NODE_OPTIONS||""} --require=${preload}`},encoding:"utf8"});assert.equal(child.status,0,child.stderr);
+ const file=path.join(terminalDir,fs.readdirSync(terminalDir).find(p=>p.endsWith(".full.json"))),record=JSON.parse(fs.readFileSync(file));
+ assert.equal(record.terminal,true);assert.equal(record.stopReason,"terminal");assert.equal(record.summary.scores["player-white"],384);assert.equal(record.steps,474);assert.deepEqual(record.metrics.searches,[]);
+}finally{fs.rmSync(terminalDir,{recursive:true,force:true})}
 // A changed fixture must be refused before loading it.
 const file=path.join(root,identity.scenario.controlledTeacherPrefix.savePath),bytes=fs.readFileSync(file);
 try{fs.appendFileSync(file," ");assert.throws(()=>scenario.source(),/ADMISSION_DRIFT/);}finally{fs.writeFileSync(file,bytes)}

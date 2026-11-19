@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "seti-teacher-r4-related-validation-v1",
+  "sourcePolicyUnchanged": true,
+  "checks": [
+    {
+      "file": "tools/research-human405-teacher-r4.test.js",
+      "passed": true,
+      "covers": [
+        "exact245-input Native/RNG restore",
+        "teacher-only prefix scope",
+        "257 simulation rejection before submit",
+        "duplicate failed experiment refusal",
+        "settled Native terminal finalization with zero inputs",
+        "fixture drift refusal"
+      ]
+    },
+    {
+      "file": "tools/research-human405-current-full.test.js",
+      "passed": true
+    },
+    {
+      "file": "tools/research-search-statistics.test.js",
+      "passed": true
+    },
+    {
+      "file": "tools/research-world-resume.test.js",
+      "passed": true
+    }
+  ],
+  "javascriptSyntaxPassed": [
+    "tools/run_research_validation.js",
+    "tools/research-human405-teacher-r4.test.js"
+  ],
+  "pythonSyntaxPassed": [
+    "adhoc/run-teacher-r4-same-start-20261119.py",
+    "adhoc/report-teacher-r4-same-start-20261119.py",
+    "adhoc/prepare-teacher-r4-registry-20261119.py"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "seti-teacher-r4-early-plan-audit-v1",
+  "sourcePolicyCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "actualInput": 263,
+  "actualActionId": "move:23807efa",
+  "selectedPlanValue": 230,
+  "alternatives": [
+    {
+      "actionId": "scan:2d21a323",
+      "target": 11,
+      "value": 218,
+      "realization": -20,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "scan:sector:sector-1-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-1-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "resourceGoalCount": 4,
+      "completion": "complete"
+    },
+    {
+      "actionId": "place_data:8fd12fd3",
+      "target": 8,
+      "value": 221,
+      "realization": -20,
+      "preparationDebt": 0,
+      "kind": "resource-goal-plan",
+      "goal": {
+        "id": "data:analyze:6",
+        "kind": "analyze",
+        "targetComputerSlot": 6,
+        "required": {}
+      },
+      "resourceGoalCount": 1,
+      "completion": "complete"
+    }
+  ],
+  "classification": "scan-and-analysis-candidates-present; relative-plan-value-is-the-next-causal-question",
+  "newNativeInputs": 0,
+  "newAISearches": 0,
+  "sourceEvidence": "reports/ai-foundation-20261119/teacher-r4-input263-search-evidence-20261119-v1.json.gz",
+  "sourceEvidenceSha256": "8543b0e2ad0b2a3e2f35e37b97a5e3f990eb704f103f20ac1dbc99c480701133",
+  "boundary": "The full R4 gap does not prove that switching this one decision improves the terminal score. No strategy change or point credit is adopted."
+}

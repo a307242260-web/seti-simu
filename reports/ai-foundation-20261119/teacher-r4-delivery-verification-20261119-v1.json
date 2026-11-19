@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "seti-teacher-r4-delivery-verification-v1",
+  "verified": true,
+  "score": 267,
+  "teacherScore": 384,
+  "all97StepsMatchReplay": true,
+  "all537ExecutionSourceFilesVerified": true,
+  "allLocalReportLinksExist": true,
+  "nativeTerminalRestoreAndRngExact": true,
+  "independentFull342ReplayPerformed": false,
+  "V1AndHistoricalV2EntriesPreserved": true,
+  "newAIContinuations": 1,
+  "recoveryAIContinuations": 0,
+  "strategyChanged": false,
+  "report": "reports/iteration/teacher-r4-same-start-20261119/adcb348b.42c7f5fd.full.terminal-recovery.action-log.html"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "seti-teacher-r4-registry-merge-proof-v1",
+  "verified": true,
+  "preservedWorkingCatalogEntries": true,
+  "preservedWorkingRegistryRows": true,
+  "v1Unchanged": true,
+  "version": "teacher-r4-same-start-20261119",
+  "committedSnapshotHashes": {
+    "reports/iteration/versions.json": "d4cf3990805c65c4480abb20fe29efa3d71045ce9d9f1adf454b409b44b8929a",
+    "reports/iteration/registry.json": "7024dc137a7395da8e1584e3b1ba1a5c7ee5b00dd40aaf78622b69aa2b48386d",
+    "reports/robot-iteration.html": "a68d5b0f3b4bd13ea527bce52d3db318330108efb4c80e82094a1ef6f133ea54"
+  },
+  "beforeWorkingHashes": {
+    "reports/iteration/versions.json": "b925d44a1ebc5618c375adf645078fa22946c2b518413e257abbc9b4450309e2",
+    "reports/iteration/registry.json": "1caf1e41f50b4f07a5bd4bbc501dd679ff28ea40ce6641af1c53fb65f7cc46de",
+    "reports/robot-iteration.html": "09dbbc76db4f2737edfc4676d9c1f5665e30e963704fcee8ea6090d1a5e209e4"
+  },
+  "afterWorkingHashes": {
+    "reports/iteration/versions.json": "a229d2b2ccd12acd3f5269ea9b99c384346a6fc1f3a504500c5e2b441b85b4ec",
+    "reports/iteration/registry.json": "ba17995ac860d7e6f2db365e0e82530cd12638a3e12658b8190ed37dbc1d0571",
+    "reports/robot-iteration.html": "deec9817690cb2bee2f9338f4da98db4b6b4ac886bcfac5dc072eb1c62c81109"
+  },
+  "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673"
+}

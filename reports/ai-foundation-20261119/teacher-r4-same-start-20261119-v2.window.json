@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-same-start-route-20261119-v1.json",
+  "startedEpochSeconds": 1795068473.737004,
+  "deadlineEpochSeconds": 1795069673.737004,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "adhoc/run-teacher-r4-same-start-20261119.py"
+      ],
+      "startedEpochSeconds": 1795068474.057174,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 58081,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068483.217985
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/run_node_tests.js",
+        "--match",
+        "research-human405-teacher-r4",
+        "--match",
+        "research-human405-current-full",
+        "--match",
+        "research-world-resume",
+        "--match",
+        "research-search-statistics"
+      ],
+      "startedEpochSeconds": 1795068639.648066,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 59764,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068642.3502889
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/recover-teacher-r4-terminal-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795068714.4560902,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-3.stderr.log",
+      "pid": 60717,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068714.807339
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/report-teacher-r4-same-start-20261119.py"
+      ],
+      "startedEpochSeconds": 1795068905.6974359,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-4.stderr.log",
+      "pid": 62373,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068905.996456
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/robot_iterate.js",
+        "register",
+        "--version-id",
+        "teacher-r4-same-start-20261119",
+        "--name",
+        "教师同起点第4轮：267分（前三轮教师）",
+        "--head",
+        "42c7f5fd9e395fc075aa5e9ef06efb7c349c2498",
+        "--records",
+        "adcb348b.42c7f5fd.full.terminal-recovery.json",
+        "--date",
+        "2026-11-19",
+        "--summary",
+        "相同教师R4起点，现行v486自主第四轮267分，对照教师384；5.051秒，最大139输入/229.850ms。前三轮教师固定；原生已终局，宿主收尾失败后零输入恢复，不重跑。"
+      ],
+      "startedEpochSeconds": 1795068936.471116,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-5.stderr.log",
+      "pid": 62575,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795068937.4246159
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/robot_iterate.js",
+        "build"
+      ],
+      "startedEpochSeconds": 1795068966.334999,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-6.stderr.log",
+      "pid": 63032,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068967.122329
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/prepare-teacher-r4-registry-20261119.py"
+      ],
+      "startedEpochSeconds": 1795069002.626341,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795069673.737004,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.attempt-7.stderr.log",
+      "pid": 63427,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795069003.969708
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795068966.019047,
+      "previousStatus": "failed",
+      "reason": "Metadata-only register wrote catalog/registry but isolated runtime lacked the existing HTML page template. Supply the unchanged HEAD template and rebuild metadata only. No AI or Native action rerun; original deadline retained."
+    }
+  ],
+  "closedEpochSeconds": 1795069220.466035,
+  "outcome": "R4 endpoint267 verified and reported; V2 metadata merged; one actual game, no AI rerun."
+}

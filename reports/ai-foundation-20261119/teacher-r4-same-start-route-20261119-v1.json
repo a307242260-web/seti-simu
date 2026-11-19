@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "accepted-v486-teacher-exact-r4-start-control",
+  "startedEpochSeconds": 1795067103.829607,
+  "deadlineEpochSeconds": 1795070703.829607,
+  "status": "closed-completed-control",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v2.window.json"
+  ],
+  "businessQuestion": "From the exact current-legal teacher first-White R4 state, how much fourth-round development can unchanged v486 realize, independently of differing R3 preparation assets?",
+  "hypotheses": [
+    "Different R3 ending assets explain a material part of the observed R4 development gap.",
+    "There remains a concrete R4 decision or preparation/valuation defect even when the initial Native state/RNG are equal."
+  ],
+  "limits": {
+    "maximumWallSeconds": 3600,
+    "maximumWorkUnits": 2,
+    "maximumLiteralPreparationAndVerificationInputs": 800,
+    "maximumColdSearches": 3,
+    "maximumNewRegisteredR4Continuations": 1,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000,
+    "newAIStrategyChangesBeforeCausalProof": 0
+  },
+  "searchContract": {
+    "stateEquivalence": "Exact legal teacher Native envelope/RNG before input246, White first R4 main opportunity. Brown has passed; Green/Blue remain scheduled and use the same PASS-only/forced policy. Preserve this actual order and invalidate old AI plans.",
+    "reachability": "Replay current-legal teacher prefix from verified23-input opening; all non-White active actions must be PASS or forced conditional decisions. Preserve all hands, probes, symbols, technology slots and task/cargo state.",
+    "dedup": "Reuse any existing source-exact checkpoint/control record. No identical game rerun and no bare-tool full continuation bypassing robot_iterate.",
+    "globalBudget": "Existing search unchanged; three fresh cold decisions at most, all complete <=256 Native simulations and <=600ms. A failed first gate prohibits larger run.",
+    "stop": "No revival of frozen cargo/income candidates. Close with failure evidence on an unresolved gate or deadline; no source tuning or re-labelled retry."
+  },
+  "next": "A new causal task must test resource opportunity cost at the observed root263 before any policy change; this control route cannot rerun the same game.",
+  "checkpointIndexCorrection": {
+    "atEpochSeconds": 1795067250.1753979,
+    "previousPlannedInput": 251,
+    "actualFirstWhiteInput": 246,
+    "input251Actor": "player-blue",
+    "input251Family": "choose_card",
+    "reason": "Read actual current-legal replay action ownership before reconstructing; Brown has passed, Green/Blue have not. Do not replay teacher White launch or advance other players out of order."
+  },
+  "verifiedProgress": {
+    "preparationCheckpoint": "teacher-r4-same-start-preparation-20261119-v1.json",
+    "controlledPrefixInputs": 245,
+    "nativePreparationAndVerificationInputs": 719,
+    "rootAndRngIndependentlyVerified": true,
+    "coldSearchCheckpoint": "teacher-r4-same-start-cold-search-20261119-v1.json",
+    "coldSearches": 1,
+    "coldGate": {
+      "complete": true,
+      "actionId": "card_corner:367a82a7",
+      "value": 198.5,
+      "nativeInputs": 45,
+      "milliseconds": 193.985209,
+      "rootAndRngUnchanged": true,
+      "gatePassed": true
+    },
+    "newRegisteredR4Continuations": 1,
+    "strategyChanged": false,
+    "recoveredTerminal267": true,
+    "newAIInputs": 97,
+    "independentFull342Replay": false,
+    "relatedChecksPassed": 4,
+    "actualPreparationAndVerificationInputs": 733,
+    "causalAuditNativeInputs": 0
+  },
+  "closedEpochSeconds": 1795069220.465646,
+  "outcome": "Same teacher R4 Native/RNG start: unchanged AI267 versus legal teacher384. One actual AI continuation, terminal host finalization recovered with zero inputs; strategy unchanged. Root263 scan/analyze candidates present, selected transport/landing value230 versus218/221; causal alternative remains untested."
+}

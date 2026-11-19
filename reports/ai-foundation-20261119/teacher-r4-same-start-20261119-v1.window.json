@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-same-start-route-20261119-v1.json",
+  "startedEpochSeconds": 1795067103.829607,
+  "deadlineEpochSeconds": 1795068903.829607,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067104.1402009,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 41015,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067107.5701299
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067150.71287,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 41973,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067150.790704
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067165.159731,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 42118,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067165.2006452
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067250.470727,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 42885,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067250.511616
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067383.129123,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 44049,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067383.170107
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795067488.668999,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 44725,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067488.709694
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-teacher-r4-same-start-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795067489.586095,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 45050,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795067489.716109
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-teacher-r4-same-start-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795067516.209874,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 45617,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795067521.487356
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-teacher-r4-same-start-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795068081.8711889,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-9.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-9.stderr.log",
+      "pid": 51007,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068082.2794151
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/run_node_tests.js",
+        "--match",
+        "research-human405-teacher-r4"
+      ],
+      "startedEpochSeconds": 1795068284.1149461,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-10.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-10.stderr.log",
+      "pid": 54751,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795068284.3009229
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/run_node_tests.js",
+        "--match",
+        "research-human405-teacher-r4"
+      ],
+      "startedEpochSeconds": 1795068298.5490382,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-11.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-11.stderr.log",
+      "pid": 54982,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795068298.844139
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/run_node_tests.js",
+        "--match",
+        "research-human405-teacher-r4"
+      ],
+      "startedEpochSeconds": 1795068315.3638132,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-12.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-12.stderr.log",
+      "pid": 55304,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068316.1546261
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-teacher-r4-controlled-20261119-wwhi1itp/tools/run_node_tests.js",
+        "--match",
+        "research-human405-current-full",
+        "--match",
+        "research-search-statistics",
+        "--match",
+        "research-world-resume"
+      ],
+      "startedEpochSeconds": 1795068348.386323,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795068903.829607,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-13.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-same-start-20261119-v1.window.attempt-13.stderr.log",
+      "pid": 55765,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795068350.1607969
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795067515.889746,
+      "previousStatus": "failed",
+      "reason": "Pre-execution schema assertion compared compact replay descriptors to full browser action metadata. Zero Native/AI inputs. Match the four archived semantic fields and check PASS-only against the actual legal action phase; preserve the original deadline and failed attempt."
+    },
+    {
+      "atEpochSeconds": 1795068298.240077,
+      "previousStatus": "failed",
+      "reason": "Isolated test runtime lacked the existing fixed-board catalog required at runner module import. No AI search or Native action executed; copy the unchanged catalog and retain original deadline."
+    },
+    {
+      "atEpochSeconds": 1795068315.046902,
+      "previousStatus": "failed",
+      "reason": "The accepted manifest also pins experiment tools; the new scenario intentionally changes runner and inventory. Freeze every randomizer policy/kernel byte; validate new harness with its own clean snapshot and behavior checks. No AI/Native input executed. Original deadlines unchanged."
+    }
+  ],
+  "closedEpochSeconds": 1795068473.736655,
+  "outcome": "Exact Native root and cold search admitted; 4 related behavior checks passed; scenario committed and pushed."
+}

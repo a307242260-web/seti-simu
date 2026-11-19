@@ -611,7 +611,7 @@ function runValidation(options) {
     if (freshFull && wallMs > identity.scenario.gameMillisecondsTarget) {
       throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
     }
-    if (guardedR4 && wallMs + identity.scenario.continuation.sourceGameWallMs > identity.scenario.gameMillisecondsTarget) {
+    if (guardedR4 && wallMs + (identity.scenario.continuation?.sourceGameWallMs || 0) > identity.scenario.gameMillisecondsTarget) {
       throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
     }
 

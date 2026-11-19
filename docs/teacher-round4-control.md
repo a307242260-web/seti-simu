@@ -16,3 +16,5 @@ node tools/robot_iterate.js run --name teacher-r4-same-start-20261119 --full --c
 ```
 
 行为验证：`node tools/run_node_tests.js --match research-human405-teacher-r4`。测试覆盖原生恢复、教师前缀范围、无旧计划、实际轮序、257次模拟提交前拒绝、失败指纹去重及存档篡改拒绝。
+
+终局耗时检查支持无历史AI续跑字段的教师控制场景。回归测试直接恢复已结算原生终局，验证零动作收尾；该测试不运行或重跑自主对局。隔离运行在启动前必须核对实际HEAD，不能只更新未被HEAD引用的分支。

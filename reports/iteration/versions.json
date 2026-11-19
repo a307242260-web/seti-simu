@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "teacher-r4-same-start-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "\u6559\u5e08\u540c\u8d77\u70b9\u7b2c4\u8f6e\uff1a267\u5206\uff08\u524d\u4e09\u8f6e\u6559\u5e08\uff09",
+      "date": "2026-11-19",
+      "baseline": "v486-teaching-current-full-20261119",
+      "baselineEligible": false,
+      "head": "42c7f5fd9e395fc075aa5e9ef06efb7c349c2498",
+      "commits": [
+        "42c7f5fd9e395fc075aa5e9ef06efb7c349c2498"
+      ],
+      "summary": "\u76f8\u540c\u6559\u5e08R4\u8d77\u70b9\uff0c\u73b0\u884cv486\u81ea\u4e3b\u7b2c\u56db\u8f6e267\u5206\uff0c\u5bf9\u7167\u6559\u5e08384\uff1b5.051\u79d2\uff0c\u6700\u5927139\u8f93\u5165/229.850ms\u3002\u524d\u4e09\u8f6e\u6559\u5e08\u56fa\u5b9a\uff1b\u539f\u751f\u5df2\u7ec8\u5c40\uff0c\u5bbf\u4e3b\u6536\u5c3e\u5931\u8d25\u540e\u96f6\u8f93\u5165\u6062\u590d\uff0c\u4e0d\u91cd\u8dd1\u3002",
+      "records": {
+        "adcb348b.42c7f5fd.full.terminal-recovery.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "v486-teaching-current-full-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

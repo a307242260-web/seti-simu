@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "seti-teacher-r4-control-outcome-v1",
+  "strategyChanged": false,
+  "autonomousScope": "round4-only",
+  "controlledTeacherRounds": [
+    1,
+    2,
+    3
+  ],
+  "AI": {
+    "baseScore": 182,
+    "cardScore": 6,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 0
+      },
+      {
+        "cardId": "amiba_7.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "blue"
+        },
+        "score": 6
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 267,
+    "runezuSymbolScore": 0,
+    "tileScore": 79,
+    "tileScoresById": {
+      "a": 0,
+      "b": 24,
+      "c": 20,
+      "d": 35
+    },
+    "tiles": [
+      {
+        "baseValue": 3,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 24,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 20,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 35,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 267
+  },
+  "teacher": {
+    "baseScore": 239,
+    "cardScore": 38,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 6
+      },
+      {
+        "cardId": "amiba_7.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "blue"
+        },
+        "score": 8
+      },
+      {
+        "cardId": "chong_2.webp",
+        "rule": {
+          "kind": "chongTraceCount",
+          "scorePer": 1
+        },
+        "score": 10
+      },
+      {
+        "cardId": "amiba_5.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "pink"
+        },
+        "score": 6
+      },
+      {
+        "cardId": "amiba_6.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "yellow"
+        },
+        "score": 8
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 384,
+    "runezuSymbolScore": 0,
+    "tileScore": 107,
+    "tileScoresById": {
+      "a": 0,
+      "b": 48,
+      "c": 24,
+      "d": 35
+    },
+    "tiles": [
+      {
+        "baseValue": 6,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 48,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 6,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 24,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 35,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 384
+  },
+  "gap": -117,
+  "fourthRoundBoardGrowth": {
+    "AI": 77,
+    "teacher": 134
+  },
+  "fourthRoundActionCounts": {
+    "AI": {
+      "card_corner": 3,
+      "research_tech": 3,
+      "choose_target": 27,
+      "choose_card": 11,
+      "end_turn": 9,
+      "play_card": 1,
+      "accept_optional_effect": 2,
+      "place_data": 14,
+      "move": 6,
+      "choose_payment": 6,
+      "complete_task": 1,
+      "industry": 1,
+      "land": 1,
+      "analyze": 2,
+      "quick_trade": 3,
+      "scan": 2,
+      "pass": 1
+    },
+    "teacher": {
+      "launch": 1,
+      "end_turn": 25,
+      "place_data": 38,
+      "choose_target": 94,
+      "analyze": 5,
+      "choose_card": 27,
+      "scan": 8,
+      "play_card": 6,
+      "accept_optional_effect": 3,
+      "card_corner": 8,
+      "research_tech": 4,
+      "quick_trade": 1,
+      "complete_task": 2,
+      "industry": 1,
+      "land": 1,
+      "pass": 1
+    }
+  },
+  "maxNative": 139,
+  "maxMilliseconds": 229.85029199999997,
+  "wallMs": 5051,
+  "newGames": 1,
+  "recoveryGames": 0,
+  "report": "reports/iteration/teacher-r4-same-start-20261119/adcb348b.42c7f5fd.full.terminal-recovery.action-log.html",
+  "record": "reports/research/adcb348b.42c7f5fd.full.terminal-recovery.json",
+  "next": "Audit the earliest high-cost action plan against the teacher continuation; distinguish candidate omission, resource preparation and long-horizon value before any strategy patch."
+}
