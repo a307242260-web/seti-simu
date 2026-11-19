@@ -1,0 +1,165 @@
+{
+  "schemaVersion": "seti-opening-policy-outcome-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "AIChanged": false,
+  "newFullGames": 0,
+  "formalOriginal20MeanUnchanged": 134.35,
+  "facts": [
+    "The original20 setup is scripted outside the search agent; initial cards follow Native action order and income insertions use action-id sorting. The historical discard-hand-cards target means income insertion, not an ordinary discard.",
+    "On board20, replacing the initial energy-income insertion of b31 with dlc29 preserves all public opening facts and RNG. Existing v486 then prefers playing b31 first: own-turn model value64.83333333333333 versus launch62.333333333333336.",
+    "Following the unchanged policy, the retained-card opening ends round1 at13 points, two technologies, money2/power4/card2 income,1power,2hand,3publicity, and no white alien traces.",
+    "From that exact same opening, forcing only the first launch and then following unchanged v486 reaches31 points. The complete Native round1 state equals the old baseline after sorting only the removed-from-game card-id set, which the production forward-identity contract already treats as unordered. RNG and session match.",
+    "Therefore a setup-policy improvement is not established. Candidate coverage for launch exists and is complete; the model prefers the immediate technology route. Its overall value error is not proved because the two routes have different future income and cards."
+  ],
+  "limits": {
+    "controlledAcceptedNativeInputsIncludingRepeatedReconstruction": 160,
+    "nativeReplayVerificationInputs": 209,
+    "maxNativePerDecision": 233,
+    "maxMillisecondsPerDecision": 428.625375
+  },
+  "round2Status": "Incomplete at the declared input budget; retained checkpoint has32 accepted round2 inputs. A read-only boundary check still selects place_data rather than PASS, so no round2-end score is reported. No runtime256/600 gate was relaxed.",
+  "decision": "Do not change initial income policy or force technology timing from this evidence. Close this bounded audit with the two-round value comparison unresolved; no automatic extra patch or game batch.",
+  "comparison": {
+    "baselineRound1": {
+      "score": 31,
+      "income": {
+        "credits": 2,
+        "energy": 5,
+        "handSize": 1
+      }
+    },
+    "retainedPurpleRound1": {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 13
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "techState": {
+        "blueBoardSlots": {
+          "blue4": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue4": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        {
+          "cardId": "b_9.webp",
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-17-0",
+          "incomeCode": 2,
+          "price": 3,
+          "scanActionCode": 0,
+          "set": "basic"
+        },
+        {
+          "cardId": "b_64.webp",
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "faceUp": true,
+          "id": "card-39-0",
+          "incomeCode": 0,
+          "price": 2,
+          "scanActionCode": 2,
+          "set": "basic"
+        }
+      ],
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-8",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-9",
+            "index": 5,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "rockets": []
+    },
+    "launchFirstRound1": {
+      "round": 1,
+      "phase": "before-pass-card-and-income",
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 31
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 5,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "techState": {
+        "blueBoardSlots": {
+          "blue4": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue4": true,
+          "purple4": true
+        }
+      },
+      "hand": [],
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [],
+        "poolTokens": []
+      },
+      "rockets": []
+    }
+  },
+  "replayEvidence": "reports/ai-foundation-20261119/opening-policy-replay-verification-20261119-v1.json"
+}

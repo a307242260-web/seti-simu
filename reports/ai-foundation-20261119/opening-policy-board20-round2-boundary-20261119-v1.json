@@ -1,0 +1,31 @@
+{
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "newCommittedInputs": 0,
+  "newFullGames": 0,
+  "priorSafetyStopPreserved": true,
+  "status": "incomplete",
+  "search": {
+    "action": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 33,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    "complete": true,
+    "nativeInputs": 45,
+    "milliseconds": 84.55183300000002
+  },
+  "failure": {
+    "message": "boundary not yet reached; no input may be submitted\n+ actual - expected\n\n+ 'place_data'\n- 'pass'\n",
+    "stack": "AssertionError [ERR_ASSERTION]: boundary not yet reached; no input may be submitted\n+ actual - expected\n\n+ 'place_data'\n- 'pass'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/close-opening-round2-boundary-20261119.cjs:22:108)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "opening-policy-route-20261119-v1.json",
+  "startedEpochSeconds": 1795050166.6243682,
+  "deadlineEpochSeconds": 1795051366.6243682,
+  "status": "failed",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795050166.96259,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795051366.6243682,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 78191,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795050166.986736
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795050181.073544,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795051366.6243682,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 78402,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795050181.122251
+    },
+    {
+      "command": [
+        "python3",
+        "-"
+      ],
+      "startedEpochSeconds": 1795050234.329608,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795051366.6243682,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 78857,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795050234.3781161
+    }
+  ],
+  "scope": "Audit original20 scripted setup and selected hand versus offers; Native controlled prefix only if needed."
+}

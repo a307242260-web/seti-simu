@@ -1,0 +1,51 @@
+{
+  "cases": [
+    {
+      "name": "purple-first-r1",
+      "path": "reports/ai-foundation-20261119/opening-policy-purple-first-r1-replay-20261119-v1.json.gz",
+      "sha256": "778735d04c01b7c3c48fbc46d988cfb6f3e1ab02ebaa9ec937119efd3d5e555e",
+      "inputs": 54,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "fad32ac28c1641d3cd99565b6a2165b24892f6aae44ae1849221b0c4f4bb03c8",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    },
+    {
+      "name": "purple-first-r2-stop",
+      "path": "reports/ai-foundation-20261119/opening-policy-purple-first-r2-stop-replay-20261119-v1.json.gz",
+      "sha256": "61f6e295a62997a833b91c1c530f82abaf5e10d8ccbd56b952abfe9b9e83d0a8",
+      "inputs": 86,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "3c9a1385ff046fd7f5af2b6a5722365b4cdf0515569db97f15c0f6b1853a4930",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    },
+    {
+      "name": "launch-first-r1",
+      "path": "reports/ai-foundation-20261119/opening-policy-launch-first-r1-replay-20261119-v1.json.gz",
+      "sha256": "688c51157a75eb1cc4fd6086973e404f0529716072e9555ec409bd342eacd3cf",
+      "inputs": 69,
+      "verified": true,
+      "expected": {
+        "nativeStateSha256": "f73a5379491596bcdcca1f5a56c8ff1e8fcc0927c455882b31d55e2f2ca39c94",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 2185593560
+        }
+      }
+    }
+  ],
+  "nativeReplayInputs": 209,
+  "newFullGames": 0
+}

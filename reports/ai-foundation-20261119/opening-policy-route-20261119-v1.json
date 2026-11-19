@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "original20-opening-policy-causal-audit",
+  "startedEpochSeconds": 1795050166.6243682,
+  "deadlineEpochSeconds": 1795051366.6243682,
+  "status": "closed",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/opening-policy-20261119-v2.window.json"
+  ],
+  "businessQuestion": "Does the forced first-offered setup/hashed discard omit a demonstrably better visible opening choice on an original20 board? Preserve the fixed23 teacher opening and all formal baseline results.",
+  "hypotheses": [
+    "The scripted setup, outside the search agent, discards a known useful card without evaluating its printed purpose.",
+    "A visible initial-card pair produces a dominated opening under the same Native rules and card identities."
+  ],
+  "success": "Identify exact ownership and one verifiable dominance or explain the tradeoff; only a causally justified shared production policy can be implemented; no new full games or batch.",
+  "limits": {
+    "wallSeconds": 1200,
+    "maximumHypotheses": 2,
+    "maximumNativeControlInputs": 160,
+    "noFullGames": true
+  },
+  "stop": "No positive causal evidence means no opening-policy change. No continuation of frozen income/performance candidates.",
+  "untestedHypothesisRevision": {
+    "original": "A visible initial-card pair produces a dominated opening under the same Native rules and card identities.",
+    "replacement": "Within the retained-card opening, the model prefers the technology card immediately but a first launch may produce better round1 assets.",
+    "reason": "The first own-turn value rose by2.5 but the completed round1 score fell from31 to13; a same-opening timing control is needed before attributing the result to setup quality."
+  },
+  "closedEpochSeconds": 1795051314.926558,
+  "outcome": "opening-policy-outcome-20261119-v1.json",
+  "policyChangeAdmitted": false
+}
