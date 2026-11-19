@@ -9,9 +9,18 @@ const ORIGINAL_ROUTE_ID='human405-white-r2-original-route-control-v1',RETAINED_P
 const AMIBA0_FIRST_ID='human405-white-r2-amiba0-first-control-v1',AMIBA1_FIRST_ID='human405-white-r2-amiba1-first-control-v1';
 const R4_CHONG2_BASELINE_ID='human405-white-r4-chong2-baseline-control-v1',R4_CHONG2_DEPLOYED_ID='human405-white-r4-chong2-deployed-control-v1';
 const R4_SCAN_BASELINE_ID='human405-white-r4-scan-engine-baseline-control-v1',R4_SCAN_DEPLOYED_ID='human405-white-r4-scan-engine-deployed-control-v1';
-const IDS = Object.freeze([ID,BLUE1_ID,BLUE3_ID,ORIGINAL_ROUTE_ID,RETAINED_PROBE_ID,AMIBA0_FIRST_ID,AMIBA1_FIRST_ID,R4_CHONG2_BASELINE_ID,R4_CHONG2_DEPLOYED_ID,R4_SCAN_BASELINE_ID,R4_SCAN_DEPLOYED_ID]);
+const R4_SCAN_FUNDED_ID='human405-white-r4-b111-funded-scan-control-v1';
+const IDS = Object.freeze([ID,BLUE1_ID,BLUE3_ID,ORIGINAL_ROUTE_ID,RETAINED_PROBE_ID,AMIBA0_FIRST_ID,AMIBA1_FIRST_ID,R4_CHONG2_BASELINE_ID,R4_CHONG2_DEPLOYED_ID,R4_SCAN_BASELINE_ID,R4_SCAN_DEPLOYED_ID,R4_SCAN_FUNDED_ID]);
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const CONTROL_SOURCES=Object.freeze({
+  "human405-white-r4-b111-funded-scan-control-v1": {
+  "file": "reports/ai-foundation-20261119/r4-b111-funded-scan-preparation-20261119-v1.json",
+  "sha256": "3a2058cdbb75ffbddbdbda0bd26920c5b46d7af7f870695792ebdc453652ed4d",
+  "technology": "blue1",
+  "round": 4,
+  "route": "r4-b111-funded-scan",
+  "r4ScanEngine": true
+},
   "human405-white-r4-scan-engine-baseline-control-v1": {
     "file": "reports/ai-foundation-20261119/r4-scan-engine-baseline-preparation-20261119-v1.json",
     "sha256": "640f1d30ca1c967b3d8463f95fbb6d22b48efdfcb58ada67869bebb390384661",
@@ -112,4 +121,4 @@ function initialize(env, config, metadata, {checkpointFromSave}={}) {
   return first.initialize(env, config, { ...metadata, id: first.FIRST_THREE_ROUNDS_ID });
 }
 function settled(observation) { return observation.terminal === true || observation.publicState.terminal === true; }
-module.exports = { ID, IDS, BLUE1_ID, BLUE3_ID, ORIGINAL_ROUTE_ID, RETAINED_PROBE_ID, AMIBA0_FIRST_ID, AMIBA1_FIRST_ID, R4_CHONG2_BASELINE_ID, R4_CHONG2_DEPLOYED_ID, R4_SCAN_BASELINE_ID, R4_SCAN_DEPLOYED_ID, controlledBlueSource, describe, createEnvironment, initialize, settled };
+module.exports = { ID, IDS, BLUE1_ID, BLUE3_ID, ORIGINAL_ROUTE_ID, RETAINED_PROBE_ID, AMIBA0_FIRST_ID, AMIBA1_FIRST_ID, R4_CHONG2_BASELINE_ID, R4_CHONG2_DEPLOYED_ID, R4_SCAN_BASELINE_ID, R4_SCAN_DEPLOYED_ID, R4_SCAN_FUNDED_ID, controlledBlueSource, describe, createEnvironment, initialize, settled };
