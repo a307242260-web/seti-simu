@@ -1,0 +1,628 @@
+{
+  "status": "needs-explicit-known-choice",
+  "sourceCommit": "11b0287f7421a4c3eb06b1346d18f8ad02065b42",
+  "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
+  "beforeInput": 74,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 0,
+  "counterfactualInputs": 16,
+  "branches": [
+    {
+      "name": "original-orange",
+      "status": "complete",
+      "actions": [
+        {
+          "actionId": "play_card:0e9f5a96",
+          "actorId": "player-white",
+          "family": "play_card",
+          "phase": "main",
+          "target": {
+            "cardInstanceId": "card-38-0"
+          }
+        },
+        {
+          "actionId": "choose_target:99e4f6e0",
+          "actorId": "player-white",
+          "family": "choose_target",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          }
+        },
+        {
+          "actionId": "choose_card:ecb525ad",
+          "actorId": "player-white",
+          "family": "choose_card",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "target": {
+            "kind": "end-turn"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "after-original-turn",
+          "phase": "idle",
+          "resources": {
+            "additionalPublicScan": 1,
+            "aomomoFossils": 0,
+            "availableData": 0,
+            "credits": 0,
+            "energy": 3,
+            "handSize": 4,
+            "publicity": 3,
+            "score": 34
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "technology": {
+            "blueBoardSlots": {},
+            "disabledTiles": {},
+            "ownedTiles": {
+              "orange3": true,
+              "purple4": true
+            }
+          },
+          "computer": [],
+          "hand": [
+            {
+              "id": "card-21-pass-1-2",
+              "cardId": "b_8.webp"
+            },
+            {
+              "id": "card-39-0",
+              "cardId": "b_123.webp"
+            },
+            {
+              "id": "card-40-0",
+              "cardId": "b_84.webp"
+            },
+            {
+              "id": "card-17-0",
+              "cardId": "b_27.webp"
+            }
+          ],
+          "reserved": [
+            {
+              "id": "card-38-0",
+              "cardId": "b_113.webp"
+            }
+          ],
+          "value": 77,
+          "parts": {
+            "realizedScore": 34,
+            "currentEndGameBonus": 7,
+            "resources": 5,
+            "hand": 4,
+            "income": 17,
+            "technologyPotential": 10,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "legal": [
+            {
+              "family": "pass",
+              "target": {
+                "kind": "pass"
+              },
+              "summary": "PASS"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-credit"
+              },
+              "summary": "2\u5f20\u724c \u2192 1\u4fe1\u7528\u70b9"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-energy"
+              },
+              "summary": "2\u5f20\u724c \u2192 1\u80fd\u91cf"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-pick-card"
+              },
+              "summary": "2\u5f20\u724c \u2192 \u7cbe\u90091\u5f20\u724c"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "energy-for-card"
+              },
+              "summary": "2\u80fd\u91cf \u2192 1\u5f20\u724c"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "energy-for-credit"
+              },
+              "summary": "2\u80fd\u91cf \u2192 1\u4fe1\u7528\u70b9"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "publicity-for-card"
+              },
+              "summary": "3\u5ba3\u4f20 \u2192 \u7cbe\u90091\u5f20\u724c"
+            },
+            {
+              "family": "industry",
+              "target": {
+                "companyId": "\u6df1\u7a7a\u63a2\u6d4b",
+                "abilityId": "deepspace_swap_cards"
+              },
+              "summary": "\u6df1\u7a7a\u63a2\u6d4b 1x \u884c\u52a8"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-21-pass-1-2"
+              },
+              "summary": "b_8.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-39-0"
+              },
+              "summary": "b_123.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-40-0"
+              },
+              "summary": "b_84.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-17-0"
+              },
+              "summary": "b_27.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "held-scan",
+      "status": "complete",
+      "actions": [
+        {
+          "actionId": "play_card:d5466bfb",
+          "actorId": "player-white",
+          "family": "play_card",
+          "phase": "main",
+          "target": {
+            "cardInstanceId": "card-40-0"
+          }
+        },
+        {
+          "actionId": "choose_target:a71db59e",
+          "actorId": "player-white",
+          "family": "choose_target",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "nebula:sector-2-b",
+            "nebulaId": "sector-2-b",
+            "sectorX": 0
+          }
+        },
+        {
+          "actionId": "choose_card:07848c6c",
+          "actorId": "player-white",
+          "family": "choose_card",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "public:card-17-0:sector-2-b",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0,
+            "nebulaId": "sector-2-b"
+          }
+        },
+        {
+          "actionId": "choose_card:2b54f21f",
+          "actorId": "player-white",
+          "family": "choose_card",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "public:card-18-0:sector-4-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-4-a"
+          }
+        },
+        {
+          "actionId": "choose_target:f042ebe0",
+          "actorId": "player-white",
+          "family": "choose_target",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "scan4:skip",
+            "mode": "skip"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "after-first-scan",
+          "phase": "idle",
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 1,
+            "energy": 3,
+            "handSize": 3,
+            "publicity": 4,
+            "score": 34
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "technology": {
+            "blueBoardSlots": {},
+            "disabledTiles": {},
+            "ownedTiles": {
+              "purple4": true
+            }
+          },
+          "computer": [],
+          "hand": [
+            {
+              "id": "card-38-0",
+              "cardId": "b_113.webp"
+            },
+            {
+              "id": "card-21-pass-1-2",
+              "cardId": "b_8.webp"
+            },
+            {
+              "id": "card-39-0",
+              "cardId": "b_123.webp"
+            }
+          ],
+          "reserved": [],
+          "value": 74.5,
+          "parts": {
+            "realizedScore": 34,
+            "currentEndGameBonus": 5,
+            "resources": 7.5,
+            "hand": 3,
+            "income": 17,
+            "technologyPotential": 8,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "legal": [
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-credit"
+              },
+              "summary": "2\u5f20\u724c \u2192 1\u4fe1\u7528\u70b9"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-energy"
+              },
+              "summary": "2\u5f20\u724c \u2192 1\u80fd\u91cf"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "cards-for-pick-card"
+              },
+              "summary": "2\u5f20\u724c \u2192 \u7cbe\u90091\u5f20\u724c"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "energy-for-card"
+              },
+              "summary": "2\u80fd\u91cf \u2192 1\u5f20\u724c"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "energy-for-credit"
+              },
+              "summary": "2\u80fd\u91cf \u2192 1\u4fe1\u7528\u70b9"
+            },
+            {
+              "family": "quick_trade",
+              "target": {
+                "tradeId": "publicity-for-card"
+              },
+              "summary": "3\u5ba3\u4f20 \u2192 \u7cbe\u90091\u5f20\u724c"
+            },
+            {
+              "family": "industry",
+              "target": {
+                "companyId": "\u6df1\u7a7a\u63a2\u6d4b",
+                "abilityId": "deepspace_swap_cards"
+              },
+              "summary": "\u6df1\u7a7a\u63a2\u6d4b 1x \u884c\u52a8"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-38-0"
+              },
+              "summary": "b_113.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-21-pass-1-2"
+              },
+              "summary": "b_8.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "card_corner",
+              "target": {
+                "cardInstanceId": "card-39-0"
+              },
+              "summary": "b_123.webp\uff1a\u5f03\u724c\u89d2\u6807"
+            },
+            {
+              "family": "place_data",
+              "target": {
+                "kind": "place-data"
+              },
+              "summary": "\u653e\u7f6e\u6570\u636e"
+            },
+            {
+              "family": "end_turn",
+              "target": {
+                "kind": "end-turn"
+              },
+              "summary": "\u7ed3\u675f\u56de\u5408"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "scan-tool",
+      "status": "needs-explicit-known-choice",
+      "actions": [
+        {
+          "actionId": "play_card:6e637c04",
+          "actorId": "player-white",
+          "family": "play_card",
+          "phase": "main",
+          "target": {
+            "cardInstanceId": "card-39-0"
+          }
+        },
+        {
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "target": {
+            "kind": "end-turn"
+          }
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "actorId": "player-white",
+          "family": "scan",
+          "phase": "main",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "actionId": "choose_target:a71db59e",
+          "actorId": "player-white",
+          "family": "choose_target",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "nebula:sector-2-b",
+            "nebulaId": "sector-2-b",
+            "sectorX": 0
+          }
+        },
+        {
+          "actionId": "choose_card:07848c6c",
+          "actorId": "player-white",
+          "family": "choose_card",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "public:card-17-0:sector-2-b",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0,
+            "nebulaId": "sector-2-b"
+          }
+        },
+        {
+          "actionId": "choose_card:2b54f21f",
+          "actorId": "player-white",
+          "family": "choose_card",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "public:card-18-0:sector-4-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-4-a"
+          }
+        },
+        {
+          "actionId": "choose_target:f042ebe0",
+          "actorId": "player-white",
+          "family": "choose_target",
+          "phase": "conditional",
+          "target": {
+            "choiceId": "scan4:skip",
+            "mode": "skip"
+          }
+        }
+      ],
+      "snapshots": [
+        {
+          "label": "after-first-scan",
+          "phase": "awaiting_input",
+          "resources": {
+            "additionalPublicScan": 0,
+            "aomomoFossils": 0,
+            "availableData": 3,
+            "credits": 0,
+            "energy": 1,
+            "handSize": 3,
+            "publicity": 3,
+            "score": 34
+          },
+          "income": {
+            "additionalPublicScan": 1,
+            "availableData": 0,
+            "credits": 3,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 0
+          },
+          "technology": {
+            "blueBoardSlots": {},
+            "disabledTiles": {},
+            "ownedTiles": {
+              "purple4": true
+            }
+          },
+          "computer": [],
+          "hand": [
+            {
+              "id": "card-38-0",
+              "cardId": "b_113.webp"
+            },
+            {
+              "id": "card-21-pass-1-2",
+              "cardId": "b_8.webp"
+            },
+            {
+              "id": "card-40-0",
+              "cardId": "b_84.webp"
+            }
+          ],
+          "reserved": [
+            {
+              "id": "card-39-0",
+              "cardId": "b_123.webp",
+              "effects": {
+                "modelCardId": "b_123.webp",
+                "consumedTriggerIds": [],
+                "completedTaskIds": []
+              }
+            }
+          ],
+          "value": 71,
+          "parts": {
+            "realizedScore": 34,
+            "currentEndGameBonus": 5,
+            "resources": 4,
+            "hand": 3,
+            "income": 17,
+            "technologyPotential": 8,
+            "handPotential": 0,
+            "researchPotential": 0,
+            "probePotential": 0,
+            "analysisPotential": 0,
+            "researchIncomePotential": 0,
+            "dataPotential": 0,
+            "finalMarkPotential": 0
+          },
+          "legal": [
+            {
+              "family": "accept_optional_effect",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "confirm:trigger:card-39-0:b123-scan-yellow",
+                "cardInstanceId": "card-39-0",
+                "ruleId": "b123-scan-yellow"
+              },
+              "summary": "\u7ed3\u7b97 b_123.webp"
+            },
+            {
+              "family": "accept_optional_effect",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "confirm:trigger:card-39-0:b123-scan-red",
+                "cardInstanceId": "card-39-0",
+                "ruleId": "b123-scan-red"
+              },
+              "summary": "\u7ed3\u7b97 b_123.webp"
+            },
+            {
+              "family": "accept_optional_effect",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "confirm:trigger:card-39-0:b123-scan-blue",
+                "cardInstanceId": "card-39-0",
+                "ruleId": "b123-scan-blue"
+              },
+              "summary": "\u7ed3\u7b97 b_123.webp"
+            },
+            {
+              "family": "accept_optional_effect",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "skip:scanAction"
+              },
+              "summary": "\u8df3\u8fc7"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "preparationReusedFrom": "r2-scan-tool-native-20261119-v1.json",
+  "rootSha256": "890d42af0a78737fcda71489bd2ebfc8bdd3f16355a3080d83ccfc30338c1626",
+  "rootAndRngRestored": true,
+  "retention": {
+    "mode": "actions-final-assets-and-failure",
+    "rawSha256": "8150eb361690759685b14b9025507b50b23ba26761ab82ce82f4e23ba718d2e5",
+    "duplicateIntermediateSnapshotsOmitted": true,
+    "nativeReplayProof": "r2-scan-tool-native-proof-20261119-v1.json"
+  }
+}

@@ -7,6 +7,42 @@
   },
   "versions": [
     {
+      "id": "v494-r2-scan-tool-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u7b2c\u4e8c\u8f6e\u626b\u63cf\u89e6\u53d1\u724c\u5206\u6790\uff1a128\u5206\u53d7\u63a7\u5bf9\u7167",
+      "date": "2026-11-19",
+      "baseline": "v490-final-currency-teaching-20261119",
+      "head": "9a6547b28",
+      "commits": [
+        "9a6547b28"
+      ],
+      "summary": "Controlled purpose after original73 inputs:36 fixed known scan-tool/income/analysis inputs, then unchanged V72. Terminal128 versus original v486 same-board135; R2 score39 vs34, but fewer technology/cards.5.389s; max104 Native/165.551ms;235-input terminal replay passed. Not autonomous performance; no policy adoption or20-board rerun.",
+      "records": {
+        "a7360aaf.9a6547b2.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v494-r2-held-scan-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u7b2c\u4e8c\u8f6e\u76f4\u63a5\u626b\u63cf\u5206\u6790\uff1a110\u5206\u53d7\u63a7\u5bf9\u7167",
+      "date": "2026-11-19",
+      "baseline": "v490-final-currency-teaching-20261119",
+      "head": "9a6547b28",
+      "commits": [
+        "9a6547b28"
+      ],
+      "summary": "Controlled purpose after original73 inputs:28 fixed known scan/income/analysis inputs, then unchanged V72. Terminal110 versus original v486 same-board135; R2 score37 vs34 and energy income4 vs3 but fewer technology/cards.3.993s; max96 Native/153.881ms;204-input terminal replay passed. Not autonomous performance; no policy adoption or20-board rerun.",
+      "records": {
+        "b5d054a7.9a6547b2.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v493-scan-purpose-resumed-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

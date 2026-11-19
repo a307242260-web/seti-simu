@@ -1,0 +1,176 @@
+{
+  "sourceCommit": "9a6547b28ed2d715bc8683ea02ca4861f90c56b5",
+  "policyChanged": false,
+  "newNativeInputs": 0,
+  "rows": [
+    {
+      "name": "original",
+      "score": {
+        "playerId": "player-white",
+        "baseScore": 95,
+        "tileScore": 34,
+        "cardScore": 6,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 135,
+        "totalScore": 135,
+        "tileScoresById": {
+          "a": 15,
+          "b": 0,
+          "c": 8,
+          "d": 11
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 1,
+            "formulaId": "a1",
+            "slotIndex": 1,
+            "baseValue": 3,
+            "multiplier": 5,
+            "score": 15
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 4,
+            "score": 8
+          },
+          {
+            "tileId": "d",
+            "variant": 1,
+            "formulaId": "d1",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 11,
+            "score": 11
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "b_113.webp",
+            "rule": {
+              "kind": "traceCount",
+              "traceType": "yellow",
+              "scorePer": 2
+            },
+            "score": 6
+          }
+        ],
+        "jiuzheCards": []
+      }
+    },
+    {
+      "name": "held-scan",
+      "score": {
+        "playerId": "player-white",
+        "baseScore": 90,
+        "tileScore": 20,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 110,
+        "totalScore": 110,
+        "tileScoresById": {
+          "a": 20,
+          "b": 0,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 1,
+            "formulaId": "a1",
+            "slotIndex": 1,
+            "baseValue": 4,
+            "multiplier": 5,
+            "score": 20
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 0,
+            "multiplier": 4,
+            "score": 0
+          },
+          {
+            "tileId": "d",
+            "variant": 1,
+            "formulaId": "d1",
+            "slotIndex": 1,
+            "baseValue": 0,
+            "multiplier": 11,
+            "score": 0
+          }
+        ],
+        "cards": [],
+        "jiuzheCards": []
+      }
+    },
+    {
+      "name": "scan-tool",
+      "score": {
+        "playerId": "player-white",
+        "baseScore": 88,
+        "tileScore": 40,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 128,
+        "totalScore": 128,
+        "tileScoresById": {
+          "a": 20,
+          "b": 16,
+          "c": 4,
+          "d": 0
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 1,
+            "formulaId": "a1",
+            "slotIndex": 1,
+            "baseValue": 4,
+            "multiplier": 5,
+            "score": 20
+          },
+          {
+            "tileId": "b",
+            "variant": 2,
+            "formulaId": "b2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 8,
+            "score": 16
+          },
+          {
+            "tileId": "c",
+            "variant": 1,
+            "formulaId": "c1",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 4,
+            "score": 4
+          }
+        ],
+        "cards": [],
+        "jiuzheCards": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,418 @@
+{
+  "status": "verified",
+  "sourceCommit": "11b0287f7421a4c3eb06b1346d18f8ad02065b42",
+  "policyChanged": false,
+  "independentReplayInputs": 287,
+  "branches": [
+    {
+      "name": "original-orange",
+      "inputs": 77,
+      "fixedPurposeInputs": 4,
+      "archive": "reports/ai-foundation-20261119/r2-original-orange-purpose-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "4b98896adf3df799f914d454669280ec41ae06674edae800cc8edae5f329a258",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "4b98896adf3df799f914d454669280ec41ae06674edae800cc8edae5f329a258",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "endpoint": {
+        "label": "after-original-turn",
+        "phase": "idle",
+        "resources": {
+          "additionalPublicScan": 1,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 3,
+          "handSize": 4,
+          "publicity": 3,
+          "score": 34
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {
+            "orange3": true,
+            "purple4": true
+          }
+        },
+        "computer": [],
+        "hand": [
+          {
+            "id": "card-21-pass-1-2",
+            "cardId": "b_8.webp"
+          },
+          {
+            "id": "card-39-0",
+            "cardId": "b_123.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "b_84.webp"
+          },
+          {
+            "id": "card-17-0",
+            "cardId": "b_27.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-38-0",
+            "cardId": "b_113.webp"
+          }
+        ],
+        "value": 77,
+        "parts": {
+          "realizedScore": 34,
+          "currentEndGameBonus": 7,
+          "resources": 5,
+          "hand": 4,
+          "income": 17,
+          "technologyPotential": 10,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "legal": [
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "summary": "PASS"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "cards-for-credit"
+            },
+            "summary": "2张牌 → 1信用点"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "cards-for-energy"
+            },
+            "summary": "2张牌 → 1能量"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "cards-for-pick-card"
+            },
+            "summary": "2张牌 → 精选1张牌"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "summary": "2能量 → 1张牌"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "summary": "2能量 → 1信用点"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-21-pass-1-2"
+            },
+            "summary": "b_8.webp：弃牌角标"
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "summary": "b_123.webp：弃牌角标"
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-40-0"
+            },
+            "summary": "b_84.webp：弃牌角标"
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-17-0"
+            },
+            "summary": "b_27.webp：弃牌角标"
+          }
+        ]
+      }
+    },
+    {
+      "name": "held-scan",
+      "inputs": 101,
+      "fixedPurposeInputs": 28,
+      "archive": "reports/ai-foundation-20261119/r2-held-scan-purpose-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "d76c6692cc6269c4d0da80becd019e69cf3055f02c5ffde72a1fcfd3d0d35132",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "d76c6692cc6269c4d0da80becd019e69cf3055f02c5ffde72a1fcfd3d0d35132",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "endpoint": {
+        "label": "after-known-analysis",
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 5,
+          "score": 37
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {
+            "purple4": true
+          }
+        },
+        "hand": [
+          {
+            "id": "card-38-0",
+            "cardId": "b_113.webp"
+          }
+        ],
+        "reserved": [],
+        "value": 79.5,
+        "parts": {
+          "realizedScore": 37,
+          "currentEndGameBonus": 10,
+          "resources": 4.5,
+          "hand": 1,
+          "income": 19,
+          "technologyPotential": 8,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "phase": "idle",
+        "legal": [
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "summary": "PASS"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-card"
+            },
+            "summary": "2能量 → 1张牌"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "energy-for-credit"
+            },
+            "summary": "2能量 → 1信用点"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "family": "industry",
+            "target": {
+              "companyId": "深空探测",
+              "abilityId": "deepspace_swap_cards"
+            },
+            "summary": "深空探测 1x 行动"
+          },
+          {
+            "family": "card_corner",
+            "target": {
+              "cardInstanceId": "card-38-0"
+            },
+            "summary": "b_113.webp：弃牌角标"
+          }
+        ]
+      },
+      "save": "seti-saves/seti-save-r2-held-scan-purpose-prefix101-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/r2-held-scan-purpose-preparation-20261119-v1.json",
+      "preparationSha256": "72ad4ac15f0f6cc8e980ace940bed3f0521417a0be968200d9b0972ca17e231e"
+    },
+    {
+      "name": "scan-tool",
+      "inputs": 109,
+      "fixedPurposeInputs": 36,
+      "archive": "reports/ai-foundation-20261119/r2-scan-tool-purpose-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "00050d933fdc3aad67bef21e5aeb82247eeaa6376ed6fe0d176e96fde2292e26",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "00050d933fdc3aad67bef21e5aeb82247eeaa6376ed6fe0d176e96fde2292e26",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "endpoint": {
+        "label": "after-known-analysis",
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 0,
+          "energy": 0,
+          "handSize": 0,
+          "publicity": 4,
+          "score": 39
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {
+            "purple4": true
+          }
+        },
+        "hand": [],
+        "reserved": [
+          {
+            "id": "card-39-0",
+            "cardId": "b_123.webp",
+            "effects": {
+              "completedTaskIds": [],
+              "consumedTriggerIds": [
+                "b123-scan-yellow",
+                "b123-scan-blue"
+              ],
+              "modelCardId": "b_123.webp"
+            }
+          }
+        ],
+        "value": 78.5,
+        "parts": {
+          "realizedScore": 39,
+          "currentEndGameBonus": 10,
+          "resources": 2.5,
+          "hand": 0,
+          "income": 19,
+          "technologyPotential": 8,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 0,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "phase": "idle",
+        "legal": [
+          {
+            "family": "pass",
+            "target": {
+              "kind": "pass"
+            },
+            "summary": "PASS"
+          },
+          {
+            "family": "quick_trade",
+            "target": {
+              "tradeId": "publicity-for-card"
+            },
+            "summary": "3宣传 → 精选1张牌"
+          },
+          {
+            "family": "place_data",
+            "target": {
+              "kind": "place-data"
+            },
+            "summary": "放置数据"
+          }
+        ]
+      },
+      "save": "seti-saves/seti-save-r2-scan-tool-purpose-prefix109-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/r2-scan-tool-purpose-preparation-20261119-v1.json",
+      "preparationSha256": "d32f2f02aa25d1dff55aa0cf57a37be36ce759a5d95b76e54c37f792c10e6dea"
+    }
+  ]
+}

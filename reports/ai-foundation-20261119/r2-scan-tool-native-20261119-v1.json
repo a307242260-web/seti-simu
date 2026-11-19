@@ -1,0 +1,29 @@
+{
+  "status": "failed",
+  "sourceCommit": "11b0287f7421a4c3eb06b1346d18f8ad02065b42",
+  "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
+  "beforeInput": 74,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 73,
+  "counterfactualInputs": 0,
+  "branches": [
+    {
+      "name": "original-orange",
+      "status": "running",
+      "actions": [],
+      "snapshots": []
+    }
+  ],
+  "rootSha256": "890d42af0a78737fcda71489bd2ebfc8bdd3f16355a3080d83ccfc30338c1626",
+  "failure": {
+    "message": "VALUE_PLAYER_MISSING: player-white",
+    "stack": "TypeError: VALUE_PLAYER_MISSING: player-white\n    at Object.evaluateStateValue (/private/tmp/seti-r2-scan-tool-20261119-axqeitxn/randomizer/game/ai/state-value.js:779:24)\n    at snapshot (/Users/bilibili/code/seti-simu/adhoc/probe-r2-scan-tool-native-20261119.cjs:9:386)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/probe-r2-scan-tool-native-20261119.cjs:27:124)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+  },
+  "retention": {
+    "mode": "actions-final-assets-and-failure",
+    "rawSha256": "6fd73a33aa27b65a13eff0e81d26674d2a3a1f2b38c947c9c28a0d53473eeb5a",
+    "duplicateIntermediateSnapshotsOmitted": true,
+    "nativeReplayProof": "r2-scan-tool-native-proof-20261119-v1.json"
+  }
+}

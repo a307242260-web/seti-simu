@@ -1,0 +1,43 @@
+{
+  "status": "validated-both-controlled-routes-rejected",
+  "sourceCommit": "9a6547b28ed2d715bc8683ea02ca4861f90c56b5",
+  "acceptedProduction": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "policyChanged": false,
+  "candidateAdopted": false,
+  "newAutonomousGames": 0,
+  "newControlledGames": 2,
+  "referenceOriginalV486": 135,
+  "controlledTerminalScores": [
+    110,
+    128
+  ],
+  "controlledScoresNotAutonomous": true,
+  "independentNativeWitnessInputs": 287,
+  "independentTerminalReplayInputs": 439,
+  "nativeCounterfactualInputs": 69,
+  "abandonedMovementCornerInputsIncludedInCounter": 1,
+  "nativePreparationInputs": 73,
+  "firstColdGates": {
+    "heldScan": {
+      "nativeInputs": 1,
+      "milliseconds": 27.779915999999986
+    },
+    "scanTool": {
+      "nativeInputs": 1,
+      "milliseconds": 24.284082999999995
+    }
+  },
+  "allFullDecisionsComplete": true,
+  "maxFullNative": 104,
+  "maxFullMilliseconds": 165.55075,
+  "maxFullGameMilliseconds": 5389,
+  "continuationContractTestsPassed": 2,
+  "oldControlledSourceMetadataPreserved": true,
+  "sourceAdmissionProductionFilesVerified": 382,
+  "earlierRoundAssetsInheritedOnlyFromIdenticalFirst73Inputs": true,
+  "original20BatchRerun": false,
+  "v1AndHistoricalRegistryPreserved": true,
+  "sharedIndexSha256": "09ab7e2c7b05737a9b99ce24cc553f036351cd64aee6ecbf82809c43d913d673",
+  "historicalRetention": "Seeds, named actions, checkpoints required by pinned scenario, compact budgets and round assets retained. Duplicate temporary Native snapshots and full search graphs excluded from historical publication.",
+  "wholeGoalComplete": false
+}

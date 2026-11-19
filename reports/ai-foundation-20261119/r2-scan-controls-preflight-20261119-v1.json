@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "newNativeInputs": 0,
+  "oldControlledSourceMetadataPreserved": true,
+  "results": [
+    {
+      "id": "free-analyze-r2-held-scan-control-v1",
+      "prefixInputs": 101,
+      "round": 2,
+      "policyUnchanged": true,
+      "rootAndRngExact": true
+    },
+    {
+      "id": "free-analyze-r2-scan-tool-control-v1",
+      "prefixInputs": 109,
+      "round": 2,
+      "policyUnchanged": true,
+      "rootAndRngExact": true
+    }
+  ]
+}

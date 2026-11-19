@@ -1,0 +1,51 @@
+{
+  "status": "closed-both-terminal-controls-worse",
+  "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
+  "rootBeforeInput": 74,
+  "knownCards": [
+    "b_113.webp",
+    "b_8.webp",
+    "b_123.webp",
+    "b_84.webp"
+  ],
+  "question": "Does the held scan-trigger card B123 finance a valuable known next-turn scan/computer route that current own-turn search omits?",
+  "sourceCommit": "11b0287f7421a4c3eb06b1346d18f8ad02065b42",
+  "stateEquivalence": "Exact Native composition, session, RNG and visible public cards at source74; all other seats passed; no invented successor or source equivalence.",
+  "reachabilityAndPruning": "Pay the actual2-credit setup and1-credit2-energy next scan; fixed greedy named choices only. Existing production deductions stay authoritative; no depth limit represented as pruning.",
+  "nativePreparationInputs": 73,
+  "maxCounterfactualInputs": 100,
+  "maxNativeBranches": 3,
+  "maxColdAISearches": 0,
+  "maxFullGames": 0,
+  "stateValue": "Unchanged V72; new draw/replacement identities cannot finance the known route and are masked before valuation.",
+  "stop": "Verify the exact setup+beneficiary before any AI code; no global trigger, card or income priority. No new full game at this stage.",
+  "startedEpochSeconds": 1795094347.710538,
+  "deadlineEpochSeconds": 1795095547.710538,
+  "nativeCounterfactualInputs": 69,
+  "independentNativePreparationInputs": 73,
+  "nativeEvidence": "r2-scan-tool-native-20261119-v7.json",
+  "positiveNativeValues": {
+    "original-orange": 77,
+    "held-scan": 79.5,
+    "scan-tool": 78.5
+  },
+  "policyChanged": false,
+  "terminalValidation": {
+    "registeredEpochSeconds": 1795095187.510995,
+    "reason": "Two fully known Native purposes improve unchanged V72 endpoint value, but differ in score, technology, wallet, hand and remaining trigger; neither dominates. Test both to terminal before AI code.",
+    "maxNewColdAISearches": 2,
+    "maxRegisteredControlledFullGames": 2,
+    "newAutonomousGames": 0,
+    "decisionGate": {
+      "nativeInputs": 256,
+      "milliseconds": 600
+    },
+    "gameMillisecondsGate": 180000,
+    "deadlineEpochSeconds": 1795096387.510995,
+    "stop": "No policy implementation or20-board rerun without a better terminal control. If a control fails a gate, preserve that root and do not substitute actions."
+  },
+  "newAutonomousGames": 0,
+  "newControlledGames": 2,
+  "closedEpochSeconds": 1795095991.0281239,
+  "outcome": "r2-scan-controls-outcome-20261119-v1.json"
+}
