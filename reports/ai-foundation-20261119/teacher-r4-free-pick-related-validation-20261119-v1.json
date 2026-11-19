@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "seti-r4-free-pick-related-validation-v1",
+  "unitPassed": 3,
+  "tests": [
+    "tools/research-human405-free-pick-control.test.js",
+    "tools/research-world-resume.test.js",
+    "tools/research-search-statistics.test.js"
+  ],
+  "actual287NativeRestoreAndRngExact": true,
+  "fault257RejectedBeforeInput": true,
+  "failedFingerprintDeduplicated": true,
+  "syntaxChecks": [
+    "adhoc/prepare-r4-free-pick-control-20261119.cjs",
+    "adhoc/probe-r4-blind-after287-20261119.cjs",
+    "adhoc/export-r4-free-blind-control-20261119.cjs",
+    "adhoc/run-r4-free-blind-control-20261119.py",
+    "adhoc/prepare-r4-free-pick-registry-20261119.py"
+  ],
+  "AIChanged": false
+}

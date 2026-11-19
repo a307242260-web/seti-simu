@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "seti-research-route-v1",
+  "routeId": "actual-r4-input287-free-card-causal-control",
+  "startedEpochSeconds": 1795071610.0,
+  "deadlineEpochSeconds": 1795075210.0,
+  "status": "closed-positive-single-seed-control",
+  "workUnits": [
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.json",
+    "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v2.window.json"
+  ],
+  "businessQuestion": "At actual267 input287, does choosing the blind free Chong reward instead of the otherwise unused displayed transport card change the completed R4 outcome under unchanged policy?",
+  "hypotheses": [
+    "The unconditional displayed-card preference overlooks current data supply for an already held energy-income card when no own movable probe remains.",
+    "A legal one-input blind intervention can reveal whether this is a materially useful strategy-learning target; one seeded outcome cannot establish a general blind-pick policy."
+  ],
+  "limits": {
+    "maximumWallSeconds": 3600,
+    "maximumWorkUnits": 2,
+    "maximumPreparationAndVerificationInputs": 750,
+    "maximumColdSearches": 2,
+    "maximumRegisteredControlledContinuations": 1,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000,
+    "ProductionPolicyChangesBeforeCausalProof": 0
+  },
+  "searchContract": {
+    "equivalence": "Restore the independently verified actual267 Native endpoint before283, preserve its282-input accepted prefix, execute only actual283..286, then intervene with exactly one currently offered blind choice287. Record new public knowledge after the Native choice; never inspect hidden deck order to choose it.",
+    "scope": "Teacher first245 inputs plus actualAI41 inputs are controlled; input287 is the only forced difference. Continue unchanged sharedAI from real Native after287. All other players remain passed.",
+    "dedup": "Reuse267 completed baseline and old272 evidence. No source-renamed duplicate full game; one distinct forced-choice control via robot_iterate only.",
+    "budgets": "No new search algorithm. One fresh complete cold gate at after287 <=256/600ms before the single continuation; preserve root/RNG. All subsequent real decisions enforced at same limits.",
+    "stop": "If gate or host source validation fails, retain state and stop larger run. Do not adopt a blind heuristic from this one seeded outcome; require actual and population/known-card counterexamples."
+  },
+  "next": "Define a public-information, purpose-based free-card comparison; test displayed useful/unused cards and independence from hidden deck order before changing policy. Do not force blind9 by seed/card outcome.",
+  "closedEpochSeconds": 1795073945.174221,
+  "outcome": "Completed276 vs267 single-choice control; all350 inputs independently replayed from seed, complete Native state/session/RNG hashes exact. No strategy adoption or extra AI game.",
+  "observed": {
+    "nativePreparationAndVerificationInputs": 711,
+    "newColdSearches": 1,
+    "newRegisteredControlledContinuations": 1,
+    "terminal": 276,
+    "baseline": 267,
+    "sourcePolicyChanged": false,
+    "independentFullReplayHashCaptured": true
+  },
+  "planCorrections": [
+    {
+      "atEpochSeconds": 1795073834.109102,
+      "previousStatus": "closed-positive-single-seed-control",
+      "originalVerificationInputEstimate": 400,
+      "revisedVerificationInputEstimate": 750,
+      "reason": "The required full-seed replay hash was not captured because the read-only report hook targeted the wrong factory. Basic reproducibility requires one explicit350-input deterministic replay. This corrects an underestimated verification workload, not the runtime search budget; keep the original deadline,2 windows,1 AI continuation,256/600ms gates and all prior costs."
+    }
+  ]
+}

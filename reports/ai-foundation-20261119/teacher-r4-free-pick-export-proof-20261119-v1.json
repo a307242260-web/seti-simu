@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "seti-r4-free-pick-export-proof-v1",
+  "verified": true,
+  "record": "reports/research/91b4e074.b6e4c628.full.json",
+  "report": "reports/iteration/teacher-r4-free-blind-control-20261119/91b4e074.b6e4c628.full.action-log.html",
+  "archive": "reports/iteration/teacher-r4-free-blind-control-20261119/native-replay-20261119-v1.json.gz",
+  "policyChanged": false,
+  "controlledPrefixInputs": 286,
+  "onlyForcedDifference": {
+    "input": 287,
+    "baseline": "displayed-chong9",
+    "challenger": "blind-result-chong6"
+  },
+  "subsequentPolicyUnchanged": true,
+  "baseline267": {
+    "baseScore": 182,
+    "cardScore": 6,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 0
+      },
+      {
+        "cardId": "amiba_7.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "blue"
+        },
+        "score": 6
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 267,
+    "runezuSymbolScore": 0,
+    "tileScore": 79,
+    "tileScoresById": {
+      "a": 0,
+      "b": 24,
+      "c": 20,
+      "d": 35
+    },
+    "tiles": [
+      {
+        "baseValue": 3,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 24,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 20,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 35,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 267
+  },
+  "challenger276": {
+    "baseScore": 185,
+    "cardScore": 4,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 0
+      },
+      {
+        "cardId": "amiba_7.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "blue"
+        },
+        "score": 4
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 276,
+    "runezuSymbolScore": 0,
+    "tileScore": 87,
+    "tileScoresById": {
+      "a": 0,
+      "b": 32,
+      "c": 20,
+      "d": 35
+    },
+    "tiles": [
+      {
+        "baseValue": 4,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 32,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 20,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 5,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 35,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 276
+  },
+  "delta": {
+    "total": 9,
+    "base": 3,
+    "tile": 8,
+    "card": -2
+  },
+  "terminalPassNativeStateSessionRngExact": true,
+  "terminalVerificationNativeInputs": 2,
+  "standardHTMLReportNativeReplay": {
+    "inputs": 350,
+    "completed": true,
+    "source": "tools/robot-iteration-lib.js:replaySaveEnriched",
+    "fullFinalHashCaptured": false
+  },
+  "totalPreparationAndVerificationNativeInputs": 711,
+  "reportReplayHashHookDidNotCapture": "The preload targeted the training composition module; the standard renderer imports production-kernel. No second replay was run. The completed standard350-input replay and one-input terminal checkpoint validation are recorded separately.",
+  "nativeActionsAnd63TraceRowsConsistent": true,
+  "newGames": 1,
+  "additionalGamesDuringExport": 0,
+  "wallMs": 3048,
+  "maxNative": 41,
+  "maxMilliseconds": 78.09145900000004,
+  "rawRecordSha256": "2fac61bd4b03e1f9f5ff90de21716e8f1fafaadd0d785d2140a72c19b86943d8",
+  "publishedFiles": {
+    "reports/research/91b4e074.b6e4c628.full.json": "f161e1f7fa8be096ffab156f141db02199643cf7a0943dc8ed49fb9278790b57",
+    "reports/iteration/teacher-r4-free-blind-control-20261119/91b4e074.b6e4c628.full.action-log.html": "e99d11588bc10732ecb787ebd4bd11efa26f472ed151d0f08ac7b00238fd00a6",
+    "reports/iteration/teacher-r4-free-blind-control-20261119/native-replay-20261119-v1.json.gz": "bdeb87c669ff393bd4ca31fe1b861af10501627ecc151bc0e8577949ac81a149",
+    "seti-saves/seti-save-research-teacher-r4-free-blind-control-20261119-b6e4c628-full-v153.json": "237e24eba45e320832863742a982d98d4fb72e79b0bef667aa417b7bb65c2111"
+  },
+  "limitations": [
+    "One actual blind outcome under a fixed seed, not evidence that blind generally dominates displayed cards.",
+    "Teacher first3 rounds and41 subsequent AI inputs are controlled;276 is not an autonomous whole-game score."
+  ],
+  "independentFull350NativeReplayVerified": true,
+  "independentFullReplayProof": "reports/ai-foundation-20261119/teacher-r4-free-pick-full-native-replay-20261119-v1.json"
+}

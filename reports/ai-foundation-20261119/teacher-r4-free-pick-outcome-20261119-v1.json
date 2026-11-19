@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "seti-r4-free-card-causal-outcome-v1",
+  "status": "completed-single-seed-control",
+  "strategyChanged": false,
+  "baseline267": {
+    "total": 267,
+    "base": 182,
+    "tile": 79,
+    "card": 6
+  },
+  "blindControl276": {
+    "total": 276,
+    "base": 185,
+    "tile": 87,
+    "card": 4
+  },
+  "delta": {
+    "total": 9,
+    "base": 3,
+    "tile": 8,
+    "card": -2
+  },
+  "fixedInputs": 286,
+  "intervention": {
+    "input": 287,
+    "before": "free-displayed-chong9",
+    "after": "free-blind-choice",
+    "observedResult": "chong6",
+    "deckOrderReadToChoose": false
+  },
+  "unchangedPolicyAfterIntervention": true,
+  "subsequentAIInputs": 63,
+  "subsequentAIWallMs": 3048,
+  "maximumSubsequentDecisionNative": 41,
+  "maximumSubsequentDecisionMilliseconds": 78.09145900000004,
+  "finalTechnologyAndIncomeUnchanged": true,
+  "scoreSourceDelta": {
+    "landScore": 5,
+    "alienEffectScore": -4,
+    "alienTraceYellowScore": 5,
+    "blueTechScore": 2,
+    "alienTracePinkScore": -5
+  },
+  "observedCardUse": {
+    "input": 295,
+    "cardId": "chong_6.webp",
+    "family": "card_corner",
+    "printedReward": {
+      "data": 1,
+      "score": 1
+    }
+  },
+  "scope": "Teacher first245 inputs + fixed actualAI41 inputs + one choice intervention; not an autonomous whole-game policy improvement.",
+  "conclusion": "The unconditional known-free-card preference has one completed, reproducible counterexample: the displayed transport card was unused, while the blind outcome supplied data and led to9 more final points. This is not evidence that blind generally dominates display.",
+  "next": "Define a public-information, purpose-based free-card comparison; test displayed useful/unused cards and independence from hidden deck order before changing policy. Do not force blind9 by seed/card outcome.",
+  "formalScoresUnchanged": {
+    "autonomousTeaching": 272,
+    "original20Mean": 134.35
+  },
+  "record": "reports/research/91b4e074.b6e4c628.full.json",
+  "report": "reports/iteration/teacher-r4-free-blind-control-20261119/91b4e074.b6e4c628.full.action-log.html",
+  "archive": "reports/iteration/teacher-r4-free-blind-control-20261119/native-replay-20261119-v1.json.gz",
+  "verification": {
+    "standardRendererNativeInputs": 350,
+    "terminalPassNativeStateSessionRngExact": true,
+    "fullFinalHashCapture": true,
+    "preparationAndVerificationNativeInputs": 711,
+    "independentFullReplayProof": "reports/ai-foundation-20261119/teacher-r4-free-pick-full-native-replay-20261119-v1.json"
+  }
+}

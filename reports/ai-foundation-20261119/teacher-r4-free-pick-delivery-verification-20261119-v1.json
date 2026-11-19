@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "seti-r4-free-pick-delivery-verification-v1",
+  "verified": true,
+  "score": 276,
+  "baseline": 267,
+  "delta": 9,
+  "strategyChanged": false,
+  "fixedNativePrefixInputs": 286,
+  "singleInterventionInput": 287,
+  "subsequentAIInputs": 63,
+  "sourceFilesVerified": 539,
+  "allSearchGatesPassed": true,
+  "terminalPassStateSessionRngExact": true,
+  "standardReportNativeReplayInputs": 350,
+  "fullSeedReplayFinalHashCaptured": true,
+  "generalBlindPolicyAdopted": false,
+  "priorV1AndV2EntriesPreserved": true,
+  "report": "reports/iteration/teacher-r4-free-blind-control-20261119/91b4e074.b6e4c628.full.action-log.html",
+  "full350NativeReplayVerified": true,
+  "actualPreparationAndVerificationInputs": 711
+}

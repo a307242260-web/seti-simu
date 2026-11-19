@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "seti-r4-free-pick-full-native-replay-v1",
+  "status": "verified",
+  "archive": "reports/iteration/teacher-r4-free-blind-control-20261119/native-replay-20261119-v1.json.gz",
+  "archiveSha256": "bdeb87c669ff393bd4ca31fe1b861af10501627ecc151bc0e8577949ac81a149",
+  "nativeInputsPlanned": 350,
+  "newAISearches": 0,
+  "newGames": 0,
+  "verified": true,
+  "actual": {
+    "nativeStateSha256": "84c55ec485705db0041bf0663874a9f80ef80b368345668d7e72d67601d9b75e",
+    "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+    "rng": {
+      "algorithm": "seti-simulation-mulberry32-v1",
+      "state": 3171573311
+    }
+  },
+  "nativeInputs": 350,
+  "fullStateSessionAndRngExactlyEqual": true
+}

@@ -3,7 +3,7 @@
 // The agent runner subprocess is untouched; no extra replay or AI run occurs.
 if(process.argv[1]?.endsWith('robot_iterate.js')){
  const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
- const root=path.resolve(__dirname,'..'),file=path.join(root,'randomizer/training/simulation-rule-composition.js'),api=require(file),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+ const root=path.resolve(__dirname,'..'),file=path.join(root,'randomizer/game/production-kernel.js'),api=require(file),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
  require.cache[require.resolve(file)].exports={...api,createSimulationRuleComposition(options){
   const kernel=api.createSimulationRuleComposition(options),core=kernel.composition;let reporting=false,inputs=0;
   const port=new Proxy(core.inputPort,{get(target,key){

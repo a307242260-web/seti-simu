@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seti-r4-free-pick-registry-merge-proof-v1",
+  "verified": true,
+  "v1Unchanged": true,
+  "allPriorCatalogAndRegistryRowsPreserved": true,
+  "version": "teacher-r4-free-blind-control-20261119",
+  "committedSnapshotHashes": {
+    "reports/iteration/versions.json": "6d1b842cbf6d79be389395b0cd19ccc82bd2aed48fe48d7b739f7b12b7eeca22",
+    "reports/iteration/registry.json": "1bb846141ef6917f6c3a6e084b4ae51d291457328a5bbe56640374b692f73616",
+    "reports/robot-iteration.html": "60efac3b9414570a58ebf3d07386b1bb4bb6a78dddf71ea7c8a39e6031f936b1"
+  },
+  "beforeWorkingHashes": {
+    "reports/iteration/versions.json": "a229d2b2ccd12acd3f5269ea9b99c384346a6fc1f3a504500c5e2b441b85b4ec",
+    "reports/iteration/registry.json": "ba17995ac860d7e6f2db365e0e82530cd12638a3e12658b8190ed37dbc1d0571",
+    "reports/robot-iteration.html": "deec9817690cb2bee2f9338f4da98db4b6b4ac886bcfac5dc072eb1c62c81109"
+  },
+  "afterWorkingHashes": {
+    "reports/iteration/versions.json": "ebcf034293e48fe6cf4a90a3a9d3040834b42ecd5cc75c6e99840b6bd4850a4a",
+    "reports/iteration/registry.json": "83cde001fcc1868770724018e56b553fb61de114f38b7b28e508b0fbf9b9e3ea",
+    "reports/robot-iteration.html": "3089f0279092c39dff0038b716df798f7f7f079341da61a3bf493c2dbd63f5d1"
+  }
+}

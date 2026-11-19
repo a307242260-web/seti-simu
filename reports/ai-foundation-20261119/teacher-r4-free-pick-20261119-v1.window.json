@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-free-pick-route-20261119-v1.json",
+  "startedEpochSeconds": 1795071610.0,
+  "deadlineEpochSeconds": 1795073410.0,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-r4-free-pick-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795072168.205594,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-1.stderr.log",
+      "pid": 99585,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795072168.5580878
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-r4-free-pick-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795072234.940469,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-2.stderr.log",
+      "pid": 253,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795072235.293134
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/prepare-r4-free-pick-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795072277.305645,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-3.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-3.stderr.log",
+      "pid": 801,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795072277.658583
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/probe-r4-blind-after287-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795072293.5789282,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-4.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-4.stderr.log",
+      "pid": 1068,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795072293.766358
+    },
+    {
+      "command": [
+        "node",
+        "/private/tmp/seti-r4-free-pick-20261119-raa871d5/tools/run_node_tests.js",
+        "--match",
+        "research-human405-free-pick-control",
+        "--match",
+        "research-world-resume",
+        "--match",
+        "research-search-statistics"
+      ],
+      "startedEpochSeconds": 1795072407.600499,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-5.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-5.stderr.log",
+      "pid": 2485,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795072408.826122
+    },
+    {
+      "command": [
+        "python3",
+        "adhoc/run-r4-free-blind-control-20261119.py"
+      ],
+      "startedEpochSeconds": 1795072757.6892679,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-6.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-6.stderr.log",
+      "pid": 5353,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795072791.419761
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/export-r4-free-blind-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795073124.752038,
+      "status": "failed",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-7.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-7.stderr.log",
+      "pid": 41488,
+      "exitCode": 1,
+      "childExitCode": 1,
+      "endedEpochSeconds": 1795073124.939255
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/export-r4-free-blind-control-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795073168.104398,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795073410.0,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-8.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v1.window.attempt-8.stderr.log",
+      "pid": 41907,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795073168.3432739
+    }
+  ],
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795072234.6372612,
+      "previousStatus": "failed",
+      "reason": "Simulation host overlays pending decision routing metadata; recorded analysis observation keeps its default pending descriptor. Compare all public game assets+self state and all actual legal actions exactly, and actor equality. Preserve original4 preparation inputs in the budget and keep failure evidence. No AI/full-game retry or deadline change."
+    },
+    {
+      "atEpochSeconds": 1795072276.9666939,
+      "previousStatus": "failed",
+      "reason": "Browser legal actions include presentation metadata and a null decision field; policy legal actions omit them. Compare all semantic and version fields exactly after removing only presentation/decision. Resume the persisted exact Native checkpoint before287; do not repeat its4 inputs. Original deadlines and all8 preparation inputs retained."
+    },
+    {
+      "atEpochSeconds": 1795073167.799705,
+      "previousStatus": "failed",
+      "reason": "Postprocessing archive/retention utilities are present in the accepted runtime but absent from the tracked-tool snapshot. Copy their identical verified bytes for export only; no agent/report replay rerun. The already successful1-input terminal check is retained in the count; the repeated final PASS check makes total Native preparation/verification361, within400. Original deadline unchanged."
+    }
+  ],
+  "closedEpochSeconds": 1795073371.166931,
+  "outcome": "Unique276 control, standard350-input report replay and exact final-PASS Native check complete; policy unchanged."
+}

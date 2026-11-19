@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "seti-research-wall-window-v2",
+  "routeCheckpoint": "teacher-r4-free-pick-route-20261119-v1.json",
+  "startedEpochSeconds": 1795073371.167259,
+  "deadlineEpochSeconds": 1795074571.16726,
+  "status": "complete",
+  "attempts": [
+    {
+      "command": [
+        "python3",
+        "adhoc/prepare-r4-free-pick-registry-20261119.py"
+      ],
+      "startedEpochSeconds": 1795073420.378315,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795074571.16726,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v2.window.attempt-1.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v2.window.attempt-1.stderr.log",
+      "pid": 44614,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795073421.9250078
+    },
+    {
+      "command": [
+        "node",
+        "adhoc/verify-r4-free-blind-replay-20261119.cjs"
+      ],
+      "startedEpochSeconds": 1795073834.463069,
+      "status": "finished",
+      "effectiveDeadlineEpochSeconds": 1795074571.16726,
+      "stdout": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v2.window.attempt-2.stdout.log",
+      "stderr": "/Users/bilibili/code/seti-simu/reports/ai-foundation-20261119/teacher-r4-free-pick-20261119-v2.window.attempt-2.stderr.log",
+      "pid": 48502,
+      "exitCode": 0,
+      "childExitCode": 0,
+      "endedEpochSeconds": 1795073836.882745
+    }
+  ],
+  "closedEpochSeconds": 1795073945.174347,
+  "outcome": "Completed276 vs267 single-choice control; all350 inputs independently replayed from seed, complete Native state/session/RNG hashes exact. No strategy adoption or extra AI game.",
+  "manualRecovery": [
+    {
+      "atEpochSeconds": 1795073834.10947,
+      "previousStatus": "complete",
+      "reason": "Correct premature delivery closure: missing full-state deterministic replay hash. One pure Native replay, zero AI search/game retry; retain the same absolute deadline."
+    }
+  ]
+}
