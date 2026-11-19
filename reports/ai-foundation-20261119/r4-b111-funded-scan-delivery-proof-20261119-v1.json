@@ -1,0 +1,34 @@
+{
+  "status": "passed",
+  "sourceCommit": "79e6d94de9c7c8addafcda6c9eae17cebac54bd7",
+  "acceptedPolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "policyChanged": false,
+  "newAutonomousGames": 0,
+  "newControlledGames": 1,
+  "terminalScore": 247,
+  "deploymentOnlyReference": 250,
+  "originalR4Reference": 267,
+  "autonomousTeachingReference": 272,
+  "original20Rerun": false,
+  "independentTerminalReplayInputs": 324,
+  "independentPrefixReplayInputs": 272,
+  "fixedPurposeRealizationNativeInputs": 8,
+  "sourceValueEqualsActualNativePurpose": 220.5,
+  "priorScenarioMetadataPreserved": true,
+  "fullGameGate": {
+    "maxNative": 89,
+    "maxMilliseconds": 164.221709,
+    "wallMs": 2625,
+    "complete": true
+  },
+  "coldGate": {
+    "nativeInputs": 48,
+    "milliseconds": 176.418668,
+    "complete": true
+  },
+  "v1AndHistoryPreserved": true,
+  "sharedIndexUnchanged": true,
+  "protectedRootUnchanged": true,
+  "candidateAdopted": false,
+  "conclusion": "Complete known B111-plus-scan purpose does not improve this R4 continuation; no priority or commitment patch adopted."
+}

@@ -1,0 +1,34 @@
+{
+  "status": "verified",
+  "sourceCommit": "e46eb0e41b5e90e540d3ad30653c41cb7e0cfc94",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "independentReplayInputs": 272,
+  "branches": [
+    {
+      "name": "funded",
+      "preparation": "reports/ai-foundation-20261119/r4-b111-funded-scan-preparation-20261119-v1.json",
+      "archive": "reports/ai-foundation-20261119/r4-b111-best-scan-prefix272-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-r4-b111-best-scan-before273-20261119-v1.json",
+      "prefixInputs": 272,
+      "preparationSha256": "3a2058cdbb75ffbddbdbda0bd26920c5b46d7af7f870695792ebdc453652ed4d",
+      "expected": {
+        "nativeStateSha256": "1453bcb1c83a21e126e14c5ef64ebe3b76275e238c3984c5765341e4480c71cf",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "1453bcb1c83a21e126e14c5ef64ebe3b76275e238c3984c5765341e4480c71cf",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    }
+  ]
+}

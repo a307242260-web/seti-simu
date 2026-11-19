@@ -1,0 +1,23 @@
+{
+  "status": "registered-single-terminal-purpose-control",
+  "sourceParent": "e46eb0e41b5e90e540d3ad30653c41cb7e0cfc94",
+  "question": "After deployment-only250 performed no scans, does the fully Native-realized existing best funded scan purpose improve continuation beyond original267?",
+  "prefixInputs": 272,
+  "sourceNativeProof": "reports/ai-foundation-20261119/r4-b111-best-scan-purpose-native-20261119-v1.json",
+  "baselineReferences": {
+    "original267": "reports/research/0a3f282a.410c41e4.full.json",
+    "deploymentOnly250": "reports/research/a185d288.410c41e4.full.json"
+  },
+  "constraints": {
+    "coldAISearches": 1,
+    "controlledGames": 1,
+    "autonomousGames": 0,
+    "decisionNativeInputs": 256,
+    "decisionMilliseconds": 600,
+    "gameMilliseconds": 180000
+  },
+  "dedup": "New single scenario/source admitted before one robot_iterate execution; no previous AI game is restarted.",
+  "promotion": "A positive controlled purpose still needs an actual policy change and autonomous game before promotion.",
+  "startedEpochSeconds": 1795103200.185747,
+  "deadlineEpochSeconds": 1795104400.1857479
+}

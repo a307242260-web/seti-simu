@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "newNativeInputs": 0,
+  "earlierFreshAndBlueMetadataUnchanged": true,
+  "results": [
+    {
+      "id": "human405-white-r4-b111-funded-scan-control-v1",
+      "prefixInputs": 272,
+      "rootSessionAndRngExact": true
+    }
+  ]
+}

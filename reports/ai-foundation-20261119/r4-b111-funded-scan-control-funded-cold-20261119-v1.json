@@ -1,0 +1,39 @@
+{
+  "status": "passed",
+  "case": "funded",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 0,
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 48,
+  "milliseconds": 176.41866700000003,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "move",
+    "phase": "quick",
+    "actionId": "move:2df2f24d",
+    "actorId": "player-white",
+    "stateVersion": 112,
+    "decisionVersion": 1,
+    "target": {
+      "rocketId": 7,
+      "deltaX": 0,
+      "deltaY": 1
+    },
+    "payload": {
+      "direction": "out",
+      "requiredMovePoints": 1
+    },
+    "decision": null,
+    "summary": "\u79fb\u52a8\u63a2\u6d4b\u5668 7 \u5411\u5916"
+  },
+  "value": 229.5,
+  "rootAndRngUnchanged": true,
+  "searchSummary": {
+    "actionId": "move:2df2f24d",
+    "complete": true,
+    "value": 229.5
+  },
+  "retention": "closed-trial decision and budget; full graph omitted"
+}

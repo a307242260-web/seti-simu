@@ -1,0 +1,15 @@
+{
+  "status": "registered-native-plan-realization",
+  "sourceCommit": "e46eb0e41b5e90e540d3ad30653c41cb7e0cfc94",
+  "sourcePlan": "reports/ai-foundation-20261119/r4-b111-visible-scan-existing-plan-20261119-v1.json",
+  "question": "Realize the exact already-evaluated best funded scan after B111 deployment, rather than leaving the task unused. Verify real payment, free movement, one selected reward and end-turn before any later continuation experiment.",
+  "rootPrefixInputs": 264,
+  "fixedPlanNativeInputs": 8,
+  "maximumNativeInputs": 8,
+  "independentReplayInputs": 272,
+  "newAISearches": 0,
+  "newGames": 0,
+  "knowledge": "Require every selected card to be known at root; no blind identity or replenished public card is selected. Only the stored goal scan, existing free move and one existing best reward are used.",
+  "identity": "Exact loaded state/session/RNG, active player and passed opponents. All inputs are Native choices; preserve a numbered checkpoint and tape after each input.",
+  "deadlineEpochSeconds": 1795103664.452054
+}
