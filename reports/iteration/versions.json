@@ -7,6 +7,42 @@
   },
   "versions": [
     {
+      "id": "v492-known-scan-funding-board05-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u4ed8\u6b3e\u5e73\u5c40\u5019\u9009\uff1a\u7b2c5\u76d8135\u5206\uff08\u672a\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v486-teaching-current-full-20261119",
+      "head": "be9664dda",
+      "commits": [
+        "be9664dda"
+      ],
+      "summary": "Original board05 autonomous135 unchanged; all200 actions and round assets identical. Plan binds supplier at110 before data-corner preparation; new quote only passes later113/115 cold roots.7.270s; max182 Native/173.752ms. Replay passed. Not adopted; no20-board rerun.",
+      "records": {
+        "174a9d1b.be9664dd.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v492-known-scan-funding-teaching-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u4ed8\u6b3e\u5e73\u5c40\u5019\u9009\uff1a\u6559\u5b66272\u5206\uff08\u672a\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v490-final-currency-teaching-20261119",
+      "head": "be9664dda",
+      "commits": [
+        "be9664dda"
+      ],
+      "summary": "Exact income tie uses known scan funding. Teaching272 unchanged; all354 actions and round assets identical.15.278s; max256 Native/396.934ms. Independent replay passed. Not adopted.",
+      "records": {
+        "58ab2d95.be9664dd.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v491-scan-forecast-teaching-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

@@ -1,0 +1,23 @@
+known scan/analysis income utility selects the currently funded electric source without new search branches
+{"scanAnalysisIncomeUtility":"passed","nativeInputs":16,"nativeExactGain":3,"quotedFloorAfter":141.5,"initialAndPendingSame":true,"unknownPairExcluded":true,"noNewSearchBranches":true,"rootAndRngRestored":true}
+SUMMARY unit passed=0 failed=1 total=1 time=0.35s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/state-value tests=1
+/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/scan-analysis-income-utility.js:71
+   const gain=cards.getIncomeGainForCard(card),keys=Object.keys(gain||{});
+              ^
+
+ReferenceError: cards is not defined
+    at currency (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/scan-analysis-income-utility.js:71:15)
+    at Object.preferPaidCardFunding (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/scan-analysis-income-utility.js:74:13)
+    at rankIncomeChoices (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/resource-demand.js:489:35)
+    at Object.catalog (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/resource-demand.js:622:56)
+    at resourceCatalog (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/analysis-port.js:3085:44)
+    at Object.resourceSpec (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/analysis-port.js:4092:15)
+    at Object.<anonymous> (/private/tmp/seti-scan-funding-20261119-efqpyl39/randomizer/game/ai/scan-analysis-income-utility.test.js:36:154)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+
+Node.js v22.22.0
+FAIL randomizer/game/ai/scan-analysis-income-utility.test.js status=1 signal=none

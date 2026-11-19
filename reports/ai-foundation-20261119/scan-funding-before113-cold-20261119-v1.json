@@ -1,0 +1,222 @@
+{
+  "status": "passed",
+  "case": "before113",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v492-known-scan-funding/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 0,
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 175,
+  "milliseconds": 253.362708,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "place_data",
+    "phase": "quick",
+    "actionId": "place_data:8fd12fd3",
+    "actorId": "player-white",
+    "stateVersion": 44,
+    "decisionVersion": 0,
+    "target": {
+      "kind": "place-data"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "\u653e\u7f6e\u6570\u636e"
+  },
+  "value": 104,
+  "result": {
+    "schemaVersion": "seti-complete-decision-search-v492-known-scan-funding",
+    "complete": true,
+    "actionId": "place_data:8fd12fd3",
+    "value": 104,
+    "stopReason": null,
+    "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 73,
+      "valueCacheHits": 176,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 13,
+      "movementDirectionsExcluded": 34,
+      "routeGeometryNodes": 32,
+      "incomePlanProofs": 14,
+      "provedIncomeInputs": 42,
+      "turnTailProofs": 55,
+      "provedTurnTailInputs": 103,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 175,
+      "logicalResourceInputs": 350,
+      "sharedResourceInputHits": 195,
+      "sharedResourceInternalStates": 101,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 18,
+      "singleAlternativeStates": 93,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 20,
+      "resourceGoalPlans": 54,
+      "resourcePreparationInputs": 350,
+      "resourceFallbacks": 0,
+      "resourceExcludedActions": 596,
+      "transitions": 221,
+      "nodes": 289,
+      "graphNodes": 184,
+      "certificateNodes": 105,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 2,
+      "selectionMacros": 0,
+      "peakFrontier": 46,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v72-final-currency\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 240.774458,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    },
+    "rootCandidates": [
+      {
+        "kind": "action",
+        "actionId": "pass:a1f33c73"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "place_data:8fd12fd3"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "quick_trade:12411a2c"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "research_tech:806ccfc8"
+      }
+    ]
+  },
+  "rootAndRngUnchanged": true,
+  "retention": {
+    "mode": "decision-and-budget",
+    "rawSha256": "298b1d7360a7939e860d17eead3dcae3d47195cac1f9312684d4638b2c15dc41",
+    "fullSearchGraphOmitted": true,
+    "source": "be9664ddac8a83e81f28f77d41edcfd616c32980",
+    "probeScript": "adhoc/probe-scan-funding-20261119.cjs",
+    "roots": "paid-scan-income5-fixture-20261119-v1.json.gz and existing teaching checkpoints"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "status": "verified",
+  "independentReplayInputs": 509,
+  "newAISearches": 0,
+  "newGames": 0,
+  "results": [
+    {
+      "name": "income-timing38-baseline",
+      "inputs": 60,
+      "archive": "reports/ai-foundation-20261119/income-timing38-baseline-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "a46efc50cd869d0dcdbf020be96c71f21c7c64ac2093c482594771041452fade",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "a46efc50cd869d0dcdbf020be96c71f21c7c64ac2093c482594771041452fade",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "name": "income-timing38-alternative",
+      "inputs": 58,
+      "archive": "reports/ai-foundation-20261119/income-timing38-alternative-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "243a03314e2724bd59414b3cb84ce5b78ffcf87e5dccfa88b0c9c3583f8c1f59",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "243a03314e2724bd59414b3cb84ce5b78ffcf87e5dccfa88b0c9c3583f8c1f59",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "name": "paid-scan-income5-baseline",
+      "inputs": 142,
+      "archive": "reports/ai-foundation-20261119/paid-scan-income5-baseline-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "9074d7971e40532f470b14ba231901e3ebbb728fd101a71cc6364a812ae3cd7d",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "9074d7971e40532f470b14ba231901e3ebbb728fd101a71cc6364a812ae3cd7d",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      }
+    },
+    {
+      "name": "paid-scan-income5-alternative",
+      "inputs": 137,
+      "archive": "reports/ai-foundation-20261119/paid-scan-income5-alternative-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "4fc9d088585ec374aaab9244d4fbad0f2d3b8c1f955fc4dcc3027cff03bf2ea0",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "4fc9d088585ec374aaab9244d4fbad0f2d3b8c1f955fc4dcc3027cff03bf2ea0",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      }
+    },
+    {
+      "name": "paid-scan-income5-before113",
+      "inputs": 112,
+      "archive": "reports/ai-foundation-20261119/paid-scan-income5-before113-replay-20261119-v1.json.gz",
+      "expected": {
+        "nativeStateSha256": "370a3001b1021b536f1d8d47316287944ea51835e9b2bf35f534cd9e7c3995b7",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "370a3001b1021b536f1d8d47316287944ea51835e9b2bf35f534cd9e7c3995b7",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 4179339788
+        }
+      }
+    }
+  ],
+  "fixture": "reports/ai-foundation-20261119/paid-scan-income5-fixture-20261119-v1.json.gz"
+}

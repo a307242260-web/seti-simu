@@ -1,0 +1,167 @@
+{
+  "status": "passed",
+  "case": "teaching-r2",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v492-known-scan-funding/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 9,
+  "newGames": 0,
+  "newAISearches": 1,
+  "sourceInput": 72,
+  "complete": true,
+  "nativeInputs": 25,
+  "milliseconds": 183.18179100000003,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "scan",
+    "phase": "main",
+    "actionId": "scan:2d21a323",
+    "actorId": "player-white",
+    "stateVersion": 24,
+    "decisionVersion": 0,
+    "target": {
+      "kind": "standard-scan"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "\u626b\u63cf"
+  },
+  "value": 94.08333333333333,
+  "result": {
+    "schemaVersion": "seti-complete-decision-search-v492-known-scan-funding",
+    "complete": true,
+    "actionId": "scan:2d21a323",
+    "value": 94.08333333333333,
+    "stopReason": null,
+    "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+    "diagnostics": {
+      "realizationTies": "funded-preparation-debt-and-latest-native-purpose-capital",
+      "valueEvaluations": 27,
+      "valueCacheHits": 54,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 2,
+      "movementDirectionsExcluded": 6,
+      "routeGeometryNodes": 32,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 25,
+      "provedTurnTailInputs": 25,
+      "movementValuePrunes": 0,
+      "dataPrimaryBoundPrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "deferredMovementPlans": 0,
+      "nativeExecutions": 25,
+      "logicalResourceInputs": 34,
+      "sharedResourceInputHits": 12,
+      "sharedResourceInternalStates": 12,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 13,
+      "singleAlternativeStates": 26,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 10,
+      "resourceGoalPlans": 10,
+      "resourcePreparationInputs": 34,
+      "resourceFallbacks": 0,
+      "resourceExcludedActions": 157,
+      "transitions": 57,
+      "nodes": 82,
+      "graphNodes": 66,
+      "certificateNodes": 16,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 1,
+      "selectionMacros": 0,
+      "peakFrontier": 12,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v72-final-currency\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 171.204,
+      "limits": {
+        "transitions": null,
+        "nodes": null,
+        "frontier": null,
+        "milliseconds": null
+      }
+    },
+    "rootCandidates": [
+      {
+        "kind": "action",
+        "actionId": "launch:c94cda79"
+      },
+      {
+        "kind": "action",
+        "actionId": "play_card:720c219a"
+      },
+      {
+        "kind": "action",
+        "actionId": "play_card:249d7be3"
+      },
+      {
+        "kind": "action",
+        "actionId": "pass:a1f33c73"
+      },
+      {
+        "kind": "card-acquisition-plan",
+        "firstActionId": "industry:e887dc52"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "scan:2d21a323"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "scan:2d21a323"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "scan:2d21a323"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "firstActionId": "scan:2d21a323"
+      }
+    ]
+  },
+  "rootAndRngUnchanged": true,
+  "retention": {
+    "mode": "decision-and-budget",
+    "rawSha256": "e9458b67d71a0505fe3471006d1f57cf084b849498d320b40e348101db18e853",
+    "fullSearchGraphOmitted": true,
+    "source": "be9664ddac8a83e81f28f77d41edcfd616c32980",
+    "probeScript": "adhoc/probe-scan-funding-20261119.cjs",
+    "roots": "paid-scan-income5-fixture-20261119-v1.json.gz and existing teaching checkpoints"
+  }
+}

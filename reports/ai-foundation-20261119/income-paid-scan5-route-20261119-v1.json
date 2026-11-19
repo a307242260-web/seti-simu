@@ -1,0 +1,46 @@
+{
+  "status": "closed-candidate-not-triggered-in-autonomous-plan",
+  "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
+  "sourceInput": 115,
+  "sourceTraceLine": 91,
+  "sourceCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "hypothesis": "A credit income instead of energy may save one two-card currency exchange while paying for the same known full-scan card and free analysis. The baseline later discards the very credit-income card it preserves at the income menu.",
+  "stateEquivalence": "Exact Native root, session, RNG, known cards and same literal scan/analysis targets; no synthetic funds or hand-subset search.",
+  "preparationInputBudget": 60,
+  "counterfactualInputBudget": 100,
+  "maxColdAISearches": 6,
+  "maxFullGames": 2,
+  "success": "Verify the same native score/technology/scan/analysis endpoint with the exact income, currency and retained-card tradeoff; only then consider a shared income-funding quote.",
+  "startedEpochSeconds": 1795088289.708097,
+  "deadlineEpochSeconds": 1795090089.708098,
+  "nativeWitness": "paid-scan-income5-native-control-20261119-v2.json",
+  "greedyPairVerified": [
+    "card-27-pass-2-3",
+    "card-46-0"
+  ],
+  "candidateContract": "On an exact primary utility tie, prefer the currency supplier that saves a known two-card exchange for an already-known paid full-scan/free-analysis purpose. No extra search node, income weight or credit priority.",
+  "stateDedupAndBudget": "Existing complete Native identity, goal reachability and shared-prefix budgets unchanged. New ranking reads visible immutable facts only, never substitutes a Native successor.",
+  "candidateColdCasesBudget": 6,
+  "maxRegisteredAutonomousGames": 2,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameGateMilliseconds": 180000,
+  "stop": "No full game before candidate cold gate; no20-board batch. Stop the candidate if required development regresses. No generic forecast tuning.",
+  "discoveryWindowClosedAtEpochSeconds": 1795090973.1763499,
+  "validationPhase": {
+    "registeredEpochSeconds": 1795090973.1763499,
+    "reason": "Positive same-purpose Native witness and a failing-then-passing production-port test now justify the bounded implementation gate. This is the same funding-tie hypothesis, not a forecast sweep.",
+    "maxColdAISearches": 6,
+    "maxRegisteredFullGames": 2,
+    "nativeInputGate": 256,
+    "decisionMillisecondsGate": 600,
+    "gameMillisecondsGate": 180000,
+    "required": "All cold points pass before any autonomous game; preserve complete teaching round assets before a single board5 run.",
+    "deadlineEpochSeconds": 1795092173.1763499
+  },
+  "outcome": "scan-funding-outcome-20261119-v1.json",
+  "closedEpochSeconds": 1795091961.4907851,
+  "newAutonomousGames": 2
+}

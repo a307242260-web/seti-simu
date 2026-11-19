@@ -1,0 +1,23 @@
+{
+  "status": "closed-no-policy-defect-established",
+  "sourceCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "sourceRecord": "reports/research/327c52b2.e08665e6.full.json",
+  "sourceInput": 38,
+  "question": "Separate the early income decision from later discarding DLC9. Does a legal early-energy-income plus Mars orbit, blue refund and currency trade still fund DLC9 before round1 ends?",
+  "stateEquivalence": "Restore the exact Native envelope, session, RNG and known source; no fabricated currencies, cards, turn reset or opponent activity.",
+  "preparationInputBudget": 20,
+  "counterfactualInputBudget": 80,
+  "maxAISearches": 0,
+  "maxFullGames": 0,
+  "startedEpochSeconds": 1795086858.751961,
+  "deadlineEpochSeconds": 1795088058.751961,
+  "success": "Either a complete legal funding witness and round-end asset tradeoff, or explicit infeasibility; no policy change from score alone.",
+  "stop": "No automatic forecast parameter sweep or new autonomous game.",
+  "closedEpochSeconds": 1795088289.7076821,
+  "outcome": "income-timing38-native-control-20261119-v2.json",
+  "finding": "Early income preserves blue2+purple4 through a legal Mars orbit, blue-energy return and trade; the161-score discard is a later decision. Existing V72 remains better on the measured round1 wallet and retains more cash income.",
+  "preparationInputs": 14,
+  "counterfactualInputs": 44,
+  "newAISearches": 0,
+  "newFullGames": 0
+}
