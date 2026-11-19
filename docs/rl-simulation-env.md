@@ -491,3 +491,5 @@ effect drain、observation、serialization 与 inference idle；不得通过省�
 固定扫描续跑若因报告记账失败而已有正式输入提交，保存并验证失败存档，从下一输入续跑。该场景从第三轮记录边界，元数据分别保留137步原固定前缀与已提交的1步自主输入，不重复策略决策。
 
 第二轮扫描用途对照使用 `free-analyze-r2-held-scan-control-v1` 与 `free-analyze-r2-scan-tool-control-v1`。两者均固定原73输入及各自已验证的完整扫描、收入、分析用途后交回V72；分别记录固定前缀、来源哈希和已完成轮数。轮次记账从前缀所在轮次继续，受控终局不能记为自主成绩。
+
+教学盘蓝科技第2槽对照使用 `human405-white-blue1-slot2-control-v1` 与 `human405-white-blue3-slot2-control-v1`：保留实际前103条AI输入及第104步研究，只改变第105步科技选择。蓝3尚未完成的原生奖励选择直接交回V72；两分支均清空临时AI状态。入口校验完整策略、固定前缀和原生档指纹，保留待处理session，从第二轮继续记账，终局按受控成绩登记。
