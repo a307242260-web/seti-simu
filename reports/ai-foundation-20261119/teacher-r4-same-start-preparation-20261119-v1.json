@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "seti-teacher-r4-exact-start-preparation-v1",
+  "sourceCommit": "94299f385450f80f2720b3dc0d15ea92c9d771f7",
+  "teacherRuleCommit": "838395727df8ae4e4734b101028485aef59dc1b3",
+  "sourceArchive": "reports/ai-foundation-20261117/human405-r3-teacher-repeat-income-20261117-v1/teacher-current-legal-reference-384-20261118-v1.replay.json",
+  "sourceArchiveSha256": "79174b6ff5e975a1b96c1fc9f29a2c2c52ec594b24a404ea234538709fcfd099",
+  "teacherSave": "seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json",
+  "teacherSaveSha256": "b8d6e45acb87828a8e2b0113323a69f3aea90f3a649287972137d344e42ab03e",
+  "seed": "seti-free-analyze-v1",
+  "status": "verified",
+  "nativeInputs": 719,
+  "newAISearches": 0,
+  "newAutonomousGames": 0,
+  "sourceFilesVerified": 536,
+  "correctBeforeInput": 246,
+  "controlledPrefixInputs": 245,
+  "originalOpeningInputs": 23,
+  "openingCheckpointSha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+  "lastReferenceInput": 245,
+  "original23NativeOpeningExact": true,
+  "teacherR3End": {
+    "score": 105,
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 3,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 3,
+      "publicity": 5,
+      "score": 105
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 2,
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "blue2": true,
+        "orange2": true,
+        "orange4": true,
+        "purple2": true,
+        "purple4": true
+      }
+    }
+  },
+  "oldArchivedFirstRootNativeEqual": true,
+  "oldArchivedBeforeTeacherInput": 249,
+  "rootPath": "reports/ai-foundation-20261119/teacher-r4-before-input246-20261119-v1.json.gz",
+  "rootNativeEnvelopeSha256": "69dba7102f983b310b19a406e3f3bbf0d3ad8162ee81b903b5518bcbaea4c591",
+  "rootNativeStateSha256": "6f0d611d3a648d1250c4a4bf2974c6f66783357f5886a36ae1e77520cf36a0ea",
+  "fullTeacher474InputsVerified": true,
+  "fresh245PrefixNativeAndRngExact": true,
+  "browserSavePath": "seti-saves/seti-save-teacher-r4-same-start-before246-20261119-v1.json",
+  "browserSaveSha256": "65ef9c2e7de685c4faf76a1343c363364ea5f006cec434d108d15cba6a826a2d"
+}

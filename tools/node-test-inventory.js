@@ -160,6 +160,7 @@ module.exports = Object.freeze({
     entry("tools/research-world-resume.test.js", "training/reporting", "研究续跑保留权威世界、行动快照与全部历史", "重建牌序、丢历史或改写未知RNG标签后续跑"),
     entry("tools/research-human405-current-full.test.js", "training/reporting", "当前策略从23输入原生开局完整行动，逐轮口径与正式终局分分开，256次/600ms及180秒触限前拒绝输入并保留失败去重", "误用冻结策略存档、临时盘面分冒充终局或超限后提交动作"),
     entry("tools/research-frozen-continuation-identity.test.js", "training/reporting", "冻结续局先核对当前源码再读取历史载荷；匹配源码仍校验记录存档痕迹与开局前缀", "旧存档缺失掩盖源码漂移、部分源码匹配误接旧前缀或跳过档案校验"),
+    entry("tools/research-human405-teacher-r4.test.js", "training/reporting", "教师245输入原生根及RNG恢复，前三轮教师与第四轮自主范围分明，超限提交前拒绝并去重", "受控前缀冒充自主整局、旧AI计划污染、篡改开局、超限提交或重复实验"),
     entry("tools/research-human405-full.test.js", "training/reporting", "白席整局复用v123首轮状态/RNG/AI证书和64输入，逐轮落盘、失败不重跑且人数及对手独立指纹", "续跑重复第一轮、历史输入漏计、已完成轮次丢失或失败后绕过去重"),
     entry("tools/research-human405-r4.test.js", "training/reporting", "固定候选源码和前三轮原生存档，第四轮决策过线前不提交", "跨策略误用旧计划、失败改变盘面、丢失前三轮或重复同一实验"),
     entry("tools/research-human405-first2.test.js", "training/reporting", "白席前两轮独立实验身份，PASS提交前记录原生轮末状态，轮末选牌和下一轮收入严格分开", "把下一轮收入或选牌计入轮末，第二轮提前停止、污染原根或重复同指纹"),

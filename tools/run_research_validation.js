@@ -48,6 +48,7 @@ const { buildWorldIdentity } = require("./fixed-world-identity");
 const whiteRound1 = require("./research-human405-round1");
 const whiteFull = require("./research-human405-full");
 const whiteCurrentFull = require("./research-human405-current-full");
+const whiteTeacherR4 = require("./research-human405-teacher-r4");
 const random20 = require("./research-free-analyze-random20");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
@@ -132,7 +133,7 @@ function buildIdentity(options) {
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
   if (config.scenario != null) {
-    identity.scenario = (random20.IDS.includes(config.scenario) ? random20 : whiteCurrentFull.IDS.includes(config.scenario) ? whiteCurrentFull : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
+    identity.scenario = (whiteTeacherR4.IDS.includes(config.scenario) ? whiteTeacherR4 : random20.IDS.includes(config.scenario) ? random20 : whiteCurrentFull.IDS.includes(config.scenario) ? whiteCurrentFull : whiteFull.IDS.includes(config.scenario) ? whiteFull : whiteRound1).describe(identity, options);
     identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
   }
   identity.world = buildWorldIdentity(identity);
@@ -419,13 +420,14 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const scenario = random20.IDS.includes(identity.scenario?.id) ? random20 : whiteCurrentFull.IDS.includes(identity.scenario?.id) ? whiteCurrentFull : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
+  const scenario = whiteTeacherR4.IDS.includes(identity.scenario?.id) ? whiteTeacherR4 : random20.IDS.includes(identity.scenario?.id) ? random20 : whiteCurrentFull.IDS.includes(identity.scenario?.id) ? whiteCurrentFull : whiteFull.IDS.includes(identity.scenario?.id) ? whiteFull : whiteRound1;
   const freshFull = scenario === whiteCurrentFull;
-  const fullWhite = scenario === whiteFull || scenario === random20 || freshFull;
+  const teacherR4 = scenario === whiteTeacherR4;
+  const fullWhite = scenario === whiteFull || scenario === random20 || freshFull || teacherR4;
   const pinnedContinuation = scenario === whiteFull;
-  const guardedR4 = whiteFull.isGuarded(identity.scenario?.id);
+  const guardedR4 = whiteFull.isGuarded(identity.scenario?.id) || teacherR4;
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
-  let nextRoundToRecord = 1;
+  let nextRoundToRecord = teacherR4 ? 4 : 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
   let failedTrace = null;
   const roundEnds = [];
@@ -550,7 +552,7 @@ function runValidation(options) {
       if (identity.scenario && scenario.settled(obsBefore, identity.scenario)) break;
       const seat = obsBefore?.decision?.actorPlayerId || null;
       decisionStartSteps = steps;
-      if (guardedR4 && Date.now() - startedAt + identity.scenario.continuation.sourceGameWallMs >= identity.scenario.gameMillisecondsTarget) {
+      if (guardedR4 && Date.now() - startedAt + (identity.scenario.continuation?.sourceGameWallMs || 0) >= identity.scenario.gameMillisecondsTarget) {
         throw Object.assign(new Error("WHITE_ONLY_GAME_TIME_LIMIT"), { code: "WHITE_ONLY_GAME_TIME_LIMIT" });
       }
       if (freshFull && Date.now() - startedAt >= identity.scenario.gameMillisecondsTarget) {

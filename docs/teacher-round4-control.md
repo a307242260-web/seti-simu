@@ -1,0 +1,18 @@
+# 教师同起点第四轮对照
+
+场景 `human405-white-teacher-r4-v1` 从当前规则合法教师记录的第246步前恢复。前245条输入固定，其中前三轮由教师完成；仅第四轮由现行共享搜索策略自主行动。白席开始行动时棕席已PASS，绿、蓝两席仍按真实轮序执行PASS及强制选择。
+
+该实验用于区分前三轮准备资产与第四轮决策造成的差距。终局分数包含教师前三轮贡献，不属于自主完整局成绩，不进入四AI榜或完整自主baseline。轮末资产在PASS选牌与下一轮收入之前记录；本实验只产生自主第四轮的轮末和耗时。
+
+恢复时校验固定开局、245条输入、完整原生状态与RNG，清空机器计划，并锁定被验证策略的全部 `randomizer/` 文件。教师合法474输入终局与245输入前缀已独立重放验证。固定存档、验证证据和首次冷搜索都有摘要校验；过期或被改写的数据拒绝加载。
+
+单次决策必须搜索闭合且不超过256次原生模拟、600ms，超限在提交动作前拒绝。第四轮运行上限180秒。同代码、同场景已有记录即拒绝重跑；失败记录也保留，不通过换名绕过去重。新策略仍须重新取得起点性能准入。
+
+标准入口：
+
+```sh
+node tools/run_research_validation.js --list
+node tools/robot_iterate.js run --name teacher-r4-same-start-20261119 --full --config agentType=search,scenario=human405-white-teacher-r4-v1,compactReplay=true
+```
+
+行为验证：`node tools/run_node_tests.js --match research-human405-teacher-r4`。测试覆盖原生恢复、教师前缀范围、无旧计划、实际轮序、257次模拟提交前拒绝、失败指纹去重及存档篡改拒绝。
