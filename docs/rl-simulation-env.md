@@ -487,3 +487,5 @@ effect drain、observation、serialization 与 inference idle；不得通过省�
 - full-flow：唯一版本化完整流程。
 - parity：Browser/Simulation 对同 descriptor、Decision、journal 和 committed checkpoint 等价。
 - 性能：固定命令输出可追溯报告；性能测试不替代规则正确性证据。
+
+固定扫描续跑若因报告记账失败而已有正式输入提交，保存并验证失败存档，从下一输入续跑。该场景从第三轮记录边界，元数据分别保留137步原固定前缀与已提交的1步自主输入，不重复策略决策。

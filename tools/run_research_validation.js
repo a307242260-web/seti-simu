@@ -427,7 +427,7 @@ function runValidation(options) {
   const pinnedContinuation = scenario === whiteFull;
   const guardedR4 = whiteFull.isGuarded(identity.scenario?.id) || teacherR4;
   const roundSummaries = [], roundSummariesPath = `${recordPath}.rounds.jsonl`;
-  let nextRoundToRecord = teacherR4 ? 4 : 1;
+  let nextRoundToRecord = teacherR4 ? 4 : scenario === random20 && identity.scenario.controlledPurposePrefix ? 3 : 1;
   const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
   let failedTrace = null;
   const roundEnds = [];

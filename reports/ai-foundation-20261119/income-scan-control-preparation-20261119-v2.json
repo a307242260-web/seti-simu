@@ -3,8 +3,8 @@
   "seed": "seti-analyze-5001578c1141",
   "sourcePolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
   "sourceRecord": "reports/research/8d68c835.94299f38.full.json",
-  "savePath": "seti-saves/seti-save-income-scan-control-prefix137-20261119-v1.json",
-  "saveSha256": "4226a91dad74a0d20fc975e4e3a38273f08cb2ed6c20089b86d65031a0992f72",
+  "savePath": "seti-saves/seti-save-income-scan-control-resume138-20261119-v1.json",
+  "saveSha256": "88dab280b0b2859d750ee462a837d4af7fd0604e44a3450c4d520e2b4eadd4fc",
   "archivePath": "reports/ai-foundation-20261119/paid-scan-income5-alternative-replay-20261119-v1.json.gz",
   "archiveSha256": "5dced3d8919b6cd652a0cfa2e742fb5bc1c43c2b87816e986c24f06d8c6ac44c",
   "expected": {
@@ -15,7 +15,7 @@
       "state": 4179339788
     }
   },
-  "nativePrefixInputs": 137,
+  "nativePrefixInputs": 138,
   "originalPrefixInputs": 114,
   "fixedPurposeInputs": 23,
   "runtimeSourceHashes": {
@@ -402,5 +402,10 @@
     "randomizer/full-flow/standard-flow-v1.fixture.js": "2e80d31cd3576c3135b5d3d005d4f6670ed7ce4bb716e70a863b87fe8931896d",
     "randomizer/full-flow/standard-flow.test.js": "95528f21d9be6a0eeb6210e4948a4177e062a31ea2cb8d985deb3dca4caae170"
   },
-  "scope": "Fixed intervention followed by unchanged V72; not autonomous full-game performance."
+  "scope": "Fixed intervention followed by unchanged V72; not autonomous full-game performance.",
+  "inheritedAutonomousInputs": 1,
+  "sourceFailedRecord": "reports/research/52fbbfd4.c017c680.full.json",
+  "sourceFailedCommit": "c017c68031c1c59f092459d688b0312b5178669c",
+  "sourceFailure": "ROUND_SUMMARY_SKIPPED_BOUNDARY",
+  "resumedAfterCommittedInput": true
 }
