@@ -8,7 +8,7 @@
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue,incomeOrder,tech,catalog,placement,aliens,industry,abilities,turnFlow,probeCapital,copyForkData){
  'use strict';
- const VERSION='seti-local-mark-and-scan-purpose-v13';
+ const VERSION='seti-local-mark-and-scan-purpose-v14-funded-launch';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
  const tie=(a,b)=>a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0;
  function readyIncomePlayer(p){
@@ -2539,10 +2539,10 @@
   const pair=publicBluePair(state,seatId,session);
   const goals=ids.map(nebulaId=>({id:'scan:sector:'+nebulaId,kind:'scan-flow',nebulaId,required,purpose:'advance-or-complete-known-sector; collect its data and native reward',
    ...(pair?.capacities[nebulaId]?{publicBluePair:pair.pair,publicBlueCapacity:pair.capacities[nebulaId]}:{})}));
-  // Already-funded scans retain their native launch/move/skip choices. Only
-  // the missing reserve needs a separate, bound preparation purpose.
-  if(!session&&!p.mainActionCompleted&&launchPossible&&scanEffects.playerOwnsPurpleTech(p,4,{turn:state.turn})
-    &&p.resources.energy<(required.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY){
+  // Keep launch as its own purpose: the ordinary scan's fixed movement
+  // choice may consume Purple4 on an existing probe, even when a launch
+  // is already funded. Both purposes share the same native scan prefix.
+  if(!session&&!p.mainActionCompleted&&launchPossible&&scanEffects.playerOwnsPurpleTech(p,4,{turn:state.turn})){
    const launchCost={...required,energy:(required.energy||0)+scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY};
    goals.push(...ids.map(nebulaId=>({id:'scan:sector:'+nebulaId+':launch',kind:'scan-flow',nebulaId,required:launchCost,launch:true,purpose:'scan named sector and fund purple4 native launch'})));
   }
