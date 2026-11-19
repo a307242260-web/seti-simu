@@ -1,0 +1,26 @@
+{
+  "status": "registered-known-route-native-check",
+  "sourceRecord": "reports/research/327c52b2.e08665e6.full.json",
+  "teacherSource": "seti-saves/seti-save-teacher-current-legal-reference-384-20261118-v1.json",
+  "commonActualAIPrefixInputs": 83,
+  "baselineRoute": "Actual AI inputs84-127, early analysis then Neptune orbit and blue3; resume before round2 PASS.",
+  "teacherRoute": "Teacher inputs84-104 from the exact current AI state after83: known DLC37, complete data, blue1, analysis; preserve cash and probe. No third-round teacher action or future card is imposed.",
+  "question": "Does the full known teacher round2 route, including cash and an in-flight probe rather than only blue1, improve unchanged V72 continuation?",
+  "stateEquivalence": "Both Native branches start at the same actual current AI first83 inputs, including all opponents. No teacher hidden hands, discard piles or resources are imported.",
+  "reachability": "Every fixed route input must match a current Native choice. Failure stops the branch at its exact checkpoint; no resource injection or unregistered repair.",
+  "maxNativePreparationInputs": 83,
+  "maxCounterfactualInputs": 70,
+  "maxNativeBranches": 2,
+  "maxColdAISearches": 2,
+  "maxRegisteredControlledGames": 2,
+  "newAutonomousGames": 0,
+  "policyChanged": false,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameMillisecondsGate": 180000,
+  "stop": "No valuation patch or20-board run before complete route terminal evidence. Branches receive the same transient-AI reset; pending Native choices remain authoritative.",
+  "startedEpochSeconds": 1795098428.34329,
+  "deadlineEpochSeconds": 1795100228.34329
+}

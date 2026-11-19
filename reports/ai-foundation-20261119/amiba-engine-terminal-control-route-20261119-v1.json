@@ -1,0 +1,30 @@
+{
+  "status": "registered-minimal-engine-deployment-control",
+  "sourceRecord": "reports/research/0a797f9f.5757b29e.full.json",
+  "sourceCommit": "5757b29e5ce39326047f5577e4c900698f7908e2",
+  "sourcePolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "commonActualNativePrefix": 112,
+  "interventionInput": 113,
+  "branches": [
+    "amiba0",
+    "amiba1"
+  ],
+  "question": "Does playing the known funded Amiba1 before Amiba0 preserve the research engine and improve unchanged V72 continuation, instead of consuming Amiba1 as income117?",
+  "scope": "Retain the exact existing controlled root including earlier83 AI inputs,21 fixed round2 teacher inputs and8 subsequent V72 inputs. Only card deployment113 changes; all later income, research and card decisions remain V72. No invented cards or publicity.",
+  "stateEquivalence": "Exact common Native state/session/RNG before113; the revealed three Amiba cards are already visible. Both branches clear transient AI state equally.",
+  "reachability": "Existing2 credits pay the actual Amiba1 cost1; Native determines all effects and later legality. No assumption of the next pass/income card is used for the fixed prefix.",
+  "maxNativePreparationInputs": 112,
+  "maxCounterfactualInputs": 2,
+  "maxColdAISearches": 2,
+  "maxRegisteredControlledGames": 2,
+  "newAutonomousGames": 0,
+  "policyChanged": false,
+  "singleDecisionGate": {
+    "nativeInputs": 256,
+    "milliseconds": 600
+  },
+  "gameMillisecondsGate": 180000,
+  "stop": "No heuristic patch or full20-board run before terminal control. Local undeployed-engine value may be lower; teacher strategy and exact affordability motivate this comparison.",
+  "startedEpochSeconds": 1795099422.1877701,
+  "deadlineEpochSeconds": 1795101222.1877701
+}

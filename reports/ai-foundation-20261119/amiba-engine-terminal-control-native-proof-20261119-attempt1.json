@@ -1,0 +1,46 @@
+{
+  "status": "failed",
+  "sourceCommit": "5757b29e5ce39326047f5577e4c900698f7908e2",
+  "sourceRecord": "reports/research/0a797f9f.5757b29e.full.json",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 112,
+  "counterfactualInputs": 1,
+  "branches": [],
+  "commonRootSha256": "67c78220103e8c35725a0d5cf5494fa073ebe616f22b17b994b306fe29639741",
+  "rootAssets": {
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 2,
+      "energy": 0,
+      "handSize": 3,
+      "publicity": 3,
+      "score": 48
+    },
+    "hand": [
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp"
+      },
+      {
+        "id": "alien-amiba-1-2",
+        "cardId": "amiba_1.webp"
+      },
+      {
+        "id": "alien-amiba-3-3",
+        "cardId": "amiba_3.webp"
+      }
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ]
+  },
+  "failure": {
+    "message": "RESEARCH_ARCHIVE_FINAL_STATE_OR_RNG_DRIFT\n+ actual - expected\n\n  {\n    nativeStateSha256: 'b621318b3e02fe575ef4fd42347d445acf1e14c6faad7712e0ecf38b1303849a',\n    rng: {\n      algorithm: 'seti-simulation-mulberry32-v1',\n      state: 3171573311\n    },\n+   sessionSha256: '1d044d29caa28d78483ce575966c29e0327b5b1f24043723769fbaa5b372d89d'\n-   sessionSha256: '7bc16914d961f3de52f610dd97a4739accb109794bf5cdb644f3701cf437602a'\n  }\n",
+    "stack": "AssertionError [ERR_ASSERTION]: RESEARCH_ARCHIVE_FINAL_STATE_OR_RNG_DRIFT\n+ actual - expected\n\n  {\n    nativeStateSha256: 'b621318b3e02fe575ef4fd42347d445acf1e14c6faad7712e0ecf38b1303849a',\n    rng: {\n      algorithm: 'seti-simulation-mulberry32-v1',\n      state: 3171573311\n    },\n+   sessionSha256: '1d044d29caa28d78483ce575966c29e0327b5b1f24043723769fbaa5b372d89d'\n-   sessionSha256: '7bc16914d961f3de52f610dd97a4739accb109794bf5cdb644f3701cf437602a'\n  }\n\n    at Object.replay (/private/tmp/seti-amiba-engine-control-20261119-b8wyk988/tools/archive_research_replay.js:53:12)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/prepare-amiba-engine-terminal-controls-20261119.cjs:14:618)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

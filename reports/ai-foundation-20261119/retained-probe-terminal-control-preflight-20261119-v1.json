@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "newNativeInputs": 0,
+  "earlierFreshAndBlueMetadataUnchanged": true,
+  "results": [
+    {
+      "id": "human405-white-r2-original-route-control-v1",
+      "prefixInputs": 127,
+      "rootSessionAndRngExact": true
+    },
+    {
+      "id": "human405-white-r2-retain-probe-control-v1",
+      "prefixInputs": 104,
+      "rootSessionAndRngExact": true
+    }
+  ]
+}

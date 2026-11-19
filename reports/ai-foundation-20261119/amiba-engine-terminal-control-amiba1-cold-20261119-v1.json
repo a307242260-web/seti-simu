@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "case": "amiba1",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 0,
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 0,
+  "milliseconds": 24.86737500000001,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "end_turn",
+    "phase": "turn_control",
+    "actionId": "end_turn:b2f9b29d",
+    "actorId": "player-white",
+    "stateVersion": 47,
+    "decisionVersion": 1,
+    "target": {
+      "kind": "end-turn"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "\u7ed3\u675f\u56de\u5408"
+  },
+  "value": 119.25,
+  "rootAndRngUnchanged": true,
+  "searchSummary": {
+    "actionId": "end_turn:b2f9b29d",
+    "complete": true,
+    "value": 119.25,
+    "nativeExecutions": 0
+  },
+  "retention": "closed-trial decision and budget evidence; full search graphs omitted"
+}

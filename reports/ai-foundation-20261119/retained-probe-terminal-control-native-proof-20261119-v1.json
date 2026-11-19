@@ -1,0 +1,1330 @@
+{
+  "status": "verified",
+  "sourceCommit": "9cf3cd75e6a51692765d20f10cc4e1f41b4f44c1",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 83,
+  "counterfactualInputs": 65,
+  "branches": [
+    {
+      "name": "original",
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 5"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 31,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 31,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 6"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "analyze",
+          "phase": "main",
+          "actionId": "analyze:a5629aa3",
+          "actorId": "player-white",
+          "stateVersion": 32,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "computer",
+            "requiredSlot": 6
+          },
+          "payload": {
+            "skipCost": true
+          },
+          "decision": null,
+          "summary": "\u5206\u6790"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8f2f1c72",
+          "actorId": "player-white",
+          "stateVersion": 32,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "trace:1:blue",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u5916\u661f\u4eba 1 \u84dd\u8272\u75d5\u8ff9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 33,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 33,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 1"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 34,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:44b74627",
+          "actorId": "player-white",
+          "stateVersion": 34,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:blueBonus:1",
+            "target": "blueBonus",
+            "blueSlot": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue2 \u4e0b\u65b9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 35,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 35,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 36,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:f385e2ac",
+          "actorId": "player-white",
+          "stateVersion": 37,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2\u4fe1\u7528\u70b9 \u2192 1\u80fd\u91cf"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:967b2b4c",
+          "actorId": "player-white",
+          "stateVersion": 38,
+          "decisionVersion": 1,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "\u79fb\u52a8\u63a2\u6d4b\u5668 4 \u5411\u5916"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:abbb51f1",
+          "actorId": "player-white",
+          "stateVersion": 38,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "\u6d88\u8017 1 \u80fd\u91cf"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:d0314792",
+          "actorId": "player-white",
+          "stateVersion": 39,
+          "decisionVersion": 1,
+          "target": {
+            "rocketId": 4,
+            "planetId": "neptune"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u73af\u7ed5\u6d77\u738b\u661f - \u5956\u52b1\uff1a\u9996\u6b21\u73af\u7ed5\uff1a\u989d\u5916\u83b7\u5f97 3 \u5206\uff1b\u83b7\u5f97 7 \u5206\uff1b\u83b7\u5f97 4 \u4e2a\u6570\u636e\uff1b\u7ec7\u5973\u4e00/\u7ed8\u67b6\u5ea7\u03b2\u626b\u63cf\uff08R4\uff0c1\u4fe1\u7528\u70b9 + 1\u80fd\u91cf\uff09"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:ab0a745f",
+          "actorId": "player-white",
+          "stateVersion": 39,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "nebula:sector-1-b",
+            "nebulaId": "sector-1-b",
+            "sectorX": null
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "\u626b\u63cf \u7ec7\u5973\u4e00"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 40,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:91d79691",
+          "actorId": "player-white",
+          "stateVersion": 40,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:d",
+            "tileId": "d"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u6807\u8bb0 D",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "d",
+            "imageSrc": "../assets/final/final_d2.png",
+            "imageAlt": "\u7ec8\u5c40\u8ba1\u5206\u677f\u5757 D"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 41,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "\u7814\u7a76\u79d1\u6280"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c86683cc",
+          "actorId": "player-white",
+          "stateVersion": 41,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "tech:blue3:slot:2",
+            "tileId": "blue3",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "\u7814\u7a76 blue3\uff08\u84dd\u69fd 2\uff09"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:56497dc2",
+          "actorId": "player-white",
+          "stateVersion": 41,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "pick:card-18-0",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "b_48.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-18-0",
+            "imageSrc": "../assets/cards/basic/split/b_48.webp",
+            "imageAlt": "b_48.webp"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 42,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 42,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 3"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 43,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 43,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 4"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:b27d2a0c",
+          "actorId": "player-white",
+          "stateVersion": 43,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "income:card-18-0",
+            "cardInstanceId": "card-18-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u6536\u5165 b_48.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-18-0",
+            "imageSrc": "../assets/cards/basic/split/b_48.webp",
+            "imageAlt": "b_48.webp"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 44,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:7be78a55",
+          "actorId": "player-white",
+          "stateVersion": 44,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "data:blueBonus:2",
+            "target": "blueBonus",
+            "blueSlot": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue3 \u4e0b\u65b9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:859d2a59",
+          "actorId": "player-white",
+          "stateVersion": 44,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "pick:card-49-0",
+            "cardInstanceId": "card-49-0",
+            "publicSlotIndex": 0
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "dlc_32.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-49-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_32.png",
+            "imageAlt": "dlc_32.png"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 45,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:684d5f30",
+          "actorId": "player-white",
+          "stateVersion": 46,
+          "decisionVersion": 1,
+          "target": {
+            "cardInstanceId": "card-42-0"
+          },
+          "payload": {
+            "cost": {},
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_37.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1e039ca2",
+          "actorId": "player-white",
+          "stateVersion": 46,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "nebula:sector-1-b",
+            "nebulaId": "sector-1-b",
+            "sectorX": null
+          },
+          "payload": {
+            "gainData": false
+          },
+          "decision": null,
+          "summary": "\u626b\u63cf \u7ec7\u5973\u4e00"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8b9d27ca",
+          "actorId": "player-white",
+          "stateVersion": 46,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "nebula:sector-4-b",
+            "nebulaId": "sector-4-b",
+            "sectorX": null
+          },
+          "payload": {
+            "gainData": false
+          },
+          "decision": null,
+          "summary": "\u626b\u63cf \u7ed8\u67b6\u5ea7\u03b2"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2618cdf2",
+          "actorId": "player-white",
+          "stateVersion": 46,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "trace:1:pink",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u5916\u661f\u4eba 1 \u7c89\u8272\u75d5\u8ff9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 47,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 48,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 48,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 5"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 49,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 49,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 6"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "analyze",
+          "phase": "main",
+          "actionId": "analyze:a5629aa3",
+          "actorId": "player-white",
+          "stateVersion": 50,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "computer",
+            "requiredSlot": 6
+          },
+          "payload": {
+            "skipCost": true
+          },
+          "decision": null,
+          "summary": "\u5206\u6790"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:46f3414a",
+          "actorId": "player-white",
+          "stateVersion": 50,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "trace:2:blue",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u5916\u661f\u4eba 2 \u84dd\u8272\u75d5\u8ff9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 51,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        }
+      ],
+      "assets": {
+        "score": 48,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 0,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 4,
+          "score": 48
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 3,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue2": 1,
+            "blue3": 2
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "blue3": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [],
+          "poolTokens": []
+        },
+        "probes": [],
+        "hand": [
+          "dlc_32.png"
+        ],
+        "playedCards": [
+          "b_117.webp",
+          "dlc_9.png"
+        ]
+      },
+      "prefixInputs": 127,
+      "archive": "reports/ai-foundation-20261119/retained-probe-original-prefix-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-r2-original-route-prefix127-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/retained-probe-original-preparation-20261119-v1.json",
+      "preparationSha256": "6f23c6786995dd5d9f4eb78e40312f92e268dcf24d9fdf7fa06c50857be66595",
+      "expected": {
+        "nativeStateSha256": "c0fb7711c2b800b48541ff306b0701209d56be918926dff26c038cfa2b664149",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "c0fb7711c2b800b48541ff306b0701209d56be918926dff26c038cfa2b664149",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "name": "retained",
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:684d5f30",
+          "actorId": "player-white",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-42-0"
+          },
+          "payload": {
+            "cost": {},
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_37.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6b287122",
+          "actorId": "player-white",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "nebula:sector-2-a",
+            "nebulaId": "sector-2-a",
+            "sectorX": null
+          },
+          "payload": {
+            "gainData": false
+          },
+          "decision": null,
+          "summary": "\u626b\u63cf \u5929\u72fc\u661fA"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2618cdf2",
+          "actorId": "player-white",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "trace:1:pink",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u5916\u661f\u4eba 1 \u7c89\u8272\u75d5\u8ff9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 31,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 31,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 5"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 32,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 32,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 6"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 33,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:806ccfc8",
+          "actorId": "player-white",
+          "stateVersion": 34,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "\u7814\u7a76\u79d1\u6280"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0cbf059c",
+          "actorId": "player-white",
+          "stateVersion": 34,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:blue1:slot:2",
+            "tileId": "blue1",
+            "blueSlot": 2
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "\u7814\u7a76 blue1\uff08\u84dd\u69fd 2\uff09"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 35,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:7be78a55",
+          "actorId": "player-white",
+          "stateVersion": 35,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:blueBonus:2",
+            "target": "blueBonus",
+            "blueSlot": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue1 \u4e0b\u65b9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 36,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:91d79691",
+          "actorId": "player-white",
+          "stateVersion": 36,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:d",
+            "tileId": "d"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u6807\u8bb0 D",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "d",
+            "imageSrc": "../assets/final/final_d2.png",
+            "imageAlt": "\u7ec8\u5c40\u8ba1\u5206\u677f\u5757 D"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "analyze",
+          "phase": "main",
+          "actionId": "analyze:a5629aa3",
+          "actorId": "player-white",
+          "stateVersion": 37,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "computer",
+            "requiredSlot": 6
+          },
+          "payload": {
+            "skipCost": true
+          },
+          "decision": null,
+          "summary": "\u5206\u6790"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8f2f1c72",
+          "actorId": "player-white",
+          "stateVersion": 37,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "trace:1:blue",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u5916\u661f\u4eba 1 \u84dd\u8272\u75d5\u8ff9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 38,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:29b5215c",
+          "actorId": "player-white",
+          "stateVersion": 38,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7b2c\u4e00\u6392\u653e\u7f6e\u4f4d 1"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:8fd12fd3",
+          "actorId": "player-white",
+          "stateVersion": 39,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u653e\u7f6e\u6570\u636e"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:44b74627",
+          "actorId": "player-white",
+          "stateVersion": 39,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "data:blueBonus:1",
+            "target": "blueBonus",
+            "blueSlot": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "blue2 \u4e0b\u65b9"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 40,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "\u7ed3\u675f\u56de\u5408"
+        }
+      ],
+      "teacherOwnAssetEquality": {
+        "resources": true,
+        "income": true,
+        "technology": true,
+        "data": true,
+        "probes": true,
+        "hand": true,
+        "playedCards": true
+      },
+      "assets": {
+        "score": 34,
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 1,
+          "handSize": 0,
+          "publicity": 1,
+          "score": 34
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 6,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "technology": {
+          "blueBoardSlots": {
+            "blue1": 2,
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true,
+            "purple4": true
+          }
+        },
+        "data": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-16",
+              "index": 9,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "blueSlot": 1,
+              "id": "data-token-17",
+              "index": 10,
+              "placementKind": "blueBonus"
+            }
+          ],
+          "poolTokens": []
+        },
+        "probes": [
+          {
+            "angleDegrees": -22.5,
+            "color": "white",
+            "id": 4,
+            "launchGrid": {
+              "x": 1,
+              "y": 1
+            },
+            "launchSectorCoordinate": {
+              "x": 1,
+              "y": 1
+            },
+            "playerId": "player-white",
+            "playerSequence": 1,
+            "radius": 227.66,
+            "sectorX": 1,
+            "sectorY": 3,
+            "slotIndex": 4,
+            "surface": "solar-board"
+          }
+        ],
+        "hand": [],
+        "playedCards": [
+          "b_117.webp",
+          "dlc_9.png"
+        ]
+      },
+      "prefixInputs": 104,
+      "archive": "reports/ai-foundation-20261119/retained-probe-retained-prefix-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-r2-retained-route-prefix104-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/retained-probe-retained-preparation-20261119-v1.json",
+      "preparationSha256": "c90c55745104fca1a51c26d1c62493c258b1fee8c19df907300fd1cb64ae279a",
+      "expected": {
+        "nativeStateSha256": "5e54a10ca24e9814807e73c0d5bc76a870e923c955e6c5b34041b4e090d4ade5",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "5e54a10ca24e9814807e73c0d5bc76a870e923c955e6c5b34041b4e090d4ade5",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "teacherOwnAssetFieldMapping": {
+        "playedCards": "reserved"
+      }
+    }
+  ],
+  "commonRootSha256": "45c5255f29cd630c68c5233e40f1ba75ccc8f1d1a53380fec13e09f74beee160",
+  "rootAndRngRestored": true,
+  "independentReplayInputs": 231
+}

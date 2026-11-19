@@ -7,6 +7,78 @@
   },
   "versions": [
     {
+      "id": "v497-amiba1-first-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u5148\u90e8\u7f72\u963f\u7c73\u5df41\uff1a150\u5206\uff08\u5c40\u90e8\u5bf9\u7167\uff09",
+      "date": "2026-11-19",
+      "baseline": "v497-amiba0-first-control-20261119",
+      "head": "d01b9ad48",
+      "commits": [
+        "d01b9ad48"
+      ],
+      "summary": "Same first112 actual inputs; only deploy Amiba1 rather than Amiba0 at113. Unchanged V72 triggers engine on known blue/orange research. Terminal150 vs133 (+17), still below autonomous272;232 inputs,5.008s; max157 Native/167.934ms. Controlled continuation, not autonomous improvement; no20-board rerun.",
+      "records": {
+        "7662691d.d01b9ad4.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v497-amiba0-first-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u5148\u90e8\u7f72\u963f\u7c73\u5df40\uff1a133\u5206\uff08\u8def\u7ebf\u590d\u73b0\uff09",
+      "date": "2026-11-19",
+      "baseline": "v496-r2-retained-route-control-20261119",
+      "head": "d01b9ad48",
+      "commits": [
+        "d01b9ad48"
+      ],
+      "summary": "Same first112 retained-route inputs, deploy Amiba0 at113, clear transient AI and continue V72. All233 actual actions reproduce the retained-route133 control.5.010s; max163 Native/177.540ms. Controlled continuation, no policy adoption.",
+      "records": {
+        "429f78f7.d01b9ad4.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v496-r2-retained-route-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u4fdd\u7559\u73b0\u91d1\u4e0e\u63a2\u6d4b\u5668\u8def\u7ebf\uff1a133\u5206\uff08\u4e0d\u91c7\u7528\uff09",
+      "date": "2026-11-19",
+      "baseline": "v496-r2-original-route-control-20261119",
+      "head": "5757b29e5",
+      "commits": [
+        "5757b29e5"
+      ],
+      "summary": "Same actual first83 inputs; known teacher route84-104 matches teacher key R2 assets. Unchanged V72 then immediately lands Jupiter and consumes Amiba1 as income. Terminal133,233 inputs,5.185s; max163 Native/171.759ms. No future teacher actions imposed. Controlled continuation; not autonomous performance.",
+      "records": {
+        "0a797f9f.5757b29e.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
+      "id": "v496-r2-original-route-control-20261119",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "V72\u539f\u8def\u7ebf\u5bf9\u7167\uff1a272\u5206\uff08\u5b8c\u6574\u590d\u73b0\uff09",
+      "date": "2026-11-19",
+      "baseline": "v490-final-currency-teaching-20261119",
+      "head": "5757b29e5",
+      "commits": [
+        "5757b29e5"
+      ],
+      "summary": "Common actual first83 inputs; fixed original route to127, paired transient reset, unchanged V72. Terminal272; all354 actions and round assets reproduce accepted autonomous reference.10.882s; max148 Native/386.404ms. Controlled continuation, not a new autonomous score.",
+      "records": {
+        "19ecde57.5757b29e.full.json": {}
+      },
+      "baselineEligible": false,
+      "roadmap": null
+    },
+    {
       "id": "v495-blue1-slot2-control-20261119",
       "aiGeneration": "v2",
       "agentType": "search",

@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "newAISearches": 0,
+  "newGames": 0,
+  "newNativeInputs": 0,
+  "earlierFreshAndBlueMetadataUnchanged": true,
+  "results": [
+    {
+      "id": "human405-white-r2-amiba0-first-control-v1",
+      "prefixInputs": 113,
+      "rootSessionAndRngExact": true
+    },
+    {
+      "id": "human405-white-r2-amiba1-first-control-v1",
+      "prefixInputs": 113,
+      "rootSessionAndRngExact": true
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "case": "retained",
+  "policy": "seti-search-agent-v2/seti-complete-decision-search-v490-final-currency/seti-purpose-capital-state-value-v72-final-currency",
+  "preparationInputs": 0,
+  "newGames": 0,
+  "newAISearches": 1,
+  "complete": true,
+  "nativeInputs": 18,
+  "milliseconds": 77.09145899999999,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "quick_trade",
+    "phase": "quick",
+    "actionId": "quick_trade:f385e2ac",
+    "actorId": "player-white",
+    "stateVersion": 41,
+    "decisionVersion": 0,
+    "target": {
+      "tradeId": "credits-for-energy"
+    },
+    "payload": {
+      "cost": {
+        "credits": 2
+      },
+      "gain": {
+        "energy": 1
+      }
+    },
+    "decision": null,
+    "summary": "2\u4fe1\u7528\u70b9 \u2192 1\u80fd\u91cf"
+  },
+  "value": 100.25,
+  "rootAndRngUnchanged": true,
+  "searchSummary": {
+    "actionId": "quick_trade:f385e2ac",
+    "complete": true,
+    "value": 100.25,
+    "nativeExecutions": 18
+  },
+  "retention": "closed-trial decision and budget evidence; full search graphs omitted"
+}

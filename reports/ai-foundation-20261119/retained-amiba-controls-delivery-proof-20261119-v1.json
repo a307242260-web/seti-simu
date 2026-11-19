@@ -1,0 +1,36 @@
+{
+  "status": "passed",
+  "sourceCommits": [
+    "5757b29e5ce39326047f5577e4c900698f7908e2",
+    "d01b9ad48db6ee2005f2ca5107132022b60633bb"
+  ],
+  "acceptedPolicyCommit": "e08665e697909c61d8e39b70cb0b25e9850de31e",
+  "policyChanged": false,
+  "newAutonomousGames": 0,
+  "newControlledGames": 4,
+  "teacherRouteTerminal": 133,
+  "engineFirstTerminal": 150,
+  "autonomousTeachingReference": 272,
+  "original20Rerun": false,
+  "independentTerminalReplayInputs": 1052,
+  "nativePrefixReplayInputs": 457,
+  "priorScenarioMetadataPreserved": true,
+  "resumeTests": {
+    "commands": [
+      "node tools/run_node_tests.js --match research-world-resume --match frozen-continuation-identity"
+    ],
+    "result": "2 passed,0 failed",
+    "snapshot": "/private/tmp/seti-amiba-engine-control-20261119-b8wyk988"
+  },
+  "gameGate": {
+    "maxNative": 163,
+    "maxMilliseconds": 386.404333,
+    "maxWallMs": 10882,
+    "allComplete": true
+  },
+  "v1AndHistoricalRegistryPreserved": true,
+  "sharedIndexUnchanged": true,
+  "protectedRootUnchanged": true,
+  "historicalRawGraphsOmitted": true,
+  "candidateAdopted": false
+}

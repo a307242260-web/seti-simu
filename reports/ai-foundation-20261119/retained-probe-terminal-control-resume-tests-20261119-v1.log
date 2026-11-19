@@ -1,0 +1,5 @@
+{"frozenContinuationIdentity":"passed","checks":21,"sourceBeforePayload":true,"matchingRuntimeStillChecksRecordSaveTraceAndPrefix":true,"newNativeInputs":0}
+research world resume tests passed
+SUMMARY unit passed=2 failed=0 total=2 time=0.52s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=2

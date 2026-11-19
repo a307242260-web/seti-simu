@@ -1,0 +1,165 @@
+{
+  "status": "verified",
+  "sourceCommit": "5757b29e5ce39326047f5577e4c900698f7908e2",
+  "sourceRecord": "reports/research/0a797f9f.5757b29e.full.json",
+  "policyChanged": false,
+  "newAISearches": 0,
+  "newGames": 0,
+  "preparationInputs": 112,
+  "counterfactualInputs": 2,
+  "branches": [
+    {
+      "name": "amiba0",
+      "prefixInputs": 113,
+      "pendingNativeEffect": true,
+      "resources": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 3,
+        "availableData": 3,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 2,
+        "score": 48
+      },
+      "hand": [
+        "amiba_1.webp",
+        "amiba_3.webp"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 98.75,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 0,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "archive": "reports/ai-foundation-20261119/amiba-engine-amiba0-prefix113-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-amiba0-first-prefix113-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/amiba-engine-amiba0-preparation-20261119-v1.json",
+      "preparationSha256": "3326f939d327bb70a53355d8d0aee4f00c8b4461b47abd569153fa0feda186c7",
+      "expected": {
+        "nativeStateSha256": "b621318b3e02fe575ef4fd42347d445acf1e14c6faad7712e0ecf38b1303849a",
+        "sessionSha256": "1d044d29caa28d78483ce575966c29e0327b5b1f24043723769fbaa5b372d89d",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "b621318b3e02fe575ef4fd42347d445acf1e14c6faad7712e0ecf38b1303849a",
+        "sessionSha256": "1d044d29caa28d78483ce575966c29e0327b5b1f24043723769fbaa5b372d89d",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    },
+    {
+      "name": "amiba1",
+      "prefixInputs": 113,
+      "pendingNativeEffect": false,
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 4,
+        "score": 48
+      },
+      "hand": [
+        "amiba_0.webp",
+        "amiba_3.webp"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v72-final-currency",
+        "total": 119.25,
+        "components": {
+          "realizedScore": 48,
+          "currentEndGameBonus": 7,
+          "resources": 3,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 18,
+          "handPotential": 0,
+          "researchPotential": 20.5,
+          "probePotential": 0,
+          "analysisPotential": 1.75,
+          "researchIncomePotential": 0,
+          "dataPotential": 0,
+          "finalMarkPotential": 0
+        },
+        "terminal": false,
+        "purposePreparationDebt": 0
+      },
+      "archive": "reports/ai-foundation-20261119/amiba-engine-amiba1-prefix113-replay-20261119-v1.json.gz",
+      "save": "seti-saves/seti-save-amiba1-first-prefix113-20261119-v1.json",
+      "preparation": "reports/ai-foundation-20261119/amiba-engine-amiba1-preparation-20261119-v1.json",
+      "preparationSha256": "5b578ae35ca0fa2889a788c16d6875082c43efc67da1f9c98d35a3eceb179a01",
+      "expected": {
+        "nativeStateSha256": "227201b3b91433205eafc9d7f8e6398ab0bca49a71888f864d87322890cc5b43",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      },
+      "actual": {
+        "nativeStateSha256": "227201b3b91433205eafc9d7f8e6398ab0bca49a71888f864d87322890cc5b43",
+        "sessionSha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+        "rng": {
+          "algorithm": "seti-simulation-mulberry32-v1",
+          "state": 3171573311
+        }
+      }
+    }
+  ],
+  "commonRootSha256": "67c78220103e8c35725a0d5cf5494fa073ebe616f22b17b994b306fe29639741",
+  "rootAssets": {
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 2,
+      "energy": 0,
+      "handSize": 3,
+      "publicity": 3,
+      "score": 48
+    },
+    "hand": [
+      {
+        "id": "alien-amiba-0-1",
+        "cardId": "amiba_0.webp"
+      },
+      {
+        "id": "alien-amiba-1-2",
+        "cardId": "amiba_1.webp"
+      },
+      {
+        "id": "alien-amiba-3-3",
+        "cardId": "amiba_3.webp"
+      }
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ]
+  },
+  "rootAndRngRestored": true,
+  "independentReplayInputs": 226
+}
